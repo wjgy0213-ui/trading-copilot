@@ -10,6 +10,7 @@ import { calculateEquity, checkStopLossAndTakeProfit } from '@/lib/tradingEngine
 import TradingPanel from '@/components/TradingPanel';
 import PositionsPanel from '@/components/PositionsPanel';
 import AccountPanel from '@/components/AccountPanel';
+import AICoach from '@/components/AICoach';
 
 export default function TradePage() {
   const [activePair, setActivePair] = useState<TradingPair>('BTC/USD');
@@ -147,9 +148,10 @@ export default function TradePage() {
             </div>
           </div>
           
-          {/* Right: Account Info */}
-          <div>
+          {/* Right: Account Info + AI Coach */}
+          <div className="space-y-6">
             <AccountPanel account={account} currentPrice={price.price} />
+            <AICoach />
           </div>
         </div>
       </div>
