@@ -124,6 +124,13 @@ export default function LandingPage() {
       <footer className="container mx-auto px-4 py-8 border-t border-gray-800 text-center text-gray-500">
         <p>交易陪练AI - 帮助韭菜觉醒者建立交易纪律</p>
         <p className="text-sm mt-2">⚠️ 本工具仅用于教育目的，不构成投资建议</p>
+        <div className="flex justify-center gap-4 mt-4 text-sm">
+          <Link href="/trade" className="hover:text-blue-400 transition">模拟交易</Link>
+          <span>|</span>
+          <Link href="/learn" className="hover:text-blue-400 transition">📚 入门课程</Link>
+          <span>|</span>
+          <Link href="/history" className="hover:text-blue-400 transition">交易记录</Link>
+        </div>
       </footer>
     </div>
   );

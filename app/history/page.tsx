@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, TrendingUp, TrendingDown, Star, Clock } from 'lucide-react';
 import { getAccount, getAIScores } from '@/lib/storage';
 import { Trade, AIScore } from '@/lib/types';
+import EquityCurve from '@/components/EquityCurve';
 
 export default function HistoryPage() {
   const [closedTrades, setClosedTrades] = useState<Trade[]>([]);
@@ -58,6 +59,11 @@ export default function HistoryPage() {
 
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">交易历史</h1>
+
+        {/* Equity Curve */}
+        <div className="mb-8">
+          <EquityCurve trades={closedTrades} initialBalance={500} />
+        </div>
 
         {/* Stats Summary */}
         {(() => {
