@@ -57,7 +57,55 @@ export default function HistoryPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">交易历史</h1>
+        <h1 className="text-3xl font-bold mb-6">交易历史</h1>
+
+        {/* Stats Summary */}
+        {(() => {
+          const wins = closedTrades.filter(t => (t.pnl || 0) > 0).length;
+          const losses = closedTrades.filter(t => (t.pnl || 0) <= 0).length;
+          const totalPnl = closedTrades.reduce((sum, t) => sum + (t.pnl || 0), 0);
+          const winRate = closedTrades.length > 0 ? (wins / closedTrades.length * 100) : 0;
+          const avgWin = wins > 0 ? closedTrades.filter(t => (t.pnl || 0) > 0).reduce((s, t) => s + (t.pnl || 0), 0) / wins : 0;
+          const avgLoss = losses > 0 ? Math.abs(closedTrades.filter(t => (t.pnl || 0) <= 0).reduce((s, t) => s + (t.pnl || 0), 0) / losses) : 0;
+          const profitFactor = avgLoss > 0 ? avgWin / avgLoss : 0;
+          const scores = closedTrades.map(t => aiScores[t.id]?.entryScore).filter(Boolean) as number[];
+          const avgScore = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
+
+          return (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-8">
+              <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
+                <div className="text-2xl font-bold">{closedTrades.length}</div>
+                <div className="text-xs text-gray-400">总交易</div>
+              </div>
+              <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
+                <div className={`text-2xl font-bold ${winRate >= 50 ? 'text-green-400' : 'text-red-400'}`}>
+                  {winRate.toFixed(0)}%
+                </div>
+                <div className="text-xs text-gray-400">胜率 ({wins}胜{losses}负)</div>
+              </div>
+              <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
+                <div className={`text-2xl font-bold ${totalPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                  {totalPnl >= 0 ? '+' : ''}${totalPnl.toFixed(2)}
+                </div>
+                <div className="text-xs text-gray-400">总盈亏</div>
+              </div>
+              <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
+                <div className="text-2xl font-bold text-green-400">${avgWin.toFixed(2)}</div>
+                <div className="text-xs text-gray-400">平均盈利</div>
+              </div>
+              <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
+                <div className="text-2xl font-bold text-red-400">${avgLoss.toFixed(2)}</div>
+                <div className="text-xs text-gray-400">平均亏损</div>
+              </div>
+              <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
+                <div className={`text-2xl font-bold ${avgScore >= 70 ? 'text-yellow-400' : 'text-gray-400'}`}>
+                  {avgScore > 0 ? avgScore.toFixed(0) : '-'}
+                </div>
+                <div className="text-xs text-gray-400">平均AI评分</div>
+              </div>
+            </div>
+          );
+        })()}
 
         <div className="space-y-4">
           {closedTrades.map((trade) => {
