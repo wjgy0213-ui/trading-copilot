@@ -1,49 +1,64 @@
-// CoinGecko API - 获取BTC实时价格
+// CoinGecko API - 获取实时价格（BTC/ETH/SOL）
 
-import { PriceData } from './types';
+import { PriceData, TradingPair, TRADING_PAIRS } from './types';
 
 const COINGECKO_API = 'https://api.coingecko.com/api/v3';
 
-/** 获取BTC价格 */
-export async function getBTCPrice(): Promise<PriceData> {
+/** 获取指定交易对价格 */
+export async function getPrice(pair: TradingPair = 'BTC/USD'): Promise<PriceData> {
+  const config = TRADING_PAIRS[pair];
   try {
     const response = await fetch(
-      `${COINGECKO_API}/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true`
+      `${COINGECKO_API}/simple/price?ids=${config.id}&vs_currencies=usd&include_24hr_change=true`
     );
     
-    if (!response.ok) {
-      throw new Error('Failed to fetch price');
-    }
+    if (!response.ok) throw new Error('Failed to fetch price');
     
     const data = await response.json();
+    const coinData = data[config.id];
     
     return {
-      symbol: 'BTC/USD',
-      price: data.bitcoin.usd,
+      symbol: pair,
+      price: coinData.usd,
       timestamp: Date.now(),
-      change24h: data.bitcoin.usd_24h_change || 0,
+      change24h: coinData.usd_24h_change || 0,
     };
   } catch (error) {
-    console.error('Error fetching BTC price:', error);
-    // 返回模拟数据作为fallback
+    console.error(`Error fetching ${pair} price:`, error);
+    const fallbacks: Record<TradingPair, number> = {
+      'BTC/USD': 65000,
+      'ETH/USD': 1900,
+      'SOL/USD': 30,
+    };
     return {
-      symbol: 'BTC/USD',
-      price: 50000 + Math.random() * 1000,
+      symbol: pair,
+      price: fallbacks[pair] + (Math.random() - 0.5) * fallbacks[pair] * 0.01,
       timestamp: Date.now(),
       change24h: (Math.random() - 0.5) * 10,
     };
   }
 }
 
-/** WebSocket模式获取实时价格（可选实现） */
+/** 向后兼容 */
+export async function getBTCPrice(): Promise<PriceData> {
+  return getPrice('BTC/USD');
+}
+
+/** 实时价格流 */
 export class PriceStream {
   private intervalId?: NodeJS.Timeout;
   private listeners: Array<(price: PriceData) => void> = [];
+  private pair: TradingPair = 'BTC/USD';
+
+  /** 设置交易对 */
+  setPair(pair: TradingPair): void {
+    this.pair = pair;
+  }
 
   /** 开始价格更新 */
   start(intervalMs: number = 5000): void {
     this.intervalId = setInterval(async () => {
-      const price = await getBTCPrice();
+      const price = await getPrice(this.pair);
       this.listeners.forEach(listener => listener(price));
     }, intervalMs);
   }

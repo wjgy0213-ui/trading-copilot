@@ -54,10 +54,20 @@ export interface AIScore {
   };
 }
 
+/** 支持的交易对 */
+export type TradingPair = 'BTC/USD' | 'ETH/USD' | 'SOL/USD';
+
+/** 交易对配置 */
+export const TRADING_PAIRS: Record<TradingPair, { id: string; name: string; icon: string }> = {
+  'BTC/USD': { id: 'bitcoin', name: '比特币', icon: '₿' },
+  'ETH/USD': { id: 'ethereum', name: '以太坊', icon: 'Ξ' },
+  'SOL/USD': { id: 'solana', name: 'Solana', icon: '◎' },
+};
+
 /** 价格数据 */
 export interface PriceData {
-  symbol: string; // BTC/USD
+  symbol: string;
   price: number;
   timestamp: number;
-  change24h: number; // 24小时涨跌幅
+  change24h: number;
 }

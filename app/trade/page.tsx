@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, TrendingUp, TrendingDown, DollarSign, Target, Zap } from 'lucide-react';
-import { PriceData } from '@/lib/types';
-import { getBTCPrice, PriceStream } from '@/lib/priceAPI';
+import { PriceData, TradingPair, TRADING_PAIRS } from '@/lib/types';
+import { getPrice, PriceStream } from '@/lib/priceAPI';
 import { getAccount } from '@/lib/storage';
 import { calculateEquity, checkStopLossAndTakeProfit } from '@/lib/tradingEngine';
 import TradingPanel from '@/components/TradingPanel';
@@ -12,6 +12,7 @@ import PositionsPanel from '@/components/PositionsPanel';
 import AccountPanel from '@/components/AccountPanel';
 
 export default function TradePage() {
+  const [activePair, setActivePair] = useState<TradingPair>('BTC/USD');
   const [price, setPrice] = useState<PriceData | null>(null);
   const [account, setAccount] = useState(getAccount());
   const [loading, setLoading] = useState(true);
@@ -19,7 +20,7 @@ export default function TradePage() {
   // 初始化价格
   useEffect(() => {
     const initPrice = async () => {
-      const initialPrice = await getBTCPrice();
+      const initialPrice = await getPrice(activePair);
       setPrice(initialPrice);
       setLoading(false);
     };
@@ -85,7 +86,21 @@ export default function TradePage() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <div className="text-sm text-gray-400 mb-1">BTC/USD</div>
+              <div className="flex items-center gap-2 mb-1">
+                {(Object.keys(TRADING_PAIRS) as TradingPair[]).map((pair) => (
+                  <button
+                    key={pair}
+                    onClick={() => { setActivePair(pair); setLoading(true); }}
+                    className={`px-3 py-1 rounded-full text-sm font-medium transition ${
+                      activePair === pair 
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-gray-700 text-gray-400 hover:text-white'
+                    }`}
+                  >
+                    {TRADING_PAIRS[pair].icon} {pair.split('/')[0]}
+                  </button>
+                ))}
+              </div>
               <div className="flex items-center gap-3">
                 <span className="text-3xl font-bold">
                   ${price.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
