@@ -4,8 +4,12 @@ import { PriceData, TradingPair, TRADING_PAIRS } from './types';
 
 const COINGECKO_API = 'https://api.coingecko.com/api/v3';
 
-// 股票近似价格（用于模拟交易，非实时）
-const STOCK_PRICES: Record<string, number> = {
+// Yahoo Finance 免费价格 API
+const YAHOO_API = 'https://query1.finance.yahoo.com/v8/finance/chart';
+
+// 缓存 + fallback
+const stockCache: Record<string, { price: number; change: number; ts: number }> = {};
+const STOCK_FALLBACKS: Record<string, number> = {
   'AAPL': 178, 'MSFT': 415, 'GOOGL': 175, 'AMZN': 185,
   'NVDA': 130, 'META': 590, 'TSLA': 180,
 };
@@ -14,16 +18,31 @@ const STOCK_PRICES: Record<string, number> = {
 export async function getPrice(pair: TradingPair = 'BTC/USD'): Promise<PriceData> {
   const config = TRADING_PAIRS[pair];
   
-  // 股票使用模拟价格（带随机波动）
+  // 股票：尝试 Yahoo Finance，fallback 到缓存/模拟
   if (config.category === 'stock') {
-    const basePrice = STOCK_PRICES[config.id] || 100;
-    const noise = (Math.random() - 0.5) * basePrice * 0.005;
-    return {
-      symbol: pair,
-      price: basePrice + noise,
-      timestamp: Date.now(),
-      change24h: (Math.random() - 0.5) * 4,
-    };
+    const cached = stockCache[config.id];
+    // 缓存15秒内有效
+    if (cached && Date.now() - cached.ts < 15000) {
+      return { symbol: pair, price: cached.price, timestamp: cached.ts, change24h: cached.change };
+    }
+    try {
+      const res = await fetch(`${YAHOO_API}/${config.id}?interval=1m&range=1d`, {
+        headers: { 'User-Agent': 'Mozilla/5.0' },
+      });
+      if (!res.ok) throw new Error('Yahoo API failed');
+      const data = await res.json();
+      const meta = data.chart.result[0].meta;
+      const price = meta.regularMarketPrice;
+      const prevClose = meta.chartPreviousClose || meta.previousClose;
+      const change = prevClose ? ((price - prevClose) / prevClose) * 100 : 0;
+      stockCache[config.id] = { price, change, ts: Date.now() };
+      return { symbol: pair, price, timestamp: Date.now(), change24h: change };
+    } catch {
+      // Fallback：用缓存或模拟
+      const base = cached?.price || STOCK_FALLBACKS[config.id] || 100;
+      const noise = (Math.random() - 0.5) * base * 0.002;
+      return { symbol: pair, price: base + noise, timestamp: Date.now(), change24h: cached?.change || 0 };
+    }
   }
   
   // 加密货币使用CoinGecko
