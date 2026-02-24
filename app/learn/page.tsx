@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Lock, CheckCircle, Clock, ChevronRight, ChevronDown, Sparkles, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { COURSE_CHAPTERS, Chapter, Lesson } from '@/lib/courseData';
+import { COURSE_CHAPTERS, Chapter, Lesson, QuizQuestion } from '@/lib/courseData';
 import { isProUser, activatePro } from '@/lib/paywall';
 
 function PaywallBanner({ onUnlock }: { onUnlock: () => void }) {
@@ -130,6 +130,17 @@ function LessonCard({ lesson, index, locked }: { lesson: Lesson; index: number; 
           <div className="prose prose-invert prose-sm max-w-none mt-4">
             <LessonContent content={lesson.content} />
           </div>
+          {lesson.homework && (
+            <div className="mt-6 p-4 bg-blue-600/10 border border-blue-500/20 rounded-xl">
+              <div className="text-sm font-semibold text-blue-400 mb-2">📝 课后作业</div>
+              <p className="text-sm text-gray-300">{lesson.homework}</p>
+            </div>
+          )}
+          {lesson.quiz && lesson.quiz.length > 0 && (
+            <div className="mt-6">
+              <QuizSection quiz={lesson.quiz} lessonId={lesson.id} />
+            </div>
+          )}
         </div>
       )}
     </motion.div>
@@ -246,6 +257,66 @@ function renderInline(text: string): React.ReactNode {
   });
 }
 
+function QuizSection({ quiz, lessonId }: { quiz: QuizQuestion[]; lessonId: string }) {
+  const [answers, setAnswers] = useState<Record<number, number>>({});
+  const [showResults, setShowResults] = useState(false);
+
+  const handleAnswer = (qIdx: number, optIdx: number) => {
+    if (showResults) return;
+    setAnswers(prev => ({ ...prev, [qIdx]: optIdx }));
+  };
+
+  const score = Object.entries(answers).filter(([qIdx, optIdx]) => quiz[parseInt(qIdx)].correctIndex === optIdx).length;
+
+  return (
+    <div className="border border-gray-800 rounded-xl p-5 bg-gray-900/50">
+      <h4 className="font-bold text-sm mb-4 flex items-center gap-2">
+        📋 小测试（{quiz.length}题）
+        {showResults && <span className={`text-xs px-2 py-0.5 rounded-full ${score === quiz.length ? 'bg-green-600/20 text-green-400' : 'bg-yellow-600/20 text-yellow-400'}`}>{score}/{quiz.length}</span>}
+      </h4>
+      <div className="space-y-5">
+        {quiz.map((q, qi) => (
+          <div key={qi}>
+            <p className="text-sm font-medium mb-2">{qi + 1}. {q.question}</p>
+            <div className="space-y-1.5">
+              {q.options.map((opt, oi) => {
+                const selected = answers[qi] === oi;
+                const isCorrect = q.correctIndex === oi;
+                let cls = 'bg-gray-800 border-gray-700 text-gray-300 hover:border-gray-600';
+                if (showResults && selected && isCorrect) cls = 'bg-green-600/20 border-green-500/30 text-green-300';
+                else if (showResults && selected && !isCorrect) cls = 'bg-red-600/20 border-red-500/30 text-red-300';
+                else if (showResults && isCorrect) cls = 'bg-green-600/10 border-green-500/20 text-green-400';
+                else if (selected) cls = 'bg-blue-600/20 border-blue-500/30 text-blue-300';
+                return (
+                  <button key={oi} onClick={() => handleAnswer(qi, oi)} className={`w-full text-left text-sm p-3 rounded-lg border transition ${cls}`}>
+                    {opt}
+                  </button>
+                );
+              })}
+            </div>
+            {showResults && answers[qi] !== undefined && (
+              <p className="text-xs text-gray-400 mt-2 pl-2 border-l-2 border-gray-700">{q.explanation}</p>
+            )}
+          </div>
+        ))}
+      </div>
+      {!showResults ? (
+        <button
+          onClick={() => Object.keys(answers).length === quiz.length && setShowResults(true)}
+          disabled={Object.keys(answers).length < quiz.length}
+          className={`mt-4 px-5 py-2 rounded-lg text-sm font-medium transition ${Object.keys(answers).length === quiz.length ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-gray-800 text-gray-600 cursor-not-allowed'}`}
+        >
+          提交答案
+        </button>
+      ) : (
+        <button onClick={() => { setAnswers({}); setShowResults(false); }} className="mt-4 px-5 py-2 rounded-lg text-sm font-medium bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
+          重新答题
+        </button>
+      )}
+    </div>
+  );
+}
+
 function ChapterSection({ chapter, isPro, chapterIndex }: { chapter: Chapter; isPro: boolean; chapterIndex: number }) {
   const locked = chapter.tier === 'pro' && !isPro;
   
@@ -266,6 +337,11 @@ function ChapterSection({ chapter, isPro, chapterIndex }: { chapter: Chapter; is
                 isPro ? 'bg-green-600/20 text-green-400' : 'bg-purple-600/20 text-purple-400'
               }`}>
                 {isPro ? '✓ 已解锁' : '🔒 PRO'}
+              </span>
+            )}
+            {chapter.comingSoon && (
+              <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-yellow-600/20 text-yellow-400">
+                🔄 更新中
               </span>
             )}
           </div>
@@ -303,7 +379,7 @@ export default function LearnPage() {
             📚 交易课程
           </h1>
           <p className="text-gray-400">
-            从零基础到系统化交易者。{totalLessons}节课，{freeLessons}节免费。
+            从零基础到系统化交易者。{totalLessons}节课，{freeLessons}节免费，持续更新中。
           </p>
           <div className="flex items-center gap-4 mt-4 text-sm text-gray-500">
             <span className="flex items-center gap-1">
