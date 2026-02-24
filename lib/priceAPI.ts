@@ -4,10 +4,11 @@ import { PriceData, TradingPair, TRADING_PAIRS } from './types';
 
 const COINGECKO_API = 'https://api.coingecko.com/api/v3';
 
-// Yahoo Finance 免费价格 API
-const YAHOO_API = 'https://query1.finance.yahoo.com/v8/finance/chart';
+// 股票实时价格 — Twelve Data免费API（CORS友好，8/min免费额度）
+const TWELVE_API = 'https://api.twelvedata.com';
+const TWELVE_KEY = 'demo'; // demo key: 8 calls/min, 800/day
 
-// 缓存 + fallback
+// 缓存30秒避免超额
 const stockCache: Record<string, { price: number; change: number; ts: number }> = {};
 const STOCK_FALLBACKS: Record<string, number> = {
   'AAPL': 178, 'MSFT': 415, 'GOOGL': 175, 'AMZN': 185,
@@ -18,30 +19,27 @@ const STOCK_FALLBACKS: Record<string, number> = {
 export async function getPrice(pair: TradingPair = 'BTC/USD'): Promise<PriceData> {
   const config = TRADING_PAIRS[pair];
   
-  // 股票：尝试 Yahoo Finance，fallback 到缓存/模拟
+  // 股票：Twelve Data API（支持CORS）
   if (config.category === 'stock') {
     const cached = stockCache[config.id];
-    // 缓存15秒内有效
-    if (cached && Date.now() - cached.ts < 15000) {
+    if (cached && Date.now() - cached.ts < 30000) {
       return { symbol: pair, price: cached.price, timestamp: cached.ts, change24h: cached.change };
     }
     try {
-      const res = await fetch(`${YAHOO_API}/${config.id}?interval=1m&range=1d`, {
-        headers: { 'User-Agent': 'Mozilla/5.0' },
-      });
-      if (!res.ok) throw new Error('Yahoo API failed');
+      const res = await fetch(
+        `${TWELVE_API}/quote?symbol=${config.id}&apikey=${TWELVE_KEY}`
+      );
+      if (!res.ok) throw new Error('Twelve Data failed');
       const data = await res.json();
-      const meta = data.chart.result[0].meta;
-      const price = meta.regularMarketPrice;
-      const prevClose = meta.chartPreviousClose || meta.previousClose;
+      if (data.code) throw new Error(data.message); // API error
+      const price = parseFloat(data.close);
+      const prevClose = parseFloat(data.previous_close);
       const change = prevClose ? ((price - prevClose) / prevClose) * 100 : 0;
       stockCache[config.id] = { price, change, ts: Date.now() };
       return { symbol: pair, price, timestamp: Date.now(), change24h: change };
     } catch {
-      // Fallback：用缓存或模拟
       const base = cached?.price || STOCK_FALLBACKS[config.id] || 100;
-      const noise = (Math.random() - 0.5) * base * 0.002;
-      return { symbol: pair, price: base + noise, timestamp: Date.now(), change24h: cached?.change || 0 };
+      return { symbol: pair, price: base, timestamp: Date.now(), change24h: cached?.change || 0 };
     }
   }
   
