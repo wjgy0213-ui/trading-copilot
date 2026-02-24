@@ -4,6 +4,7 @@ import { DollarSign, TrendingUp, Percent, AlertCircle, RotateCcw } from 'lucide-
 import { Account } from '@/lib/types';
 import { resetAccount } from '@/lib/storage';
 import { calculateEquity } from '@/lib/tradingEngine';
+import RankBadge from './RankBadge';
 
 interface AccountPanelProps {
   account: Account;
@@ -26,6 +27,13 @@ export default function AccountPanel({ account, currentPrice }: AccountPanelProp
 
   return (
     <div className="space-y-6">
+      {/* Rank Badge */}
+      <RankBadge 
+        totalTrades={account.closedTrades.length} 
+        winRate={account.winRate} 
+        showProgress={true}
+      />
+
       {/* Account Summary */}
       <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
         <h2 className="text-xl font-bold mb-4">账户总览</h2>
