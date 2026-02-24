@@ -54,14 +54,37 @@ export interface AIScore {
   };
 }
 
+/** 资产类别 */
+export type AssetCategory = 'crypto' | 'stock';
+
 /** 支持的交易对 */
-export type TradingPair = 'BTC/USD' | 'ETH/USD' | 'SOL/USD';
+export type TradingPair = 
+  // Crypto
+  | 'BTC/USD' | 'ETH/USD' | 'SOL/USD' | 'BNB/USD' | 'XRP/USD' | 'DOGE/USD' | 'ADA/USD' | 'AVAX/USD' | 'LINK/USD' | 'DOT/USD'
+  // Mag 7
+  | 'AAPL' | 'MSFT' | 'GOOGL' | 'AMZN' | 'NVDA' | 'META' | 'TSLA';
 
 /** 交易对配置 */
-export const TRADING_PAIRS: Record<TradingPair, { id: string; name: string; icon: string }> = {
-  'BTC/USD': { id: 'bitcoin', name: '比特币', icon: '₿' },
-  'ETH/USD': { id: 'ethereum', name: '以太坊', icon: 'Ξ' },
-  'SOL/USD': { id: 'solana', name: 'Solana', icon: '◎' },
+export const TRADING_PAIRS: Record<TradingPair, { id: string; name: string; icon: string; category: AssetCategory }> = {
+  // Crypto
+  'BTC/USD': { id: 'bitcoin', name: '比特币', icon: '₿', category: 'crypto' },
+  'ETH/USD': { id: 'ethereum', name: '以太坊', icon: 'Ξ', category: 'crypto' },
+  'SOL/USD': { id: 'solana', name: 'Solana', icon: '◎', category: 'crypto' },
+  'BNB/USD': { id: 'binancecoin', name: 'BNB', icon: '⬡', category: 'crypto' },
+  'XRP/USD': { id: 'ripple', name: 'XRP', icon: '✕', category: 'crypto' },
+  'DOGE/USD': { id: 'dogecoin', name: 'DOGE', icon: '🐕', category: 'crypto' },
+  'ADA/USD': { id: 'cardano', name: 'ADA', icon: '♦', category: 'crypto' },
+  'AVAX/USD': { id: 'avalanche-2', name: 'AVAX', icon: '🔺', category: 'crypto' },
+  'LINK/USD': { id: 'chainlink', name: 'LINK', icon: '⬡', category: 'crypto' },
+  'DOT/USD': { id: 'polkadot', name: 'DOT', icon: '●', category: 'crypto' },
+  // Magnificent 7
+  'AAPL': { id: 'AAPL', name: 'Apple', icon: '🍎', category: 'stock' },
+  'MSFT': { id: 'MSFT', name: 'Microsoft', icon: '🪟', category: 'stock' },
+  'GOOGL': { id: 'GOOGL', name: 'Google', icon: '🔍', category: 'stock' },
+  'AMZN': { id: 'AMZN', name: 'Amazon', icon: '📦', category: 'stock' },
+  'NVDA': { id: 'NVDA', name: 'NVIDIA', icon: '💚', category: 'stock' },
+  'META': { id: 'META', name: 'Meta', icon: '👁', category: 'stock' },
+  'TSLA': { id: 'TSLA', name: 'Tesla', icon: '⚡', category: 'stock' },
 };
 
 /** 价格数据 */

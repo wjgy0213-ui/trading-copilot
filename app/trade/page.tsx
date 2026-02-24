@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
-import { PriceData, TradingPair, TRADING_PAIRS } from '@/lib/types';
+import { PriceData, TradingPair, TRADING_PAIRS, AssetCategory } from '@/lib/types';
 import { getPrice, PriceStream } from '@/lib/priceAPI';
 import { getAccount } from '@/lib/storage';
 import { calculateEquity, checkStopLossAndTakeProfit } from '@/lib/tradingEngine';
@@ -13,18 +13,39 @@ import AICoach from '@/components/AICoach';
 import PriceChart from '@/components/PriceChart';
 
 const SYMBOL_MAP: Record<TradingPair, string> = {
+  // Crypto
   'BTC/USD': 'BINANCE:BTCUSDT',
   'ETH/USD': 'BINANCE:ETHUSDT',
   'SOL/USD': 'BINANCE:SOLUSDT',
+  'BNB/USD': 'BINANCE:BNBUSDT',
+  'XRP/USD': 'BINANCE:XRPUSDT',
+  'DOGE/USD': 'BINANCE:DOGEUSDT',
+  'ADA/USD': 'BINANCE:ADAUSDT',
+  'AVAX/USD': 'BINANCE:AVAXUSDT',
+  'LINK/USD': 'BINANCE:LINKUSDT',
+  'DOT/USD': 'BINANCE:DOTUSDT',
+  // Mag 7
+  'AAPL': 'NASDAQ:AAPL',
+  'MSFT': 'NASDAQ:MSFT',
+  'GOOGL': 'NASDAQ:GOOGL',
+  'AMZN': 'NASDAQ:AMZN',
+  'NVDA': 'NASDAQ:NVDA',
+  'META': 'NASDAQ:META',
+  'TSLA': 'NASDAQ:TSLA',
 };
 
 export default function TradePage() {
   const [activePair, setActivePair] = useState<TradingPair>('BTC/USD');
+  const [activeCategory, setActiveCategory] = useState<AssetCategory>('crypto');
   const [price, setPrice] = useState<PriceData | null>(null);
   const [prevPrice, setPrevPrice] = useState<number>(0);
   const [priceFlash, setPriceFlash] = useState<'up' | 'down' | null>(null);
   const [account, setAccount] = useState(getAccount());
   const [loading, setLoading] = useState(true);
+  
+  const categoryPairs = (Object.keys(TRADING_PAIRS) as TradingPair[]).filter(
+    pair => TRADING_PAIRS[pair].category === activeCategory
+  );
 
   useEffect(() => {
     const initPrice = async () => {
@@ -83,15 +104,40 @@ export default function TradePage() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              {/* Coin selector */}
-              <div className="flex items-center gap-2 mb-2">
-                {(Object.keys(TRADING_PAIRS) as TradingPair[]).map((pair) => (
+              {/* Category tabs */}
+              <div className="flex items-center gap-1 mb-2">
+                <button
+                  onClick={() => { setActiveCategory('crypto'); if (TRADING_PAIRS[activePair].category !== 'crypto') { setActivePair('BTC/USD'); setLoading(true); } }}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+                    activeCategory === 'crypto'
+                      ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
+                      : 'text-gray-500 hover:text-gray-300'
+                  }`}
+                >
+                  🪙 加密货币
+                </button>
+                <button
+                  onClick={() => { setActiveCategory('stock'); if (TRADING_PAIRS[activePair].category !== 'stock') { setActivePair('NVDA'); setLoading(true); } }}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+                    activeCategory === 'stock'
+                      ? 'bg-purple-600/20 text-purple-400 border border-purple-500/30'
+                      : 'text-gray-500 hover:text-gray-300'
+                  }`}
+                >
+                  📈 Mag 7
+                </button>
+              </div>
+              {/* Asset selector */}
+              <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+                {categoryPairs.map((pair) => (
                   <button
                     key={pair}
                     onClick={() => { setActivePair(pair); setLoading(true); }}
-                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                       activePair === pair
-                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
+                        ? activeCategory === 'crypto'
+                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
+                          : 'bg-purple-600 text-white shadow-lg shadow-purple-600/25'
                         : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
                     }`}
                   >
