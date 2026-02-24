@@ -128,7 +128,7 @@ export default function TradePage() {
                 </button>
               </div>
               {/* Asset selector */}
-              <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+              <div className="flex items-center gap-1.5 mb-2 overflow-x-auto pb-1 scrollbar-hide">
                 {categoryPairs.map((pair) => (
                   <button
                     key={pair}
