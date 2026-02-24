@@ -9,26 +9,25 @@ interface PriceChartProps {
 
 export default function PriceChart({ symbol = 'BINANCE:BTCUSDT' }: PriceChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const chartId = useRef(`tv_chart_${Math.random().toString(36).slice(2)}`);
 
-  // Re-create widget when symbol or fullscreen changes
+  // Create TradingView widget
   useEffect(() => {
-    // Update ID to force fresh container
-    chartId.current = `tv_chart_${Math.random().toString(36).slice(2)}`;
-    
     const el = containerRef.current;
     if (!el) return;
-    el.id = chartId.current;
+    
+    const id = `tv_${Date.now()}`;
+    el.id = id;
     el.innerHTML = '';
 
     const script = document.createElement('script');
     script.src = 'https://s3.tradingview.com/tv.js';
     script.async = true;
     script.onload = () => {
-      if (typeof (window as any).TradingView !== 'undefined' && el) {
+      if (typeof (window as any).TradingView !== 'undefined' && document.getElementById(id)) {
         new (window as any).TradingView.widget({
-          container_id: el.id,
+          container_id: id,
           symbol,
           interval: '15',
           timezone: 'America/Vancouver',
@@ -52,7 +51,20 @@ export default function PriceChart({ symbol = 'BINANCE:BTCUSDT' }: PriceChartPro
     };
     document.head.appendChild(script);
     return () => { try { document.head.removeChild(script); } catch {} };
-  }, [symbol, isFullscreen]);
+  }, [symbol]);
+
+  // When toggling fullscreen, force iframe resize
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const iframe = containerRef.current?.querySelector('iframe');
+      if (iframe) {
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+      }
+      window.dispatchEvent(new Event('resize'));
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [isFullscreen]);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -62,41 +74,48 @@ export default function PriceChart({ symbol = 'BINANCE:BTCUSDT' }: PriceChartPro
     return () => window.removeEventListener('keydown', handleEsc);
   }, [isFullscreen]);
 
-  if (isFullscreen) {
-    return (
-      <div className="fixed inset-0 z-50 bg-gray-950 flex flex-col">
-        <div className="flex items-center justify-between px-4 py-2 bg-gray-900/90 border-b border-gray-800">
+  return (
+    <div
+      ref={wrapperRef}
+      className={
+        isFullscreen
+          ? 'fixed inset-0 z-50 bg-gray-950 flex flex-col'
+          : 'relative'
+      }
+    >
+      {/* Top bar in fullscreen */}
+      {isFullscreen && (
+        <div className="flex items-center justify-between px-4 py-2 bg-gray-900/90 border-b border-gray-800 shrink-0">
           <span className="text-sm text-gray-400 font-mono">{symbol}</span>
           <button
             onClick={() => setIsFullscreen(false)}
             className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 hover:bg-red-600/80 rounded-lg text-sm text-gray-300 hover:text-white transition-all"
           >
             <Minimize2 className="w-4 h-4" />
-            退出全屏
+            退出全屏 (ESC)
           </button>
         </div>
-        <div className="flex-1 p-1">
-          <div
-            ref={containerRef}
-            className="w-full h-full rounded-lg overflow-hidden"
-          />
-        </div>
-      </div>
-    );
-  }
+      )}
 
-  return (
-    <div className="relative">
-      <button
-        onClick={() => setIsFullscreen(true)}
-        className="absolute top-3 right-3 z-10 p-2 bg-gray-800/80 hover:bg-gray-700 rounded-lg transition-all border border-gray-700/50 backdrop-blur-sm group"
-        title="全屏查看"
-      >
-        <Maximize2 className="w-5 h-5 text-gray-400 group-hover:text-white" />
-      </button>
+      {/* Expand button (normal mode) */}
+      {!isFullscreen && (
+        <button
+          onClick={() => setIsFullscreen(true)}
+          className="absolute top-3 right-3 z-10 p-2 bg-gray-800/80 hover:bg-gray-700 rounded-lg transition-all border border-gray-700/50 backdrop-blur-sm group"
+          title="全屏查看"
+        >
+          <Maximize2 className="w-5 h-5 text-gray-400 group-hover:text-white" />
+        </button>
+      )}
+
+      {/* Chart container — same DOM element, CSS changes */}
       <div
         ref={containerRef}
-        className="w-full h-[550px] rounded-xl overflow-hidden border border-gray-800"
+        className={
+          isFullscreen
+            ? 'flex-1 m-1 rounded-lg overflow-hidden'
+            : 'w-full h-[550px] rounded-xl overflow-hidden border border-gray-800'
+        }
       />
     </div>
   );
