@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { STRATEGY_TEMPLATES, TIMEFRAMES, SYMBOLS, BACKTEST_PERIODS, DEFAULT_RISK } from '@/lib/strategies';
 import { runBacktest, BacktestResult, BacktestConfig } from '@/lib/backtestEngine';
 import { optimize, OptResult } from '@/lib/optimizer';
+import { runMonteCarlo, MonteCarloResult } from '@/lib/monteCarlo';
 import Paywall from '@/components/Paywall';
 import { ChevronDown, ChevronRight, Play, Trash2, BarChart3, Layers, Search } from 'lucide-react';
 
@@ -227,6 +228,8 @@ function StrategyPage() {
   const [optimizing, setOptimizing] = useState(false);
   const [optProgress, setOptProgress] = useState({ current: 0, total: 0 });
   const [optResults, setOptResults] = useState<OptResult[]>([]);
+  const [mcResult, setMcResult] = useState<MonteCarloResult | null>(null);
+  const [mcRunning, setMcRunning] = useState(false);
 
   // Read URL params from AI strategy generator
   useEffect(() => {
@@ -492,6 +495,152 @@ function StrategyPage() {
                 <div className="text-xs text-gray-500 font-medium mb-3">盈亏散点图</div>
                 <TradeScatter trades={latest.trades} />
               </div>
+
+              {/* Monte Carlo Simulation */}
+              <Paywall feature="蒙特卡洛模拟">
+              <div className="bg-gray-900/30 border border-emerald-800/40 rounded-xl p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs text-emerald-400 font-medium">🎲 蒙特卡洛模拟</div>
+                  <button onClick={() => {
+                    if (!latest || latest.trades.length < 2) return;
+                    setMcRunning(true);
+                    setTimeout(() => {
+                      try {
+                        const mc = runMonteCarlo(latest, { numSimulations: 1000, initialCapital: capital, confidenceLevels: [0.05, 0.25, 0.5, 0.75, 0.95] });
+                        setMcResult(mc);
+                      } catch (e: any) { setError(e.message); }
+                      setMcRunning(false);
+                    }, 50);
+                  }} disabled={mcRunning || !latest || latest.trades.length < 2}
+                    className={`text-xs px-3 py-1.5 rounded-lg font-medium transition ${mcRunning ? 'bg-gray-800 text-gray-500 cursor-wait' : 'bg-emerald-700 hover:bg-emerald-600 text-white'}`}>
+                    {mcRunning ? '模拟中…' : '运行 1000 次模拟'}
+                  </button>
+                </div>
+                <p className="text-[10px] text-gray-600">随机打乱交易顺序，模拟1000条不同路径，评估策略的鲁棒性和概率分布</p>
+
+                {mcResult && (<>
+                  {/* Probability Cards */}
+                  <div className="grid grid-cols-4 gap-2">
+                    <div className="bg-gray-900/50 rounded-lg p-2.5 text-center">
+                      <div className="text-[10px] text-gray-500 mb-1">盈利概率</div>
+                      <div className={`text-lg font-bold font-mono ${mcResult.probProfit >= 0.7 ? 'text-green-400' : mcResult.probProfit >= 0.5 ? 'text-yellow-400' : 'text-red-400'}`}>
+                        {(mcResult.probProfit * 100).toFixed(0)}%
+                      </div>
+                    </div>
+                    <div className="bg-gray-900/50 rounded-lg p-2.5 text-center">
+                      <div className="text-[10px] text-gray-500 mb-1">翻倍概率</div>
+                      <div className="text-lg font-bold font-mono text-emerald-400">{(mcResult.probDouble * 100).toFixed(0)}%</div>
+                    </div>
+                    <div className="bg-gray-900/50 rounded-lg p-2.5 text-center">
+                      <div className="text-[10px] text-gray-500 mb-1">爆仓概率</div>
+                      <div className={`text-lg font-bold font-mono ${mcResult.probRuin <= 0.05 ? 'text-green-400' : mcResult.probRuin <= 0.15 ? 'text-yellow-400' : 'text-red-400'}`}>
+                        {(mcResult.probRuin * 100).toFixed(0)}%
+                      </div>
+                    </div>
+                    <div className="bg-gray-900/50 rounded-lg p-2.5 text-center">
+                      <div className="text-[10px] text-gray-500 mb-1">跑赢持有</div>
+                      <div className="text-lg font-bold font-mono text-violet-400">{(mcResult.probBeatBuyHold * 100).toFixed(0)}%</div>
+                    </div>
+                  </div>
+
+                  {/* Return Distribution */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-gray-900/50 rounded-lg p-3">
+                      <div className="text-[10px] text-gray-500 mb-2">收益分布</div>
+                      <div className="space-y-1.5 text-xs">
+                        <div className="flex justify-between"><span className="text-gray-500">最佳</span><span className="text-green-400 font-mono">+{mcResult.bestCase.toFixed(1)}%</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">75分位</span><span className="text-green-400 font-mono">+{mcResult.percentiles.find(p => p.level === 0.75)?.returnPercent.toFixed(1)}%</span></div>
+                        <div className="flex justify-between font-medium"><span className="text-gray-400">中位数</span><span className={`font-mono ${mcResult.medianReturn > 0 ? 'text-emerald-400' : 'text-red-400'}`}>{mcResult.medianReturn > 0 ? '+' : ''}{mcResult.medianReturn.toFixed(1)}%</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">25分位</span><span className={`font-mono ${(mcResult.percentiles.find(p => p.level === 0.25)?.returnPercent || 0) > 0 ? 'text-green-400' : 'text-red-400'}`}>{mcResult.percentiles.find(p => p.level === 0.25)?.returnPercent.toFixed(1)}%</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">最差</span><span className="text-red-400 font-mono">{mcResult.worstCase.toFixed(1)}%</span></div>
+                      </div>
+                    </div>
+                    <div className="bg-gray-900/50 rounded-lg p-3">
+                      <div className="text-[10px] text-gray-500 mb-2">回撤分布</div>
+                      <div className="space-y-1.5 text-xs">
+                        <div className="flex justify-between"><span className="text-gray-500">平均回撤</span><span className="text-yellow-400 font-mono">{mcResult.meanMaxDrawdown.toFixed(1)}%</span></div>
+                        <div className="flex justify-between font-medium"><span className="text-gray-400">中位回撤</span><span className="text-yellow-400 font-mono">{mcResult.medianMaxDrawdown.toFixed(1)}%</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">最大回撤</span><span className="text-red-400 font-mono">{mcResult.worstDrawdown.toFixed(1)}%</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">平均收益</span><span className="text-gray-300 font-mono">{mcResult.meanReturn > 0 ? '+' : ''}{mcResult.meanReturn.toFixed(1)}%</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">标准差</span><span className="text-gray-300 font-mono">±{mcResult.stdReturn.toFixed(1)}%</span></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Percentile Table */}
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead><tr className="text-gray-600 border-b border-gray-800">
+                        <th className="text-left py-1.5 px-2">置信度</th>
+                        <th className="text-right py-1.5 px-2">最终资金</th>
+                        <th className="text-right py-1.5 px-2">收益率</th>
+                        <th className="text-right py-1.5 px-2">最大回撤</th>
+                      </tr></thead>
+                      <tbody>{mcResult.percentiles.map(p => (
+                        <tr key={p.level} className={`border-b border-gray-800/50 ${p.level === 0.5 ? 'bg-emerald-500/5' : ''}`}>
+                          <td className="py-1.5 px-2 text-gray-400">{(p.level * 100).toFixed(0)}%</td>
+                          <td className="py-1.5 px-2 text-right font-mono text-gray-300">${p.finalCapital.toLocaleString()}</td>
+                          <td className={`py-1.5 px-2 text-right font-mono ${p.returnPercent > 0 ? 'text-green-400' : 'text-red-400'}`}>{p.returnPercent > 0 ? '+' : ''}{p.returnPercent.toFixed(1)}%</td>
+                          <td className="py-1.5 px-2 text-right font-mono text-red-400">{p.maxDrawdown.toFixed(1)}%</td>
+                        </tr>
+                      ))}</tbody>
+                    </table>
+                  </div>
+
+                  {/* MC Equity Fan Chart (SVG) */}
+                  <div>
+                    <div className="text-[10px] text-gray-500 mb-2">1000条模拟路径（绿=盈利 红=亏损）</div>
+                    <svg viewBox="0 0 600 200" className="w-full" style={{background: 'transparent'}}>
+                      {mcResult.paths.map((path, i) => {
+                        const pts = path.equityCurve;
+                        if (pts.length < 2) return null;
+                        const maxLen = Math.max(...mcResult.paths.map(p => p.equityCurve.length));
+                        const allVals = mcResult.paths.flatMap(p => p.equityCurve);
+                        const minY = Math.min(...allVals) * 0.95;
+                        const maxY = Math.max(...allVals) * 1.05;
+                        const d = pts.map((v, j) => {
+                          const x = (j / (maxLen - 1)) * 600;
+                          const y = 200 - ((v - minY) / (maxY - minY)) * 200;
+                          return `${j === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+                        }).join(' ');
+                        const color = path.totalReturnPercent >= 0 ? 'rgba(16,185,129,0.08)' : 'rgba(248,81,73,0.08)';
+                        return <path key={i} d={d} fill="none" stroke={color} strokeWidth="0.8" />;
+                      })}
+                      {/* Median line */}
+                      {(() => {
+                        const medianPath = [...mcResult.paths].sort((a, b) =>
+                          Math.abs(a.totalReturnPercent - mcResult.medianReturn) - Math.abs(b.totalReturnPercent - mcResult.medianReturn)
+                        )[0];
+                        if (!medianPath) return null;
+                        const pts = medianPath.equityCurve;
+                        const maxLen = Math.max(...mcResult.paths.map(p => p.equityCurve.length));
+                        const allVals = mcResult.paths.flatMap(p => p.equityCurve);
+                        const minY = Math.min(...allVals) * 0.95;
+                        const maxY = Math.max(...allVals) * 1.05;
+                        const d = pts.map((v, j) => {
+                          const x = (j / (maxLen - 1)) * 600;
+                          const y = 200 - ((v - minY) / (maxY - minY)) * 200;
+                          return `${j === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+                        }).join(' ');
+                        return <path d={d} fill="none" stroke="#10b981" strokeWidth="2" />;
+                      })()}
+                      {/* Start line */}
+                      {(() => {
+                        const allVals = mcResult.paths.flatMap(p => p.equityCurve);
+                        const minY = Math.min(...allVals) * 0.95;
+                        const maxY = Math.max(...allVals) * 1.05;
+                        const y = 200 - ((capital - minY) / (maxY - minY)) * 200;
+                        return <line x1="0" y1={y} x2="600" y2={y} stroke="#484f58" strokeWidth="0.5" strokeDasharray="4,4" />;
+                      })()}
+                    </svg>
+                  </div>
+
+                  <div className="text-[10px] text-gray-600 text-center">
+                    基于 {latest.totalTrades} 笔历史交易 × 1000 次随机排列 | 绿线=中位数路径
+                  </div>
+                </>)}
+              </div>
+              </Paywall>
 
               <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4"><TradeTable trades={latest.trades} /></div>
             </>)}
