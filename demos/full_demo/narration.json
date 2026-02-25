@@ -1,0 +1,71 @@
+{
+  "scenario": "完整产品演示",
+  "description": "Agent walks through the entire product: homepage → trade → courses → dashboard → backtest → news",
+  "timestamp": "2026-02-24T21:56:04.476812",
+  "narration": [
+    {
+      "step": 0,
+      "text": "首页 — 交易陪练",
+      "action": "goto"
+    },
+    {
+      "step": 1,
+      "text": "产品Demo展示区",
+      "action": "scroll"
+    },
+    {
+      "step": 2,
+      "text": "3步开始练习",
+      "action": "scroll"
+    },
+    {
+      "step": 3,
+      "text": "核心功能介绍",
+      "action": "scroll"
+    },
+    {
+      "step": 6,
+      "text": "交易页面 — 实时价格 + 模拟开仓",
+      "action": "goto"
+    },
+    {
+      "step": 9,
+      "text": "课程体系 — 从入门到实战",
+      "action": "goto"
+    },
+    {
+      "step": 11,
+      "text": "展开免费课程",
+      "action": "click"
+    },
+    {
+      "step": 14,
+      "text": "ITC风险仪表盘",
+      "action": "goto"
+    },
+    {
+      "step": 17,
+      "text": "回测引擎 — 3大策略",
+      "action": "goto"
+    },
+    {
+      "step": 18,
+      "text": "运行回测",
+      "action": "click"
+    },
+    {
+      "step": 21,
+      "text": "资讯中心",
+      "action": "goto"
+    }
+  ],
+  "screenshots": [
+    "projects/trading-copilot/demos/full_demo/home.png",
+    "projects/trading-copilot/demos/full_demo/trade.png",
+    "projects/trading-copilot/demos/full_demo/learn.png",
+    "projects/trading-copilot/demos/full_demo/dashboard.png",
+    "projects/trading-copilot/demos/full_demo/backtest.png",
+    "projects/trading-copilot/demos/full_demo/news.png"
+  ],
+  "video": "projects/trading-copilot/demos/full_demo/demo_raw.mp4"
+}

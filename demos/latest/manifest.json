@@ -1,0 +1,42 @@
+{
+  "timestamp": "20260224_214940",
+  "base_url": "https://trading-copilot-wjgy0213-uis-projects.vercel.app",
+  "results": [
+    {
+      "page": "/",
+      "url": "https://trading-copilot-wjgy0213-uis-projects.vercel.app/",
+      "screenshot": "/Users/jacky/.openclaw/workspace/projects/trading-copilot/demos/latest/demo_home.png",
+      "status": "ok"
+    },
+    {
+      "page": "/learn",
+      "url": "https://trading-copilot-wjgy0213-uis-projects.vercel.app/learn",
+      "screenshot": "/Users/jacky/.openclaw/workspace/projects/trading-copilot/demos/latest/demo_learn.png",
+      "status": "ok"
+    },
+    {
+      "page": "/trade",
+      "url": "https://trading-copilot-wjgy0213-uis-projects.vercel.app/trade",
+      "screenshot": "/Users/jacky/.openclaw/workspace/projects/trading-copilot/demos/latest/demo_trade.png",
+      "status": "ok"
+    },
+    {
+      "page": "/dashboard",
+      "url": "https://trading-copilot-wjgy0213-uis-projects.vercel.app/dashboard",
+      "screenshot": "/Users/jacky/.openclaw/workspace/projects/trading-copilot/demos/latest/demo_dashboard.png",
+      "status": "ok"
+    },
+    {
+      "page": "/backtest",
+      "url": "https://trading-copilot-wjgy0213-uis-projects.vercel.app/backtest",
+      "screenshot": "/Users/jacky/.openclaw/workspace/projects/trading-copilot/demos/latest/demo_backtest.png",
+      "status": "ok"
+    },
+    {
+      "page": "/news",
+      "url": "https://trading-copilot-wjgy0213-uis-projects.vercel.app/news",
+      "screenshot": "/Users/jacky/.openclaw/workspace/projects/trading-copilot/demos/latest/demo_news.png",
+      "status": "ok"
+    }
+  ]
+}

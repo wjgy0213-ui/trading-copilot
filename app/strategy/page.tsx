@@ -1,228 +1,590 @@
 'use client';
 
-import { useState } from 'react';
-import { Brain, Zap, Shield, Lock, ChevronRight, Sparkles, BarChart3, Bot, ArrowRight, Check, Star } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { 
+  TrendingUp, Target, Zap, Code, ChevronDown, ChevronUp, 
+  Play, TrendingDown, DollarSign, Activity, Clock 
+} from 'lucide-react';
+import {
+  STRATEGY_TEMPLATES,
+  StrategyType,
+  TradingParams,
+  DEFAULT_TRADING_PARAMS,
+  BacktestConfig,
+  DEFAULT_BACKTEST_CONFIG,
+  generateStrategyCode,
+  generateStrategyDescription,
+} from '@/lib/strategies';
+import { runBacktest, BacktestResult, ASSETS, TIMEFRAMES, PERIODS } from '@/lib/backtestEngine';
 
-const FEATURES = [
-  {
-    icon: Brain,
-    title: '定制策略生成',
-    titleEn: 'Custom Strategy Builder',
-    desc: '用自然语言描述你的交易想法，系统自动生成可执行策略。不需要任何编程知识。',
-    preview: [
-      { role: 'user', text: '"4小时EMA金叉做多，RSI超买时出场，止损2%"' },
-      { role: 'system', text: '已生成策略：EMA(9,21) Cross + RSI(70) Exit\n入场：EMA9上穿EMA21\n出场：RSI>70 或 止损-2%\n回测胜率：62.3% | 盈亏比：1.8' },
-    ],
-  },
-  {
-    icon: BarChart3,
-    title: '高级回测引擎',
-    titleEn: 'Advanced Backtesting',
-    desc: '手续费模拟、滑点计算、Monte Carlo验证、多币种同时回测、策略A/B对比。',
-    highlights: ['真实手续费 (0.04%-0.1%)', '滑点模拟', 'Monte Carlo 1000次', '策略对比视图', 'PDF报告导出'],
-  },
-  {
-    icon: Bot,
-    title: '实盘自动化交易',
-    titleEn: 'Live Auto-Trading',
-    desc: '回测验证过的策略一键接入实盘。支持币安、OKX、Bybit。强制风控保护你的资金。',
-    highlights: ['一键从纸盘切实盘', '每日亏损上限', '紧急停止按钮', 'Telegram实时通知', '交易日志自动记录'],
-  },
-];
-
-const PLANS = [
-  {
-    name: '免费版',
-    nameEn: 'Free',
-    price: '$0',
-    period: '永久',
-    features: ['模拟交易 + 教练评分', '3个基础策略回测', '基础仪表盘 (12指标)', '入门课程 (25课)', '每日市场资讯'],
-    cta: '当前计划',
-    disabled: true,
-    popular: false,
-  },
-  {
-    name: 'Pro',
-    nameEn: 'Pro',
-    price: '$29',
-    period: '/月',
-    features: ['定制策略生成 (无限)', '高级回测引擎', '手续费+滑点模拟', 'Monte Carlo验证', '策略A/B对比', 'PDF报告导出', '优先客服支持'],
-    cta: '即将上线',
-    disabled: true,
-    popular: true,
-  },
-  {
-    name: 'Elite',
-    nameEn: 'Elite',
-    price: '$49',
-    period: '/月',
-    features: ['Pro全部功能', '实盘自动化交易', '交易所API对接', '风控系统 (熔断+止损)', 'Telegram实时通知', '专属策略优化建议', '1对1策略咨询'],
-    cta: '即将上线',
-    disabled: true,
-    popular: false,
-  },
-];
-
-function FeatureCard({ feature, index }: { feature: typeof FEATURES[0]; index: number }) {
-  const Icon = feature.icon;
+export default function StrategyPage() {
+  // 策略选择
+  const [selectedStrategy, setSelectedStrategy] = useState<StrategyType>('ema-cross');
+  
+  // 策略参数
+  const [strategyParams, setStrategyParams] = useState<Record<string, number>>({
+    fastPeriod: 9,
+    slowPeriod: 21,
+    rsiPeriod: 14,
+    oversold: 30,
+    overbought: 70,
+    period: 20,
+    stdDev: 2,
+    signalPeriod: 9,
+  });
+  
+  // 交易参数
+  const [tradingParams, setTradingParams] = useState<TradingParams>(DEFAULT_TRADING_PARAMS);
+  
+  // 回测配置
+  const [backtestConfig, setBacktestConfig] = useState<BacktestConfig>(DEFAULT_BACKTEST_CONFIG);
+  
+  // UI 状态
+  const [showCode, setShowCode] = useState(true);
+  const [isBacktesting, setIsBacktesting] = useState(false);
+  const [backtestResult, setBacktestResult] = useState<BacktestResult | null>(null);
+  
+  // 当前策略模板
+  const currentTemplate = STRATEGY_TEMPLATES.find(t => t.id === selectedStrategy);
+  
+  // 生成策略代码
+  const strategyCode = useMemo(() => {
+    return generateStrategyCode(selectedStrategy, strategyParams, tradingParams);
+  }, [selectedStrategy, strategyParams, tradingParams]);
+  
+  // 生成策略描述
+  const strategyDescription = useMemo(() => {
+    return generateStrategyDescription(selectedStrategy, strategyParams, tradingParams);
+  }, [selectedStrategy, strategyParams, tradingParams]);
+  
+  // 运行回测
+  const handleRunBacktest = async () => {
+    setIsBacktesting(true);
+    try {
+      const result = await runBacktest(
+        selectedStrategy,
+        tradingParams.symbol,
+        tradingParams.timeframe,
+        backtestConfig.period,
+        {
+          ...strategyParams,
+          stopLoss: tradingParams.stopLoss,
+          takeProfit: tradingParams.takeProfit,
+        },
+        backtestConfig
+      );
+      setBacktestResult(result);
+    } catch (error) {
+      console.error('回测失败:', error);
+      alert('回测失败，请检查参数或稍后重试');
+    } finally {
+      setIsBacktesting(false);
+    }
+  };
+  
   return (
-    <div className="border border-gray-800 rounded-xl p-6 bg-gray-900/30 hover:bg-gray-900/60 transition-all">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-          <Icon className="w-5 h-5 text-emerald-400" />
+    <div className="min-h-screen bg-gray-950 py-6 px-4">
+      <div className="container mx-auto max-w-[1400px]">
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold mb-2 bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+            策略工坊
+          </h1>
+          <p className="text-gray-400 text-sm">构建、测试、优化你的交易策略</p>
         </div>
-        <div>
-          <h3 className="font-semibold text-gray-100">{feature.title}</h3>
-          <p className="text-[10px] text-gray-500">{feature.titleEn}</p>
-        </div>
-      </div>
 
-      <p className="text-sm text-gray-400 leading-relaxed mb-4">{feature.desc}</p>
-
-      {/* Chat preview for strategy builder */}
-      {'preview' in feature && feature.preview && (
-        <div className="bg-gray-950 rounded-lg p-3 space-y-2.5 border border-gray-800">
-          {feature.preview.map((msg, i) => (
-            <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[85%] rounded-lg px-3 py-2 text-xs ${
-                msg.role === 'user' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-gray-800 text-gray-300'
-              }`}>
-                <pre className="whitespace-pre-wrap font-sans">{msg.text}</pre>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+          {/* 左侧：策略模板选择 */}
+          <div className="lg:col-span-3">
+            <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-4 sticky top-20">
+              <h2 className="text-sm font-semibold mb-3 flex items-center gap-2 text-gray-200">
+                <Target className="w-4 h-4 text-emerald-400" />
+                策略模板
+              </h2>
+              
+              <div className="space-y-2">
+                {STRATEGY_TEMPLATES.map(template => (
+                  <button
+                    key={template.id}
+                    onClick={() => setSelectedStrategy(template.id)}
+                    className={`w-full text-left p-3 rounded-lg border transition-all ${
+                      selectedStrategy === template.id
+                        ? 'bg-emerald-600/20 border-emerald-500/50 text-emerald-300'
+                        : 'bg-gray-800/50 border-gray-700 text-gray-300 hover:border-gray-600'
+                    }`}
+                  >
+                    <div className="font-medium text-sm">{template.name}</div>
+                    <div className="text-[10px] text-gray-500 mt-0.5">{template.description}</div>
+                  </button>
+                ))}
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
 
-      {/* Highlights list */}
-      {'highlights' in feature && feature.highlights && (
-        <div className="space-y-1.5">
-          {feature.highlights.map((h, i) => (
-            <div key={i} className="flex items-center gap-2 text-xs text-gray-400">
-              <Check className="w-3 h-3 text-emerald-400 shrink-0" />
-              {h}
+          {/* 右侧：参数编辑器 + 预览 + 回测 */}
+          <div className="lg:col-span-9 space-y-4">
+            {/* 策略参数 */}
+            <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-5">
+              <h2 className="text-sm font-semibold mb-4 text-gray-200">策略参数</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {currentTemplate?.parameters.map(param => (
+                  <div key={param.id}>
+                    <label className="block text-xs text-gray-400 mb-2">
+                      {param.label} {param.unit && <span className="text-gray-600">({param.unit})</span>}
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="range"
+                        min={param.min}
+                        max={param.max}
+                        step={param.step}
+                        value={strategyParams[param.id] || param.default}
+                        onChange={e => setStrategyParams({
+                          ...strategyParams,
+                          [param.id]: parseFloat(e.target.value),
+                        })}
+                        className="flex-1 h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                      />
+                      <input
+                        type="number"
+                        min={param.min}
+                        max={param.max}
+                        step={param.step}
+                        value={strategyParams[param.id] || param.default}
+                        onChange={e => setStrategyParams({
+                          ...strategyParams,
+                          [param.id]: parseFloat(e.target.value),
+                        })}
+                        className="w-16 px-2 py-1 text-xs bg-gray-800 border border-gray-700 rounded text-white text-center"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+
+            {/* 交易设置 */}
+            <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-5">
+              <h2 className="text-sm font-semibold mb-4 text-gray-200">交易设置</h2>
+              
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                {/* 币种 */}
+                <div>
+                  <label className="block text-xs text-gray-400 mb-2">币种</label>
+                  <select
+                    value={tradingParams.symbol}
+                    onChange={e => setTradingParams({ ...tradingParams, symbol: e.target.value as any })}
+                    className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded text-white"
+                  >
+                    {ASSETS.map(a => (
+                      <option key={a.id} value={a.id}>{a.symbol}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 时间框架 */}
+                <div>
+                  <label className="block text-xs text-gray-400 mb-2">时间框架</label>
+                  <select
+                    value={tradingParams.timeframe}
+                    onChange={e => setTradingParams({ ...tradingParams, timeframe: e.target.value as any })}
+                    className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded text-white"
+                  >
+                    {TIMEFRAMES.map(t => (
+                      <option key={t.id} value={t.id}>{t.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 止损 */}
+                <div>
+                  <label className="block text-xs text-gray-400 mb-2">止损%</label>
+                  <input
+                    type="number"
+                    min={0.5}
+                    max={20}
+                    step={0.5}
+                    value={tradingParams.stopLoss}
+                    onChange={e => setTradingParams({ ...tradingParams, stopLoss: parseFloat(e.target.value) })}
+                    className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded text-white"
+                  />
+                </div>
+
+                {/* 止盈 */}
+                <div>
+                  <label className="block text-xs text-gray-400 mb-2">止盈%</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={50}
+                    step={1}
+                    value={tradingParams.takeProfit}
+                    onChange={e => setTradingParams({ ...tradingParams, takeProfit: parseFloat(e.target.value) })}
+                    className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded text-white"
+                  />
+                </div>
+
+                {/* 最大仓位 */}
+                <div>
+                  <label className="block text-xs text-gray-400 mb-2">最大仓位%</label>
+                  <input
+                    type="number"
+                    min={10}
+                    max={100}
+                    step={10}
+                    value={tradingParams.maxPosition}
+                    onChange={e => setTradingParams({ ...tradingParams, maxPosition: parseFloat(e.target.value) })}
+                    className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded text-white"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 策略描述 */}
+            <div className="bg-gradient-to-r from-emerald-900/20 to-cyan-900/20 border border-emerald-800/30 rounded-xl p-4">
+              <div className="flex items-start gap-3">
+                <Activity className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="text-sm font-medium text-emerald-300 mb-1">策略逻辑</h3>
+                  <p className="text-xs text-gray-300 leading-relaxed">{strategyDescription}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* 策略代码预览 */}
+            <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl overflow-hidden">
+              <button
+                onClick={() => setShowCode(!showCode)}
+                className="w-full px-5 py-3 flex items-center justify-between text-sm font-medium text-gray-200 hover:bg-gray-800/50 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <Code className="w-4 h-4 text-blue-400" />
+                  策略伪代码
+                </div>
+                {showCode ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
+              
+              {showCode && (
+                <div className="px-5 pb-5">
+                  <pre className="bg-gray-950 border border-gray-800 rounded-lg p-4 text-xs text-gray-300 font-mono overflow-x-auto">
+                    {strategyCode}
+                  </pre>
+                </div>
+              )}
+            </div>
+
+            {/* 回测配置 */}
+            <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-5">
+              <h2 className="text-sm font-semibold mb-4 text-gray-200">回测配置</h2>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div>
+                  <label className="block text-xs text-gray-400 mb-2">回测周期</label>
+                  <select
+                    value={backtestConfig.period}
+                    onChange={e => setBacktestConfig({ ...backtestConfig, period: parseInt(e.target.value) as any })}
+                    className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded text-white"
+                  >
+                    {PERIODS.map(p => (
+                      <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs text-gray-400 mb-2">初始资金</label>
+                  <input
+                    type="number"
+                    min={1000}
+                    max={1000000}
+                    step={1000}
+                    value={backtestConfig.initialCapital}
+                    onChange={e => setBacktestConfig({ ...backtestConfig, initialCapital: parseFloat(e.target.value) })}
+                    className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs text-gray-400 mb-2">手续费%</label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={1}
+                    step={0.01}
+                    value={backtestConfig.fee}
+                    onChange={e => setBacktestConfig({ ...backtestConfig, fee: parseFloat(e.target.value) })}
+                    className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs text-gray-400 mb-2">滑点%</label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={1}
+                    step={0.01}
+                    value={backtestConfig.slippage}
+                    onChange={e => setBacktestConfig({ ...backtestConfig, slippage: parseFloat(e.target.value) })}
+                    className="w-full px-3 py-2 text-sm bg-gray-800 border border-gray-700 rounded text-white"
+                  />
+                </div>
+              </div>
+
+              <button
+                onClick={handleRunBacktest}
+                disabled={isBacktesting}
+                className="w-full mt-4 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 disabled:from-gray-700 disabled:to-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-all flex items-center justify-center gap-2"
+              >
+                {isBacktesting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    运行中...
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-4 h-4" />
+                    运行回测
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* 回测结果 */}
+            {backtestResult && (
+              <div className="space-y-4">
+                {/* 核心指标卡片 */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                  <MetricCard
+                    icon={DollarSign}
+                    label="总收益"
+                    value={`${backtestResult.totalReturn >= 0 ? '+' : ''}${backtestResult.totalReturn.toFixed(2)}%`}
+                    color={backtestResult.totalReturn >= 0 ? 'text-emerald-400' : 'text-red-400'}
+                  />
+                  <MetricCard
+                    icon={Target}
+                    label="胜率"
+                    value={`${backtestResult.winRate.toFixed(1)}%`}
+                    color={backtestResult.winRate >= 50 ? 'text-emerald-400' : 'text-yellow-400'}
+                  />
+                  <MetricCard
+                    icon={TrendingUp}
+                    label="盈亏比"
+                    value={backtestResult.profitLossRatio.toFixed(2)}
+                    color={backtestResult.profitLossRatio >= 1 ? 'text-emerald-400' : 'text-yellow-400'}
+                  />
+                  <MetricCard
+                    icon={TrendingDown}
+                    label="最大回撤"
+                    value={`${backtestResult.maxDrawdown.toFixed(2)}%`}
+                    color="text-red-400"
+                  />
+                  <MetricCard
+                    icon={Activity}
+                    label="夏普比率"
+                    value={backtestResult.sharpeRatio.toFixed(2)}
+                    color={backtestResult.sharpeRatio >= 1 ? 'text-emerald-400' : 'text-gray-400'}
+                  />
+                  <MetricCard
+                    icon={Zap}
+                    label="交易次数"
+                    value={backtestResult.totalTrades.toString()}
+                    color="text-blue-400"
+                  />
+                </div>
+
+                {/* 资金曲线 */}
+                <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-5">
+                  <h3 className="text-sm font-semibold mb-4 text-gray-200">资金曲线</h3>
+                  <EquityCurveChart data={backtestResult.equityCurve} />
+                </div>
+
+                {/* 交易明细 */}
+                <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-5">
+                  <h3 className="text-sm font-semibold mb-4 text-gray-200">交易明细（最近10笔）</h3>
+                  <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                    {backtestResult.trades
+                      .filter(t => t.pnl !== undefined)
+                      .slice(-10)
+                      .reverse()
+                      .map(trade => (
+                        <div
+                          key={trade.id}
+                          className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg text-xs"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`px-2 py-1 rounded font-medium ${
+                              trade.type === 'buy' 
+                                ? 'bg-emerald-500/20 text-emerald-400' 
+                                : 'bg-red-500/20 text-red-400'
+                            }`}>
+                              {trade.type === 'buy' ? '买入' : '卖出'}
+                            </div>
+                            <div className="text-gray-400">
+                              {new Date(trade.timestamp).toLocaleString('zh-CN', {
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </div>
+                            {trade.holdingTime && (
+                              <div className="text-gray-500 flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {formatHoldingTime(trade.holdingTime)}
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="font-mono text-gray-300">
+                              ${trade.price.toFixed(2)}
+                            </div>
+                            {trade.pnlPercent !== undefined && (
+                              <div className={`font-mono font-bold min-w-[60px] text-right ${
+                                trade.pnlPercent >= 0 ? 'text-emerald-400' : 'text-red-400'
+                              }`}>
+                                {trade.pnlPercent >= 0 ? '+' : ''}{trade.pnlPercent.toFixed(2)}%
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
 
-export default function StrategyPage() {
-  const [email, setEmail] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-
+// 指标卡片组件
+function MetricCard({ 
+  icon: Icon, 
+  label, 
+  value, 
+  color 
+}: { 
+  icon: any; 
+  label: string; 
+  value: string; 
+  color: string;
+}) {
   return (
-    <div className="max-w-[1200px] mx-auto px-4 py-10">
-      {/* Hero */}
-      <div className="text-center mb-12">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium mb-4">
-          <Sparkles className="w-3 h-3" />
-          即将上线
-        </div>
-        <h1 className="text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-          策略工坊
-        </h1>
-        <p className="text-lg text-gray-400 mb-2">从想法到实盘，一站式完成</p>
-        <p className="text-sm text-gray-500 max-w-2xl mx-auto">
-          用自然语言描述策略 → 系统自动生成 → 高级回测验证 → 一键接入实盘。
-          全程不需要写一行代码。
-        </p>
+    <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-3">
+      <div className="flex items-center gap-2 text-gray-400 text-[10px] mb-1.5">
+        <Icon className="w-3 h-3" />
+        {label}
       </div>
-
-      {/* Features */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
-        {FEATURES.map((f, i) => (
-          <FeatureCard key={i} feature={f} index={i} />
-        ))}
-      </div>
-
-      {/* Flow */}
-      <div className="mb-12 border border-gray-800 rounded-xl p-6 bg-gray-900/20">
-        <h2 className="text-center text-sm font-semibold text-gray-300 mb-6">完整工作流</h2>
-        <div className="flex items-center justify-center gap-2 flex-wrap">
-          {[
-            { icon: Brain, label: '描述策略' },
-            { icon: Sparkles, label: '生成代码' },
-            { icon: BarChart3, label: '回测验证' },
-            { icon: Shield, label: '风控设置' },
-            { icon: Bot, label: '实盘运行' },
-          ].map((step, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <div className="flex flex-col items-center gap-1.5">
-                <div className="w-12 h-12 rounded-lg bg-gray-800 flex items-center justify-center">
-                  <step.icon className="w-5 h-5 text-emerald-400" />
-                </div>
-                <span className="text-[10px] text-gray-500">{step.label}</span>
-              </div>
-              {i < 4 && <ArrowRight className="w-4 h-4 text-gray-700 mx-1" />}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Pricing */}
-      <div className="mb-12">
-        <h2 className="text-center text-sm font-semibold text-gray-300 mb-6">选择你的计划</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {PLANS.map(plan => (
-            <div key={plan.name} className={`border rounded-xl p-5 relative ${
-              plan.popular ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-gray-800 bg-gray-900/30'
-            }`}>
-              {plan.popular && (
-                <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-emerald-500 text-black text-[10px] font-bold rounded-full flex items-center gap-1">
-                  <Star className="w-2.5 h-2.5" /> 推荐
-                </div>
-              )}
-              <div className="mb-4">
-                <h3 className="font-semibold text-gray-200">{plan.name}</h3>
-                <div className="flex items-baseline gap-0.5 mt-1">
-                  <span className="text-3xl font-mono font-bold text-white">{plan.price}</span>
-                  <span className="text-xs text-gray-500">{plan.period}</span>
-                </div>
-              </div>
-              <div className="space-y-2 mb-5">
-                {plan.features.map(f => (
-                  <div key={f} className="flex items-start gap-2 text-xs text-gray-400">
-                    <Check className="w-3 h-3 text-emerald-400 shrink-0 mt-0.5" />
-                    {f}
-                  </div>
-                ))}
-              </div>
-              <button disabled={plan.disabled}
-                className={`w-full py-2 rounded-lg text-sm font-medium transition-all ${
-                  plan.popular
-                    ? 'bg-emerald-600 text-white opacity-60 cursor-not-allowed'
-                    : 'bg-gray-800 text-gray-400 cursor-not-allowed'
-                }`}>
-                {plan.cta}
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Waitlist */}
-      <div className="text-center border border-gray-800 rounded-xl p-8 bg-gray-900/20">
-        <Lock className="w-8 h-8 text-gray-600 mx-auto mb-3" />
-        <h2 className="text-lg font-semibold text-gray-200 mb-2">加入等待列表</h2>
-        <p className="text-sm text-gray-500 mb-5">策略工坊正在内测中。留下邮箱，上线第一时间通知你。</p>
-        {submitted ? (
-          <div className="text-emerald-400 text-sm font-medium">已加入等待列表！我们会尽快通知你。</div>
-        ) : (
-          <div className="flex gap-2 max-w-md mx-auto">
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-              placeholder="your@email.com"
-              className="flex-1 px-4 py-2.5 rounded-lg bg-gray-800 border border-gray-700 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500"
-            />
-            <button onClick={() => { if(email) setSubmitted(true); }}
-              className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg transition-all">
-              加入
-            </button>
-          </div>
-        )}
+      <div className={`text-lg font-mono font-bold ${color}`}>
+        {value}
       </div>
     </div>
   );
+}
+
+// 资金曲线图组件（SVG）
+function EquityCurveChart({ data }: { data: { timestamp: number; equity: number }[] }) {
+  if (data.length === 0) return null;
+  
+  const width = 800;
+  const height = 200;
+  const padding = { top: 20, right: 20, bottom: 30, left: 60 };
+  
+  const chartWidth = width - padding.left - padding.right;
+  const chartHeight = height - padding.top - padding.bottom;
+  
+  // 计算比例
+  const minEquity = Math.min(...data.map(d => d.equity));
+  const maxEquity = Math.max(...data.map(d => d.equity));
+  const minTime = data[0].timestamp;
+  const maxTime = data[data.length - 1].timestamp;
+  
+  const xScale = (timestamp: number) => 
+    padding.left + ((timestamp - minTime) / (maxTime - minTime)) * chartWidth;
+  const yScale = (equity: number) => 
+    padding.top + chartHeight - ((equity - minEquity) / (maxEquity - minEquity)) * chartHeight;
+  
+  // 生成路径
+  const pathData = data.map((d, i) => {
+    const x = xScale(d.timestamp);
+    const y = yScale(d.equity);
+    return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+  }).join(' ');
+  
+  // Y轴刻度
+  const yTicks = [minEquity, (minEquity + maxEquity) / 2, maxEquity];
+  
+  return (
+    <div className="w-full overflow-x-auto">
+      <svg width={width} height={height} className="mx-auto">
+        {/* 网格线 */}
+        {yTicks.map((tick, i) => (
+          <g key={i}>
+            <line
+              x1={padding.left}
+              y1={yScale(tick)}
+              x2={width - padding.right}
+              y2={yScale(tick)}
+              stroke="#374151"
+              strokeWidth="1"
+              strokeDasharray="2,2"
+            />
+            <text
+              x={padding.left - 10}
+              y={yScale(tick)}
+              textAnchor="end"
+              alignmentBaseline="middle"
+              className="text-[10px] fill-gray-500"
+            >
+              ${tick.toFixed(0)}
+            </text>
+          </g>
+        ))}
+        
+        {/* 资金曲线 */}
+        <path
+          d={pathData}
+          fill="none"
+          stroke="#10b981"
+          strokeWidth="2"
+        />
+        
+        {/* 起点和终点标记 */}
+        <circle cx={xScale(data[0].timestamp)} cy={yScale(data[0].equity)} r="3" fill="#10b981" />
+        <circle cx={xScale(data[data.length - 1].timestamp)} cy={yScale(data[data.length - 1].equity)} r="3" fill="#10b981" />
+        
+        {/* X轴标签（首尾） */}
+        <text
+          x={xScale(minTime)}
+          y={height - 5}
+          textAnchor="start"
+          className="text-[10px] fill-gray-500"
+        >
+          {new Date(minTime).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}
+        </text>
+        <text
+          x={xScale(maxTime)}
+          y={height - 5}
+          textAnchor="end"
+          className="text-[10px] fill-gray-500"
+        >
+          {new Date(maxTime).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })}
+        </text>
+      </svg>
+    </div>
+  );
+}
+
+// 格式化持仓时间
+function formatHoldingTime(ms: number): string {
+  const hours = Math.floor(ms / (1000 * 60 * 60));
+  const days = Math.floor(hours / 24);
+  
+  if (days > 0) return `${days}天`;
+  if (hours > 0) return `${hours}小时`;
+  return `${Math.floor(ms / (1000 * 60))}分钟`;
 }

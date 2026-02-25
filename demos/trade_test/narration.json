@@ -1,0 +1,52 @@
+{
+  "scenario": "交易功能测试",
+  "description": "Agent opens a simulated trade, sets stop-loss/take-profit, and verifies the position",
+  "timestamp": "2026-02-24T21:55:21.312393",
+  "narration": [
+    {
+      "step": 0,
+      "text": "打开交易页面",
+      "action": "goto"
+    },
+    {
+      "step": 1,
+      "text": "选择BTC交易对",
+      "action": "click"
+    },
+    {
+      "step": 3,
+      "text": "选择做多方向",
+      "action": "click"
+    },
+    {
+      "step": 4,
+      "text": "设置止损价 $62,000",
+      "action": "fill"
+    },
+    {
+      "step": 5,
+      "text": "设置止盈价 $68,000",
+      "action": "fill"
+    },
+    {
+      "step": 6,
+      "text": "交易设置完成",
+      "action": "screenshot"
+    },
+    {
+      "step": 7,
+      "text": "提交模拟开仓",
+      "action": "click"
+    },
+    {
+      "step": 8,
+      "text": "交易结果",
+      "action": "screenshot"
+    }
+  ],
+  "screenshots": [
+    "projects/trading-copilot/demos/trade_test/trade_setup.png",
+    "projects/trading-copilot/demos/trade_test/trade_result.png"
+  ],
+  "video": "projects/trading-copilot/demos/trade_test/demo_raw.mp4"
+}
