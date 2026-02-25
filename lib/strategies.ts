@@ -1,193 +1,87 @@
-// 策略模板定义
+// Strategy template definitions
 
-export type StrategyType = 'ema-cross' | 'rsi-reversal' | 'bollinger' | 'macd' | 'custom';
-
-export interface StrategyParameter {
-  id: string;
+export interface StrategyParam {
+  key: string;
   label: string;
-  type: 'number' | 'select';
-  min?: number;
-  max?: number;
-  step?: number;
-  default: number | string;
-  options?: { value: string | number; label: string }[];
+  min: number;
+  max: number;
+  step: number;
+  default: number;
   unit?: string;
 }
 
 export interface StrategyTemplate {
-  id: StrategyType;
+  id: string;
   name: string;
+  icon: string;
   description: string;
-  category: 'trend' | 'reversal' | 'breakout' | 'custom';
-  parameters: StrategyParameter[];
+  params: StrategyParam[];
+  pseudoCode: (params: Record<string, number>) => string;
 }
 
-// 策略模板库
 export const STRATEGY_TEMPLATES: StrategyTemplate[] = [
   {
-    id: 'ema-cross',
-    name: 'EMA交叉策略',
-    description: '快线上穿慢线做多，下穿做空。经典趋势跟踪策略，适合单边行情。',
-    category: 'trend',
-    parameters: [
-      { id: 'fastPeriod', label: '快线周期', type: 'number', min: 5, max: 50, step: 1, default: 9 },
-      { id: 'slowPeriod', label: '慢线周期', type: 'number', min: 10, max: 200, step: 1, default: 21 },
+    id: 'ema_cross', name: 'EMA交叉', icon: '📊',
+    description: '快线上穿慢线做多，下穿做空。经典趋势跟踪策略。',
+    params: [
+      { key: 'fastPeriod', label: '快线周期', min: 3, max: 50, step: 1, default: 9 },
+      { key: 'slowPeriod', label: '慢线周期', min: 10, max: 200, step: 1, default: 21 },
     ],
+    pseudoCode: (p) => `// EMA交叉策略\nfastEMA = EMA(close, ${p.fastPeriod})\nslowEMA = EMA(close, ${p.slowPeriod})\n\n做多: fastEMA 上穿 slowEMA\n做空: fastEMA 下穿 slowEMA`,
   },
   {
-    id: 'rsi-reversal',
-    name: 'RSI反转策略',
-    description: 'RSI超卖时买入，超买时卖出。适合震荡行情的均值回归策略。',
-    category: 'reversal',
-    parameters: [
-      { id: 'rsiPeriod', label: 'RSI周期', type: 'number', min: 7, max: 28, step: 1, default: 14 },
-      { id: 'oversold', label: '超卖阈值', type: 'number', min: 10, max: 40, step: 5, default: 30, unit: '' },
-      { id: 'overbought', label: '超买阈值', type: 'number', min: 60, max: 90, step: 5, default: 70, unit: '' },
+    id: 'rsi_reversal', name: 'RSI反转', icon: '🔄',
+    description: '超卖区反弹做多，超买区回落做空。均值回归策略。',
+    params: [
+      { key: 'rsiPeriod', label: 'RSI周期', min: 5, max: 30, step: 1, default: 14 },
+      { key: 'oversold', label: '超卖线', min: 10, max: 40, step: 1, default: 30 },
+      { key: 'overbought', label: '超买线', min: 60, max: 90, step: 1, default: 70 },
     ],
+    pseudoCode: (p) => `// RSI反转策略\nrsi = RSI(close, ${p.rsiPeriod})\n\n做多: RSI从下穿越 ${p.oversold}\n做空: RSI从上穿越 ${p.overbought}`,
   },
   {
-    id: 'bollinger',
-    name: '布林带突破策略',
-    description: '价格突破上轨做多，突破下轨做空。波动率突破策略。',
-    category: 'breakout',
-    parameters: [
-      { id: 'period', label: '周期', type: 'number', min: 10, max: 50, step: 1, default: 20 },
-      { id: 'stdDev', label: '标准差倍数', type: 'number', min: 1, max: 3, step: 0.1, default: 2, unit: 'σ' },
+    id: 'bollinger', name: '布林带突破', icon: '📈',
+    description: '价格触及下轨做多，触及上轨做空。利用波动率回归。',
+    params: [
+      { key: 'period', label: '周期', min: 10, max: 50, step: 1, default: 20 },
+      { key: 'stdDev', label: '标准差倍数', min: 1, max: 4, step: 0.1, default: 2 },
     ],
+    pseudoCode: (p) => `// 布林带策略\nmiddle = SMA(close, ${p.period})\nupper = middle + ${p.stdDev} × StdDev\nlower = middle - ${p.stdDev} × StdDev\n\n做多: 价格触及下轨后反弹\n做空: 价格触及上轨后回落`,
   },
   {
-    id: 'macd',
-    name: 'MACD策略',
-    description: 'MACD金叉做多，死叉做空。动量指标策略。',
-    category: 'trend',
-    parameters: [
-      { id: 'fastPeriod', label: '快线周期', type: 'number', min: 5, max: 20, step: 1, default: 12 },
-      { id: 'slowPeriod', label: '慢线周期', type: 'number', min: 15, max: 50, step: 1, default: 26 },
-      { id: 'signalPeriod', label: '信号线周期', type: 'number', min: 5, max: 20, step: 1, default: 9 },
+    id: 'macd', name: 'MACD策略', icon: '📉',
+    description: 'MACD线上穿信号线做多，下穿做空。结合柱状图判断动量。',
+    params: [
+      { key: 'fastPeriod', label: '快线', min: 5, max: 20, step: 1, default: 12 },
+      { key: 'slowPeriod', label: '慢线', min: 15, max: 50, step: 1, default: 26 },
+      { key: 'signalPeriod', label: '信号线', min: 3, max: 15, step: 1, default: 9 },
     ],
+    pseudoCode: (p) => `// MACD策略\nmacdLine = EMA(${p.fastPeriod}) - EMA(${p.slowPeriod})\nsignal = EMA(macdLine, ${p.signalPeriod})\n\n做多: MACD上穿信号线\n做空: MACD下穿信号线`,
+  },
+  {
+    id: 'ema_rsi_combo', name: 'EMA+RSI组合', icon: '🎯',
+    description: 'EMA确认趋势，RSI确认时机。多维度过滤提高胜率。',
+    params: [
+      { key: 'emaPeriod', label: 'EMA周期', min: 10, max: 100, step: 1, default: 50 },
+      { key: 'rsiPeriod', label: 'RSI周期', min: 5, max: 30, step: 1, default: 14 },
+      { key: 'rsiEntry', label: 'RSI入场线', min: 20, max: 50, step: 1, default: 40 },
+    ],
+    pseudoCode: (p) => `// EMA+RSI组合\nema = EMA(close, ${p.emaPeriod})\nrsi = RSI(close, ${p.rsiPeriod})\n\n做多: 价格>EMA 且 RSI<${p.rsiEntry}\n做空: 价格<EMA 且 RSI>${100 - p.rsiEntry}`,
   },
 ];
 
-// 交易参数（通用）
-export interface TradingParams {
-  symbol: 'BTC' | 'ETH' | 'SOL';
-  timeframe: '1h' | '4h' | '1d';
-  stopLoss: number; // 百分比
-  takeProfit: number; // 百分比
-  maxPosition: number; // 最大仓位百分比
-}
+export interface RiskParams { stopLoss: number; takeProfit: number; maxPosition: number; }
+export const DEFAULT_RISK: RiskParams = { stopLoss: 3, takeProfit: 6, maxPosition: 30 };
 
-export const DEFAULT_TRADING_PARAMS: TradingParams = {
-  symbol: 'BTC',
-  timeframe: '4h',
-  stopLoss: 2,
-  takeProfit: 5,
-  maxPosition: 50,
-};
+export type Timeframe = '1h' | '4h' | '1d';
+export type Symbol = 'BTCUSDT' | 'ETHUSDT' | 'SOLUSDT';
 
-// 回测配置
-export interface BacktestConfig {
-  period: 30 | 90 | 180 | 365; // 天数
-  initialCapital: number;
-  fee: number; // 手续费百分比
-  slippage: number; // 滑点百分比
-}
-
-export const DEFAULT_BACKTEST_CONFIG: BacktestConfig = {
-  period: 90,
-  initialCapital: 10000,
-  fee: 0.04,
-  slippage: 0.01,
-};
-
-// 生成策略伪代码
-export function generateStrategyCode(
-  strategy: StrategyType,
-  params: Record<string, number>,
-  tradingParams: TradingParams
-): string {
-  const lines: string[] = [];
-  
-  lines.push(`// ${STRATEGY_TEMPLATES.find(s => s.id === strategy)?.name || '策略'}`);
-  lines.push(`币种: ${tradingParams.symbol}USDT`);
-  lines.push(`时间框架: ${tradingParams.timeframe}`);
-  lines.push('');
-  
-  switch (strategy) {
-    case 'ema-cross':
-      lines.push(`EMA快线 = EMA(close, ${params.fastPeriod})`);
-      lines.push(`EMA慢线 = EMA(close, ${params.slowPeriod})`);
-      lines.push('');
-      lines.push('入场条件:');
-      lines.push('  做多: 快线上穿慢线');
-      lines.push('  做空: 快线下穿慢线');
-      break;
-      
-    case 'rsi-reversal':
-      lines.push(`RSI = RSI(close, ${params.rsiPeriod})`);
-      lines.push('');
-      lines.push('入场条件:');
-      lines.push(`  做多: RSI < ${params.oversold} (超卖反弹)`);
-      lines.push('出场条件:');
-      lines.push(`  平多: RSI > ${params.overbought} (超买)`);
-      break;
-      
-    case 'bollinger':
-      lines.push(`中轨 = SMA(close, ${params.period})`);
-      lines.push(`上轨 = 中轨 + ${params.stdDev}σ`);
-      lines.push(`下轨 = 中轨 - ${params.stdDev}σ`);
-      lines.push('');
-      lines.push('入场条件:');
-      lines.push('  做多: 价格突破上轨');
-      lines.push('  做空: 价格跌破下轨');
-      break;
-      
-    case 'macd':
-      lines.push(`MACD = EMA(close, ${params.fastPeriod}) - EMA(close, ${params.slowPeriod})`);
-      lines.push(`信号线 = EMA(MACD, ${params.signalPeriod})`);
-      lines.push('');
-      lines.push('入场条件:');
-      lines.push('  做多: MACD上穿信号线（金叉）');
-      lines.push('  做空: MACD下穿信号线（死叉）');
-      break;
-  }
-  
-  lines.push('');
-  lines.push('风控设置:');
-  lines.push(`  止损: -${tradingParams.stopLoss}%`);
-  lines.push(`  止盈: +${tradingParams.takeProfit}%`);
-  lines.push(`  最大仓位: ${tradingParams.maxPosition}%`);
-  
-  return lines.join('\n');
-}
-
-// 生成策略描述（自然语言）
-export function generateStrategyDescription(
-  strategy: StrategyType,
-  params: Record<string, number>,
-  tradingParams: TradingParams
-): string {
-  const template = STRATEGY_TEMPLATES.find(s => s.id === strategy);
-  if (!template) return '';
-  
-  let desc = `使用 ${template.name}，`;
-  
-  switch (strategy) {
-    case 'ema-cross':
-      desc += `快线${params.fastPeriod}周期，慢线${params.slowPeriod}周期。当快线上穿慢线时做多，下穿时做空。`;
-      break;
-    case 'rsi-reversal':
-      desc += `RSI周期${params.rsiPeriod}。当RSI低于${params.oversold}时买入，高于${params.overbought}时卖出。`;
-      break;
-    case 'bollinger':
-      desc += `周期${params.period}，标准差${params.stdDev}倍。价格突破上轨做多，跌破下轨做空。`;
-      break;
-    case 'macd':
-      desc += `快线${params.fastPeriod}，慢线${params.slowPeriod}，信号线${params.signalPeriod}。MACD金叉做多，死叉做空。`;
-      break;
-  }
-  
-  desc += ` 止损${tradingParams.stopLoss}%，止盈${tradingParams.takeProfit}%。`;
-  
-  return desc;
-}
+export const TIMEFRAMES: { value: Timeframe; label: string }[] = [
+  { value: '1h', label: '1小时' }, { value: '4h', label: '4小时' }, { value: '1d', label: '1天' },
+];
+export const SYMBOLS: { value: Symbol; label: string }[] = [
+  { value: 'BTCUSDT', label: 'BTC/USDT' }, { value: 'ETHUSDT', label: 'ETH/USDT' }, { value: 'SOLUSDT', label: 'SOL/USDT' },
+];
+export const BACKTEST_PERIODS = [
+  { value: 30, label: '30天' }, { value: 90, label: '90天' }, { value: 180, label: '180天' }, { value: 365, label: '1年' },
+];
