@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { href: '/backtest', label: '回测', icon: TrendingUp },
   { href: '/news', label: '资讯', icon: Newspaper },
   { href: '/strategy', label: '策略工坊', icon: Sparkles, premium: true },
+  { href: '/ai-strategy', label: 'AI策略', icon: Sparkles, premium: true },
   { href: '/pricing', label: '定价', icon: CreditCard, premium: true },
   { href: '/learn', label: '课程', icon: BookOpen },
   { href: '/history', label: '历史', icon: History },
