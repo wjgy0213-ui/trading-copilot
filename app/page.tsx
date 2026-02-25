@@ -63,9 +63,9 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent"
+            className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-emerald-400 to-cyan-500 bg-clip-text text-transparent"
           >
-            交易陪练AI
+            交易陪练
           </motion.h1>
           
           <motion.p 
@@ -83,7 +83,7 @@ export default function LandingPage() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto"
           >
-            在真实价格环境下进行零风险模拟交易，AI教练实时评分，帮你建立交易纪律，告别情绪化操作
+            在真实价格环境下进行零风险模拟交易，教练实时评分，帮你建立交易纪律，告别情绪化操作
           </motion.p>
           
           <motion.div
@@ -151,7 +151,7 @@ export default function LandingPage() {
                   <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                   <div className="w-3 h-3 rounded-full bg-green-500"></div>
                 </div>
-                <div className="text-sm text-gray-500">交易陪练AI · Demo</div>
+                <div className="text-sm text-gray-500">交易陪练 · Demo</div>
               </div>
 
               {/* Mock Content */}
@@ -173,12 +173,12 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Mock AI Coach */}
+              {/* Mock Coach */}
               <div className="bg-blue-900/20 border border-blue-700/50 rounded-lg p-4">
                 <div className="flex items-start gap-3">
                   <Brain className="w-5 h-5 text-blue-400 flex-shrink-0 mt-1" />
                   <div className="flex-1">
-                    <div className="text-sm text-gray-300 mb-2">AI教练建议</div>
+                    <div className="text-sm text-gray-300 mb-2">教练建议</div>
                     <div className="h-3 bg-gray-700/50 rounded w-full mb-2"></div>
                     <div className="h-3 bg-gray-700/50 rounded w-3/4"></div>
                   </div>
@@ -187,7 +187,7 @@ export default function LandingPage() {
             </div>
 
             {/* Glow Effect */}
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl opacity-20 blur-xl -z-10"></div>
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-600 to-cyan-600 rounded-2xl opacity-20 blur-xl -z-10"></div>
           </div>
         </div>
       </motion.div>
@@ -205,7 +205,7 @@ export default function LandingPage() {
           {[
             { step: '1', title: '选择币种', desc: 'BTC、ETH、SOL真实价格', icon: Target },
             { step: '2', title: '模拟交易', desc: '设置止损止盈，开多或开空', icon: TrendingUp },
-            { step: '3', title: 'AI评分', desc: '每笔交易AI即时反馈建议', icon: Brain },
+            { step: '3', title: '教练评分', desc: '每笔交易即时反馈建议', icon: Brain },
           ].map((item, i) => (
             <motion.div
               key={i}
@@ -231,7 +231,7 @@ export default function LandingPage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             { icon: Target, title: '纸盘交易', description: '虚拟$500账户，接入真实BTC价格，模拟开仓/平仓，零风险练习' },
-            { icon: Brain, title: 'AI教练', description: '每笔交易即时评分，分析止损、仓位、杠杆，指出情绪化操作' },
+            { icon: Brain, title: '教练', description: '每笔交易即时评分，分析止损、仓位、杠杆，指出情绪化操作' },
             { icon: TrendingUp, title: '风险管理', description: '支持止损止盈、1-10x杠杆，学习如何控制风险和资金管理' },
             { icon: BarChart3, title: '复盘日志', description: '查看历史交易、胜率、盈亏比、最大回撤，系统化提升' },
           ].map((feature, i) => (
@@ -279,7 +279,7 @@ export default function LandingPage() {
           
           <div className="mt-8 pt-8 border-t border-gray-700">
             <p className="text-center text-lg text-blue-400 font-semibold mb-4">
-              💡 交易陪练AI帮你建立纪律
+              💡 交易陪练帮你建立纪律
             </p>
             <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-300">
               <div className="flex items-start gap-2">
@@ -288,7 +288,7 @@ export default function LandingPage() {
               </div>
               <div className="flex items-start gap-2">
                 <span className="text-green-400">✓</span>
-                <span>AI实时评分，纠正坏习惯</span>
+                <span>实时评分，纠正坏习惯</span>
               </div>
               <div className="flex items-start gap-2">
                 <span className="text-green-400">✓</span>
@@ -322,8 +322,8 @@ export default function LandingPage() {
             answer="不需要。为了让你快速开始练习，我们采用本地存储方案，所有数据保存在你的浏览器里。缺点是换设备后数据不同步，优点是隐私100%安全。"
           />
           <FAQItem
-            question="AI教练是如何评分的？"
-            answer="AI会从4个维度评估你的交易：止损设置（有没有设、位置合理性）、仓位大小（是否过度集中）、杠杆使用（新手是否过高）、持仓时间（是否过于频繁）。每笔交易会给出0-100分和具体改进建议。"
+            question="教练是如何评分的？"
+            answer="教练会从4个维度评估你的交易：止损设置（有没有设、位置合理性）、仓位大小（是否过度集中）、杠杆使用（新手是否过高）、持仓时间（是否过于频繁）。每笔交易会给出0-100分和具体改进建议。"
           />
           <FAQItem
             question="练习多久可以实盘？"
@@ -348,7 +348,7 @@ export default function LandingPage() {
         <p className="text-gray-400 mb-8">不需要登录，不需要绑卡，立即开始免费练习</p>
         <Link 
           href="/trade" 
-          className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-5 rounded-lg text-xl font-semibold transition-all transform hover:scale-105"
+          className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-blue-700 hover:to-purple-700 text-white px-10 py-5 rounded-lg text-xl font-semibold transition-all transform hover:scale-105"
         >
           开始交易
           <ArrowRight className="w-6 h-6" />
@@ -357,7 +357,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="container mx-auto px-4 py-8 border-t border-gray-800 text-center text-gray-500">
-        <p>交易陪练AI - 帮助韭菜觉醒者建立交易纪律</p>
+        <p>交易陪练 - 帮助韭菜觉醒者建立交易纪律</p>
         <p className="text-sm mt-2">⚠️ 本工具仅用于教育目的，不构成投资建议</p>
       </footer>
     </div>
