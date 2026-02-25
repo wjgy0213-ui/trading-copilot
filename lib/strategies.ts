@@ -59,6 +59,33 @@ export const STRATEGY_TEMPLATES: StrategyTemplate[] = [
     pseudoCode: (p) => `// MACD策略\nmacdLine = EMA(${p.fastPeriod}) - EMA(${p.slowPeriod})\nsignal = EMA(macdLine, ${p.signalPeriod})\n\n做多: MACD上穿信号线\n做空: MACD下穿信号线`,
   },
   {
+    id: 'supertrend', name: 'Supertrend', icon: '🚀',
+    description: 'ATR动态止损趋势跟踪。适合趋势行情。',
+    params: [
+      { key: 'atrPeriod', label: 'ATR周期', min: 10, max: 50, step: 1, default: 14 },
+      { key: 'multiplier', label: '乘数', min: 1, max: 5, step: 0.5, default: 3 },
+    ],
+    pseudoCode: (p) => `// Supertrend策略\nATR = ATR(${p.atrPeriod})\nupperBand = (H+L)/2 + ${p.multiplier} × ATR\nlowerBand = (H+L)/2 - ${p.multiplier} × ATR\n\n做多: 价格上穿Supertrend\n做空: 价格下穿Supertrend`,
+  },
+  {
+    id: 'ema_volume', name: '双均线+量能', icon: '📊',
+    description: 'EMA交叉配合成交量确认。减少假突破。',
+    params: [
+      { key: 'fastPeriod', label: '快线周期', min: 3, max: 50, step: 1, default: 10 },
+      { key: 'slowPeriod', label: '慢线周期', min: 10, max: 200, step: 1, default: 30 },
+      { key: 'volumeMult', label: '量能倍数', min: 1, max: 5, step: 0.5, default: 1.5 },
+    ],
+    pseudoCode: (p) => `// 双均线+量能策略\nfastEMA = EMA(close, ${p.fastPeriod})\nslowEMA = EMA(close, ${p.slowPeriod})\nvolSMA = SMA(volume, 20)\n\n做多: fastEMA上穿slowEMA 且 volume > volSMA × ${p.volumeMult}\n做空: fastEMA下穿slowEMA 且 volume > volSMA × ${p.volumeMult}`,
+  },
+  {
+    id: 'donchian', name: '通道突破', icon: '🔔',
+    description: 'Donchian通道突破。海龟交易法核心策略。',
+    params: [
+      { key: 'period', label: '通道周期', min: 10, max: 100, step: 1, default: 20 },
+    ],
+    pseudoCode: (p) => `// Donchian通道突破\nupperChannel = ${p.period}周期最高价\nlowerChannel = ${p.period}周期最低价\n\n做多: 价格突破上轨\n做空: 价格突破下轨`,
+  },
+  {
     id: 'ema_rsi_combo', name: 'EMA+RSI组合', icon: '🎯',
     description: 'EMA确认趋势，RSI确认时机。多维度过滤提高胜率。',
     params: [
@@ -67,6 +94,33 @@ export const STRATEGY_TEMPLATES: StrategyTemplate[] = [
       { key: 'rsiEntry', label: 'RSI入场线', min: 20, max: 50, step: 1, default: 40 },
     ],
     pseudoCode: (p) => `// EMA+RSI组合\nema = EMA(close, ${p.emaPeriod})\nrsi = RSI(close, ${p.rsiPeriod})\n\n做多: 价格>EMA 且 RSI<${p.rsiEntry}\n做空: 价格<EMA 且 RSI>${100 - p.rsiEntry}`,
+  },
+  {
+    id: 'supertrend', name: 'Supertrend', icon: '🚀',
+    description: 'ATR动态止损趋势跟踪。适合趋势行情。',
+    params: [
+      { key: 'atrPeriod', label: 'ATR周期', min: 10, max: 50, step: 1, default: 14 },
+      { key: 'multiplier', label: '乘数', min: 1, max: 5, step: 0.5, default: 3 },
+    ],
+    pseudoCode: (p) => `// Supertrend策略\nATR = ATR(${p.atrPeriod}周期真实波幅均值)\nupperBand = (high+low)/2 + ${p.multiplier}×ATR\nlowerBand = (high+low)/2 - ${p.multiplier}×ATR\n\n做多: close > supertrend 且前一根 close <= supertrend\n做空: close < supertrend 且前一根 close >= supertrend`,
+  },
+  {
+    id: 'ema_volume', name: '双均线+量能', icon: '📊',
+    description: 'EMA交叉配合成交量确认。减少假突破。',
+    params: [
+      { key: 'fastPeriod', label: '快线周期', min: 3, max: 50, step: 1, default: 10 },
+      { key: 'slowPeriod', label: '慢线周期', min: 10, max: 200, step: 1, default: 30 },
+      { key: 'volumeMult', label: '量能倍数', min: 1, max: 5, step: 0.5, default: 1.5 },
+    ],
+    pseudoCode: (p) => `// 双均线+量能策略\nfastEMA = EMA(close, ${p.fastPeriod})\nslowEMA = EMA(close, ${p.slowPeriod})\nvolumeSMA = SMA(volume, 20)\n\n做多: fastEMA上穿slowEMA 且 volume > volumeSMA×${p.volumeMult}\n做空: fastEMA下穿slowEMA 且 volume > volumeSMA×${p.volumeMult}`,
+  },
+  {
+    id: 'donchian', name: '通道突破', icon: '🔔',
+    description: 'Donchian通道突破。海龟交易法核心策略。',
+    params: [
+      { key: 'period', label: '通道周期', min: 10, max: 100, step: 1, default: 20 },
+    ],
+    pseudoCode: (p) => `// Donchian通道突破\nupperChannel = ${p.period}周期最高的high\nlowerChannel = ${p.period}周期最低的low\n\n做多: close > 前一根upperChannel\n做空: close < 前一根lowerChannel`,
   },
 ];
 

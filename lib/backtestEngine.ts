@@ -126,11 +126,148 @@ function generateSignals(id: string, params: Record<string, number>, candles: Ca
         if (ml[i] < sl[i] && ml[i-1] >= sl[i-1] && hist[i] < 0) signals[i] = 'short';
       } break;
     }
+    case 'supertrend': {
+      // Calculate ATR
+      const atrPeriod = params.atrPeriod;
+      const mult = params.multiplier;
+      const tr: number[] = new Array(candles.length).fill(0);
+      for (let i = 1; i < candles.length; i++) {
+        tr[i] = Math.max(
+          candles[i].high - candles[i].low,
+          Math.abs(candles[i].high - candles[i-1].close),
+          Math.abs(candles[i].low - candles[i-1].close)
+        );
+      }
+      const atr = calcSMA(tr, atrPeriod);
+      // Supertrend
+      const st: number[] = new Array(candles.length).fill(0);
+      const dir: number[] = new Array(candles.length).fill(1); // 1=up, -1=down
+      for (let i = atrPeriod; i < candles.length; i++) {
+        const hl2 = (candles[i].high + candles[i].low) / 2;
+        let ub = hl2 + mult * atr[i];
+        let lb = hl2 - mult * atr[i];
+        if (i > atrPeriod) {
+          const prevUb = (candles[i-1].high + candles[i-1].low) / 2 + mult * atr[i-1];
+          const prevLb = (candles[i-1].high + candles[i-1].low) / 2 - mult * atr[i-1];
+          const prevSt = st[i-1];
+          if (lb > (dir[i-1] === 1 ? prevSt : prevLb)) { /* keep */ } else { lb = dir[i-1] === 1 ? prevSt : prevLb; }
+          if (ub < (dir[i-1] === -1 ? prevSt : prevUb)) { /* keep */ } else { ub = dir[i-1] === -1 ? prevSt : prevUb; }
+        }
+        if (dir[i-1] === 1) {
+          dir[i] = closes[i] < st[i-1] ? -1 : 1;
+        } else {
+          dir[i] = closes[i] > st[i-1] ? 1 : -1;
+        }
+        st[i] = dir[i] === 1 ? lb : ub;
+      }
+      for (let i = w; i < candles.length; i++) {
+        if (dir[i] === 1 && dir[i-1] === -1) signals[i] = 'long';
+        if (dir[i] === -1 && dir[i-1] === 1) signals[i] = 'short';
+      }
+      break;
+    }
+    case 'ema_volume': {
+      const f = calcEMA(closes, params.fastPeriod), s = calcEMA(closes, params.slowPeriod);
+      const vols = candles.map(c => c.volume);
+      const volSma = calcSMA(vols, 20);
+      for (let i = w; i < candles.length; i++) {
+        const volOk = vols[i] > volSma[i] * params.volumeMult;
+        if (f[i] > s[i] && f[i-1] <= s[i-1] && volOk) signals[i] = 'long';
+        if (f[i] < s[i] && f[i-1] >= s[i-1] && volOk) signals[i] = 'short';
+      }
+      break;
+    }
+    case 'donchian': {
+      const period = params.period;
+      for (let i = period + 1; i < candles.length; i++) {
+        let hi = -Infinity, lo = Infinity;
+        for (let j = i - period; j < i; j++) {
+          if (candles[j].high > hi) hi = candles[j].high;
+          if (candles[j].low < lo) lo = candles[j].low;
+        }
+        if (closes[i] > hi) signals[i] = 'long';
+        if (closes[i] < lo) signals[i] = 'short';
+      }
+      break;
+    }
     case 'ema_rsi_combo': {
       const ema = calcEMA(closes, params.emaPeriod), rsi = calcRSI(closes, params.rsiPeriod);
       for (let i = w; i < candles.length; i++) {
         if (closes[i] > ema[i] && rsi[i] < params.rsiEntry && rsi[i-1] >= params.rsiEntry) signals[i] = 'long';
         if (closes[i] < ema[i] && rsi[i] > (100-params.rsiEntry) && rsi[i-1] <= (100-params.rsiEntry)) signals[i] = 'short';
+      } break;
+    }
+    case 'supertrend': {
+      const period = Math.round(params.atrPeriod);
+      const mult = params.multiplier;
+      // Calculate ATR
+      const atr: number[] = new Array(candles.length).fill(0);
+      for (let i = 1; i < candles.length; i++) {
+        const tr = Math.max(
+          candles[i].high - candles[i].low,
+          Math.abs(candles[i].high - candles[i-1].close),
+          Math.abs(candles[i].low - candles[i-1].close)
+        );
+        if (i < period) { atr[i] = tr; }
+        else if (i === period) {
+          let s = 0; for (let j = 1; j <= period; j++) s += Math.max(
+            candles[j].high - candles[j].low,
+            Math.abs(candles[j].high - candles[j-1].close),
+            Math.abs(candles[j].low - candles[j-1].close)
+          );
+          atr[i] = s / period;
+        } else {
+          const trCur = Math.max(
+            candles[i].high - candles[i].low,
+            Math.abs(candles[i].high - candles[i-1].close),
+            Math.abs(candles[i].low - candles[i-1].close)
+          );
+          atr[i] = (atr[i-1] * (period - 1) + trCur) / period;
+        }
+      }
+      // Calculate Supertrend
+      const supertrend: number[] = new Array(candles.length).fill(0);
+      let trend = 1; // 1 = bullish, -1 = bearish
+      for (let i = period; i < candles.length; i++) {
+        const hl2 = (candles[i].high + candles[i].low) / 2;
+        const up = hl2 + mult * atr[i];
+        const dn = hl2 - mult * atr[i];
+        if (closes[i] > supertrend[i-1]) {
+          supertrend[i] = dn;
+          trend = 1;
+        } else {
+          supertrend[i] = up;
+          trend = -1;
+        }
+        if (i > period) {
+          if (closes[i] > supertrend[i-1] && closes[i-1] <= supertrend[i-1]) signals[i] = 'long';
+          if (closes[i] < supertrend[i-1] && closes[i-1] >= supertrend[i-1]) signals[i] = 'short';
+        }
+      }
+      break;
+    }
+    case 'ema_volume': {
+      const fast = calcEMA(closes, params.fastPeriod), slow = calcEMA(closes, params.slowPeriod);
+      const vols = candles.map(c => c.volume);
+      const volSMA = calcSMA(vols, 20);
+      for (let i = w; i < candles.length; i++) {
+        const volOk = vols[i] > volSMA[i] * params.volumeMult;
+        if (fast[i] > slow[i] && fast[i-1] <= slow[i-1] && volOk) signals[i] = 'long';
+        if (fast[i] < slow[i] && fast[i-1] >= slow[i-1] && volOk) signals[i] = 'short';
+      } break;
+    }
+    case 'donchian': {
+      const p = Math.round(params.period);
+      const upperCh: number[] = new Array(candles.length).fill(0);
+      const lowerCh: number[] = new Array(candles.length).fill(0);
+      for (let i = p - 1; i < candles.length; i++) {
+        let hi = -Infinity, lo = Infinity;
+        for (let j = i - p + 1; j <= i; j++) { hi = Math.max(hi, candles[j].high); lo = Math.min(lo, candles[j].low); }
+        upperCh[i] = hi; lowerCh[i] = lo;
+      }
+      for (let i = w; i < candles.length; i++) {
+        if (closes[i] > upperCh[i-1] && upperCh[i-1] > 0) signals[i] = 'long';
+        if (closes[i] < lowerCh[i-1] && lowerCh[i-1] > 0) signals[i] = 'short';
       } break;
     }
   }

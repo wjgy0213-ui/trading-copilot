@@ -3,7 +3,8 @@
 import { useState, useCallback } from 'react';
 import { STRATEGY_TEMPLATES, TIMEFRAMES, SYMBOLS, BACKTEST_PERIODS, DEFAULT_RISK } from '@/lib/strategies';
 import { runBacktest, BacktestResult, BacktestConfig } from '@/lib/backtestEngine';
-import { ChevronDown, ChevronRight, Play, Trash2, BarChart3, Layers } from 'lucide-react';
+import { optimize, OptResult } from '@/lib/optimizer';
+import { ChevronDown, ChevronRight, Play, Trash2, BarChart3, Layers, Search } from 'lucide-react';
 
 function EquityCurve({ data, color = '#10b981', height = 200, compareData }: {
   data: { time: number; equity: number }[]; color?: string; height?: number;
@@ -101,6 +102,78 @@ function TradeTable({ trades }: { trades: BacktestResult['trades'] }) {
   );
 }
 
+function DrawdownChart({ data }: { data: { time: number; equity: number }[] }) {
+  if (data.length < 2) return null;
+  const drawdowns: number[] = [];
+  let peak = data[0].equity;
+  for (const pt of data) {
+    if (pt.equity > peak) peak = pt.equity;
+    drawdowns.push(((pt.equity - peak) / peak) * 100);
+  }
+  const minDD = Math.min(...drawdowns);
+  if (minDD >= 0) return null;
+  const w = 800, h = 100;
+  const toPath = drawdowns.map((dd, i) => {
+    const x = (i / (drawdowns.length - 1)) * w;
+    const y = (dd / minDD) * (h - 10);
+    return `${i === 0 ? 'M' : 'L'}${x},${y}`;
+  }).join(' ');
+  return (
+    <div className="w-full overflow-hidden">
+      <svg viewBox={`0 0 ${w} ${h}`} className="w-full" preserveAspectRatio="none">
+        <line x1="0" y1="0" x2={w} y2="0" stroke="#374151" strokeWidth="1" />
+        <text x="5" y="12" fill="#6b7280" fontSize="9">0%</text>
+        <text x="5" y={h - 4} fill="#6b7280" fontSize="9">{minDD.toFixed(1)}%</text>
+        <defs>
+          <linearGradient id="ddGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#ef4444" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#ef4444" stopOpacity="0.05" />
+          </linearGradient>
+        </defs>
+        <path d={`${toPath} L${w},0 L0,0 Z`} fill="url(#ddGrad)" />
+        <path d={toPath} fill="none" stroke="#ef4444" strokeWidth="1.5" />
+      </svg>
+    </div>
+  );
+}
+
+function TradeScatter({ trades }: { trades: BacktestResult['trades'] }) {
+  if (trades.length === 0) return null;
+  const maxAbs = Math.max(...trades.map(t => Math.abs(t.pnl)), 1);
+  const w = 800, h = 150;
+  const midY = h / 2;
+  return (
+    <div className="w-full overflow-hidden">
+      <svg viewBox={`0 0 ${w} ${h}`} className="w-full" preserveAspectRatio="none">
+        <line x1="0" y1={midY} x2={w} y2={midY} stroke="#374151" strokeWidth="1" strokeDasharray="4,4" />
+        <text x="5" y={midY - 4} fill="#6b7280" fontSize="9">$0</text>
+        {trades.map((t, i) => {
+          const x = (i / Math.max(trades.length - 1, 1)) * (w - 20) + 10;
+          const y = midY - (t.pnl / maxAbs) * (midY - 10);
+          return (
+            <circle key={i} cx={x} cy={y} r="3"
+              fill={t.pnl > 0 ? '#10b981' : '#ef4444'} opacity="0.7" />
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+function calcScore(r: BacktestResult): number {
+  let score = 0;
+  if (r.sharpeRatio > 2) score += 40;
+  else if (r.sharpeRatio > 1) score += 25;
+  else if (r.sharpeRatio > 0) score += 10;
+  if (r.winRate > 60) score += 25;
+  else if (r.winRate > 50) score += 15;
+  if (r.profitFactor > 2) score += 25;
+  else if (r.profitFactor > 1.5) score += 15;
+  if (r.maxDrawdownPercent < 5) score += 25;
+  else if (r.maxDrawdownPercent < 10) score += 15;
+  return Math.min(score, 100);
+}
+
 function CompareTable({ results }: { results: BacktestResult[] }) {
   if (results.length < 2) return null;
   const colors = ['#10b981', '#3b82f6', '#f59e0b'];
@@ -143,6 +216,9 @@ export default function StrategyPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showCode, setShowCode] = useState(false);
+  const [optimizing, setOptimizing] = useState(false);
+  const [optProgress, setOptProgress] = useState({ current: 0, total: 0 });
+  const [optResults, setOptResults] = useState<OptResult[]>([]);
 
   const handleSelect = (id: string) => {
     setSelectedId(id);
@@ -160,6 +236,17 @@ export default function StrategyPage() {
     } catch (e: any) { setError(e.message || '回测失败'); }
     setLoading(false);
   }, [selectedId, params, symbol, timeframe, periodDays, capital, feeRate, slippage, stopLoss, takeProfit, maxPosition]);
+
+  const handleOptimize = useCallback(async () => {
+    setOptimizing(true); setOptResults([]);
+    try {
+      const baseConfig = { symbol, timeframe, periodDays, initialCapital: capital,
+        feeRate: feeRate / 100, slippage: slippage / 100, stopLoss, takeProfit, maxPosition };
+      const top = await optimize(selectedId, baseConfig, (c, t) => setOptProgress({ current: c, total: t }));
+      setOptResults(top);
+    } catch {}
+    setOptimizing(false);
+  }, [selectedId, symbol, timeframe, periodDays, capital, feeRate, slippage, stopLoss, takeProfit, maxPosition]);
 
   const latest = results.length > 0 ? results[results.length - 1] : null;
   const colors = ['#10b981', '#3b82f6', '#f59e0b'];
@@ -252,6 +339,91 @@ export default function StrategyPage() {
             </button>
             {results.length > 0 && results.length < 3 && <p className="text-[10px] text-gray-600 text-center">切换策略再运行可对比（最多3个）</p>}
             {error && <p className="text-xs text-red-400 text-center">{error}</p>}
+
+            <button onClick={handleOptimize} disabled={optimizing || loading}
+              className={`w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition ${optimizing ? 'bg-gray-800 text-gray-500 cursor-wait' : 'bg-violet-600 hover:bg-violet-500 text-white'}`}>
+              {optimizing ? <><div className="w-4 h-4 border-2 border-gray-600 border-t-white rounded-full animate-spin" /> 寻参中 {optProgress.current}/{optProgress.total}</> : <><Search className="w-4 h-4" /> 🔍 自动寻参</>}
+            </button>
+            {optimizing && optProgress.total > 0 && (
+              <div className="w-full bg-gray-800 rounded-full h-1.5">
+                <div className="bg-violet-500 h-1.5 rounded-full transition-all" style={{ width: `${(optProgress.current / optProgress.total) * 100}%` }} />
+              </div>
+            )}
+            {optResults.length > 0 && (
+              <div className="bg-gray-900/30 border border-violet-800/50 rounded-xl p-4">
+                <div className="text-xs text-violet-400 font-medium mb-3">🏆 Top 5 参数组合（按夏普排序）</div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead><tr className="text-gray-500 border-b border-gray-800">
+                      <th className="text-left py-1.5 px-2">#</th>
+                      <th className="text-left py-1.5 px-2">参数</th>
+                      <th className="text-right py-1.5 px-2">收益%</th>
+                      <th className="text-right py-1.5 px-2">胜率</th>
+                      <th className="text-right py-1.5 px-2">夏普</th>
+                      <th className="text-right py-1.5 px-2">回撤</th>
+                      <th className="text-right py-1.5 px-2"></th>
+                    </tr></thead>
+                    <tbody>{optResults.map((o, i) => (
+                      <tr key={i} className="border-b border-gray-800/50 hover:bg-violet-500/5">
+                        <td className="py-1.5 px-2 text-gray-400">{i + 1}</td>
+                        <td className="py-1.5 px-2 font-mono text-gray-300 text-[10px]">{Object.entries(o.params).map(([k,v]) => `${k}=${v}`).join(' ')}</td>
+                        <td className={`py-1.5 px-2 text-right font-mono ${o.returnPct > 0 ? 'text-green-400' : 'text-red-400'}`}>{o.returnPct > 0 ? '+' : ''}{o.returnPct.toFixed(1)}%</td>
+                        <td className="py-1.5 px-2 text-right font-mono text-gray-300">{o.winRate.toFixed(1)}%</td>
+                        <td className="py-1.5 px-2 text-right font-mono text-violet-400">{o.sharpe.toFixed(2)}</td>
+                        <td className="py-1.5 px-2 text-right font-mono text-red-400">{o.maxDD.toFixed(1)}%</td>
+                        <td className="py-1.5 px-2 text-right">
+                          <button onClick={() => { setParams(o.params); setOptResults([]); }}
+                            className="text-[10px] text-violet-400 hover:text-violet-300">应用</button>
+                        </td>
+                      </tr>
+                    ))}</tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            <button onClick={handleOptimize} disabled={optimizing || loading}
+              className={`w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition ${optimizing ? 'bg-gray-800 text-gray-500 cursor-wait' : 'bg-violet-700 hover:bg-violet-600 text-white'}`}>
+              {optimizing
+                ? <><div className="w-4 h-4 border-2 border-gray-600 border-t-violet-400 rounded-full animate-spin" /> 寻参中…</>
+                : <><Search className="w-4 h-4" /> 🔍 自动寻参</>}
+            </button>
+            {optimizing && optProgress.total > 0 && (
+              <div className="space-y-1">
+                <div className="flex justify-between text-[10px] text-gray-500"><span>测试参数组合</span><span>{optProgress.current}/{optProgress.total}</span></div>
+                <div className="w-full bg-gray-800 rounded-full h-1.5"><div className="bg-violet-500 h-1.5 rounded-full transition-all" style={{width: `${(optProgress.current / optProgress.total) * 100}%`}} /></div>
+              </div>
+            )}
+            {optResults.length > 0 && (
+              <div className="bg-gray-900/30 border border-violet-800/40 rounded-xl p-3">
+                <div className="text-xs text-gray-400 font-medium mb-2">🏆 Top 5 最优参数</div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead><tr className="text-gray-600 border-b border-gray-800">
+                      <th className="text-left py-1 pr-2">#</th>
+                      <th className="text-right py-1 pr-2">夏普</th>
+                      <th className="text-right py-1 pr-2">收益%</th>
+                      <th className="text-right py-1 pr-2">胜率</th>
+                      <th className="text-right py-1">回撤</th>
+                      <th className="py-1"></th>
+                    </tr></thead>
+                    <tbody>{optResults.map((r, i) => (
+                      <tr key={i} className="border-b border-gray-800/40 hover:bg-gray-800/30">
+                        <td className="py-1 pr-2 text-gray-500">{i + 1}</td>
+                        <td className="py-1 pr-2 text-right font-mono text-violet-300">{r.sharpe.toFixed(2)}</td>
+                        <td className={`py-1 pr-2 text-right font-mono ${r.returnPct > 0 ? 'text-green-400' : 'text-red-400'}`}>{r.returnPct > 0 ? '+' : ''}{r.returnPct.toFixed(1)}%</td>
+                        <td className="py-1 pr-2 text-right font-mono text-gray-300">{r.winRate.toFixed(0)}%</td>
+                        <td className="py-1 text-right font-mono text-red-400">{r.maxDD.toFixed(1)}%</td>
+                        <td className="py-1 pl-2">
+                          <button onClick={() => setParams(r.params)} className="text-[10px] text-violet-400 hover:text-violet-300 border border-violet-700/50 rounded px-1.5 py-0.5">应用</button>
+                        </td>
+                      </tr>
+                    ))}</tbody>
+                  </table>
+                </div>
+                <div className="mt-2 text-[10px] text-gray-600">点击"应用"将最优参数填入滑块</div>
+              </div>
+            )}
           </div>
 
           {/* Right: Results */}
@@ -262,7 +434,8 @@ export default function StrategyPage() {
               </div>
             )}
             {latest && (<>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-4 gap-2">
+                {(() => { const s = calcScore(latest); const color = s >= 61 ? 'text-green-400' : s >= 31 ? 'text-yellow-400' : 'text-red-400'; const grade = s >= 80 ? 'S级' : s >= 61 ? 'A级' : s >= 31 ? 'B级' : 'C级'; return <StatCard label="综合评分" value={`${s}`} sub={grade} color={color} />; })()}
                 <StatCard label="总收益" value={`${latest.totalReturnPercent > 0 ? '+' : ''}${latest.totalReturnPercent.toFixed(2)}%`} sub={`$${latest.totalReturn.toFixed(0)}`} color={latest.totalReturnPercent > 0 ? 'text-green-400' : 'text-red-400'} />
                 <StatCard label="胜率" value={`${latest.winRate.toFixed(1)}%`} sub={`${latest.winTrades}胜 ${latest.lossTrades}负`} color={latest.winRate >= 50 ? 'text-green-400' : 'text-yellow-400'} />
                 <StatCard label="盈亏比" value={latest.profitFactor === Infinity ? '∞' : latest.profitFactor.toFixed(2)} color={latest.profitFactor >= 1.5 ? 'text-green-400' : latest.profitFactor >= 1 ? 'text-yellow-400' : 'text-red-400'} />
@@ -277,9 +450,19 @@ export default function StrategyPage() {
                   compareData={results.slice(0,-1).map((r,i) => ({ data: r.equityCurve, color: colors[i], name: STRATEGY_TEMPLATES.find(t => t.id === r.strategyName)?.name || r.strategyName }))} />
               </div>
 
+              <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">
+                <div className="text-xs text-gray-500 font-medium mb-3">回撤水下图</div>
+                <DrawdownChart data={latest.equityCurve} />
+              </div>
+
               {results.length >= 2 && <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4"><div className="text-xs text-gray-500 font-medium mb-3">策略对比</div><CompareTable results={results} /></div>}
 
               {latest.monthlyReturns.length > 0 && <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4"><div className="text-xs text-gray-500 font-medium mb-3">月度收益</div><MonthlyHeatmap data={latest.monthlyReturns} /></div>}
+
+              <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">
+                <div className="text-xs text-gray-500 font-medium mb-3">盈亏散点图</div>
+                <TradeScatter trades={latest.trades} />
+              </div>
 
               <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4"><TradeTable trades={latest.trades} /></div>
             </>)}
