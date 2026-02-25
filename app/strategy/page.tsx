@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import { STRATEGY_TEMPLATES, TIMEFRAMES, SYMBOLS, BACKTEST_PERIODS, DEFAULT_RISK } from '@/lib/strategies';
 import { runBacktest, BacktestResult, BacktestConfig } from '@/lib/backtestEngine';
 import { optimize, OptResult } from '@/lib/optimizer';
+import Paywall from '@/components/Paywall';
 import { ChevronDown, ChevronRight, Play, Trash2, BarChart3, Layers, Search } from 'lucide-react';
 
 function EquityCurve({ data, color = '#10b981', height = 200, compareData }: {
@@ -340,6 +341,7 @@ export default function StrategyPage() {
             {results.length > 0 && results.length < 3 && <p className="text-[10px] text-gray-600 text-center">切换策略再运行可对比（最多3个）</p>}
             {error && <p className="text-xs text-red-400 text-center">{error}</p>}
 
+            <Paywall feature="参数优化器 — 自动寻找最优策略参数">
             <button onClick={handleOptimize} disabled={optimizing || loading}
               className={`w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition ${optimizing ? 'bg-gray-800 text-gray-500 cursor-wait' : 'bg-violet-600 hover:bg-violet-500 text-white'}`}>
               {optimizing ? <><div className="w-4 h-4 border-2 border-gray-600 border-t-white rounded-full animate-spin" /> 寻参中 {optProgress.current}/{optProgress.total}</> : <><Search className="w-4 h-4" /> 🔍 自动寻参</>}
@@ -381,6 +383,7 @@ export default function StrategyPage() {
                 </div>
               </div>
             )}
+            </Paywall>
 
             <button onClick={handleOptimize} disabled={optimizing || loading}
               className={`w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition ${optimizing ? 'bg-gray-800 text-gray-500 cursor-wait' : 'bg-violet-700 hover:bg-violet-600 text-white'}`}>
