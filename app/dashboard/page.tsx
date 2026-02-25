@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { ITCIndicators, getRiskColor, getRiskBgColor, getRiskLabel, getRiskStrokeColor, type ITCIndicator } from '@/lib/mockData';
+import { getRiskColor, getRiskBgColor, getRiskLabel, getRiskStrokeColor, type ITCIndicator } from '@/lib/mockData';
+import { useITCData } from '@/lib/useITCData';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Area, AreaChart, ReferenceLine } from 'recharts';
-import { Activity, TrendingUp, TrendingDown, X, Maximize2, BarChart3, Globe, Link2 } from 'lucide-react';
+import { Activity, TrendingUp, TrendingDown, X, Maximize2, BarChart3, Globe, Link2, Wifi, WifiOff } from 'lucide-react';
 
 function DetailModal({ indicator, onClose }: { indicator: ITCIndicator; onClose: () => void }) {
   const [range, setRange] = useState<30 | 90 | 180>(90);
@@ -115,6 +116,7 @@ const CATEGORY_TABS = [
 export default function DashboardPage() {
   const [selected, setSelected] = useState<ITCIndicator | null>(null);
   const [category, setCategory] = useState<string>('all');
+  const { indicators: ITCIndicators, prices, loading: dataLoading, error: dataError, isLive } = useITCData();
 
   const filtered = category === 'all' ? ITCIndicators : ITCIndicators.filter(i => i.category === category);
 
@@ -124,7 +126,11 @@ export default function DashboardPage() {
       <div className="flex items-center justify-between mb-5">
         <div>
           <h1 className="text-lg font-semibold text-gray-100">市场仪表盘</h1>
-          <p className="text-xs text-gray-500 mt-0.5">{ITCIndicators.length} 个指标 · 点击查看详情</p>
+          <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
+            {ITCIndicators.length} 个指标 · 点击查看详情
+            {isLive ? <span className="inline-flex items-center gap-1 text-emerald-400"><Wifi className="w-3 h-3" />实时</span> : <span className="inline-flex items-center gap-1 text-gray-600"><WifiOff className="w-3 h-3" />模拟</span>}
+            {prices && <span className="text-gray-500">BTC ${prices.BTC.toLocaleString()} · ETH ${prices.ETH.toLocaleString()}</span>}
+          </p>
         </div>
         <div className="flex gap-1">
           {CATEGORY_TABS.map(({ id, label, icon: Icon }) => (
