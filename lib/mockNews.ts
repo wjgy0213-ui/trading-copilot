@@ -1,203 +1,144 @@
-// 模拟新闻数据
-
-export type NewsCategory = 'market' | 'macro' | 'onchain' | 'hot';
-export type NewsSentiment = 'bullish' | 'bearish' | 'neutral';
+export type NewsCategory = 'market' | 'macro' | 'onchain' | 'trending';
+export type Sentiment = 'bullish' | 'bearish' | 'neutral';
 
 export interface NewsItem {
   id: string;
   title: string;
   summary: string;
   category: NewsCategory;
-  sentiment: NewsSentiment;
-  timestamp: number;
+  sentiment: Sentiment;
   source: string;
-  url?: string;
+  timestamp: number;
+  impact: 'high' | 'medium' | 'low';
+  tags?: string[];
 }
 
-export const NEWS_CATEGORIES = [
-  { id: 'market' as NewsCategory, name: '市场数据', nameEn: 'Market Data' },
-  { id: 'macro' as NewsCategory, name: '宏观政策', nameEn: 'Macro Policy' },
-  { id: 'onchain' as NewsCategory, name: '链上动态', nameEn: 'On-chain Analytics' },
-  { id: 'hot' as NewsCategory, name: '热门话题', nameEn: 'Hot Topics' },
+export const NEWS_CATEGORIES: { id: NewsCategory | 'all'; label: string; labelEn: string; icon: string }[] = [
+  { id: 'all', label: '全部', labelEn: 'All', icon: '◎' },
+  { id: 'market', label: '市场数据', labelEn: 'Market', icon: '◈' },
+  { id: 'macro', label: '宏观政策', labelEn: 'Macro', icon: '◆' },
+  { id: 'onchain', label: '链上动态', labelEn: 'On-chain', icon: '◇' },
+  { id: 'trending', label: '热门话题', labelEn: 'Trending', icon: '◉' },
 ];
 
-export function getSentimentColor(sentiment: NewsSentiment): string {
-  switch (sentiment) {
-    case 'bullish':
-      return 'text-green-400';
-    case 'bearish':
-      return 'text-red-400';
-    case 'neutral':
-      return 'text-gray-400';
-  }
-}
+const now = Date.now();
+const h = 3600000;
 
-export function getSentimentBgColor(sentiment: NewsSentiment): string {
-  switch (sentiment) {
-    case 'bullish':
-      return 'bg-green-500/10 border-green-500/30';
-    case 'bearish':
-      return 'bg-red-500/10 border-red-500/30';
-    case 'neutral':
-      return 'bg-gray-500/10 border-gray-500/30';
-  }
-}
-
-export function getSentimentLabel(sentiment: NewsSentiment): string {
-  switch (sentiment) {
-    case 'bullish':
-      return '利好';
-    case 'bearish':
-      return '利空';
-    case 'neutral':
-      return '中性';
-  }
-}
-
-// 模拟新闻数据
 export const MOCK_NEWS: NewsItem[] = [
-  // 市场数据
   {
-    id: 'news-1',
-    title: 'BTC突破$68,000，创近期新高',
-    summary: '比特币今日凌晨突破$68,000关口，24小时涨幅达到8.5%。分析师认为机构资金持续流入是主要推动力。',
-    category: 'market',
-    sentiment: 'bullish',
-    timestamp: Date.now() - 2 * 60 * 60 * 1000,
-    source: '金色财经',
+    id: '1', title: '最高法院驳回特朗普关税政策，美元空头创14年新高',
+    summary: '美国或需退还1750亿美元关税。基金经理做空美元仓位创2012年以来新高。弱美元环境历史上利好风险资产和加密货币。',
+    category: 'macro', sentiment: 'bullish', source: '金色财经', timestamp: now - 2*h, impact: 'high',
+    tags: ['美元', '关税', '宏观'],
   },
   {
-    id: 'news-2',
-    title: 'ETH Gas费降至2023年来新低',
-    summary: '随着Layer2采用率提升，以太坊主网Gas费降至平均5 Gwei，创下2023年以来最低水平。链上活跃度保持稳定。',
-    category: 'market',
-    sentiment: 'bullish',
-    timestamp: Date.now() - 4 * 60 * 60 * 1000,
-    source: 'CoinDesk',
+    id: '2', title: 'BTC ETF 昨日净流出 $2.038亿',
+    summary: '机构资金连续第5日流出。Grayscale GBTC流出$1.2亿，BlackRock IBIT微幅流入$0.3亿。历史上ETF连续流出5日以上后往往迎来反弹。',
+    category: 'onchain', sentiment: 'bearish', source: 'Bloomberg', timestamp: now - 4*h, impact: 'high',
+    tags: ['ETF', '机构', 'BTC'],
   },
   {
-    id: 'news-3',
-    title: '恐慌贪婪指数达到72，市场情绪转向贪婪',
-    summary: '加密市场恐慌贪婪指数从昨日的58跳升至72，进入"贪婪"区间。历史数据显示该水平往往伴随短期调整风险。',
-    category: 'market',
-    sentiment: 'neutral',
-    timestamp: Date.now() - 6 * 60 * 60 * 1000,
-    source: 'Alternative.me',
-  },
-
-  // 宏观政策
-  {
-    id: 'news-4',
-    title: '美联储维持利率不变，鲍威尔称通胀仍需关注',
-    summary: '美联储FOMC会议决定维持联邦基金利率在5.25%-5.50%不变。鲍威尔在发布会上表示通胀虽有所缓解但仍高于目标水平。',
-    category: 'macro',
-    sentiment: 'neutral',
-    timestamp: Date.now() - 8 * 60 * 60 * 1000,
-    source: 'FED',
+    id: '3', title: 'Fear & Greed 指数维持 8 — 连续31天极度恐惧',
+    summary: '接近历史极值。2022年6月曾触及6（BTC $17,600），当前BTC $63K+恐惧8=前所未有的价格-情绪背离。ITC Risk仅0.31（低风险买入区）。',
+    category: 'market', sentiment: 'bullish', source: 'Alternative.me', timestamp: now - 5*h, impact: 'high',
+    tags: ['情绪', 'Fear&Greed', '极端'],
   },
   {
-    id: 'news-5',
-    title: '香港证监会批准首批比特币现货ETF',
-    summary: '香港证监会今日宣布批准3家机构的比特币现货ETF申请，预计下月正式上市交易。这是亚洲首批获批的比特币现货ETF产品。',
-    category: 'macro',
-    sentiment: 'bullish',
-    timestamp: Date.now() - 12 * 60 * 60 * 1000,
-    source: 'SFC',
+    id: '4', title: 'Vitalik 2月已售出 $2174万 ETH',
+    summary: 'V神本月持续向交易所转入ETH。其称资金用于支持以太坊生态项目，但短期对ETH价格构成约0.5%的卖压。',
+    category: 'onchain', sentiment: 'bearish', source: 'Etherscan', timestamp: now - 6*h, impact: 'medium',
+    tags: ['ETH', 'Vitalik', '抛售'],
   },
   {
-    id: 'news-6',
-    title: 'SEC再次推迟以太坊现货ETF决议',
-    summary: '美国SEC将VanEck和ARK的以太坊现货ETF决议推迟至5月底。市场分析师认为批准概率低于50%。',
-    category: 'macro',
-    sentiment: 'bearish',
-    timestamp: Date.now() - 18 * 60 * 60 * 1000,
-    source: 'SEC',
-  },
-
-  // 链上动态
-  {
-    id: 'news-7',
-    title: '巨鲸地址24小时增持15,000枚BTC',
-    summary: '链上数据显示，过去24小时内多个巨鲸地址累计增持15,000枚BTC，价值超过10亿美元。资金主要来自交易所提币。',
-    category: 'onchain',
-    sentiment: 'bullish',
-    timestamp: Date.now() - 5 * 60 * 60 * 1000,
-    source: 'CryptoQuant',
+    id: '5', title: 'Galaxy CEO: 量子计算对BTC不构成重大威胁',
+    summary: 'Mike Novogratz回应市场FUD：当前量子计算能力距离破解SHA-256还有数十年。IBM量子计算概念股盘前齐升，但与加密安全无关。',
+    category: 'trending', sentiment: 'neutral', source: 'Galaxy Digital', timestamp: now - 7*h, impact: 'medium',
+    tags: ['量子计算', 'FUD', '安全'],
   },
   {
-    id: 'news-8',
-    title: 'Coinbase净流出创单日新高',
-    summary: '今日Coinbase净流出达到8,500枚BTC，创下单日新高。分析师认为这可能是机构客户转向冷钱包存储的信号。',
-    category: 'onchain',
-    sentiment: 'bullish',
-    timestamp: Date.now() - 10 * 60 * 60 * 1000,
-    source: 'Glassnode',
+    id: '6', title: 'Coinbase Q4收入下滑20%，但逆势买入400枚BTC',
+    summary: '交易收入跌破10亿美元大关。CEO Brian Armstrong宣布公司资产负债表增持BTC，"我们对长期前景非常有信心"。机构底部吸筹信号。',
+    category: 'market', sentiment: 'neutral', source: 'Coinbase', timestamp: now - 8*h, impact: 'medium',
+    tags: ['Coinbase', '财报', '机构'],
   },
   {
-    id: 'news-9',
-    title: 'DeFi锁仓量突破$600亿',
-    summary: 'DeFi协议总锁仓量（TVL）突破$600亿美元，较上月增长18%。Aave和Lido领涨，分别增长25%和32%。',
-    category: 'onchain',
-    sentiment: 'bullish',
-    timestamp: Date.now() - 14 * 60 * 60 * 1000,
-    source: 'DefiLlama',
-  },
-
-  // 热门话题
-  {
-    id: 'news-10',
-    title: 'MicroStrategy再次购买5,000枚BTC',
-    summary: 'Michael Saylor宣布MicroStrategy以平均$67,500的价格购买5,000枚BTC，公司持仓总量突破200,000枚。',
-    category: 'hot',
-    sentiment: 'bullish',
-    timestamp: Date.now() - 1 * 60 * 60 * 1000,
-    source: 'Twitter',
+    id: '7', title: '在岸人民币升穿6.89关口，美元指数跌至98.5',
+    summary: '美联储降息预期叠加美元走弱。DXY年内下跌8%。历史数据：DXY跌破100时BTC平均上涨45%（6个月）。',
+    category: 'macro', sentiment: 'bullish', source: 'Reuters', timestamp: now - 9*h, impact: 'medium',
+    tags: ['人民币', '美元', 'DXY'],
   },
   {
-    id: 'news-11',
-    title: 'Vitalik提出以太坊新扩容方案',
-    summary: 'Vitalik Buterin在最新博文中提出以太坊新扩容方案"The Surge 2.0"，目标是将TPS提升至100,000+。',
-    category: 'hot',
-    sentiment: 'bullish',
-    timestamp: Date.now() - 7 * 60 * 60 * 1000,
-    source: 'Ethereum Blog',
+    id: '8', title: '币安Alpha上线代币化股票：AMZN、META、AAPL、GOOG',
+    summary: '传统资产代币化加速。用户可用USDT直接交易科技巨头股票token。RWA赛道总TVL突破$120亿。',
+    category: 'trending', sentiment: 'bullish', source: '币安', timestamp: now - 10*h, impact: 'medium',
+    tags: ['币安', 'RWA', '代币化'],
   },
   {
-    id: 'news-12',
-    title: '币安宣布下架多个隐私币',
-    summary: '币安发布公告称将于下月15日下架Monero、Zcash等隐私币。这是继欧洲交易所后又一主流平台采取的监管应对措施。',
-    category: 'hot',
-    sentiment: 'bearish',
-    timestamp: Date.now() - 16 * 60 * 60 * 1000,
-    source: 'Binance',
+    id: '9', title: 'Missouri州推进BTC储备法案',
+    summary: '继德克萨斯、怀俄明、亚利桑那之后，Missouri成为第4个推进州级BTC储备的州。美国州级采用趋势加速。',
+    category: 'macro', sentiment: 'bullish', source: 'CoinDesk', timestamp: now - 12*h, impact: 'medium',
+    tags: ['政策', 'BTC储备', '美国'],
   },
   {
-    id: 'news-13',
-    title: 'Solana网络出现短暂宕机',
-    summary: 'Solana主网今日凌晨出现约2小时宕机，验证节点已完成重启。这是今年第3次网络中断事件。',
-    category: 'hot',
-    sentiment: 'bearish',
-    timestamp: Date.now() - 20 * 60 * 60 * 1000,
-    source: 'Solana Status',
+    id: '10', title: 'Meta宣布以太坊稳定币支付集成',
+    summary: 'WhatsApp和Instagram将支持USDC转账。30亿+用户基础对ETH生态和稳定币采用是重大催化剂。',
+    category: 'onchain', sentiment: 'bullish', source: 'Meta', timestamp: now - 14*h, impact: 'high',
+    tags: ['Meta', 'USDC', '稳定币'],
   },
   {
-    id: 'news-14',
-    title: 'OpenAI考虑推出加密货币支付',
-    summary: 'Sam Altman在采访中透露OpenAI正在评估支持加密货币支付的可行性，优先考虑稳定币和BTC。',
-    category: 'hot',
-    sentiment: 'bullish',
-    timestamp: Date.now() - 22 * 60 * 60 * 1000,
-    source: 'Bloomberg',
+    id: '11', title: 'DeFi TVL 跌至$580亿，较高点回落42%',
+    summary: 'Aave、Lido、MakerDAO领跌。用户持续将资金从DeFi协议中撤出，转入稳定币或现金等待抄底。',
+    category: 'onchain', sentiment: 'bearish', source: 'DefiLlama', timestamp: now - 16*h, impact: 'medium',
+    tags: ['DeFi', 'TVL', '资金外流'],
+  },
+  {
+    id: '12', title: 'BTC全网算力创新高 820 EH/s',
+    summary: '尽管价格下跌，矿工算力持续增长。算力创新高通常是长期看涨信号 — 矿工用行动投票对未来价格有信心。',
+    category: 'onchain', sentiment: 'bullish', source: 'Glassnode', timestamp: now - 18*h, impact: 'low',
+    tags: ['算力', '矿工', 'BTC'],
+  },
+  {
+    id: '13', title: 'Anthropic指控中国模型"蒸馏攻击"引爆AI圈争议',
+    summary: 'Anthropic博文称部分中国AI公司通过API蒸馏复制Claude能力。IBM股价因AI担忧暴跌11%。AI行业信任危机升级。',
+    category: 'trending', sentiment: 'neutral', source: 'Anthropic', timestamp: now - 20*h, impact: 'medium',
+    tags: ['AI', 'Anthropic', '中国'],
+  },
+  {
+    id: '14', title: '阿联酋$16B银行探索BTC投资',
+    summary: '中东主权财富基金和银行正在评估将BTC纳入投资组合。阿布扎比投资局(ADIA)据称已完成BTC配置框架。',
+    category: 'macro', sentiment: 'bullish', source: 'Financial Times', timestamp: now - 22*h, impact: 'high',
+    tags: ['中东', '机构', '主权基金'],
+  },
+  {
+    id: '15', title: 'Lightning Network月交易量首破$10亿',
+    summary: 'LN通道数量突破80,000。跨境支付和小额支付用例爆发，尤其在拉丁美洲和非洲地区。',
+    category: 'onchain', sentiment: 'bullish', source: 'The Block', timestamp: now - 24*h, impact: 'low',
+    tags: ['Lightning', 'BTC', '支付'],
   },
 ];
 
-// 按分类筛选新闻
+export function getSentimentColor(sentiment: Sentiment): string {
+  return { bullish: 'text-emerald-400', bearish: 'text-red-400', neutral: 'text-gray-400' }[sentiment];
+}
+
+export function getSentimentBgColor(sentiment: Sentiment): string {
+  return { bullish: 'bg-emerald-500/10 text-emerald-400', bearish: 'bg-red-500/10 text-red-400', neutral: 'bg-gray-500/10 text-gray-400' }[sentiment];
+}
+
+export function getSentimentLabel(sentiment: Sentiment, locale: 'zh' | 'en' = 'zh'): string {
+  if (locale === 'zh') return { bullish: '利好', bearish: '利空', neutral: '中性' }[sentiment];
+  return { bullish: 'Bullish', bearish: 'Bearish', neutral: 'Neutral' }[sentiment];
+}
+
 export function getNewsByCategory(category?: NewsCategory): NewsItem[] {
   if (!category) return MOCK_NEWS;
-  return MOCK_NEWS.filter((news) => news.category === category);
+  return MOCK_NEWS.filter(n => n.category === category);
 }
 
-// 按时间排序
-export function sortNewsByTime(news: NewsItem[]): NewsItem[] {
-  return [...news].sort((a, b) => b.timestamp - a.timestamp);
+export function getImpactColor(impact: string): string {
+  return { high: 'text-red-400', medium: 'text-amber-400', low: 'text-gray-500' }[impact] || 'text-gray-500';
+}
+
+export function getImpactLabel(impact: string): string {
+  return { high: '高影响', medium: '中影响', low: '低影响' }[impact] || impact;
 }

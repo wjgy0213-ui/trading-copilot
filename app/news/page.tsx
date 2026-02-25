@@ -1,133 +1,147 @@
 'use client';
 
 import { useState } from 'react';
-import { MOCK_NEWS, NEWS_CATEGORIES, NewsCategory, getSentimentColor, getSentimentBgColor, getSentimentLabel, getNewsByCategory } from '@/lib/mockNews';
-import { Newspaper, TrendingUp, Clock } from 'lucide-react';
+import { MOCK_NEWS, NEWS_CATEGORIES, type NewsCategory, getSentimentBgColor, getSentimentLabel, getImpactColor, getImpactLabel } from '@/lib/mockNews';
+import { Clock, Flame, Filter, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+
+function formatTimeAgo(timestamp: number): string {
+  const diff = Date.now() - timestamp;
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${mins}分钟前`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}小时前`;
+  return `${Math.floor(hours / 24)}天前`;
+}
+
+const SentimentIcon = ({ sentiment }: { sentiment: string }) => {
+  if (sentiment === 'bullish') return <TrendingUp className="w-3 h-3" />;
+  if (sentiment === 'bearish') return <TrendingDown className="w-3 h-3" />;
+  return <Minus className="w-3 h-3" />;
+};
 
 export default function NewsPage() {
-  const [selectedCategory, setSelectedCategory] = useState<NewsCategory | undefined>(undefined);
+  const [category, setCategory] = useState<NewsCategory | undefined>(undefined);
+  const [sentimentFilter, setSentimentFilter] = useState<string>('all');
 
-  const filteredNews = getNewsByCategory(selectedCategory);
+  let filtered = category ? MOCK_NEWS.filter(n => n.category === category) : MOCK_NEWS;
+  if (sentimentFilter !== 'all') filtered = filtered.filter(n => n.sentiment === sentimentFilter);
 
-  const formatTimeAgo = (timestamp: number) => {
-    const now = Date.now();
-    const diff = now - timestamp;
-    const hours = Math.floor(diff / (60 * 60 * 1000));
-    const minutes = Math.floor(diff / (60 * 1000));
-
-    if (hours > 24) {
-      const days = Math.floor(hours / 24);
-      return `${days}天前`;
-    } else if (hours > 0) {
-      return `${hours}小时前`;
-    } else {
-      return `${minutes}分钟前`;
-    }
-  };
+  const bullishCount = MOCK_NEWS.filter(n => n.sentiment === 'bullish').length;
+  const bearishCount = MOCK_NEWS.filter(n => n.sentiment === 'bearish').length;
+  const highImpact = MOCK_NEWS.filter(n => n.impact === 'high');
 
   return (
-    <div className="min-h-screen bg-gray-950 py-8 px-4">
-      <div className="container mx-auto max-w-6xl">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
-            加密资讯
-          </h1>
-          <p className="text-gray-400">实时追踪市场动态，把握交易机会</p>
+    <div className="max-w-[1400px] mx-auto px-4 py-6">
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h1 className="text-lg font-semibold text-gray-100">市场资讯</h1>
+          <p className="text-xs text-gray-500 mt-0.5">{MOCK_NEWS.length} 条资讯 · 实时更新</p>
         </div>
+      </div>
 
-        {/* Category Filter */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 flex-wrap">
-            <button
-              onClick={() => setSelectedCategory(undefined)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                selectedCategory === undefined
-                  ? 'bg-blue-600/20 border border-blue-500/50 text-blue-400'
-                  : 'bg-gray-800/50 border border-gray-700 text-gray-400 hover:border-gray-600'
-              }`}
-            >
-              全部
-            </button>
-            {NEWS_CATEGORIES.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                  selectedCategory === cat.id
-                    ? 'bg-blue-600/20 border border-blue-500/50 text-blue-400'
-                    : 'bg-gray-800/50 border border-gray-700 text-gray-400 hover:border-gray-600'
-                }`}
-              >
-                {cat.name}
-              </button>
-            ))}
+      {/* Market Sentiment Summary */}
+      <div className="grid grid-cols-3 gap-3 mb-5">
+        <div className="border border-emerald-500/20 bg-emerald-500/5 rounded-lg p-3">
+          <div className="flex items-center gap-1.5 mb-1">
+            <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-xs text-gray-400">利好信号</span>
           </div>
+          <div className="text-2xl font-mono font-bold text-emerald-400">{bullishCount}</div>
         </div>
+        <div className="border border-red-500/20 bg-red-500/5 rounded-lg p-3">
+          <div className="flex items-center gap-1.5 mb-1">
+            <TrendingDown className="w-3.5 h-3.5 text-red-400" />
+            <span className="text-xs text-gray-400">利空信号</span>
+          </div>
+          <div className="text-2xl font-mono font-bold text-red-400">{bearishCount}</div>
+        </div>
+        <div className="border border-amber-500/20 bg-amber-500/5 rounded-lg p-3">
+          <div className="flex items-center gap-1.5 mb-1">
+            <Flame className="w-3.5 h-3.5 text-amber-400" />
+            <span className="text-xs text-gray-400">高影响事件</span>
+          </div>
+          <div className="text-2xl font-mono font-bold text-amber-400">{highImpact.length}</div>
+        </div>
+      </div>
 
-        {/* News Timeline */}
-        <div className="space-y-4">
-          {filteredNews.map((news) => (
-            <div
-              key={news.id}
-              className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all"
-            >
-              <div className="flex items-start gap-4">
-                {/* Sentiment Indicator */}
-                <div className={`w-1 h-full rounded-full ${
-                  news.sentiment === 'bullish' ? 'bg-green-500' : news.sentiment === 'bearish' ? 'bg-red-500' : 'bg-gray-500'
-                }`} />
+      {/* Filters */}
+      <div className="flex items-center gap-4 mb-4 overflow-x-auto pb-1">
+        <div className="flex gap-1">
+          {NEWS_CATEGORIES.map(({ id, label, icon }) => (
+            <button key={id} onClick={() => setCategory(id === 'all' ? undefined : id as NewsCategory)}
+              className={`flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-medium transition-all whitespace-nowrap ${
+                (id === 'all' && !category) || category === id ? 'bg-gray-700 text-white' : 'text-gray-500 hover:bg-gray-800'
+              }`}>
+              <span className="text-[10px]">{icon}</span>{label}
+            </button>
+          ))}
+        </div>
+        <div className="w-px h-5 bg-gray-800" />
+        <div className="flex gap-1">
+          {[
+            { id: 'all', label: '全部' },
+            { id: 'bullish', label: '利好' },
+            { id: 'bearish', label: '利空' },
+          ].map(f => (
+            <button key={f.id} onClick={() => setSentimentFilter(f.id)}
+              className={`px-2 py-1 rounded text-[10px] font-medium transition-all ${
+                sentimentFilter === f.id ? 'bg-gray-700 text-white' : 'text-gray-500 hover:bg-gray-800'
+              }`}>
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
-                <div className="flex-1">
-                  {/* Header */}
-                  <div className="flex items-start justify-between gap-4 mb-3">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold mb-2 leading-tight">{news.title}</h3>
-                      <div className="flex items-center gap-3 flex-wrap">
-                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getSentimentBgColor(news.sentiment)}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${
-                            news.sentiment === 'bullish' ? 'bg-green-400' : news.sentiment === 'bearish' ? 'bg-red-400' : 'bg-gray-400'
-                          }`} />
-                          {getSentimentLabel(news.sentiment)}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {NEWS_CATEGORIES.find(c => c.id === news.category)?.name}
-                        </span>
-                        <span className="text-xs text-gray-600">•</span>
-                        <span className="text-xs text-gray-500">{news.source}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-500 text-sm whitespace-nowrap">
-                      <Clock className="w-4 h-4" />
-                      {formatTimeAgo(news.timestamp)}
-                    </div>
+      {/* News List */}
+      <div className="space-y-2">
+        {filtered.map(item => (
+          <div key={item.id} className="border border-gray-800/50 rounded-lg p-4 bg-gray-900/30 hover:bg-gray-900/60 transition-all group">
+            <div className="flex items-start gap-3">
+              {/* Sentiment dot */}
+              <div className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${
+                item.sentiment === 'bullish' ? 'bg-emerald-400' : item.sentiment === 'bearish' ? 'bg-red-400' : 'bg-gray-500'
+              }`} />
+
+              <div className="flex-1 min-w-0">
+                {/* Title + Impact */}
+                <div className="flex items-start justify-between gap-2 mb-1.5">
+                  <h3 className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors leading-snug">
+                    {item.impact === 'high' && <Flame className="w-3 h-3 text-red-400 inline mr-1 -mt-0.5" />}
+                    {item.title}
+                  </h3>
+                </div>
+
+                {/* Summary */}
+                <p className="text-xs text-gray-500 leading-relaxed mb-2.5">{item.summary}</p>
+
+                {/* Tags */}
+                {item.tags && (
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {item.tags.map(tag => (
+                      <span key={tag} className="text-[9px] px-1.5 py-0.5 rounded bg-gray-800/80 text-gray-400">#{tag}</span>
+                    ))}
                   </div>
+                )}
 
-                  {/* Summary */}
-                  <p className="text-gray-400 text-sm leading-relaxed">{news.summary}</p>
+                {/* Meta */}
+                <div className="flex items-center gap-3 text-[10px]">
+                  <span className={`font-medium px-1.5 py-0.5 rounded ${getSentimentBgColor(item.sentiment)}`}>
+                    <SentimentIcon sentiment={item.sentiment} />
+                  </span>
+                  <span className={`${getImpactColor(item.impact)}`}>{getImpactLabel(item.impact)}</span>
+                  <span className="text-gray-600">{item.source}</span>
+                  <span className="text-gray-600 flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" />{formatTimeAgo(item.timestamp)}</span>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-
-        {/* Info Footer */}
-        <div className="mt-8 p-6 bg-orange-950/20 border border-orange-800/30 rounded-xl">
-          <div className="flex items-start gap-3">
-            <Newspaper className="w-5 h-5 text-orange-400 mt-0.5" />
-            <div>
-              <h4 className="text-sm font-semibold text-orange-400 mb-1">关于资讯来源</h4>
-              <p className="text-sm text-gray-400 leading-relaxed">
-                资讯内容整合自金色财经、CoinDesk、链上数据平台等权威来源。情绪标签由算法自动判断，仅供参考。
-                请结合多方信息独立判断，理性决策。
-              </p>
-              <p className="text-xs text-gray-600 mt-2">
-                * 资讯每小时更新，不构成投资建议
-              </p>
-            </div>
           </div>
-        </div>
+        ))}
       </div>
+
+      {filtered.length === 0 && (
+        <div className="text-center py-16 text-gray-600 text-sm">暂无匹配的资讯</div>
+      )}
     </div>
   );
 }
