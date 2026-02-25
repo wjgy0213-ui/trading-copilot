@@ -21,7 +21,14 @@ export function useSession() {
   const isPro = session?.plan === 'pro' || session?.plan === 'elite';
   const isElite = session?.plan === 'elite';
 
-  return { session, loading, isPro, isElite, refresh: () => {
+  const logout = () => {
+    fetch('/api/auth/logout', { method: 'POST' }).then(() => {
+      setSession(null);
+      window.location.href = '/';
+    });
+  };
+
+  return { session, loading, isPro, isElite, logout, refresh: () => {
     fetch('/api/auth/me').then(r => r.ok ? r.json() : null).then(setSession);
   }};
 }

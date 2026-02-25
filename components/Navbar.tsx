@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, BookOpen, History, Home, Zap, LineChart, TrendingUp, Newspaper, Sparkles, CreditCard } from 'lucide-react';
+import { BarChart3, BookOpen, History, Home, Zap, LineChart, TrendingUp, Newspaper, Sparkles, CreditCard, UserCircle } from 'lucide-react';
 
 const NAV_ITEMS = [
   { href: '/', label: '首页', icon: Home },
@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { href: '/pricing', label: '定价', icon: CreditCard, premium: true },
   { href: '/learn', label: '课程', icon: BookOpen },
   { href: '/history', label: '历史', icon: History },
+  { href: '/account', label: '账户', icon: UserCircle, premium: true },
 ];
 
 export default function Navbar() {
