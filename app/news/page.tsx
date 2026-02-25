@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { MOCK_NEWS, NEWS_CATEGORIES, type NewsCategory, getSentimentBgColor, getSentimentLabel, getImpactColor, getImpactLabel } from '@/lib/mockNews';
-import { Clock, Flame, Filter, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { NEWS_CATEGORIES, type NewsCategory, getSentimentBgColor, getSentimentLabel, getImpactColor, getImpactLabel } from '@/lib/mockNews';
+import { useNewsData } from '@/lib/useNewsData';
+import { Clock, Flame, Filter, TrendingUp, TrendingDown, Minus, Wifi, WifiOff } from 'lucide-react';
 
 function formatTimeAgo(timestamp: number): string {
   const diff = Date.now() - timestamp;
@@ -22,6 +23,7 @@ const SentimentIcon = ({ sentiment }: { sentiment: string }) => {
 export default function NewsPage() {
   const [category, setCategory] = useState<NewsCategory | undefined>(undefined);
   const [sentimentFilter, setSentimentFilter] = useState<string>('all');
+  const { news: MOCK_NEWS, loading: newsLoading, isLive } = useNewsData();
 
   let filtered = category ? MOCK_NEWS.filter(n => n.category === category) : MOCK_NEWS;
   if (sentimentFilter !== 'all') filtered = filtered.filter(n => n.sentiment === sentimentFilter);
