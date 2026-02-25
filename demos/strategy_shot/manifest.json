@@ -1,0 +1,12 @@
+{
+  "timestamp": "20260224_223016",
+  "base_url": "https://trading-copilot-wjgy0213-uis-projects.vercel.app",
+  "results": [
+    {
+      "page": "/strategy",
+      "url": "https://trading-copilot-wjgy0213-uis-projects.vercel.app/strategy",
+      "screenshot": "projects/trading-copilot/demos/strategy_shot/demo_strategy.png",
+      "status": "ok"
+    }
+  ]
+}
