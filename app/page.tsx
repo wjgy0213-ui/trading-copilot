@@ -157,19 +157,51 @@ export default function LandingPage() {
               {/* Mock Content */}
               <div className="grid md:grid-cols-2 gap-4">
                 {/* Mock Chart */}
-                <div className="bg-gray-900/50 rounded-lg p-4 h-48 flex items-center justify-center border border-gray-700">
-                  <div className="text-center">
-                    <TrendingUp className="w-12 h-12 text-green-400 mx-auto mb-2 opacity-50" />
-                    <div className="text-sm text-gray-500">实时价格图表</div>
+                <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-white">BTC/USDT</span>
+                      <span className="text-xs text-green-400">+2.34%</span>
+                    </div>
+                    <span className="text-lg font-mono font-bold text-green-400">$63,847</span>
+                  </div>
+                  {/* Mini Chart SVG */}
+                  <svg viewBox="0 0 200 80" className="w-full h-28">
+                    <defs>
+                      <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#10b981" stopOpacity="0.3"/>
+                        <stop offset="100%" stopColor="#10b981" stopOpacity="0"/>
+                      </linearGradient>
+                    </defs>
+                    <path d="M0,60 L15,55 L30,58 L45,45 L60,48 L75,35 L90,38 L105,30 L120,25 L135,32 L150,20 L165,22 L180,15 L195,18 L200,12" fill="none" stroke="#10b981" strokeWidth="2"/>
+                    <path d="M0,60 L15,55 L30,58 L45,45 L60,48 L75,35 L90,38 L105,30 L120,25 L135,32 L150,20 L165,22 L180,15 L195,18 L200,12 L200,80 L0,80Z" fill="url(#chartGrad)"/>
+                  </svg>
+                  <div className="flex justify-between text-[10px] text-gray-600 mt-1">
+                    <span>09:00</span><span>12:00</span><span>15:00</span><span>18:00</span><span>21:00</span>
                   </div>
                 </div>
 
                 {/* Mock Trading Panel */}
                 <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700 space-y-3">
-                  <div className="h-8 bg-blue-600/30 rounded"></div>
-                  <div className="h-8 bg-gray-700/50 rounded"></div>
-                  <div className="h-8 bg-gray-700/50 rounded"></div>
-                  <div className="h-10 bg-green-600/50 rounded"></div>
+                  <div className="flex gap-2">
+                    <button className="flex-1 bg-green-600/80 text-white text-sm font-bold py-2 rounded">做多</button>
+                    <button className="flex-1 bg-gray-700/80 text-gray-400 text-sm font-bold py-2 rounded">做空</button>
+                  </div>
+                  <div className="flex items-center justify-between bg-gray-800/80 rounded px-3 py-2">
+                    <span className="text-xs text-gray-500">杠杆</span>
+                    <span className="text-sm font-mono text-white">3x</span>
+                  </div>
+                  <div className="flex items-center justify-between bg-gray-800/80 rounded px-3 py-2">
+                    <span className="text-xs text-gray-500">止损</span>
+                    <span className="text-sm font-mono text-red-400">$62,500</span>
+                  </div>
+                  <div className="flex items-center justify-between bg-gray-800/80 rounded px-3 py-2">
+                    <span className="text-xs text-gray-500">止盈</span>
+                    <span className="text-sm font-mono text-green-400">$66,200</span>
+                  </div>
+                  <button className="w-full bg-green-600 hover:bg-green-500 text-white text-sm font-bold py-2.5 rounded transition">
+                    模拟开多 · $150.00
+                  </button>
                 </div>
               </div>
 
@@ -178,9 +210,8 @@ export default function LandingPage() {
                 <div className="flex items-start gap-3">
                   <Brain className="w-5 h-5 text-blue-400 flex-shrink-0 mt-1" />
                   <div className="flex-1">
-                    <div className="text-sm text-gray-300 mb-2">教练建议</div>
-                    <div className="h-3 bg-gray-700/50 rounded w-full mb-2"></div>
-                    <div className="h-3 bg-gray-700/50 rounded w-3/4"></div>
+                    <div className="text-sm text-gray-300 mb-1.5 font-medium">教练建议</div>
+                    <p className="text-xs text-gray-400 leading-relaxed">✅ 止损设在支撑位下方，位置合理。R:R = 1:2.7，风险回报比优秀。建议仓位不超过账户的30%。评分：<span className="text-green-400 font-bold">85/100</span></p>
                   </div>
                 </div>
               </div>

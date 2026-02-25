@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Lock, CheckCircle, Clock, ChevronRight, ChevronDown, Sparkles, ArrowLeft } from 'lucide-react';
+import { Lock, CheckCircle, ChevronRight, ChevronDown, Sparkles, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { COURSE_CHAPTERS, Chapter, Lesson, QuizQuestion } from '@/lib/courseData';
+import { CHAPTER_QUIZZES } from '@/lib/chapterQuizzes';
 import { isProUser, activatePro } from '@/lib/paywall';
 
 function PaywallBanner({ onUnlock }: { onUnlock: () => void }) {
@@ -115,10 +116,6 @@ function LessonCard({ lesson, index, locked }: { lesson: Lesson; index: number; 
           <p className="text-xs text-gray-500 mt-0.5">{lesson.description}</p>
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">
-          <span className="text-xs text-gray-600 flex items-center gap-1">
-            <Clock className="w-3 h-3" />
-            {lesson.duration}
-          </span>
           {!locked && (
             <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${expanded ? 'rotate-180' : ''}`} />
           )}
@@ -317,6 +314,88 @@ function QuizSection({ quiz, lessonId }: { quiz: QuizQuestion[]; lessonId: strin
   );
 }
 
+function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; chapterTitle: string }) {
+  const quiz = CHAPTER_QUIZZES[chapterId];
+  if (!quiz || quiz.length === 0) return null;
+
+  const [answers, setAnswers] = useState<Record<number, number>>({});
+  const [showResults, setShowResults] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+
+  const handleAnswer = (qIdx: number, optIdx: number) => {
+    if (showResults) return;
+    setAnswers(prev => ({ ...prev, [qIdx]: optIdx }));
+  };
+
+  const score = Object.entries(answers).filter(([qIdx, optIdx]) => quiz[parseInt(qIdx)].correctIndex === optIdx).length;
+  const allAnswered = Object.keys(answers).length === quiz.length;
+
+  return (
+    <div className="mt-4 ml-2">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="flex items-center gap-3 w-full text-left p-4 bg-gradient-to-r from-purple-900/30 to-blue-900/30 border border-purple-500/20 rounded-xl hover:border-purple-500/40 transition"
+      >
+        <span className="text-xl">📝</span>
+        <div className="flex-1">
+          <span className="font-semibold text-sm">章节测试：{chapterTitle}</span>
+          <span className="text-xs text-gray-500 ml-2">（{quiz.length}题）</span>
+          {showResults && (
+            <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${score >= quiz.length * 0.8 ? 'bg-green-600/20 text-green-400' : score >= quiz.length * 0.6 ? 'bg-yellow-600/20 text-yellow-400' : 'bg-red-600/20 text-red-400'}`}>
+              {score}/{quiz.length} · {Math.round(score / quiz.length * 100)}%
+            </span>
+          )}
+        </div>
+        <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${expanded ? 'rotate-180' : ''}`} />
+      </button>
+
+      {expanded && (
+        <div className="mt-3 p-5 bg-gray-900/50 border border-gray-800 rounded-xl space-y-5">
+          {quiz.map((q, qi) => (
+            <div key={qi}>
+              <p className="text-sm font-medium mb-2">{qi + 1}. {q.question}</p>
+              <div className="space-y-1.5">
+                {q.options.map((opt, oi) => {
+                  const selected = answers[qi] === oi;
+                  const isCorrect = q.correctIndex === oi;
+                  let cls = 'bg-gray-800 border-gray-700 text-gray-300 hover:border-gray-600';
+                  if (showResults && selected && isCorrect) cls = 'bg-green-600/20 border-green-500/30 text-green-300';
+                  else if (showResults && selected && !isCorrect) cls = 'bg-red-600/20 border-red-500/30 text-red-300';
+                  else if (showResults && isCorrect) cls = 'bg-green-600/10 border-green-500/20 text-green-400';
+                  else if (selected) cls = 'bg-blue-600/20 border-blue-500/30 text-blue-300';
+                  return (
+                    <button key={oi} onClick={() => handleAnswer(qi, oi)} className={`w-full text-left text-sm p-3 rounded-lg border transition ${cls}`}>
+                      {opt}
+                    </button>
+                  );
+                })}
+              </div>
+              {showResults && answers[qi] !== undefined && (
+                <p className="text-xs text-gray-400 mt-2 pl-2 border-l-2 border-gray-700">{q.explanation}</p>
+              )}
+            </div>
+          ))}
+          <div className="flex gap-3 pt-2">
+            {!showResults ? (
+              <button
+                onClick={() => allAnswered && setShowResults(true)}
+                disabled={!allAnswered}
+                className={`px-5 py-2 rounded-lg text-sm font-medium transition ${allAnswered ? 'bg-purple-600 hover:bg-purple-500 text-white' : 'bg-gray-800 text-gray-600 cursor-not-allowed'}`}
+              >
+                提交测试（{Object.keys(answers).length}/{quiz.length}）
+              </button>
+            ) : (
+              <button onClick={() => { setAnswers({}); setShowResults(false); }} className="px-5 py-2 rounded-lg text-sm font-medium bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
+                重新测试
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ChapterSection({ chapter, isPro, chapterIndex }: { chapter: Chapter; isPro: boolean; chapterIndex: number }) {
   const locked = chapter.tier === 'pro' && !isPro;
   
@@ -353,6 +432,19 @@ function ChapterSection({ chapter, isPro, chapterIndex }: { chapter: Chapter; is
           <LessonCard key={lesson.id} lesson={lesson} index={i} locked={locked} />
         ))}
       </div>
+      {/* Chapter Quiz for pro chapters */}
+      {chapter.tier === 'pro' && !locked && CHAPTER_QUIZZES[chapter.id] && (
+        <ChapterQuizSection chapterId={chapter.id} chapterTitle={chapter.title} />
+      )}
+      {chapter.tier === 'pro' && locked && CHAPTER_QUIZZES[chapter.id] && (
+        <div className="mt-4 ml-2 p-4 bg-gray-900/30 border border-gray-800/50 rounded-xl opacity-60">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">📝</span>
+            <span className="text-sm text-gray-500">章节测试（{CHAPTER_QUIZZES[chapter.id].length}题）— 解锁后可用</span>
+            <Lock className="w-3.5 h-3.5 text-gray-600" />
+          </div>
+        </div>
+      )}
     </motion.section>
   );
 }

@@ -25,6 +25,7 @@ export interface Chapter {
   tier: 'free' | 'pro';
   lessons: Lesson[];
   comingSoon?: boolean;
+  chapterQuiz?: QuizQuestion[];
 }
 
 export const COURSE_CHAPTERS: Chapter[] = [
