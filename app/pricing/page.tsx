@@ -21,7 +21,7 @@ const PLANS = [
   {
     id: 'pro' as const,
     name: 'Pro',
-    price: 29,
+    price: 39.99,
     period: '/月',
     description: 'AI驱动的策略定制与回测',
     features: ['AI策略定制', '8大策略模板', '高级回测引擎', '参数优化器', '回测报告导出', 'Monte Carlo模拟'],
@@ -34,7 +34,7 @@ const PLANS = [
   {
     id: 'elite' as const,
     name: 'Elite',
-    price: 49,
+    price: 79.99,
     period: '/月',
     description: '从策略到实盘的完整闭环',
     features: ['Pro全部功能', '实盘自动化', '交易所API对接', '智能风控系统', 'Telegram实时通知', '1对1优先支持'],

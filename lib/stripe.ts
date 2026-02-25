@@ -15,13 +15,13 @@ export function getStripe(): Stripe {
 export const PLANS = {
   pro: {
     name: 'Pro',
-    price: 29,
+    price: 39.99,
     priceId: process.env.STRIPE_PRO_PRICE_ID || '',
     features: ['AI策略定制', '高级回测', '参数优化器', '8大策略模板', '回测报告导出'],
   },
   elite: {
     name: 'Elite',
-    price: 49,
+    price: 79.99,
     priceId: process.env.STRIPE_ELITE_PRICE_ID || '',
     features: ['Pro全部功能', '实盘自动化', '风控系统', 'Telegram通知', '优先支持'],
   },

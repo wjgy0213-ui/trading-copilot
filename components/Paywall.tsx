@@ -28,7 +28,7 @@ export default function Paywall({ children, feature }: { children: React.ReactNo
           </p>
           <Link href="/pricing"
             className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-xl text-sm font-medium transition">
-            <Sparkles className="w-4 h-4" /> 升级 Pro — $29/月
+            <Sparkles className="w-4 h-4" /> 升级 Pro — $39.99/月
           </Link>
         </div>
       </div>
