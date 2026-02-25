@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import Providers from "@/components/Providers";
 
 export const metadata: Metadata = {
   title: "交易陪练 - 从韭菜到交易者 | Trading Coach",
@@ -27,8 +28,10 @@ export default function RootLayout({
   return (
     <html lang="zh">
       <body className="bg-gray-950 text-gray-100 antialiased font-sans">
-        <Navbar />
-        <main className="pt-14">{children}</main>
+        <Providers>
+          <Navbar />
+          <main className="pt-14">{children}</main>
+        </Providers>
       </body>
     </html>
   );

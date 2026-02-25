@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, BookOpen, History, Home, Zap, LineChart, TrendingUp, Newspaper, Sparkles, CreditCard, UserCircle } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { BarChart3, BookOpen, History, Home, Zap, LineChart, TrendingUp, Newspaper, Sparkles, CreditCard, UserCircle, LogIn } from 'lucide-react';
 
 const NAV_ITEMS = [
   { href: '/', label: '首页', icon: Home },
@@ -20,6 +21,7 @@ const NAV_ITEMS = [
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { data: authSession, status } = useSession();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-950/95 backdrop-blur-xl border-b border-gray-800/50">
@@ -32,7 +34,7 @@ export default function Navbar() {
             <span className="font-semibold text-sm text-gray-100 tracking-tight">交易陪练</span>
           </Link>
 
-          <div className="flex items-center gap-0.5 overflow-x-auto scrollbar-hide">
+          <div className="flex items-center gap-0.5 overflow-x-auto scrollbar-hide flex-1 justify-center">
             {NAV_ITEMS.map(({ href, label, icon: Icon, premium }) => {
               const isActive = pathname === href;
               return (
@@ -47,6 +49,25 @@ export default function Navbar() {
                 </Link>
               );
             })}
+          </div>
+
+          {/* Auth */}
+          <div className="shrink-0">
+            {status === 'authenticated' && authSession?.user ? (
+              <Link href="/account" className="flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-gray-800/50 transition">
+                {authSession.user.image ? (
+                  <img src={authSession.user.image} alt="" className="w-6 h-6 rounded-full" />
+                ) : (
+                  <UserCircle className="w-5 h-5 text-emerald-400" />
+                )}
+                <span className="text-xs text-gray-400 hidden sm:inline">{authSession.user.name?.split(' ')[0]}</span>
+              </Link>
+            ) : status !== 'loading' ? (
+              <Link href="/login" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 text-xs font-medium transition border border-emerald-700/30">
+                <LogIn className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">登录</span>
+              </Link>
+            ) : null}
           </div>
         </div>
       </div>
