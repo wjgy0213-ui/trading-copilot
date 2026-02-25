@@ -4,19 +4,29 @@ import Navbar from "@/components/Navbar";
 import Providers from "@/components/Providers";
 
 export const metadata: Metadata = {
-  title: "交易陪练 - 从韭菜到交易者 | Trading Coach",
-  description: "零风险模拟交易，教练实时评分。17个币种+美股Mag7，完整交易课程，帮你建立交易纪律，告别亏损。",
-  keywords: ["交易", "模拟交易", "交易教练", "加密货币", "比特币", "交易课程", "trading simulator", "crypto trading"],
+  title: {
+    default: "交易陪练 AI — 策略回测 · AI生成 · 蒙特卡洛模拟",
+    template: "%s | 交易陪练 AI",
+  },
+  description: "AI驱动的交易策略平台。8大策略模板、自动参数优化、蒙特卡洛1000次模拟、AI自然语言生成策略。从回测到实盘，科学交易。",
+  keywords: ["交易策略", "回测", "AI交易", "量化交易", "蒙特卡洛", "策略优化", "加密货币", "crypto trading", "backtest", "trading bot"],
+  metadataBase: new URL('https://trading-copilot-delta.vercel.app'),
   openGraph: {
-    title: "交易陪练 - 从韭菜到交易者",
-    description: "零风险模拟交易 + 实时评分 + 25节完整课程。你的第一步，从这里开始。",
+    title: "交易陪练 AI — 你的AI交易策略平台",
+    description: "8大策略模板 · 自动寻参 · 蒙特卡洛模拟 · AI策略生成。免费开始，科学交易。",
     type: "website",
     locale: "zh_CN",
+    siteName: "交易陪练 AI",
   },
   twitter: {
     card: "summary_large_image",
-    title: "交易陪练",
-    description: "零风险模拟交易，教练实时评分，17个币种+美股Mag7",
+    title: "交易陪练 AI",
+    description: "AI驱动策略回测+蒙特卡洛模拟+自动寻参。免费开始。",
+    creator: "@SlowManJW",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
