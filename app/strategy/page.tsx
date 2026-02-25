@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { STRATEGY_TEMPLATES, TIMEFRAMES, SYMBOLS, BACKTEST_PERIODS, DEFAULT_RISK } from '@/lib/strategies';
 import { runBacktest, BacktestResult, BacktestConfig } from '@/lib/backtestEngine';
 import { optimize, OptResult } from '@/lib/optimizer';
@@ -198,8 +199,14 @@ function CompareTable({ results }: { results: BacktestResult[] }) {
   );
 }
 
-export default function StrategyPage() {
-  const [selectedId, setSelectedId] = useState(STRATEGY_TEMPLATES[0].id);
+export default function StrategyPageWrapper() {
+  return <Suspense fallback={<div className="min-h-screen bg-gray-950" />}><StrategyPage /></Suspense>;
+}
+
+function StrategyPage() {
+  const searchParams = useSearchParams();
+  const urlSid = searchParams.get('sid');
+  const [selectedId, setSelectedId] = useState(urlSid && STRATEGY_TEMPLATES.find(t => t.id === urlSid) ? urlSid : STRATEGY_TEMPLATES[0].id);
   const selected = STRATEGY_TEMPLATES.find(t => t.id === selectedId)!;
   const [params, setParams] = useState<Record<string, number>>(() => {
     const p: Record<string, number> = {}; STRATEGY_TEMPLATES[0].params.forEach(pp => p[pp.key] = pp.default); return p;
@@ -220,6 +227,25 @@ export default function StrategyPage() {
   const [optimizing, setOptimizing] = useState(false);
   const [optProgress, setOptProgress] = useState({ current: 0, total: 0 });
   const [optResults, setOptResults] = useState<OptResult[]>([]);
+
+  // Read URL params from AI strategy generator
+  useEffect(() => {
+    const sid = searchParams.get('sid');
+    if (sid && STRATEGY_TEMPLATES.find(t => t.id === sid)) {
+      setSelectedId(sid);
+      const tmpl = STRATEGY_TEMPLATES.find(t => t.id === sid)!;
+      const p: Record<string, number> = {};
+      tmpl.params.forEach(pp => {
+        const urlVal = searchParams.get(pp.key);
+        p[pp.key] = urlVal ? parseFloat(urlVal) : pp.default;
+      });
+      setParams(p);
+      const sl = searchParams.get('sl');
+      const tp = searchParams.get('tp');
+      if (sl) setStopLoss(parseFloat(sl));
+      if (tp) setTakeProfit(parseFloat(tp));
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSelect = (id: string) => {
     setSelectedId(id);
