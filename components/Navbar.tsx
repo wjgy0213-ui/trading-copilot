@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { BarChart3, BookOpen, History, Home, Zap, LineChart, TrendingUp, Newspaper, Sparkles, CreditCard, UserCircle, LogIn } from 'lucide-react';
+import { TrialCountdown } from './Paywall';
 
 const NAV_ITEMS = [
   { href: '/', label: '首页', icon: Home },
@@ -52,7 +53,8 @@ export default function Navbar() {
           </div>
 
           {/* Auth */}
-          <div className="shrink-0">
+          <div className="shrink-0 flex items-center gap-2">
+            <TrialCountdown />
             {status === 'authenticated' && authSession?.user ? (
               <Link href="/account" className="flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-gray-800/50 transition">
                 {authSession.user.image ? (
