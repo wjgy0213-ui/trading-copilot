@@ -33,20 +33,23 @@ async function fetchMarketNews(): Promise<RawNews[]> {
   } catch {}
 
   try {
-    // BTC/ETH 24h change
-    const [btcRes, ethRes] = await Promise.all([
-      fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT'),
-      fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=ETHUSDT'),
-    ]);
-    const btc = await btcRes.json();
-    const eth = await ethRes.json();
-    const btcPct = parseFloat(btc.priceChangePercent);
-    const ethPct = parseFloat(eth.priceChangePercent);
+    // BTC/ETH 24h change — CoinGecko (Binance blocked on Vercel)
+    const cgPriceRes = await fetch(
+      'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true',
+      { next: { revalidate: 300 } }
+    );
+    const cgPrice = await cgPriceRes.json();
+    const btcPct = cgPrice.bitcoin?.usd_24h_change ?? 0;
+    const ethPct = cgPrice.ethereum?.usd_24h_change ?? 0;
+    const btcPrice = cgPrice.bitcoin?.usd ?? 0;
+    const ethPrice = cgPrice.ethereum?.usd ?? 0;
+    const btcVol = (cgPrice.bitcoin?.usd_24h_vol ?? 0) / 1e9;
+    const ethVol = (cgPrice.ethereum?.usd_24h_vol ?? 0) / 1e9;
 
     news.push({
       title: `BTC 24h ${btcPct >= 0 ? '+' : ''}${btcPct.toFixed(2)}% | ETH ${ethPct >= 0 ? '+' : ''}${ethPct.toFixed(2)}%`,
-      summary: `BTC $${parseFloat(btc.lastPrice).toLocaleString()} (24h量 $${(parseFloat(btc.quoteVolume) / 1e9).toFixed(1)}B)，ETH $${parseFloat(eth.lastPrice).toLocaleString()} (24h量 $${(parseFloat(eth.quoteVolume) / 1e9).toFixed(1)}B)。`,
-      source: 'Binance', timestamp: now, category: 'market',
+      summary: `BTC $${btcPrice.toLocaleString()} (24h量 $${btcVol.toFixed(1)}B)，ETH $${ethPrice.toLocaleString()} (24h量 $${ethVol.toFixed(1)}B)。`,
+      source: 'CoinGecko', timestamp: now, category: 'market',
       sentiment: btcPct > 2 ? 'bullish' : btcPct < -2 ? 'bearish' : 'neutral',
       impact: Math.abs(btcPct) > 5 ? 'high' : 'medium', tags: ['BTC', 'ETH', '价格'],
     });
