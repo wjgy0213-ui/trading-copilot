@@ -7,7 +7,7 @@ import { runBacktest, BacktestResult, BacktestConfig } from '@/lib/backtestEngin
 import { optimize, OptResult } from '@/lib/optimizer';
 import { runMonteCarlo, MonteCarloResult } from '@/lib/monteCarlo';
 import Paywall from '@/components/Paywall';
-import { ChevronDown, ChevronRight, Play, Trash2, BarChart3, Layers, Search } from 'lucide-react';
+import { ChevronDown, ChevronRight, Play, Trash2, BarChart3, Layers, Search, Share2, X as XIcon, Copy, Check } from 'lucide-react';
 
 function EquityCurve({ data, color = '#10b981', height = 200, compareData }: {
   data: { time: number; equity: number }[]; color?: string; height?: number;
@@ -200,6 +200,136 @@ function CompareTable({ results }: { results: BacktestResult[] }) {
   );
 }
 
+function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
+  result: BacktestResult; strategyName: string; symbol: string; timeframe: string; onClose: () => void;
+}) {
+  const [copied, setCopied] = useState(false);
+  const score = (() => {
+    let s = 0;
+    if (result.sharpeRatio > 2) s += 40; else if (result.sharpeRatio > 1) s += 25; else if (result.sharpeRatio > 0) s += 10;
+    if (result.winRate > 60) s += 25; else if (result.winRate > 50) s += 15;
+    if (result.profitFactor > 2) s += 25; else if (result.profitFactor > 1.5) s += 15;
+    if (result.maxDrawdownPercent < 5) s += 25; else if (result.maxDrawdownPercent < 10) s += 15;
+    return Math.min(s, 100);
+  })();
+  const grade = score >= 80 ? 'S' : score >= 61 ? 'A' : score >= 31 ? 'B' : 'C';
+  const gradeColor = score >= 80 ? '#a78bfa' : score >= 61 ? '#34d399' : score >= 31 ? '#fbbf24' : '#f87171';
+  const returnColor = result.totalReturnPercent >= 0 ? '#34d399' : '#f87171';
+  const symbolLabel = symbol.replace('USDT', '/USDT');
+  const tfLabel: Record<string,string> = { '1h': '1小时', '4h': '4小时', '1d': '日线' };
+
+  // Mini equity SVG
+  const eqData = result.equityCurve;
+  let miniSVG = '';
+  if (eqData.length >= 2) {
+    const minE = Math.min(...eqData.map(d => d.equity));
+    const maxE = Math.max(...eqData.map(d => d.equity));
+    const pts = eqData.map((d, i) => {
+      const x = (i / (eqData.length - 1)) * 280;
+      const y = 60 - ((d.equity - minE) / (maxE - minE + 0.001)) * 55;
+      return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ');
+    miniSVG = pts;
+  }
+
+  const shareText = `我用 AI 跑了一个交易策略回测\n📊 ${strategyName} (${symbolLabel} ${tfLabel[timeframe]})\n⭐ 综合评分 ${score}分 (${grade}级)\n💰 总收益 ${result.totalReturnPercent > 0 ? '+' : ''}${result.totalReturnPercent.toFixed(1)}%\n✅ 胜率 ${result.winRate.toFixed(1)}%  📉 最大回撤 ${result.maxDrawdownPercent.toFixed(1)}%\n\n免费试用 👉 trading-copilot-delta.vercel.app`;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(shareText).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
+      <div className="flex flex-col items-center gap-4 max-w-sm w-full" onClick={e => e.stopPropagation()}>
+        {/* Instructions */}
+        <div className="text-xs text-gray-400 text-center">截图下方卡片，分享到小红书 / X</div>
+
+        {/* The shareable card */}
+        <div id="share-card" className="w-full rounded-2xl overflow-hidden border border-gray-700"
+          style={{ background: 'linear-gradient(145deg, #0f172a 0%, #111827 60%, #0d1a2e 100%)' }}>
+
+          {/* Header bar */}
+          <div className="px-5 pt-5 pb-3">
+            <div className="flex items-start justify-between mb-4">
+              <div>
+                <div className="text-[10px] text-gray-500 uppercase tracking-widest mb-1">策略回测成绩单</div>
+                <div className="text-base font-bold text-white">{strategyName}</div>
+                <div className="text-xs text-gray-400 mt-0.5">{symbolLabel} · {tfLabel[timeframe]} · {result.totalTrades}笔交易</div>
+              </div>
+              <div className="flex flex-col items-center justify-center w-16 h-16 rounded-xl border-2 shrink-0"
+                style={{ borderColor: gradeColor, background: `${gradeColor}15` }}>
+                <div className="text-2xl font-black" style={{ color: gradeColor }}>{grade}</div>
+                <div className="text-[10px] font-bold" style={{ color: gradeColor }}>{score}分</div>
+              </div>
+            </div>
+
+            {/* Score bar */}
+            <div className="h-1.5 bg-gray-800 rounded-full mb-5">
+              <div className="h-1.5 rounded-full transition-all" style={{ width: `${score}%`, background: gradeColor }} />
+            </div>
+
+            {/* Metrics grid */}
+            <div className="grid grid-cols-3 gap-3 mb-4">
+              {[
+                { label: '总收益', value: `${result.totalReturnPercent > 0 ? '+' : ''}${result.totalReturnPercent.toFixed(1)}%`, color: returnColor },
+                { label: '胜率', value: `${result.winRate.toFixed(1)}%`, color: result.winRate >= 50 ? '#34d399' : '#fbbf24' },
+                { label: '盈亏比', value: result.profitFactor === Infinity ? '∞' : result.profitFactor.toFixed(2), color: result.profitFactor >= 1.5 ? '#34d399' : '#fbbf24' },
+                { label: '最大回撤', value: `-${result.maxDrawdownPercent.toFixed(1)}%`, color: result.maxDrawdownPercent < 10 ? '#34d399' : '#fbbf24' },
+                { label: '夏普比率', value: result.sharpeRatio.toFixed(2), color: result.sharpeRatio > 1 ? '#34d399' : '#fbbf24' },
+                { label: '年化收益', value: `${(result.totalReturnPercent * 365 / (result.totalTrades > 0 ? 90 : 90)).toFixed(0)}%`, color: '#a78bfa' },
+              ].map((m, i) => (
+                <div key={i} className="bg-gray-800/60 rounded-lg px-3 py-2">
+                  <div className="text-[9px] text-gray-500 mb-0.5">{m.label}</div>
+                  <div className="text-sm font-bold font-mono" style={{ color: m.color }}>{m.value}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Mini equity chart */}
+            {miniSVG && (
+              <div className="bg-gray-800/40 rounded-lg p-3 mb-4">
+                <div className="text-[9px] text-gray-500 mb-2">资金曲线</div>
+                <svg viewBox="0 0 280 65" className="w-full" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={returnColor} stopOpacity="0.3" />
+                      <stop offset="100%" stopColor={returnColor} stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <path d={`${miniSVG} L280,65 L0,65 Z`} fill="url(#sg)" />
+                  <path d={miniSVG} fill="none" stroke={returnColor} strokeWidth="1.5" />
+                </svg>
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="px-5 pb-4 flex items-center justify-between">
+            <div>
+              <div className="text-xs font-semibold text-emerald-400">TradingCopilot</div>
+              <div className="text-[9px] text-gray-600">trading-copilot-delta.vercel.app</div>
+            </div>
+            <div className="text-[9px] text-gray-600">{new Date().toLocaleDateString('zh-CN')}</div>
+          </div>
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex gap-3 w-full">
+          <button onClick={handleCopy}
+            className="flex-1 flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-200 py-2.5 rounded-xl text-sm font-medium transition-all border border-gray-700">
+            {copied ? <><Check className="w-4 h-4 text-emerald-400" />已复制文案</> : <><Copy className="w-4 h-4" />复制分享文案</>}
+          </button>
+          <button onClick={onClose}
+            className="px-4 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-400 rounded-xl border border-gray-700 transition-all">
+            <XIcon className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="text-[10px] text-gray-600 text-center">对卡片长按/右键另存，或截图分享</div>
+      </div>
+    </div>
+  );
+}
+
 export default function StrategyPageWrapper() {
   return <Suspense fallback={<div className="min-h-screen bg-gray-950" />}><StrategyPage /></Suspense>;
 }
@@ -225,6 +355,7 @@ function StrategyPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showCode, setShowCode] = useState(false);
+  const [showShareCard, setShowShareCard] = useState(false);
   const [optimizing, setOptimizing] = useState(false);
   const [optProgress, setOptProgress] = useState({ current: 0, total: 0 });
   const [optResults, setOptResults] = useState<OptResult[]>([]);
@@ -466,14 +597,32 @@ function StrategyPage() {
               </div>
             )}
             {latest && (<>
-              <div className="grid grid-cols-4 gap-2">
-                {(() => { const s = calcScore(latest); const color = s >= 61 ? 'text-green-400' : s >= 31 ? 'text-yellow-400' : 'text-red-400'; const grade = s >= 80 ? 'S级' : s >= 61 ? 'A级' : s >= 31 ? 'B级' : 'C级'; return <StatCard label="综合评分" value={`${s}`} sub={grade} color={color} />; })()}
-                <StatCard label="总收益" value={`${latest.totalReturnPercent > 0 ? '+' : ''}${latest.totalReturnPercent.toFixed(2)}%`} sub={`$${latest.totalReturn.toFixed(0)}`} color={latest.totalReturnPercent > 0 ? 'text-green-400' : 'text-red-400'} />
-                <StatCard label="胜率" value={`${latest.winRate.toFixed(1)}%`} sub={`${latest.winTrades}胜 ${latest.lossTrades}负`} color={latest.winRate >= 50 ? 'text-green-400' : 'text-yellow-400'} />
-                <StatCard label="盈亏比" value={latest.profitFactor === Infinity ? '∞' : latest.profitFactor.toFixed(2)} color={latest.profitFactor >= 1.5 ? 'text-green-400' : latest.profitFactor >= 1 ? 'text-yellow-400' : 'text-red-400'} />
-                <StatCard label="最大回撤" value={`${latest.maxDrawdownPercent.toFixed(2)}%`} sub={`$${latest.maxDrawdown.toFixed(0)}`} color={latest.maxDrawdownPercent < 10 ? 'text-green-400' : latest.maxDrawdownPercent < 20 ? 'text-yellow-400' : 'text-red-400'} />
-                <StatCard label="夏普比率" value={latest.sharpeRatio.toFixed(2)} color={latest.sharpeRatio > 1 ? 'text-green-400' : latest.sharpeRatio > 0 ? 'text-yellow-400' : 'text-red-400'} />
-                <StatCard label="总交易" value={`${latest.totalTrades}笔`} sub={`平均${latest.avgHoldBars.toFixed(1)}根K线`} />
+              {showShareCard && (
+                <ShareCard
+                  result={latest}
+                  strategyName={STRATEGY_TEMPLATES.find(t => t.id === selectedId)?.name || selectedId}
+                  symbol={symbol}
+                  timeframe={timeframe}
+                  onClose={() => setShowShareCard(false)}
+                />
+              )}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs text-gray-500 font-medium">回测结果</span>
+                  <button onClick={() => setShowShareCard(true)}
+                    className="flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 px-3 py-1.5 rounded-lg transition-all border border-violet-500/20">
+                    <Share2 className="w-3.5 h-3.5" /> 分享成绩单
+                  </button>
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {(() => { const s = calcScore(latest); const color = s >= 61 ? 'text-green-400' : s >= 31 ? 'text-yellow-400' : 'text-red-400'; const grade = s >= 80 ? 'S级' : s >= 61 ? 'A级' : s >= 31 ? 'B级' : 'C级'; return <StatCard label="综合评分" value={`${s}`} sub={grade} color={color} />; })()}
+                  <StatCard label="总收益" value={`${latest.totalReturnPercent > 0 ? '+' : ''}${latest.totalReturnPercent.toFixed(2)}%`} sub={`$${latest.totalReturn.toFixed(0)}`} color={latest.totalReturnPercent > 0 ? 'text-green-400' : 'text-red-400'} />
+                  <StatCard label="胜率" value={`${latest.winRate.toFixed(1)}%`} sub={`${latest.winTrades}胜 ${latest.lossTrades}负`} color={latest.winRate >= 50 ? 'text-green-400' : 'text-yellow-400'} />
+                  <StatCard label="盈亏比" value={latest.profitFactor === Infinity ? '∞' : latest.profitFactor.toFixed(2)} color={latest.profitFactor >= 1.5 ? 'text-green-400' : latest.profitFactor >= 1 ? 'text-yellow-400' : 'text-red-400'} />
+                  <StatCard label="最大回撤" value={`${latest.maxDrawdownPercent.toFixed(2)}%`} sub={`$${latest.maxDrawdown.toFixed(0)}`} color={latest.maxDrawdownPercent < 10 ? 'text-green-400' : latest.maxDrawdownPercent < 20 ? 'text-yellow-400' : 'text-red-400'} />
+                  <StatCard label="夏普比率" value={latest.sharpeRatio.toFixed(2)} color={latest.sharpeRatio > 1 ? 'text-green-400' : latest.sharpeRatio > 0 ? 'text-yellow-400' : 'text-red-400'} />
+                  <StatCard label="总交易" value={`${latest.totalTrades}笔`} sub={`平均${latest.avgHoldBars.toFixed(1)}根K线`} />
+                </div>
               </div>
 
               <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">
