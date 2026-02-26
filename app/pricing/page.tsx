@@ -58,18 +58,39 @@ function PricingPage() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState<string | null>(null);
   const [activated, setActivated] = useState(false);
+  const [activating, setActivating] = useState(false);
+  const [activateError, setActivateError] = useState('');
+
+  const doActivate = async (sid: string) => {
+    setActivating(true);
+    setActivateError('');
+    try {
+      const r = await fetch('/api/auth/activate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: sid }),
+      });
+      const data = await r.json();
+      if (!r.ok || data.error) {
+        setActivateError(data.error || '激活失败，请联系支持');
+      } else {
+        await refresh();
+      }
+    } catch {
+      setActivateError('网络错误，请刷新页面重试');
+    } finally {
+      setActivating(false);
+    }
+  };
 
   // Auto-activate on success redirect
   useEffect(() => {
     if (success && sessionId && !activated) {
       setActivated(true);
-      fetch('/api/auth/activate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId }),
-      }).then(r => r.json()).then(() => refresh());
+      doActivate(sessionId);
     }
-  }, [success, sessionId, activated, refresh]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [success, sessionId, activated]);
 
   const handleCheckout = async (planId: string) => {
     if (!email || !email.includes('@')) {
@@ -114,9 +135,27 @@ function PricingPage() {
 
         {/* Success/Cancel banners */}
         {success && (
-          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 mb-8 text-center">
-            <p className="text-emerald-400 font-medium">🎉 订阅成功！欢迎成为 Pro 会员</p>
-            <p className="text-emerald-400/70 text-sm mt-1">所有高级功能已解锁</p>
+          <div className={`border rounded-xl p-4 mb-8 text-center ${activateError ? 'bg-red-500/10 border-red-500/30' : 'bg-emerald-500/10 border-emerald-500/30'}`}>
+            {activating ? (
+              <p className="text-emerald-400 font-medium flex items-center justify-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin" /> 正在激活您的订阅…
+              </p>
+            ) : activateError ? (
+              <>
+                <p className="text-red-400 font-medium mb-2">⚠️ 激活遇到问题</p>
+                <p className="text-red-400/70 text-sm mb-3">{activateError}</p>
+                <button onClick={() => sessionId && doActivate(sessionId)}
+                  className="text-sm bg-red-500/20 hover:bg-red-500/30 text-red-300 px-4 py-1.5 rounded-lg transition">
+                  重试激活
+                </button>
+                <p className="text-gray-600 text-xs mt-2">如问题持续请联系 support@tradingcopilot.ai（附订单截图）</p>
+              </>
+            ) : (
+              <>
+                <p className="text-emerald-400 font-medium">🎉 订阅成功！欢迎成为 Pro 会员</p>
+                <p className="text-emerald-400/70 text-sm mt-1">所有高级功能已解锁，开始探索吧</p>
+              </>
+            )}
           </div>
         )}
         {canceled && (
