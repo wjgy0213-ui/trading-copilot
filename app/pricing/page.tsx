@@ -104,7 +104,12 @@ function PricingPage() {
             <Sparkles className="w-3.5 h-3.5" /> 选择适合你的计划
           </div>
           <h1 className="text-3xl font-bold mb-3">从学习到实战的完整路径</h1>
-          <p className="text-gray-500 max-w-lg mx-auto">不是冷冰冰的工具，是从零到盈利的AI交易陪练系统</p>
+          <p className="text-gray-500 max-w-lg mx-auto mb-5">不是冷冰冰的工具，是从零到盈利的AI交易陪练系统</p>
+          {!isPro && (
+            <a href="/strategy" className="inline-flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-5 py-2.5 rounded-xl text-sm font-medium transition-all">
+              <Zap className="w-4 h-4" /> 先免费体验 Pro 24小时，再决定是否升级 →
+            </a>
+          )}
         </div>
 
         {/* Success/Cancel banners */}
@@ -204,7 +209,7 @@ function PricingPage() {
               { q: '可以随时取消吗？', a: '是的，随时可以在设置中取消订阅，当前计费周期内仍可使用全部功能。' },
               { q: '支持哪些支付方式？', a: '通过Stripe支持信用卡、借记卡、Apple Pay、Google Pay等主流支付方式。' },
               { q: 'Elite的实盘自动化安全吗？', a: 'API Key加密存储，仅限交易权限（不可提币），内置风控系统防止异常交易。' },
-              { q: '有试用期吗？', a: '免费版永久可用，付费功能提供7天免费试用（即将推出）。' },
+              { q: '有试用期吗？', a: '有！点击策略工坊中的任意Pro功能，可免费体验24小时全功能Pro版，无需信用卡，到期自动恢复免费版。' },
             ].map(({ q, a }) => (
               <div key={q} className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">
                 <h3 className="font-medium text-sm mb-1.5">{q}</h3>

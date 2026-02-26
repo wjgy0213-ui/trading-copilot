@@ -53,13 +53,17 @@ export default function LandingPage() {
           </motion.p>
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.5 }}
             className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/trade" className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all hover:scale-105">
-              免费开始练习 <ArrowRight className="w-5 h-5" />
+            <Link href="/strategy" className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all hover:scale-105 shadow-lg shadow-emerald-900/30">
+              免费体验 Pro 24小时 <ArrowRight className="w-5 h-5" />
             </Link>
-            <Link href="/ai-strategy" className="inline-flex items-center justify-center gap-2 bg-violet-600/20 hover:bg-violet-600/30 text-violet-400 border border-violet-500/30 px-8 py-4 rounded-xl text-lg font-semibold transition-all">
-              <Sparkles className="w-5 h-5" /> AI生成策略
+            <Link href="/trade" className="inline-flex items-center justify-center gap-2 bg-gray-800/80 hover:bg-gray-700/80 text-gray-200 border border-gray-700 px-8 py-4 rounded-xl text-lg font-semibold transition-all">
+              <Zap className="w-5 h-5 text-emerald-400" /> 开始练习交易
             </Link>
           </motion.div>
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.8 }}
+            className="text-xs text-gray-600 mt-4">
+            ✓ 无需信用卡 &nbsp;·&nbsp; ✓ 24小时全功能体验 &nbsp;·&nbsp; ✓ 到期自动恢复免费版
+          </motion.p>
         </div>
       </div>
 
