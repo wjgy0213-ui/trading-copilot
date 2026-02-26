@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: process.env.EMAIL_FROM || 'Trading Copilot <noreply@tradingcopilot.ai>',
+            from: process.env.EMAIL_FROM || 'Trading Copilot <onboarding@resend.dev>',
             to: email,
             subject: `验证码: ${code} — 交易陪练 AI`,
             html: `
