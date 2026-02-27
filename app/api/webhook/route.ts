@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe';
-import { createSession, setSessionCookie } from '@/lib/auth';
+import { activateSubscription, cancelByEmail, getUser, setUser } from '@/lib/db';
 import type Stripe from 'stripe';
 
 export async function POST(req: NextRequest) {
@@ -25,15 +25,56 @@ export async function POST(req: NextRequest) {
       const planId = session.metadata?.planId as 'pro' | 'elite' || 'pro';
       const email = session.metadata?.email || session.customer_email || '';
       
-      console.log(`✅ Subscription activated: ${email} → ${planId}`);
-      
-      // Note: In production, store this in a database
-      // For MVP, the success page will set the cookie via /api/auth/activate
+      if (email) {
+        await activateSubscription(
+          email,
+          planId,
+          session.customer as string,
+          session.subscription as string,
+          session.id,
+        );
+        console.log(`✅ KV: Subscription activated: ${email} → ${planId}`);
+      }
       break;
     }
+
+    case 'customer.subscription.updated': {
+      const sub = event.data.object as Stripe.Subscription;
+      const email = sub.metadata?.email || '';
+      if (email) {
+        const user = await getUser(email);
+        if (user) {
+          await setUser(email, {
+            ...user,
+            cancelAtPeriodEnd: sub.cancel_at_period_end,
+            status: sub.status === 'active' ? 'active' : 'past_due',
+          });
+          console.log(`🔄 KV: Subscription updated: ${email} cancel_at_period_end=${sub.cancel_at_period_end}`);
+        }
+      }
+      break;
+    }
+
     case 'customer.subscription.deleted': {
       const sub = event.data.object as Stripe.Subscription;
-      console.log(`❌ Subscription canceled: ${sub.id}`);
+      const email = sub.metadata?.email || '';
+      if (email) {
+        await cancelByEmail(email);
+        console.log(`❌ KV: Subscription canceled: ${email}`);
+      }
+      break;
+    }
+
+    case 'invoice.payment_failed': {
+      const invoice = event.data.object as Stripe.Invoice;
+      const email = invoice.customer_email || '';
+      if (email) {
+        const user = await getUser(email);
+        if (user) {
+          await setUser(email, { ...user, status: 'past_due' });
+          console.log(`⚠️ KV: Payment failed: ${email}`);
+        }
+      }
       break;
     }
   }
