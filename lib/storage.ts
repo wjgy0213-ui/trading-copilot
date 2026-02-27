@@ -6,8 +6,8 @@ const STORAGE_KEY = 'trading-copilot';
 
 /** 默认账户 */
 const DEFAULT_ACCOUNT: Account = {
-  balance: 500,
-  equity: 500,
+  balance: 10000,
+  equity: 10000,
   positions: [],
   closedTrades: [],
   totalPnl: 0,

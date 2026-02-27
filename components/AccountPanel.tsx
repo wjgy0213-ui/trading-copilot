@@ -13,7 +13,8 @@ interface AccountPanelProps {
 
 export default function AccountPanel({ account, currentPrice }: AccountPanelProps) {
   const equity = calculateEquity(account, currentPrice);
-  const totalReturn = ((equity - 500) / 500) * 100;
+  const initialBalance = 10000;
+  const totalReturn = ((equity - initialBalance) / initialBalance) * 100;
 
   const handleReset = () => {
     const confirmed = confirm(
@@ -50,7 +51,7 @@ export default function AccountPanel({ account, currentPrice }: AccountPanelProp
             icon={<TrendingUp className="w-5 h-5" />}
             label="总权益"
             value={`$${equity.toFixed(2)}`}
-            valueColor={equity >= 500 ? 'text-green-400' : 'text-red-400'}
+            valueColor={equity >= initialBalance ? 'text-green-400' : 'text-red-400'}
           />
           
           <StatItem
@@ -62,7 +63,7 @@ export default function AccountPanel({ account, currentPrice }: AccountPanelProp
 
           <div className="pt-4 border-t border-gray-700">
             <div className="text-sm text-gray-400 mb-2">初始资金</div>
-            <div className="text-lg font-semibold">$500.00</div>
+            <div className="text-lg font-semibold">${initialBalance.toLocaleString()}.00</div>
           </div>
         </div>
       </div>

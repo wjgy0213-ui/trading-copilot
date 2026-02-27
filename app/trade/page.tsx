@@ -11,6 +11,8 @@ import PositionsPanel from '@/components/PositionsPanel';
 import AccountPanel from '@/components/AccountPanel';
 import AICoach from '@/components/AICoach';
 import PriceChart from '@/components/PriceChart';
+import EquityCurve from '@/components/EquityCurve';
+import WelcomeModal from '@/components/WelcomeModal';
 
 const SYMBOL_MAP: Record<TradingPair, string> = {
   // Crypto
@@ -99,6 +101,7 @@ export default function TradePage() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
+      <WelcomeModal />
       {/* Price Ticker Bar */}
       <div className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800/50">
         <div className="container mx-auto px-4 py-4">
@@ -172,7 +175,7 @@ export default function TradePage() {
               </div>
               <div className="text-right">
                 <div className="text-xs text-gray-500 uppercase tracking-wider">权益</div>
-                <div className={`text-xl font-bold ${equity >= 500 ? 'text-green-400' : 'text-red-400'}`}>
+                <div className={`text-xl font-bold ${equity >= 10000 ? 'text-green-400' : 'text-red-400'}`}>
                   ${equity.toFixed(2)}
                 </div>
               </div>
@@ -201,8 +204,9 @@ export default function TradePage() {
             <PositionsPanel currentPrice={price.price} onPositionClosed={refreshAccount} />
           </div>
 
-          {/* Right: AI Coach + Account */}
+          {/* Right: AI Coach + Equity Curve + Account */}
           <div className="space-y-6">
+            <EquityCurve trades={account.closedTrades} initialBalance={10000} />
             <AICoach />
             <AccountPanel account={account} currentPrice={price.price} />
           </div>
