@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useCallback, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { STRATEGY_TEMPLATES, TIMEFRAMES, SYMBOLS, BACKTEST_PERIODS, DEFAULT_RISK } from '@/lib/strategies';
 import { runBacktest, BacktestResult, BacktestConfig } from '@/lib/backtestEngine';
 import { optimize, OptResult } from '@/lib/optimizer';
 import { runMonteCarlo, MonteCarloResult } from '@/lib/monteCarlo';
+import { saveStrategy } from '@/lib/autoTrader';
 import Paywall from '@/components/Paywall';
-import { ChevronDown, ChevronRight, Play, Trash2, BarChart3, Layers, Search, Share2, X as XIcon, Copy, Check } from 'lucide-react';
+import { ChevronDown, ChevronRight, Play, Trash2, BarChart3, Layers, Search, Share2, X as XIcon, Copy, Check, Rocket } from 'lucide-react';
 
 function EquityCurve({ data, color = '#10b981', height = 200, compareData }: {
   data: { time: number; equity: number }[]; color?: string; height?: number;
@@ -335,6 +336,7 @@ export default function StrategyPageWrapper() {
 }
 
 function StrategyPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const urlSid = searchParams.get('sid');
   const [selectedId, setSelectedId] = useState(urlSid && STRATEGY_TEMPLATES.find(t => t.id === urlSid) ? urlSid : STRATEGY_TEMPLATES[0].id);
@@ -609,10 +611,27 @@ function StrategyPage() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs text-gray-500 font-medium">回测结果</span>
-                  <button onClick={() => setShowShareCard(true)}
-                    className="flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 px-3 py-1.5 rounded-lg transition-all border border-violet-500/20">
-                    <Share2 className="w-3.5 h-3.5" /> 分享成绩单
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        saveStrategy({
+                          strategyId: selectedId,
+                          params: params,
+                          symbol: symbol,
+                          timeframe: timeframe,
+                          riskParams: { stopLoss, takeProfit, maxPosition },
+                          name: STRATEGY_TEMPLATES.find(t => t.id === selectedId)?.name,
+                        });
+                        router.push('/trade');
+                      }}
+                      className="flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-1.5 rounded-lg transition-all border border-emerald-500/20">
+                      <Rocket className="w-3.5 h-3.5" /> 部署到纸盘
+                    </button>
+                    <button onClick={() => setShowShareCard(true)}
+                      className="flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 px-3 py-1.5 rounded-lg transition-all border border-violet-500/20">
+                      <Share2 className="w-3.5 h-3.5" /> 分享成绩单
+                    </button>
+                  </div>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
                   {(() => { const s = calcScore(latest); const color = s >= 61 ? 'text-green-400' : s >= 31 ? 'text-yellow-400' : 'text-red-400'; const grade = s >= 80 ? 'S级' : s >= 61 ? 'A级' : s >= 31 ? 'B级' : 'C级'; return <StatCard label="综合评分" value={`${s}`} sub={grade} color={color} />; })()}

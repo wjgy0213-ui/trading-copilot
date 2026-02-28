@@ -17,11 +17,29 @@ export default function AICoach() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Check for lesson context
+    const lessonData = typeof window !== 'undefined' ? localStorage.getItem('tc-lesson-context') : null;
+    let lessonMsg: ChatMessage | null = null;
+    if (lessonData) {
+      try {
+        const lesson = JSON.parse(lessonData);
+        lessonMsg = {
+          type: 'coach',
+          text: `📚 课程练习模式：${lesson.lessonTitle}\n\n${lesson.homework}\n\n完成后回到课程继续学习！`,
+          timestamp: Date.now() - 5000,
+          variant: 'info',
+        };
+        // Clear after reading
+        localStorage.removeItem('tc-lesson-context');
+      } catch {}
+    }
+
     // 初始欢迎消息
     const welcome: ChatMessage[] = [
+      ...(lessonMsg ? [lessonMsg] : []),
       {
         type: 'coach',
-        text: '开盘前先想清楚今天的计划。每笔交易完成后，这里会给你复盘点评。',
+        text: lessonMsg ? '按照课程要求完成交易，教练会自动评分。' : '开盘前先想清楚今天的计划。每笔交易完成后，这里会给你复盘点评。',
         timestamp: Date.now() - 10000,
         variant: 'info',
       },

@@ -13,6 +13,8 @@ import AICoach from '@/components/AICoach';
 import PriceChart from '@/components/PriceChart';
 import EquityCurve from '@/components/EquityCurve';
 import WelcomeModal from '@/components/WelcomeModal';
+import AutoTraderPanel from '@/components/AutoTraderPanel';
+import TradeInsights from '@/components/TradeInsights';
 
 const SYMBOL_MAP: Record<TradingPair, string> = {
   // Crypto
@@ -204,9 +206,11 @@ export default function TradePage() {
             <PositionsPanel currentPrice={price.price} onPositionClosed={refreshAccount} />
           </div>
 
-          {/* Right: AI Coach + Equity Curve + Account */}
+          {/* Right: Auto Trader + AI Coach + Insights + Account */}
           <div className="space-y-6">
+            <AutoTraderPanel currentPrice={price.price} onTradeComplete={refreshAccount} />
             <EquityCurve trades={account.closedTrades} initialBalance={10000} />
+            <TradeInsights trades={account.closedTrades} />
             <AICoach />
             <AccountPanel account={account} currentPrice={price.price} />
           </div>

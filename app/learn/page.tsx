@@ -131,6 +131,21 @@ function LessonCard({ lesson, index, locked }: { lesson: Lesson; index: number; 
             <div className="mt-6 p-4 bg-blue-600/10 border border-blue-500/20 rounded-xl">
               <div className="text-sm font-semibold text-blue-400 mb-2">📝 课后作业</div>
               <p className="text-sm text-gray-300">{lesson.homework}</p>
+              <Link
+                href={`/trade?lesson=${lesson.id}`}
+                className="mt-3 inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 px-4 py-2 rounded-lg transition-all"
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    localStorage.setItem('tc-lesson-context', JSON.stringify({
+                      lessonId: lesson.id,
+                      lessonTitle: lesson.title,
+                      homework: lesson.homework,
+                    }));
+                  }
+                }}
+              >
+                去模拟交易练习 →
+              </Link>
             </div>
           )}
           {lesson.quiz && lesson.quiz.length > 0 && (
