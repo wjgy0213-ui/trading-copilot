@@ -15,6 +15,10 @@ import EquityCurve from '@/components/EquityCurve';
 import WelcomeModal from '@/components/WelcomeModal';
 import AutoTraderPanel from '@/components/AutoTraderPanel';
 import TradeInsights from '@/components/TradeInsights';
+import EliteGate from '@/components/EliteGate';
+import ExchangeConnect from '@/components/ExchangeConnect';
+import RiskManager from '@/components/RiskManager';
+import TelegramNotify from '@/components/TelegramNotify';
 
 const SYMBOL_MAP: Record<TradingPair, string> = {
   // Crypto
@@ -213,6 +217,18 @@ export default function TradePage() {
             <TradeInsights trades={account.closedTrades} />
             <AICoach />
             <AccountPanel account={account} currentPrice={price.price} />
+            
+            {/* Elite 专属功能 */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
+                <span className="text-[10px] text-violet-400 font-bold uppercase tracking-widest">Elite</span>
+                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
+              </div>
+              <ExchangeConnect />
+              <RiskManager />
+              <TelegramNotify />
+            </div>
           </div>
         </div>
       </div>

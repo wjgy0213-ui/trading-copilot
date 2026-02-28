@@ -37,7 +37,7 @@ const PLANS = [
     price: 79.99,
     period: '/月',
     description: '从策略到实盘的完整闭环',
-    features: ['Pro全部功能', '实盘自动化', '交易所API对接', '智能风控系统', 'Telegram实时通知', '1对1优先支持'],
+    features: ['Pro全部功能', '4大交易所API对接（Binance/OKX/Bybit/Hyperliquid）', '智能风控系统（单笔/日亏损/杠杆限制）', '风控实时监控（绿/黄/红灯）', '紧急一键平仓', 'Telegram机器人通知', '1对1优先支持'],
     cta: '升级 Elite',
     disabled: false,
     icon: Shield,
