@@ -17,12 +17,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "zh_CN",
     siteName: "交易陪练 AI",
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: '交易陪练 AI' }],
   },
   twitter: {
     card: "summary_large_image",
     title: "交易陪练 AI",
     description: "AI驱动策略回测+蒙特卡洛模拟+自动寻参。免费开始。",
     creator: "@SlowManJW",
+    images: ['/og-image.png'],
   },
   robots: {
     index: true,
