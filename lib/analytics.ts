@@ -8,6 +8,7 @@ export function trackEvent(name: string, props?: Record<string, string | number>
   try {
     const payload = {
       event: name,
+      page: window.location.pathname,
       props: props || {},
       url: window.location.pathname,
       referrer: document.referrer || '',
