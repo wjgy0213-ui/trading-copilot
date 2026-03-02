@@ -2,6 +2,7 @@ node_modules
 .next
 out
 .env
-analytics/
+# analytics output (not the API route)
+/analytics/
 .env.google
 .env.*
