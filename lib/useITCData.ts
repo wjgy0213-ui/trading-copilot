@@ -18,7 +18,7 @@ const ITC_MAP: Record<string, { id: string; name: string; nameEn: string; catego
   ETH: { id: 'eth-risk', name: 'ETH 风险', nameEn: 'ETH Risk', category: 'crypto', description: '以太坊长周期风险指标。' },
   TOTAL: { id: 'total-market-risk', name: '市场总风险', nameEn: 'Total Market Risk', category: 'crypto', description: '加密货币总市值风险指标。' },
   SOL: { id: 'sol-risk', name: 'SOL 风险', nameEn: 'SOL Risk', category: 'crypto', description: 'Solana长周期风险指标。' },
-  'BTC.D': { id: 'btc-dominance', name: 'BTC 市占率', nameEn: 'BTC Dominance', category: 'crypto', description: 'BTC市值占加密总市值比例。' },
+  'BTC.D': { id: 'btc-dominance-risk', name: 'BTC.D 风险', nameEn: 'BTC.D Risk', category: 'crypto', description: 'ITC BTC Dominance长周期风险指标（非真实市占率）。' },
   XRP: { id: 'xrp-risk', name: 'XRP 风险', nameEn: 'XRP Risk', category: 'crypto', description: 'XRP长周期风险指标。' },
   LINK: { id: 'link-risk', name: 'LINK 风险', nameEn: 'LINK Risk', category: 'crypto', description: 'Chainlink长周期风险指标。' },
   DOGE: { id: 'doge-risk', name: 'DOGE 风险', nameEn: 'DOGE Risk', category: 'crypto', description: 'Dogecoin长周期风险指标。' },
