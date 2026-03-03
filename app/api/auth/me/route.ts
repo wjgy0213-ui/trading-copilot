@@ -16,7 +16,12 @@ export async function GET() {
 
   // Check if subscription is still valid
   const isExpired = userData.expiresAt && userData.expiresAt < Math.floor(Date.now() / 1000);
-  const effectivePlan = (isExpired || userData.status !== 'active') ? 'free' : userData.plan;
+  
+  // Course buyers: check if gifted Elite is still active
+  let effectivePlan = (isExpired || userData.status !== 'active') ? 'free' : userData.plan;
+  if (effectivePlan === 'free' && userData.courseEliteExpiresAt && userData.courseEliteExpiresAt > Date.now()) {
+    effectivePlan = 'elite'; // gifted Elite from course purchase still active
+  }
 
   // If JWT is outdated, refresh it
   if (session.plan !== effectivePlan) {
@@ -35,5 +40,6 @@ export async function GET() {
     plan: effectivePlan,
     status: userData.status,
     expiresAt: userData.expiresAt,
+    courseAccess: userData.courseAccess || false,
   });
 }

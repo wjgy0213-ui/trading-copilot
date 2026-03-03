@@ -22,10 +22,34 @@ export async function POST(req: NextRequest) {
   switch (event.type) {
     case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session;
-      const planId = session.metadata?.planId as 'pro' | 'elite' || 'pro';
       const email = session.metadata?.email || session.customer_email || '';
+      const type = session.metadata?.type;
       
-      if (email) {
+      if (email && type === 'course') {
+        // Course one-time purchase
+        const eliteMonths = parseInt(session.metadata?.eliteMonths || '3');
+        const existing = await getUser(email);
+        const now = Date.now();
+        const eliteExpiry = now + eliteMonths * 30 * 24 * 60 * 60 * 1000;
+        
+        await setUser(email, {
+          ...(existing || { email: email.toLowerCase(), status: 'active' }),
+          email: email.toLowerCase(),
+          plan: 'elite', // gift Elite access
+          courseAccess: true,
+          coursePurchasedAt: now,
+          courseEliteExpiresAt: eliteExpiry,
+          stripeCustomerId: session.customer as string || existing?.stripeCustomerId,
+          status: 'active',
+          activatedSessionIds: [
+            ...(existing?.activatedSessionIds || []),
+            session.id,
+          ],
+        });
+        console.log(`📚 KV: Course activated: ${email} + Elite ${eliteMonths}mo`);
+      } else if (email) {
+        // Subscription purchase
+        const planId = session.metadata?.planId as 'pro' | 'elite' || 'pro';
         await activateSubscription(
           email,
           planId,

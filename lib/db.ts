@@ -10,6 +10,10 @@ export interface UserRecord {
   cancelAtPeriodEnd?: boolean;
   status: 'active' | 'canceled' | 'past_due' | 'free';
   activatedSessionIds?: string[]; // prevent replay
+  // Course
+  courseAccess?: boolean;        // lifetime course access
+  coursePurchasedAt?: number;
+  courseEliteExpiresAt?: number; // gifted Elite expiry from course purchase
 }
 
 const userKey = (email: string) => `user:${email.toLowerCase()}`;

@@ -16,6 +16,7 @@ const NAV_ITEMS = [
   { href: '/ai-strategy', label: 'AI策略', icon: Sparkles, premium: true },
   { href: '/pricing', label: '定价', icon: CreditCard, premium: true },
   { href: '/learn', label: '课程', icon: BookOpen },
+  { href: '/course', label: '购买课程', icon: BookOpen, premium: true },
   { href: '/history', label: '历史', icon: History },
   { href: '/elite', label: 'Elite', icon: Shield, premium: true },
   { href: '/account', label: '账户', icon: UserCircle, premium: true },

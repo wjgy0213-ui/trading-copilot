@@ -28,3 +28,31 @@ export const PLANS = {
 } as const;
 
 export type PlanId = keyof typeof PLANS;
+
+// Course products (one-time payment)
+export const COURSE_PLANS = {
+  basic: {
+    name: '课程基础版',
+    price: 49,
+    priceId: process.env.STRIPE_COURSE_BASIC_PRICE_ID || '',
+    eliteMonths: 1,
+    features: ['全部课程终身访问', '策略模板库', '1个月Pro体验'],
+  },
+  bundle: {
+    name: '课程+工具包',
+    price: 99,
+    priceId: process.env.STRIPE_COURSE_BUNDLE_PRICE_ID || '',
+    eliteMonths: 3,
+    features: ['全部课程终身访问', '策略模板库', '实战案例集', '3个月Elite体验'],
+    popular: true,
+  },
+  vip: {
+    name: '全家桶VIP',
+    price: 149,
+    priceId: process.env.STRIPE_COURSE_VIP_PRICE_ID || '',
+    eliteMonths: 6,
+    features: ['全部课程终身访问', '策略模板库', '实战案例集', '1v1策略复盘', '6个月Elite体验', '专属交流群'],
+  },
+} as const;
+
+export type CoursePlanId = keyof typeof COURSE_PLANS;
