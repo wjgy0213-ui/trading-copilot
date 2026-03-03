@@ -211,14 +211,13 @@ export default function CoursePage() {
         </div>
       </div>
 
-      {/* Guarantees */}
+      {/* Guarantee */}
       <div className="max-w-3xl mx-auto px-6 pb-20">
         <div className="bg-gray-900/30 border border-gray-800 rounded-2xl p-6 text-center">
           <Zap className="w-8 h-8 text-amber-400 mx-auto mb-3" />
-          <h3 className="text-lg font-semibold text-white mb-2">7天无理由退款</h3>
+          <h3 className="text-lg font-semibold text-white mb-2">一次付清 · 终身受益</h3>
           <p className="text-gray-500 text-sm max-w-lg mx-auto">
-            购买后7天内，如果觉得不适合你，全额退款，无需理由。
-            课程是用来帮你成长的，不是用来绑架你的。
+            没有订阅费，没有隐藏收费。买一次，永久访问所有课程内容和未来更新。
           </p>
         </div>
       </div>
