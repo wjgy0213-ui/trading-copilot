@@ -37,19 +37,33 @@ export async function GET() {
   }
 
   try {
-    const [cryptoRes, fgRes, prices] = await Promise.all([
+    const [cryptoRes, fgRes, prices, globalRes] = await Promise.all([
       fetch(`${BASE}/risk-models/price-based/crypto?apikey=${ITC_API_KEY}`, { next: { revalidate: 300 } }),
       fetch('https://api.alternative.me/fng/?limit=1'),
       getPrices(),
+      fetch('https://api.coingecko.com/api/v3/global', { next: { revalidate: 300 } }).catch(() => null),
     ]);
 
     const crypto = await cryptoRes.json();
     const fg = await fgRes.json();
+    
+    // BTC Dominance from CoinGecko global data
+    let btcDominance: number | null = null;
+    let totalMarketCap: number | null = null;
+    try {
+      if (globalRes && globalRes.ok) {
+        const globalData = await globalRes.json();
+        btcDominance = globalData?.data?.market_cap_percentage?.btc ?? null;
+        totalMarketCap = globalData?.data?.total_market_cap?.usd ?? null;
+      }
+    } catch {}
 
     return NextResponse.json({
       itc: crypto.data || {},
       fearGreed: fg.data?.[0] || {},
       prices,
+      btcDominance,      // real percentage e.g. 59.2
+      totalMarketCap,    // total crypto market cap USD
       timestamp: Date.now(),
     });
   } catch (e: any) {

@@ -7,6 +7,8 @@ interface APIResponse {
   itc: Record<string, number>;
   fearGreed: { value: string; value_classification: string };
   prices: { BTC: number; ETH: number };
+  btcDominance: number | null;
+  totalMarketCap: number | null;
   timestamp: number;
 }
 
@@ -69,6 +71,17 @@ export function useITCData(): { indicators: ITCIndicator[]; prices: { BTC: numbe
               history: fakeHistory(val),
             });
           }
+        }
+
+        // Add BTC Dominance from CoinGecko
+        if (data.btcDominance !== undefined && data.btcDominance !== null) {
+          const domVal = data.btcDominance / 100; // convert 59.2 → 0.592
+          real.push({
+            id: 'btc-dominance', name: 'BTC 市占率', nameEn: 'BTC Dominance',
+            value: domVal, history: fakeHistory(domVal),
+            category: 'crypto',
+            description: `BTC市值占加密总市值${data.btcDominance.toFixed(1)}%。高=避险情绪强，低=山寨币季节。`,
+          });
         }
 
         // Add Fear & Greed from API
