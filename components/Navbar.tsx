@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { BarChart3, BookOpen, History, Home, Zap, LineChart, TrendingUp, Newspaper, Sparkles, CreditCard, UserCircle, LogIn } from 'lucide-react';
+import { BarChart3, BookOpen, History, Home, Zap, LineChart, TrendingUp, Newspaper, Sparkles, CreditCard, UserCircle, LogIn, Shield } from 'lucide-react';
 import { TrialCountdown } from './Paywall';
 
 const NAV_ITEMS = [
@@ -17,6 +17,7 @@ const NAV_ITEMS = [
   { href: '/pricing', label: '定价', icon: CreditCard, premium: true },
   { href: '/learn', label: '课程', icon: BookOpen },
   { href: '/history', label: '历史', icon: History },
+  { href: '/elite', label: 'Elite', icon: Shield, premium: true },
   { href: '/account', label: '账户', icon: UserCircle, premium: true },
 ];
 
