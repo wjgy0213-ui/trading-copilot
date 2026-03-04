@@ -91,7 +91,11 @@ export async function GET() {
     if (dbState) {
       source = 'supabase';
       // Convert DB format to SniperState
-      const dbPositions = dbState.positions || [];
+      // Handle double-encoded JSON (string stored in jsonb)
+      let dbPositions = dbState.positions || [];
+      if (typeof dbPositions === 'string') {
+        try { dbPositions = JSON.parse(dbPositions); } catch { dbPositions = []; }
+      }
       const positionsMap: Record<string, Position> = {};
       
       for (const pos of dbPositions) {
