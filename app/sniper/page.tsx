@@ -274,29 +274,76 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
   const [tab, setTab] = useState<'positions' | 'history'>('positions');
   const [paperStarted, setPaperStarted] = useState(false);
 
-  const fetchData = useCallback(async () => {
-    try {
-      const res = await fetch('/api/sniper');
-      if (res.ok) {
-        setData(await res.json());
-      }
-    } catch {} finally {
-      setLoading(false);
+  const loadPaperData = useCallback(() => {
+    // Paper mode: user's own data from localStorage
+    const saved = localStorage.getItem('sniper_paper_state');
+    if (saved) {
+      try {
+        const state = JSON.parse(saved);
+        const solPrice = 93; // approximate
+        const posEntries = Object.entries(state.positions || {});
+        const posValue = posEntries.reduce((sum, [, p]: [string, any]) => sum + (p.size_sol || 0), 0);
+        const totalValue = state.balance_sol + posValue;
+        const pnlPct = ((totalValue - 10) / 10) * 100;
+        const winRate = state.total_trades > 0 ? (state.wins / (state.wins + state.losses)) * 100 : 0;
+
+        setData({
+          state: state,
+          portfolio: {
+            total_value_sol: totalValue,
+            total_value_usd: totalValue * solPrice,
+            total_pnl_pct: pnlPct,
+            unrealized_pnl_sol: 0,
+            win_rate: winRate,
+            sol_price: solPrice,
+          },
+          trades: state.trade_history || [],
+        });
+      } catch {}
+    } else {
+      // Fresh paper state
+      const freshState = {
+        balance_sol: 10,
+        positions: {},
+        total_trades: 0,
+        wins: 0,
+        losses: 0,
+        total_pnl_sol: 0,
+        max_drawdown: 0,
+        peak_balance: 10,
+        start_time: new Date().toISOString(),
+        trade_history: [],
+      };
+      localStorage.setItem('sniper_paper_state', JSON.stringify(freshState));
+      setData({
+        state: freshState,
+        portfolio: {
+          total_value_sol: 10,
+          total_value_usd: 930,
+          total_pnl_pct: 0,
+          unrealized_pnl_sol: 0,
+          win_rate: 0,
+          sol_price: 93,
+        },
+        trades: [],
+      });
     }
+    setLoading(false);
   }, []);
 
   useEffect(() => {
     if (mode === 'paper') {
-      // Check localStorage for existing paper session
       const saved = localStorage.getItem('sniper_paper_session');
       if (saved) {
         setPaperStarted(true);
-        fetchData();
-        const iv = setInterval(fetchData, 30000);
+        loadPaperData();
+        const iv = setInterval(loadPaperData, 30000);
         return () => clearInterval(iv);
+      } else {
+        setLoading(false);
       }
     }
-  }, [mode, fetchData]);
+  }, [mode, loadPaperData]);
 
   // Paper mode - fresh start
   if (mode === 'paper' && !paperStarted) {
@@ -351,7 +398,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                   balance: 10,
                 }));
                 setPaperStarted(true);
-                fetchData();
+                loadPaperData();
               }}
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-3 px-8 rounded-xl text-lg transition-all transform hover:scale-105"
             >
