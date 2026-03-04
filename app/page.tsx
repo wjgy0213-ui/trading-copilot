@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, Target, TrendingUp, Brain, BarChart3, ChevronDown, Sparkles, Shield, Zap, Crown, LineChart, Search } from 'lucide-react';
+import { ArrowRight, Target, TrendingUp, Brain, BarChart3, ChevronDown, Sparkles, Shield, Zap, Crown, LineChart, Search, Activity, Crosshair, Fish, Gamepad2, ShieldAlert, Radio } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
@@ -122,16 +122,21 @@ export default function LandingPage() {
       {/* Features Grid - 6 features */}
       <div className="container mx-auto px-4 py-16">
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="text-3xl md:text-4xl font-bold text-center mb-4">完整的交易学习系统</motion.h2>
-        <p className="text-gray-500 text-center mb-12 max-w-2xl mx-auto">从练习到策略到实盘，每一步都有AI陪你</p>
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          className="text-3xl md:text-4xl font-bold text-center mb-4">11个工具，一个系统</motion.h2>
+        <p className="text-gray-500 text-center mb-12 max-w-2xl mx-auto">从练习到策略到实盘风控，每一步都有AI陪你</p>
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { icon: Target, title: '纸盘交易', desc: '真实价格，虚拟资金，零风险练手', color: 'emerald', href: '/trade' },
-            { icon: Brain, title: 'AI教练', desc: '每笔交易即时评分，纠正坏习惯', color: 'blue', href: '/trade' },
-            { icon: Sparkles, title: 'AI策略生成', desc: '自然语言描述，AI帮你创建策略', color: 'violet', href: '/ai-strategy' },
-            { icon: LineChart, title: '策略工坊', desc: '8大策略模板，高级回测引擎', color: 'cyan', href: '/strategy' },
-            { icon: Search, title: '参数优化器', desc: '自动寻找最优参数组合', color: 'amber', href: '/strategy' },
-            { icon: BarChart3, title: '数据仪表盘', desc: '实时ITC风险、Fear指数、TVL', color: 'rose', href: '/dashboard' },
+            { icon: Gamepad2, title: '交易陪练', desc: '虚拟$10K，AI教练实时评分', color: 'emerald', href: '/practice' },
+            { icon: Activity, title: '市场体检', desc: '5维度一键评分，红绿灯', color: 'blue', href: '/health' },
+            { icon: Radio, title: '信号聚合', desc: '链上×技术×宏观三层融合', color: 'cyan', href: '/signals' },
+            { icon: Crosshair, title: 'Meme Sniper', desc: '自动发现+评分+风控', color: 'amber', href: '/sniper' },
+            { icon: Fish, title: '鲸鱼追踪', desc: '顶级交易员实时持仓', color: 'violet', href: '/whales' },
+            { icon: Brain, title: 'AI复盘', desc: '情绪检测+时段热力图', color: 'rose', href: '/review' },
+            { icon: ShieldAlert, title: '风控守门员', desc: '爆仓预警+实时风险扫描', color: 'orange', href: '/guardian' },
+            { icon: Sparkles, title: 'AI策略生成', desc: '自然语言→可回测策略', color: 'purple', href: '/ai-strategy' },
+            { icon: LineChart, title: '策略工坊', desc: '8大模板+参数优化器', color: 'teal', href: '/strategy' },
+            { icon: BarChart3, title: '数据仪表盘', desc: 'ITC风险、Fear指数、TVL', color: 'sky', href: '/dashboard' },
+            { icon: Shield, title: 'Elite控制台', desc: '交易所对接+一键平仓', color: 'emerald', href: '/elite' },
           ].map((f, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}>
@@ -174,7 +179,7 @@ export default function LandingPage() {
           {[
             { name: '免费版', price: '$0', features: ['模拟交易', '3个基础策略', 'AI教练', '基础仪表盘'], cta: '开始练习', href: '/trade', color: 'gray' },
             { name: 'Pro', price: '$39.99', features: ['AI策略生成', '8大策略模板', '参数优化器', '高级回测', '回测报告导出'], cta: '升级 Pro', href: '/pricing', color: 'emerald', popular: true },
-            { name: 'Elite', price: '$79.99', features: ['Pro全部功能', '实盘自动化', '风控系统', 'Telegram通知', '优先支持'], cta: '升级 Elite', href: '/pricing', color: 'violet' },
+            { name: 'Elite', price: '$79.99', features: ['Pro全部功能', 'AI复盘日记', '风控守门员', '交易所对接', 'Telegram通知'], cta: '升级 Elite', href: '/pricing', color: 'violet' },
           ].map((p, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.15 }}
