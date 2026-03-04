@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
+import { getSniperState, getSniperTrades, isSupabaseConfigured } from '@/lib/supabase';
 
 const BASE = join(process.cwd(), '..', '..', 'trading', 'scripts', 'meme_sniper');
 const STATE_FILE = join(BASE, 'paper_state.json');
@@ -84,8 +85,39 @@ export async function GET() {
 
     if (existsSync(STATE_FILE)) {
       state = JSON.parse(readFileSync(STATE_FILE, 'utf-8'));
+    } else if (isSupabaseConfigured()) {
+      // Vercel: read from Supabase
+      const sbState = await getSniperState();
+      const sbTrades = await getSniperTrades(50);
+      if (sbState) {
+        return NextResponse.json({
+          state: {
+            balance_sol: sbState.balance_sol,
+            positions: sbState.positions || {},
+            total_trades: sbState.total_trades,
+            wins: Math.round((sbState.win_rate / 100) * sbState.total_trades),
+            losses: sbState.total_trades - Math.round((sbState.win_rate / 100) * sbState.total_trades),
+            total_pnl_sol: sbState.total_pnl_sol,
+            peak_balance: 10,
+            max_drawdown: sbState.max_drawdown,
+            start_time: sbState.updated_at,
+          },
+          portfolio: {
+            total_value_sol: sbState.balance_sol,
+            total_value_usd: 0,
+            total_pnl_pct: sbState.total_pnl_pct,
+            unrealized_pnl_sol: 0,
+            win_rate: sbState.win_rate,
+            sol_price: 0,
+          },
+          trades: sbTrades || [],
+          timestamp: Date.now(),
+          source: 'supabase',
+        });
+      }
+      return NextResponse.json({ state: null, trades: [], message: 'No sniper data yet' });
     } else {
-      // Demo/Vercel fallback
+      // No local file, no Supabase
       return NextResponse.json({
         state: null,
         trades: [],

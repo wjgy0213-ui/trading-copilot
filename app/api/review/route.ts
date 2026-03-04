@@ -1,4 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getSession } from '@/lib/auth';
+import {
+  getReviews,
+  getReviewByDate,
+  saveReview as saveReviewDB,
+} from '@/lib/supabase';
 
 // AI Trade Review — analyze recent trades and generate insights
 // Elite-only feature: requires exchange connection
@@ -198,7 +204,26 @@ function generateDemoTrades(): Trade[] {
 export async function GET(req: NextRequest) {
   try {
     const mode = req.nextUrl.searchParams.get('mode') || 'demo';
+    const session = await getSession();
 
+    // If requesting saved reviews
+    if (mode === 'list' && session?.email) {
+      const reviews = await getReviews(session.email, 30);
+      return NextResponse.json({ reviews }, {
+        headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120' },
+      });
+    }
+
+    // Get specific review by date
+    const dateParam = req.nextUrl.searchParams.get('date');
+    if (dateParam && session?.email) {
+      const review = await getReviewByDate(session.email, dateParam);
+      return NextResponse.json({ review }, {
+        headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120' },
+      });
+    }
+
+    // Analyze trades (demo or live)
     let trades: Trade[];
 
     if (mode === 'live') {
@@ -215,6 +240,40 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(analysis, {
       headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120' },
     });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+// POST — save a review
+export async function POST(req: NextRequest) {
+  try {
+    const session = await getSession();
+    if (!session?.email) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const { date, entries, mood, ai_diagnosis, score } = body;
+
+    if (!date) {
+      return NextResponse.json({ error: 'Date required' }, { status: 400 });
+    }
+
+    const saved = await saveReviewDB({
+      user_id: session.email,
+      date,
+      entries: entries || [],
+      mood,
+      ai_diagnosis,
+      score,
+    });
+
+    if (!saved) {
+      return NextResponse.json({ error: 'Failed to save review' }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

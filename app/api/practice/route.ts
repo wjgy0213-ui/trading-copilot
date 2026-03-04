@@ -1,4 +1,11 @@
 import { NextResponse } from 'next/server';
+import { getSession } from '@/lib/auth';
+import {
+  getPracticePortfolio,
+  savePracticePortfolio,
+  savePracticeTrade,
+  getPracticeTrades,
+} from '@/lib/supabase';
 
 // Trading Practice Mode — Virtual $10,000 paper trading with AI coaching
 // Tiers: Bronze ($10K) → Silver ($50K) → Gold ($100K) → Platinum ($500K)
@@ -122,7 +129,7 @@ function gradeTrade(trade: Omit<PracticeTrade, 'aiScore' | 'aiAdvice'>): { score
   };
 }
 
-// GET — fetch practice state (stored in cookie for simplicity)
+// GET — fetch practice state (from Supabase if authenticated, fallback to default)
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const action = searchParams.get('action');
@@ -144,7 +151,65 @@ export async function GET(request: Request) {
     return NextResponse.json(TIERS);
   }
 
-  // Return default new state
+  // Try to get user session
+  const session = await getSession();
+  const userId = session?.email;
+
+  // If authenticated, try to fetch from Supabase
+  if (userId) {
+    const portfolio = await getPracticePortfolio(userId);
+    if (portfolio) {
+      // Convert DB format to frontend PracticeState format
+      const history = await getPracticeTrades(userId, 100);
+      
+      const state: PracticeState = {
+        tier: portfolio.tier as any,
+        balance: Number(portfolio.balance),
+        startBalance: Number(portfolio.start_balance),
+        positions: portfolio.state?.positions || [],
+        history: history.map(t => ({
+          id: t.id!,
+          coin: t.coin,
+          side: t.side as any,
+          entryPrice: Number(t.entry_price),
+          exitPrice: Number(t.exit_price),
+          size: Number(t.size),
+          leverage: Number(t.leverage),
+          pnl: Number(t.pnl),
+          pnlPct: Number(t.pnl_pct),
+          reason: t.reason || '',
+          entryTime: t.entry_time,
+          exitTime: t.exit_time,
+          aiScore: t.ai_score,
+          aiAdvice: t.ai_advice,
+        })),
+        stats: {
+          totalTrades: portfolio.total_trades,
+          wins: portfolio.wins,
+          losses: portfolio.losses,
+          bestTrade: Number(portfolio.best_trade_pct),
+          worstTrade: Number(portfolio.worst_trade_pct),
+          avgHoldTime: Number(portfolio.avg_hold_time_min),
+          maxDrawdown: Number(portfolio.max_drawdown_pct),
+          streakCurrent: portfolio.streak_current,
+          streakBest: portfolio.streak_best,
+          daysActive: portfolio.days_active,
+        },
+        achievements: portfolio.state?.achievements || [],
+        createdAt: portfolio.created_at,
+        lastActiveAt: portfolio.updated_at,
+      };
+
+      return NextResponse.json({
+        state,
+        tiers: TIERS,
+        message: 'Loaded from cloud',
+        source: 'supabase',
+      });
+    }
+  }
+
+  // Return default new state (not logged in or no data)
   const defaultState: PracticeState = {
     tier: 'bronze',
     balance: TIERS.bronze.balance,
@@ -165,11 +230,12 @@ export async function GET(request: Request) {
   return NextResponse.json({
     state: defaultState,
     tiers: TIERS,
-    message: 'Practice mode ready. State is stored in your browser.',
+    message: userId ? 'No saved data, starting fresh' : 'Guest mode - login to save progress',
+    source: 'default',
   });
 }
 
-// POST — grade a completed trade
+// POST — save state or grade a trade
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -177,6 +243,67 @@ export async function POST(request: Request) {
     if (body.action === 'grade') {
       const { score, advice } = gradeTrade(body.trade);
       return NextResponse.json({ score, advice });
+    }
+
+    if (body.action === 'save') {
+      // Save portfolio state to Supabase
+      const session = await getSession();
+      if (!session?.email) {
+        return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+      }
+
+      const { state, trade } = body;
+      const userId = session.email;
+
+      // Save portfolio
+      if (state) {
+        const saved = await savePracticePortfolio({
+          user_id: userId,
+          tier: state.tier,
+          balance: state.balance,
+          start_balance: state.startBalance,
+          total_trades: state.stats.totalTrades,
+          wins: state.stats.wins,
+          losses: state.stats.losses,
+          best_trade_pct: state.stats.bestTrade,
+          worst_trade_pct: state.stats.worstTrade,
+          avg_hold_time_min: state.stats.avgHoldTime,
+          max_drawdown_pct: state.stats.maxDrawdown,
+          streak_current: state.stats.streakCurrent,
+          streak_best: state.stats.streakBest,
+          days_active: state.stats.daysActive,
+          state: {
+            positions: state.positions,
+            achievements: state.achievements,
+          },
+        });
+
+        if (!saved) {
+          console.warn('[Practice] Failed to save to Supabase, client will use local state');
+        }
+      }
+
+      // Save individual trade if provided
+      if (trade) {
+        await savePracticeTrade({
+          user_id: userId,
+          coin: trade.coin,
+          side: trade.side,
+          entry_price: trade.entryPrice,
+          exit_price: trade.exitPrice,
+          size: trade.size,
+          leverage: trade.leverage,
+          pnl: trade.pnl,
+          pnl_pct: trade.pnlPct,
+          reason: trade.reason,
+          entry_time: trade.entryTime,
+          exit_time: trade.exitTime,
+          ai_score: trade.aiScore,
+          ai_advice: trade.aiAdvice,
+        });
+      }
+
+      return NextResponse.json({ success: true });
     }
 
     return NextResponse.json({ error: 'Unknown action' }, { status: 400 });
