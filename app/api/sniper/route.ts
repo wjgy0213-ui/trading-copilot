@@ -95,9 +95,8 @@ export async function GET() {
       const positionsMap: Record<string, Position> = {};
       
       for (const pos of dbPositions) {
-        if (pos.symbol) {
-          positionsMap[pos.symbol] = pos as Position;
-        }
+        const key = pos.address || pos.symbol || `pos_${Math.random()}`;
+        positionsMap[key] = pos as Position;
       }
 
       state = {
