@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { BarChart3, BookOpen, History, Home, Zap, LineChart, TrendingUp, Newspaper, Sparkles, CreditCard, UserCircle, LogIn, Shield, Activity, Crosshair, Fish, Gamepad2, Brain, ShieldAlert } from 'lucide-react';
+import { BarChart3, BookOpen, History, Home, Zap, LineChart, TrendingUp, Newspaper, Sparkles, CreditCard, UserCircle, LogIn, Shield, Activity, Crosshair, Fish, Gamepad2, Brain, ShieldAlert, Radio } from 'lucide-react';
 import { TrialCountdown } from './Paywall';
 
 const NAV_ITEMS = [
@@ -17,6 +17,7 @@ const NAV_ITEMS = [
   { href: '/practice', label: '陪练', icon: Gamepad2 },
   { href: '/review', label: '复盘', icon: Brain, premium: true },
   { href: '/guardian', label: '风控', icon: ShieldAlert, premium: true },
+  { href: '/signals', label: '信号', icon: Radio, premium: true },
   { href: '/news', label: '资讯', icon: Newspaper },
   { href: '/strategy', label: '策略工坊', icon: Sparkles, premium: true },
   { href: '/ai-strategy', label: 'AI策略', icon: Sparkles, premium: true },
