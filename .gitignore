@@ -6,3 +6,4 @@ out
 /analytics/
 .env.google
 .env.*
+.vercel

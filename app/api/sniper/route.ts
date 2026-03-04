@@ -1,15 +1,17 @@
 import { NextResponse } from 'next/server';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
-import { getSniperState, getSniperTrades, isSupabaseConfigured } from '@/lib/supabase';
+import {
+  getSniperState,
+  getSniperTrades,
+} from '@/lib/supabase';
 
 const BASE = join(process.cwd(), '..', '..', 'trading', 'scripts', 'meme_sniper');
 const STATE_FILE = join(BASE, 'paper_state.json');
 const HISTORY_FILE = join(BASE, 'trade_history.jsonl');
 
-// In production (Vercel), read from a different mechanism
-// For now, we'll serve mock data if files don't exist and provide an API
-// that the local dev server can use
+// In production (Vercel), read from Supabase
+// In development, fallback to local files if Supabase is not configured
 
 interface Position {
   symbol: string;
@@ -80,58 +82,79 @@ async function fetchCurrentPrices(addresses: string[]): Promise<Record<string, n
 
 export async function GET() {
   try {
-    let state: SniperState;
+    let state: SniperState | null = null;
     let trades: TradeRecord[] = [];
+    let source = 'none';
 
-    if (existsSync(STATE_FILE)) {
-      state = JSON.parse(readFileSync(STATE_FILE, 'utf-8'));
-    } else if (isSupabaseConfigured()) {
-      // Vercel: read from Supabase
-      const sbState = await getSniperState();
-      const sbTrades = await getSniperTrades(50);
-      if (sbState) {
-        return NextResponse.json({
-          state: {
-            balance_sol: sbState.balance_sol,
-            positions: sbState.positions || {},
-            total_trades: sbState.total_trades,
-            wins: Math.round((sbState.win_rate / 100) * sbState.total_trades),
-            losses: sbState.total_trades - Math.round((sbState.win_rate / 100) * sbState.total_trades),
-            total_pnl_sol: sbState.total_pnl_sol,
-            peak_balance: 10,
-            max_drawdown: sbState.max_drawdown,
-            start_time: sbState.updated_at,
-          },
-          portfolio: {
-            total_value_sol: sbState.balance_sol,
-            total_value_usd: 0,
-            total_pnl_pct: sbState.total_pnl_pct,
-            unrealized_pnl_sol: 0,
-            win_rate: sbState.win_rate,
-            sol_price: 0,
-          },
-          trades: sbTrades || [],
-          timestamp: Date.now(),
-          source: 'supabase',
-        });
+    // 1. Try Supabase first
+    const dbState = await getSniperState();
+    if (dbState) {
+      source = 'supabase';
+      // Convert DB format to SniperState
+      const dbPositions = dbState.positions || [];
+      const positionsMap: Record<string, Position> = {};
+      
+      for (const pos of dbPositions) {
+        if (pos.symbol) {
+          positionsMap[pos.symbol] = pos as Position;
+        }
       }
-      return NextResponse.json({ state: null, trades: [], message: 'No sniper data yet' });
-    } else {
-      // No local file, no Supabase
+
+      state = {
+        balance_sol: Number(dbState.balance_sol),
+        positions: positionsMap,
+        total_trades: dbState.total_trades,
+        wins: dbState.wins,
+        losses: dbState.losses,
+        total_pnl_sol: Number(dbState.total_pnl_sol || 0),
+        peak_balance: Number(dbState.peak_balance || dbState.balance_sol),
+        max_drawdown: Number(dbState.max_drawdown || 0),
+        start_time: dbState.start_time || new Date().toISOString(),
+      };
+
+      // Get trades from DB
+      const dbTrades = await getSniperTrades(50);
+      trades = dbTrades.map(t => ({
+        action: t.exit_price ? 'SELL' : 'BUY',
+        symbol: t.symbol || '',
+        token: t.token || '',
+        price: t.entry_price ? Number(t.entry_price) : undefined,
+        entry_price: t.entry_price ? Number(t.entry_price) : undefined,
+        exit_price: t.exit_price ? Number(t.exit_price) : undefined,
+        pnl_pct: t.pnl_pct ? Number(t.pnl_pct) : undefined,
+        pnl_sol: t.pnl_sol ? Number(t.pnl_sol) : undefined,
+        reason: t.reason,
+        score: t.score ? Number(t.score) : undefined,
+        size_sol: t.size_sol ? Number(t.size_sol) : undefined,
+        size_usd: t.size_usd ? Number(t.size_usd) : undefined,
+        ts: t.entry_time || t.exit_time || new Date().toISOString(),
+      }));
+    }
+
+    // 2. Fallback to local files if Supabase is empty
+    if (!state && existsSync(STATE_FILE)) {
+      source = 'local';
+      state = JSON.parse(readFileSync(STATE_FILE, 'utf-8'));
+
+      // Read trade history (last 50)
+      if (existsSync(HISTORY_FILE)) {
+        const lines = readFileSync(HISTORY_FILE, 'utf-8').trim().split('\n').filter(Boolean);
+        trades = lines.slice(-50).map(l => {
+          try { return JSON.parse(l); } catch { return null; }
+        }).filter(Boolean) as TradeRecord[];
+      }
+    }
+
+    // 3. If no data at all, return demo/empty response
+    if (!state) {
       return NextResponse.json({
         state: null,
         trades: [],
         live_prices: {},
+        portfolio: null,
         message: 'Sniper not running on this environment',
+        source: 'none',
       });
-    }
-
-    // Read trade history (last 50)
-    if (existsSync(HISTORY_FILE)) {
-      const lines = readFileSync(HISTORY_FILE, 'utf-8').trim().split('\n').filter(Boolean);
-      trades = lines.slice(-50).map(l => {
-        try { return JSON.parse(l); } catch { return null; }
-      }).filter(Boolean) as TradeRecord[];
     }
 
     // Fetch current prices for open positions
@@ -185,8 +208,10 @@ export async function GET() {
       },
       trades: trades.reverse(), // newest first
       timestamp: Date.now(),
+      source,
     });
   } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 });
+    console.error('[Sniper API] Error:', e);
+    return NextResponse.json({ error: e.message, source: 'error' }, { status: 500 });
   }
 }

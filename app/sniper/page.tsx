@@ -56,6 +56,9 @@ interface SniperData {
   trades: Trade[];
 }
 
+type SniperMode = 'choose' | 'paper' | 'live';
+type LiveExchange = 'binance' | 'phantom' | null;
+
 function StatCard({ label, value, sub, color }: { label: string; value: string; sub?: string; color?: string }) {
   return (
     <div className="bg-gray-800/60 rounded-xl p-4 border border-gray-700/50">
@@ -92,10 +95,184 @@ function timeAgo(isoStr: string): string {
   return `${Math.floor(hrs / 24)}d`;
 }
 
-export default function SniperPage() {
+/* ========== Mode Selection Screen ========== */
+function ModeSelector({ onSelect }: { onSelect: (mode: SniperMode) => void }) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex items-center justify-center px-4">
+      <div className="max-w-2xl w-full">
+        <div className="text-center mb-10">
+          <h1 className="text-3xl font-bold flex items-center justify-center gap-3">
+            <span>🔫</span>
+            <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+              Meme Sniper
+            </span>
+          </h1>
+          <p className="text-gray-400 mt-2">AI驱动的链上Meme自动狙击系统</p>
+          <p className="text-gray-500 text-sm mt-1">5维评分 · 自动买卖 · 风控止损</p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          {/* Paper Trading */}
+          <button
+            onClick={() => onSelect('paper')}
+            className="group bg-gradient-to-br from-purple-900/40 to-purple-800/20 rounded-2xl p-6 border border-purple-500/30 hover:border-purple-400/60 transition-all text-left"
+          >
+            <div className="text-3xl mb-3">📊</div>
+            <h3 className="text-lg font-bold text-purple-300 group-hover:text-purple-200">模拟盘</h3>
+            <p className="text-gray-400 text-sm mt-2">10 SOL 虚拟资金起步，零风险体验AI狙击策略</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="px-2 py-1 bg-purple-500/20 rounded text-xs text-purple-300">免费</span>
+              <span className="px-2 py-1 bg-purple-500/20 rounded text-xs text-purple-300">实时数据</span>
+              <span className="px-2 py-1 bg-purple-500/20 rounded text-xs text-purple-300">零风险</span>
+            </div>
+            <div className="mt-4 text-purple-400 text-sm font-medium group-hover:translate-x-1 transition-transform">
+              立即开始 →
+            </div>
+          </button>
+
+          {/* Live Trading */}
+          <button
+            onClick={() => onSelect('live')}
+            className="group bg-gradient-to-br from-orange-900/40 to-orange-800/20 rounded-2xl p-6 border border-orange-500/30 hover:border-orange-400/60 transition-all text-left"
+          >
+            <div className="text-3xl mb-3">⚡</div>
+            <h3 className="text-lg font-bold text-orange-300 group-hover:text-orange-200">实盘交易</h3>
+            <p className="text-gray-400 text-sm mt-2">连接交易所或钱包，真金白银自动执行</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="px-2 py-1 bg-orange-500/20 rounded text-xs text-orange-300">Elite</span>
+              <span className="px-2 py-1 bg-orange-500/20 rounded text-xs text-orange-300">币安</span>
+              <span className="px-2 py-1 bg-orange-500/20 rounded text-xs text-orange-300">Phantom</span>
+            </div>
+            <div className="mt-4 text-orange-400 text-sm font-medium group-hover:translate-x-1 transition-transform">
+              连接钱包 →
+            </div>
+          </button>
+        </div>
+
+        {/* Official Lab Stats */}
+        <div className="mt-8 bg-gray-800/40 rounded-xl p-4 border border-gray-700/30">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-sm text-gray-300 font-medium">官方实验盘 · 实时运行中</span>
+          </div>
+          <OfficialLabStats />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* Official lab stats - fetches our real data */
+function OfficialLabStats() {
+  const [stats, setStats] = useState<{ pnl: string; trades: number; winRate: string; running: string } | null>(null);
+
+  useEffect(() => {
+    fetch('/api/sniper?source=official')
+      .then(r => r.json())
+      .then(d => {
+        if (d.portfolio) {
+          const startTime = d.state?.start_time ? new Date(d.state.start_time) : new Date();
+          const days = Math.max(1, Math.ceil((Date.now() - startTime.getTime()) / 86400000));
+          setStats({
+            pnl: `${d.portfolio.total_pnl_pct >= 0 ? '+' : ''}${d.portfolio.total_pnl_pct.toFixed(1)}%`,
+            trades: d.state?.total_trades || 0,
+            winRate: `${d.portfolio.win_rate.toFixed(0)}%`,
+            running: `${days}天`,
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  if (!stats) return <div className="text-gray-500 text-sm">加载中...</div>;
+
+  return (
+    <div className="grid grid-cols-4 gap-3 text-center text-sm">
+      <div>
+        <div className={`font-bold ${stats.pnl.startsWith('+') ? 'text-green-400' : 'text-red-400'}`}>{stats.pnl}</div>
+        <div className="text-gray-500 text-xs">累计收益</div>
+      </div>
+      <div>
+        <div className="font-bold text-white">{stats.trades}</div>
+        <div className="text-gray-500 text-xs">总交易</div>
+      </div>
+      <div>
+        <div className="font-bold text-white">{stats.winRate}</div>
+        <div className="text-gray-500 text-xs">胜率</div>
+      </div>
+      <div>
+        <div className="font-bold text-purple-400">{stats.running}</div>
+        <div className="text-gray-500 text-xs">运行天数</div>
+      </div>
+    </div>
+  );
+}
+
+/* ========== Live Mode Connect Screen ========== */
+function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (exchange: LiveExchange) => void }) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex items-center justify-center px-4">
+      <div className="max-w-lg w-full">
+        <button onClick={onBack} className="text-gray-400 hover:text-white text-sm mb-6 flex items-center gap-1">
+          ← 返回
+        </button>
+
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold">⚡ 连接交易账户</h2>
+          <p className="text-gray-400 mt-2">选择你的交易所或钱包</p>
+        </div>
+
+        <div className="space-y-4">
+          <button
+            onClick={() => onConnect('binance')}
+            className="w-full bg-gray-800/60 rounded-xl p-5 border border-gray-700/50 hover:border-yellow-500/50 transition-all flex items-center gap-4 text-left"
+          >
+            <div className="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center text-2xl">🟡</div>
+            <div>
+              <div className="font-bold">币安 Binance</div>
+              <div className="text-gray-400 text-sm">API Key 连接 · 支持现货交易</div>
+            </div>
+            <div className="ml-auto text-gray-500">→</div>
+          </button>
+
+          <button
+            onClick={() => onConnect('phantom')}
+            className="w-full bg-gray-800/60 rounded-xl p-5 border border-gray-700/50 hover:border-purple-500/50 transition-all flex items-center gap-4 text-left"
+          >
+            <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center text-2xl">👻</div>
+            <div>
+              <div className="font-bold">Phantom 钱包</div>
+              <div className="text-gray-400 text-sm">链上直连 · Solana DEX 交易</div>
+            </div>
+            <div className="ml-auto text-gray-500">→</div>
+          </button>
+
+          <div className="w-full bg-gray-800/30 rounded-xl p-5 border border-gray-700/30 flex items-center gap-4 opacity-50">
+            <div className="w-12 h-12 bg-gray-500/20 rounded-xl flex items-center justify-center text-2xl">🔗</div>
+            <div>
+              <div className="font-bold text-gray-400">更多交易所</div>
+              <div className="text-gray-500 text-sm">OKX · Bybit · 即将支持</div>
+            </div>
+            <div className="ml-auto text-xs text-gray-600 bg-gray-700/50 px-2 py-1 rounded">Coming Soon</div>
+          </div>
+        </div>
+
+        <div className="mt-6 bg-orange-500/10 rounded-lg p-3 border border-orange-500/20">
+          <p className="text-orange-300 text-xs">
+            ⚠️ 实盘交易涉及真实资金风险。建议先在模拟盘验证策略，确认稳定后再接入实盘。
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ========== Main Sniper Dashboard ========== */
+function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () => void }) {
   const [data, setData] = useState<SniperData | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<'positions' | 'history'>('positions');
+  const [paperStarted, setPaperStarted] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
@@ -109,10 +286,89 @@ export default function SniperPage() {
   }, []);
 
   useEffect(() => {
-    fetchData();
-    const iv = setInterval(fetchData, 30000); // 30s refresh
-    return () => clearInterval(iv);
-  }, [fetchData]);
+    if (mode === 'paper') {
+      // Check localStorage for existing paper session
+      const saved = localStorage.getItem('sniper_paper_session');
+      if (saved) {
+        setPaperStarted(true);
+        fetchData();
+        const iv = setInterval(fetchData, 30000);
+        return () => clearInterval(iv);
+      }
+    }
+  }, [mode, fetchData]);
+
+  // Paper mode - fresh start
+  if (mode === 'paper' && !paperStarted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white">
+        <div className="max-w-2xl mx-auto px-4 pt-6 pb-12">
+          <button onClick={onBack} className="text-gray-400 hover:text-white text-sm mb-6 flex items-center gap-1">
+            ← 返回选择
+          </button>
+
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold">📊 模拟盘</h1>
+            <p className="text-gray-400 mt-2">零风险体验AI Meme狙击策略</p>
+          </div>
+
+          <div className="bg-gradient-to-r from-purple-900/30 to-pink-900/30 rounded-2xl p-8 border border-purple-500/20 text-center">
+            <div className="text-6xl mb-4">🔫</div>
+            <h3 className="text-xl font-bold mb-2">准备就绪</h3>
+            <p className="text-gray-400 mb-6">系统将分配 10 SOL 虚拟资金，AI 自动扫描并执行交易</p>
+
+            <div className="grid grid-cols-3 gap-4 mb-8 text-sm">
+              <div className="bg-gray-800/60 rounded-xl p-3">
+                <div className="text-purple-400 font-bold">10 SOL</div>
+                <div className="text-gray-500 text-xs">起始资金</div>
+              </div>
+              <div className="bg-gray-800/60 rounded-xl p-3">
+                <div className="text-purple-400 font-bold">5维评分</div>
+                <div className="text-gray-500 text-xs">选币算法</div>
+              </div>
+              <div className="bg-gray-800/60 rounded-xl p-3">
+                <div className="text-purple-400 font-bold">自动</div>
+                <div className="text-gray-500 text-xs">买卖执行</div>
+              </div>
+            </div>
+
+            <div className="bg-gray-800/40 rounded-lg p-4 mb-6 text-left text-sm">
+              <h4 className="font-medium text-gray-300 mb-2">策略参数</h4>
+              <div className="grid grid-cols-2 gap-2 text-gray-400">
+                <div>• 扫描频率: 每5分钟</div>
+                <div>• 买入门槛: ≥65分</div>
+                <div>• 单笔仓位: 5%</div>
+                <div>• 最大持仓: 10个</div>
+                <div>• 止损: -30%</div>
+                <div>• 止盈: +100%半仓 / +200%全平</div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                localStorage.setItem('sniper_paper_session', JSON.stringify({
+                  started: new Date().toISOString(),
+                  balance: 10,
+                }));
+                setPaperStarted(true);
+                fetchData();
+              }}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-3 px-8 rounded-xl text-lg transition-all transform hover:scale-105"
+            >
+              🚀 启动模拟盘
+            </button>
+          </div>
+
+          {/* Rules */}
+          <div className="mt-6 text-xs text-gray-500 space-y-1">
+            <p>• 模拟盘使用实时市场数据，不涉及真实资金</p>
+            <p>• 验证策略后可升级至实盘（需 Elite 订阅）</p>
+            <p>• 交易记录自动保存，支持导出复盘</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -130,8 +386,9 @@ export default function SniperPage() {
       <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 flex items-center justify-center">
         <div className="text-center text-gray-400">
           <p className="text-4xl mb-4">🔫</p>
-          <p className="text-lg">Meme Sniper 未运行</p>
-          <p className="text-sm mt-2">模拟盘系统离线</p>
+          <p className="text-lg">Meme Sniper 准备中</p>
+          <p className="text-sm mt-2">AI正在扫描市场，请稍候...</p>
+          <button onClick={onBack} className="mt-4 text-purple-400 hover:text-purple-300 text-sm">← 返回</button>
         </div>
       </div>
     );
@@ -147,17 +404,31 @@ export default function SniperPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
+            <button onClick={onBack} className="text-gray-500 hover:text-white text-xs mb-1 flex items-center gap-1">
+              ← 返回
+            </button>
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <span>🔫</span>
               <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
                 Meme Sniper
               </span>
             </h1>
-            <p className="text-gray-500 text-sm">链上Meme自动化狙击 · 模拟盘</p>
+            <p className="text-gray-500 text-sm">
+              {mode === 'paper' ? '模拟盘 · 虚拟资金' : '实盘 · 真实交易'}
+            </p>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-xs text-gray-400">Live</span>
+          <div className="flex items-center gap-3">
+            <span className={`px-3 py-1 rounded-full text-xs font-medium border ${
+              mode === 'paper' 
+                ? 'bg-purple-500/20 text-purple-300 border-purple-500/30' 
+                : 'bg-orange-500/20 text-orange-300 border-orange-500/30'
+            }`}>
+              {mode === 'paper' ? '📊 模拟盘' : '⚡ 实盘'}
+            </span>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-xs text-gray-400">Live</span>
+            </div>
           </div>
         </div>
 
@@ -175,15 +446,8 @@ export default function SniperPage() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <StatCard 
-              label="余额" 
-              value={`${state.balance_sol.toFixed(2)} SOL`} 
-            />
-            <StatCard 
-              label="持仓数" 
-              value={`${positions.length} / 10`}
-              sub={`${state.total_trades} 总交易`}
-            />
+            <StatCard label="余额" value={`${state.balance_sol.toFixed(2)} SOL`} />
+            <StatCard label="持仓数" value={`${positions.length} / 10`} sub={`${state.total_trades} 总交易`} />
             <StatCard 
               label="胜率" 
               value={`${portfolio.win_rate.toFixed(0)}%`}
@@ -197,6 +461,22 @@ export default function SniperPage() {
             />
           </div>
         </div>
+
+        {/* Upgrade banner for paper mode */}
+        {mode === 'paper' && (
+          <div className="bg-gradient-to-r from-orange-900/20 to-yellow-900/20 rounded-xl p-4 border border-orange-500/20 mb-6 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">⚡</span>
+              <div>
+                <div className="text-sm font-medium text-orange-300">准备好了？升级到实盘</div>
+                <div className="text-xs text-gray-400">连接币安或Phantom钱包，用真实资金自动执行</div>
+              </div>
+            </div>
+            <button className="px-4 py-2 bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 rounded-lg text-sm font-medium border border-orange-500/30 transition-colors">
+              连接钱包
+            </button>
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="flex gap-1 mb-4 bg-gray-800/50 rounded-xl p-1">
@@ -271,11 +551,8 @@ export default function SniperPage() {
                         <span>止盈 +200%</span>
                       </div>
                       <div className="relative w-full h-2 bg-gray-700 rounded-full overflow-hidden">
-                        {/* Stop loss zone */}
                         <div className="absolute left-0 h-full bg-red-500/30 rounded-l-full" style={{ width: '13%' }} />
-                        {/* Take profit zone */}
                         <div className="absolute right-0 h-full bg-green-500/30 rounded-r-full" style={{ width: '33%' }} />
-                        {/* Current position marker */}
                         <div
                           className={`absolute top-0 h-full w-1 ${pos.pnl_pct >= 0 ? 'bg-green-400' : 'bg-red-400'}`}
                           style={{
@@ -285,7 +562,6 @@ export default function SniperPage() {
                       </div>
                     </div>
 
-                    {/* Token address */}
                     <div className="mt-2 flex items-center gap-2">
                       <span className="text-xs text-gray-600 font-mono">{addr.slice(0, 8)}...{addr.slice(-4)}</span>
                       <a
@@ -346,12 +622,54 @@ export default function SniperPage() {
           </div>
         )}
 
-        {/* Footer info */}
+        {/* Footer */}
         <div className="mt-8 text-center text-xs text-gray-600">
           <p>🔫 每5分钟自动扫描 · 5维评分≥65自动买入 · 止损-30% / 止盈+200%</p>
-          <p className="mt-1">模拟盘 · 不涉及真实资金 · SOL ${portfolio.sol_price.toFixed(2)}</p>
+          <p className="mt-1">
+            {mode === 'paper' ? '模拟盘 · 不涉及真实资金' : '实盘 · 真实资金交易'} · SOL ${portfolio.sol_price.toFixed(2)}
+          </p>
         </div>
       </div>
     </div>
   );
+}
+
+/* ========== Root Page ========== */
+export default function SniperPage() {
+  const [mode, setMode] = useState<SniperMode>('choose');
+  const [liveExchange, setLiveExchange] = useState<LiveExchange>(null);
+
+  // Check for existing session
+  useEffect(() => {
+    const saved = localStorage.getItem('sniper_mode');
+    if (saved === 'paper' || saved === 'live') {
+      setMode(saved);
+    }
+  }, []);
+
+  const selectMode = (m: SniperMode) => {
+    setMode(m);
+    if (m === 'paper' || m === 'live') {
+      localStorage.setItem('sniper_mode', m);
+    }
+  };
+
+  const goBack = () => {
+    setMode('choose');
+    localStorage.removeItem('sniper_mode');
+  };
+
+  if (mode === 'choose') {
+    return <ModeSelector onSelect={selectMode} />;
+  }
+
+  if (mode === 'live' && !liveExchange) {
+    return <LiveConnect onBack={goBack} onConnect={(ex) => {
+      setLiveExchange(ex);
+      // TODO: implement actual exchange connection
+      alert(`${ex === 'binance' ? '币安' : 'Phantom'} 连接功能即将上线，敬请期待！`);
+    }} />;
+  }
+
+  return <SniperDashboard mode={mode === 'live' ? 'live' : 'paper'} onBack={goBack} />;
 }
