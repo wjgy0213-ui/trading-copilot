@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from '@/lib/useSession';
 import { isProUser, isOnFreeTrial, getTrialExpiryMs, startFreeTrial } from '@/lib/paywall';
 import { Lock, Sparkles, Clock, Zap } from 'lucide-react';
+import { trackEvent } from '@/components/Analytics';
 
 function TrialCountdown() {
   const [remaining, setRemaining] = useState('');
@@ -64,6 +65,7 @@ export default function Paywall({ children, feature }: { children: React.ReactNo
     startFreeTrial();
     setTrialStarted(true);
     setLocalPro(true);
+    trackEvent('start_trial', 'conversion', feature || 'general');
   };
 
   const handleActivateCode = () => {

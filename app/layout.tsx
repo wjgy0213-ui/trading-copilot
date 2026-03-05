@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Providers from "@/components/Providers";
+import Analytics from "@/components/Analytics";
 
 export const metadata: Metadata = {
   title: {
@@ -40,6 +41,7 @@ export default function RootLayout({
   return (
     <html lang="zh">
       <body className="bg-gray-950 text-gray-100 antialiased font-sans">
+        <Analytics />
         <Providers>
           <Navbar />
           <main className="pt-14">{children}</main>

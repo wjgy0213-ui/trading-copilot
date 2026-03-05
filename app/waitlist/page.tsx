@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { trackEvent } from '@/components/Analytics'
 
 export default function WaitlistPage() {
   const [email, setEmail] = useState('')
@@ -27,6 +28,7 @@ export default function WaitlistPage() {
       const data = await res.json()
       if (res.ok) {
         setStatus('success')
+        trackEvent('waitlist_signup', 'conversion', email ? 'email' : 'wechat')
       } else {
         setErrorMsg(data.error || '提交失败')
         setStatus('error')
