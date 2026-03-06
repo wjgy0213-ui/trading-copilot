@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowRight, Target, TrendingUp, Brain, BarChart3, ChevronDown, Sparkles, Shield, Zap, Crown, LineChart, Search, Activity, Crosshair, Fish, Gamepad2, ShieldAlert, Radio } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { useI18n } from '@/lib/i18n';
 
 function CountUpNumber({ target, suffix = '' }: { target: number; suffix?: string }) {
   const [count, setCount] = useState(0);
@@ -30,6 +31,34 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 }
 
 export default function LandingPage() {
+  const { t } = useI18n();
+
+  const features = [
+    { icon: Gamepad2, titleKey: 'features.practice.title', descKey: 'features.practice.desc', color: 'emerald', href: '/practice' },
+    { icon: Activity, titleKey: 'features.health.title', descKey: 'features.health.desc', color: 'blue', href: '/health' },
+    { icon: Radio, titleKey: 'features.signals.title', descKey: 'features.signals.desc', color: 'cyan', href: '/signals' },
+    { icon: Crosshair, titleKey: 'features.sniper.title', descKey: 'features.sniper.desc', color: 'amber', href: '/sniper' },
+    { icon: Fish, titleKey: 'features.whales.title', descKey: 'features.whales.desc', color: 'violet', href: '/whales' },
+    { icon: Brain, titleKey: 'features.review.title', descKey: 'features.review.desc', color: 'rose', href: '/review' },
+    { icon: ShieldAlert, titleKey: 'features.guardian.title', descKey: 'features.guardian.desc', color: 'orange', href: '/guardian' },
+    { icon: Sparkles, titleKey: 'features.aiStrategy.title', descKey: 'features.aiStrategy.desc', color: 'purple', href: '/ai-strategy' },
+    { icon: LineChart, titleKey: 'features.strategy.title', descKey: 'features.strategy.desc', color: 'teal', href: '/strategy' },
+    { icon: BarChart3, titleKey: 'features.dashboard.title', descKey: 'features.dashboard.desc', color: 'sky', href: '/dashboard' },
+    { icon: Shield, titleKey: 'features.elite.title', descKey: 'features.elite.desc', color: 'emerald', href: '/elite' },
+  ];
+
+  const howItWorks = [
+    { step: '1', titleKey: 'howItWorks.step1.title', descKey: 'howItWorks.step1.desc', icon: Zap },
+    { step: '2', titleKey: 'howItWorks.step2.title', descKey: 'howItWorks.step2.desc', icon: Sparkles },
+    { step: '3', titleKey: 'howItWorks.step3.title', descKey: 'howItWorks.step3.desc', icon: TrendingUp },
+  ];
+
+  const plans = [
+    { nameKey: 'pricing.free', price: '$0', features: ['pricing.free.f1', 'pricing.free.f2', 'pricing.free.f3', 'pricing.free.f4'], ctaKey: 'pricing.cta.free', href: '/trade', color: 'gray' },
+    { nameKey: 'pricing.pro', price: '$39.99', features: ['pricing.pro.f1', 'pricing.pro.f2', 'pricing.pro.f3', 'pricing.pro.f4', 'pricing.pro.f5'], ctaKey: 'pricing.cta.pro', href: '/pricing', color: 'emerald', popular: true },
+    { nameKey: 'pricing.elite', price: '$79.99', features: ['pricing.elite.f1', 'pricing.elite.f2', 'pricing.elite.f3', 'pricing.elite.f4', 'pricing.elite.f5'], ctaKey: 'pricing.cta.elite', href: '/pricing', color: 'violet' },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white pt-16">
       {/* Hero */}
@@ -37,32 +66,32 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
             className="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-400 text-xs font-medium px-3 py-1.5 rounded-full mb-6">
-            <Sparkles className="w-3.5 h-3.5" /> AI驱动的交易陪练系统
+            <Sparkles className="w-3.5 h-3.5" /> {t('hero.badge')}
           </motion.div>
           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
             className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            从韭菜到交易者
+            {t('hero.title')}
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
             className="text-xl md:text-2xl text-gray-300 mb-4">
-            零风险练习 · AI实时评分 · 策略回测 · 参数优化
+            {t('hero.subtitle')}
           </motion.p>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}
             className="text-lg text-gray-500 mb-10 max-w-2xl mx-auto">
-            不是冷冰冰的工具，是从零到盈利的AI陪练。在真实价格环境下练习，建立交易纪律，告别情绪化操作
+            {t('hero.desc')}
           </motion.p>
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.5 }}
             className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/strategy" className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all hover:scale-105 shadow-lg shadow-emerald-900/30">
-              免费体验 Pro 24小时 <ArrowRight className="w-5 h-5" />
+              {t('hero.cta.trial')} <ArrowRight className="w-5 h-5" />
             </Link>
             <Link href="/trade" className="inline-flex items-center justify-center gap-2 bg-gray-800/80 hover:bg-gray-700/80 text-gray-200 border border-gray-700 px-8 py-4 rounded-xl text-lg font-semibold transition-all">
-              <Zap className="w-5 h-5 text-emerald-400" /> 开始练习交易
+              <Zap className="w-5 h-5 text-emerald-400" /> {t('hero.cta.practice')}
             </Link>
           </motion.div>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.8 }}
             className="text-xs text-gray-600 mt-4">
-            ✓ 无需信用卡 &nbsp;·&nbsp; ✓ 24小时全功能体验 &nbsp;·&nbsp; ✓ 到期自动恢复免费版
+            {t('hero.trust.noCreditCard')} &nbsp;·&nbsp; {t('hero.trust.fullAccess')} &nbsp;·&nbsp; {t('hero.trust.autoRevert')}
           </motion.p>
         </div>
       </div>
@@ -72,14 +101,14 @@ export default function LandingPage() {
         className="container mx-auto px-4 pb-16">
         <div className="max-w-4xl mx-auto grid grid-cols-4 gap-6 text-center">
           {[
-            { n: 1247, s: '+', label: '练习交易者', color: 'text-blue-400' },
-            { n: 15328, s: '+', label: '模拟交易', color: 'text-green-400' },
-            { n: 8, s: '', label: '策略模板', color: 'text-violet-400' },
-            { n: 68, s: '%', label: '平均提升', color: 'text-amber-400' },
+            { n: 1247, s: '+', labelKey: 'social.traders', color: 'text-blue-400' },
+            { n: 15328, s: '+', labelKey: 'social.trades', color: 'text-green-400' },
+            { n: 8, s: '', labelKey: 'social.templates', color: 'text-violet-400' },
+            { n: 68, s: '%', labelKey: 'social.improvement', color: 'text-amber-400' },
           ].map((d, i) => (
             <div key={i}>
               <div className={`text-3xl md:text-4xl font-bold ${d.color} mb-1`}><CountUpNumber target={d.n} suffix={d.s} /></div>
-              <div className="text-xs text-gray-500">{d.label}</div>
+              <div className="text-xs text-gray-500">{t(d.labelKey)}</div>
             </div>
           ))}
         </div>
@@ -92,25 +121,25 @@ export default function LandingPage() {
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl border border-gray-700 p-6 shadow-2xl">
             <div className="flex items-center gap-2 pb-4 border-b border-gray-700 mb-4">
               <div className="w-3 h-3 rounded-full bg-red-500" /><div className="w-3 h-3 rounded-full bg-yellow-500" /><div className="w-3 h-3 rounded-full bg-green-500" />
-              <span className="text-xs text-gray-600 ml-2">交易陪练 · 策略工坊</span>
+              <span className="text-xs text-gray-600 ml-2">{t('app.name')} · {t('nav.strategy')}</span>
             </div>
             <div className="grid md:grid-cols-3 gap-4">
               <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
-                <div className="flex justify-between mb-2"><span className="text-xs text-gray-500">综合评分</span><span className="text-2xl font-bold text-green-400">78</span></div>
-                <div className="text-[10px] text-gray-600">A级 · 优秀</div>
+                <div className="flex justify-between mb-2"><span className="text-xs text-gray-500">{t('screenshot.score')}</span><span className="text-2xl font-bold text-green-400">78</span></div>
+                <div className="text-[10px] text-gray-600">{t('screenshot.grade')}</div>
                 <div className="mt-3 h-2 bg-gray-800 rounded-full"><div className="h-2 bg-green-500 rounded-full" style={{ width: '78%' }} /></div>
               </div>
               <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
-                <div className="flex justify-between mb-2"><span className="text-xs text-gray-500">总收益</span><span className="text-2xl font-bold text-green-400">+156.3%</span></div>
-                <div className="text-[10px] text-gray-600">90天回测 · BTC/USDT</div>
+                <div className="flex justify-between mb-2"><span className="text-xs text-gray-500">{t('screenshot.profit')}</span><span className="text-2xl font-bold text-green-400">+156.3%</span></div>
+                <div className="text-[10px] text-gray-600">{t('screenshot.backtest')}</div>
                 <svg viewBox="0 0 200 40" className="w-full mt-2"><path d="M0,35 L20,30 L40,32 L60,25 L80,20 L100,22 L120,15 L140,18 L160,10 L180,8 L200,5" fill="none" stroke="#10b981" strokeWidth="2" /><path d="M0,35 L20,30 L40,32 L60,25 L80,20 L100,22 L120,15 L140,18 L160,10 L180,8 L200,5 V40 H0Z" fill="#10b981" fillOpacity="0.1" /></svg>
               </div>
               <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
-                <div className="text-xs text-gray-500 mb-2">AI策略推荐</div>
+                <div className="text-xs text-gray-500 mb-2">{t('screenshot.aiRecommend')}</div>
                 <div className="space-y-2">
-                  <div className="flex justify-between text-xs"><span className="text-gray-400">🚀 Supertrend</span><span className="text-green-400">评分 85</span></div>
-                  <div className="flex justify-between text-xs"><span className="text-gray-400">📊 双均线+量能</span><span className="text-green-400">评分 72</span></div>
-                  <div className="flex justify-between text-xs"><span className="text-gray-400">🔔 通道突破</span><span className="text-yellow-400">评分 58</span></div>
+                  <div className="flex justify-between text-xs"><span className="text-gray-400">🚀 Supertrend</span><span className="text-green-400">85</span></div>
+                  <div className="flex justify-between text-xs"><span className="text-gray-400">📊 Dual MA+Vol</span><span className="text-green-400">72</span></div>
+                  <div className="flex justify-between text-xs"><span className="text-gray-400">🔔 Channel Break</span><span className="text-yellow-400">58</span></div>
                 </div>
               </div>
             </div>
@@ -119,31 +148,19 @@ export default function LandingPage() {
         </div>
       </motion.div>
 
-      {/* Features Grid - 6 features */}
+      {/* Features Grid */}
       <div className="container mx-auto px-4 py-16">
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="text-3xl md:text-4xl font-bold text-center mb-4">11个工具，一个系统</motion.h2>
-        <p className="text-gray-500 text-center mb-12 max-w-2xl mx-auto">从练习到策略到实盘风控，每一步都有AI陪你</p>
+          className="text-3xl md:text-4xl font-bold text-center mb-4">{t('features.title')}</motion.h2>
+        <p className="text-gray-500 text-center mb-12 max-w-2xl mx-auto">{t('features.subtitle')}</p>
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            { icon: Gamepad2, title: '交易陪练', desc: '虚拟$10K，AI教练实时评分', color: 'emerald', href: '/practice' },
-            { icon: Activity, title: '市场体检', desc: '5维度一键评分，红绿灯', color: 'blue', href: '/health' },
-            { icon: Radio, title: '信号聚合', desc: '链上×技术×宏观三层融合', color: 'cyan', href: '/signals' },
-            { icon: Crosshair, title: 'Meme Sniper', desc: '自动发现+评分+风控', color: 'amber', href: '/sniper' },
-            { icon: Fish, title: '鲸鱼追踪', desc: '顶级交易员实时持仓', color: 'violet', href: '/whales' },
-            { icon: Brain, title: 'AI复盘', desc: '情绪检测+时段热力图', color: 'rose', href: '/review' },
-            { icon: ShieldAlert, title: '风控守门员', desc: '爆仓预警+实时风险扫描', color: 'orange', href: '/guardian' },
-            { icon: Sparkles, title: 'AI策略生成', desc: '自然语言→可回测策略', color: 'purple', href: '/ai-strategy' },
-            { icon: LineChart, title: '策略工坊', desc: '8大模板+参数优化器', color: 'teal', href: '/strategy' },
-            { icon: BarChart3, title: '数据仪表盘', desc: 'ITC风险、Fear指数、TVL', color: 'sky', href: '/dashboard' },
-            { icon: Shield, title: 'Elite控制台', desc: '交易所对接+一键平仓', color: 'emerald', href: '/elite' },
-          ].map((f, i) => (
+          {features.map((f, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}>
               <Link href={f.href} className={`block bg-gray-900/50 rounded-xl p-6 border border-gray-800 hover:border-${f.color}-500/50 transition-all hover:scale-[1.02] group`}>
                 <f.icon className={`w-8 h-8 text-${f.color}-400 mb-3 group-hover:scale-110 transition`} />
-                <h3 className="text-lg font-semibold mb-1.5">{f.title}</h3>
-                <p className="text-sm text-gray-500">{f.desc}</p>
+                <h3 className="text-lg font-semibold mb-1.5">{t(f.titleKey)}</h3>
+                <p className="text-sm text-gray-500">{t(f.descKey)}</p>
               </Link>
             </motion.div>
           ))}
@@ -152,19 +169,15 @@ export default function LandingPage() {
 
       {/* How It Works */}
       <div className="container mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-12">3步开始</h2>
+        <h2 className="text-3xl font-bold text-center mb-12">{t('howItWorks.title')}</h2>
         <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-8">
-          {[
-            { step: '1', title: '免费练习', desc: '虚拟$500账户，真实BTC/ETH/SOL价格', icon: Zap },
-            { step: '2', title: 'AI生成策略', desc: '描述想法，AI帮你创建可回测的策略', icon: Sparkles },
-            { step: '3', title: '回测验证', desc: '历史数据回测，优化参数，找到最优解', icon: TrendingUp },
-          ].map((item, i) => (
+          {howItWorks.map((item, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.2 }} className="text-center">
               <div className="w-14 h-14 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xl font-bold mx-auto mb-4">{item.step}</div>
               <item.icon className="w-8 h-8 text-emerald-400 mx-auto mb-3" />
-              <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-              <p className="text-gray-500 text-sm">{item.desc}</p>
+              <h3 className="text-lg font-semibold mb-2">{t(item.titleKey)}</h3>
+              <p className="text-gray-500 text-sm">{t(item.descKey)}</p>
             </motion.div>
           ))}
         </div>
@@ -173,26 +186,22 @@ export default function LandingPage() {
       {/* Pricing Preview */}
       <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
         className="container mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-4">选择你的计划</h2>
-        <p className="text-gray-500 text-center mb-10">免费开始，随时升级</p>
+        <h2 className="text-3xl font-bold text-center mb-4">{t('pricing.title')}</h2>
+        <p className="text-gray-500 text-center mb-10">{t('pricing.subtitle')}</p>
         <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6">
-          {[
-            { name: '免费版', price: '$0', features: ['模拟交易', '3个基础策略', 'AI教练', '基础仪表盘'], cta: '开始练习', href: '/trade', color: 'gray' },
-            { name: 'Pro', price: '$39.99', features: ['AI策略生成', '8大策略模板', '参数优化器', '高级回测', '回测报告导出'], cta: '升级 Pro', href: '/pricing', color: 'emerald', popular: true },
-            { name: 'Elite', price: '$79.99', features: ['Pro全部功能', 'AI复盘日记', '风控守门员', '交易所对接', 'Telegram通知'], cta: '升级 Elite', href: '/pricing', color: 'violet' },
-          ].map((p, i) => (
+          {plans.map((p, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.15 }}
               className={`bg-gray-900/50 border ${p.popular ? 'border-emerald-500/50 ring-1 ring-emerald-500/20' : 'border-gray-800'} rounded-2xl p-6 relative`}>
-              {p.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full">最受欢迎</div>}
-              <h3 className="text-lg font-bold mb-1">{p.name}</h3>
-              <div className="mb-4"><span className="text-3xl font-bold">{p.price}</span>{p.price !== '$0' && <span className="text-gray-500 text-sm">/月</span>}</div>
+              {p.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full">{t('pricing.popular')}</div>}
+              <h3 className="text-lg font-bold mb-1">{t(p.nameKey)}</h3>
+              <div className="mb-4"><span className="text-3xl font-bold">{p.price}</span>{p.price !== '$0' && <span className="text-gray-500 text-sm">{t('pricing.perMonth')}</span>}</div>
               <ul className="space-y-2 mb-6">
-                {p.features.map(f => <li key={f} className="flex items-center gap-2 text-sm text-gray-400"><span className={`text-${p.color}-400`}>✓</span>{f}</li>)}
+                {p.features.map(fk => <li key={fk} className="flex items-center gap-2 text-sm text-gray-400"><span className={`text-${p.color}-400`}>✓</span>{t(fk)}</li>)}
               </ul>
               <Link href={p.href} className={`block w-full py-2.5 rounded-xl text-sm font-medium text-center transition ${
                 p.popular ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : p.color === 'violet' ? 'bg-violet-600/20 text-violet-400 hover:bg-violet-600/30' : 'bg-gray-800 text-gray-400'
-              }`}>{p.cta}</Link>
+              }`}>{t(p.ctaKey)}</Link>
             </motion.div>
           ))}
         </div>
@@ -202,17 +211,17 @@ export default function LandingPage() {
       <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}
         className="container mx-auto px-4 py-16">
         <div className="max-w-3xl mx-auto bg-gray-900/50 rounded-2xl p-8 md:p-12 border border-gray-800">
-          <h2 className="text-2xl font-bold mb-6 text-center">为什么需要交易陪练？</h2>
+          <h2 className="text-2xl font-bold mb-6 text-center">{t('pain.title')}</h2>
           <div className="space-y-3 text-gray-300 mb-8">
-            {['看着别人晒单心动，冲动梭哈结果爆仓', '没有止损概念，亏损死扛，盈利提前跑', '高杠杆赌方向，一次失误血本无归', '没有记录和复盘，同样的错误反复犯'].map(t => (
-              <p key={t} className="flex items-center gap-3 text-sm"><span className="text-red-400">❌</span>{t}</p>
+            {['pain.p1', 'pain.p2', 'pain.p3', 'pain.p4'].map(k => (
+              <p key={k} className="flex items-center gap-3 text-sm"><span className="text-red-400">❌</span>{t(k)}</p>
             ))}
           </div>
           <div className="pt-6 border-t border-gray-800">
-            <p className="text-center text-emerald-400 font-semibold mb-4">💡 交易陪练帮你建立纪律</p>
+            <p className="text-center text-emerald-400 font-semibold mb-4">{t('pain.solution')}</p>
             <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-400">
-              {['零成本模拟真实交易环境', 'AI实时评分，纠正坏习惯', '8种策略模板+参数优化', '记录每笔交易，系统化复盘'].map(t => (
-                <p key={t} className="flex items-center gap-2"><span className="text-green-400">✓</span>{t}</p>
+              {['pain.s1', 'pain.s2', 'pain.s3', 'pain.s4'].map(k => (
+                <p key={k} className="flex items-center gap-2"><span className="text-green-400">✓</span>{t(k)}</p>
               ))}
             </div>
           </div>
@@ -221,32 +230,28 @@ export default function LandingPage() {
 
       {/* FAQ */}
       <div className="container mx-auto px-4 py-16">
-        <h2 className="text-3xl font-bold text-center mb-12">常见问题</h2>
+        <h2 className="text-3xl font-bold text-center mb-12">{t('faq.title')}</h2>
         <div className="max-w-2xl mx-auto space-y-3">
-          {[
-            { q: '这是真钱交易吗？', a: '不是！100%模拟交易。虚拟$500账户，真实市场价格，零风险。' },
-            { q: '需要注册吗？', a: '不需要。数据存浏览器本地，随时开始。Pro功能需要邮箱订阅。' },
-            { q: 'AI策略生成器怎么用？', a: '用自然语言描述你的交易想法，如"保守的趋势跟踪策略"，AI会匹配最佳策略模板并调整参数。' },
-            { q: '练习多久可以实盘？', a: '建议至少50笔模拟交易，胜率55%+，理解止损和仓位管理后再考虑。' },
-            { q: '可以随时取消订阅吗？', a: '可以，Stripe处理支付，随时取消，当前周期内仍可使用全部功能。' },
-          ].map(f => <FAQItem key={f.q} question={f.q} answer={f.a} />)}
+          {[1,2,3,4,5].map(n => (
+            <FAQItem key={n} question={t(`faq.q${n}`)} answer={t(`faq.a${n}`)} />
+          ))}
         </div>
       </div>
 
       {/* Final CTA */}
       <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
         className="container mx-auto px-4 py-20 text-center">
-        <h2 className="text-3xl font-bold mb-4">准备好了吗？</h2>
-        <p className="text-gray-500 mb-8">不需要登录，不需要绑卡，现在就开始</p>
+        <h2 className="text-3xl font-bold mb-4">{t('cta.title')}</h2>
+        <p className="text-gray-500 mb-8">{t('cta.subtitle')}</p>
         <Link href="/trade" className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white px-10 py-5 rounded-xl text-xl font-semibold transition-all hover:scale-105">
-          开始交易 <ArrowRight className="w-6 h-6" />
+          {t('cta.button')} <ArrowRight className="w-6 h-6" />
         </Link>
       </motion.div>
 
       {/* Footer */}
       <footer className="container mx-auto px-4 py-8 border-t border-gray-800 text-center text-gray-600 text-sm">
-        <p>交易陪练 — AI驱动的交易学习系统</p>
-        <p className="mt-1">⚠️ 本工具仅用于教育目的，不构成投资建议</p>
+        <p>{t('app.name')} — {t('app.tagline')}</p>
+        <p className="mt-1">{t('app.disclaimer')}</p>
       </footer>
     </div>
   );
