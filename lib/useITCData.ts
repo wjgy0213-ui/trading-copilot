@@ -26,22 +26,9 @@ const ITC_MAP: Record<string, { id: string; name: string; nameEn: string; catego
   AVAX: { id: 'avax-risk', name: 'AVAX 风险', nameEn: 'AVAX Risk', category: 'crypto', description: 'Avalanche长周期风险指标。' },
 };
 
-// Generate fake history around a real value (API only gives current snapshot)
-function fakeHistory(value: number, days: number = 180): { timestamp: number; value: number }[] {
-  const now = Date.now();
-  const history: { timestamp: number; value: number }[] = [];
-  // Walk backwards with random noise, ending at current value
-  let v = value;
-  const pts: number[] = [value];
-  for (let i = 1; i <= days; i++) {
-    v += (Math.random() - 0.52) * 0.03; // slight mean reversion
-    v = Math.max(0, Math.min(1, v));
-    pts.unshift(v);
-  }
-  for (let i = 0; i <= days; i++) {
-    history.push({ timestamp: now - (days - i) * 86400000, value: pts[i] });
-  }
-  return history;
+// Return single-point history (current snapshot only — API doesn't provide historical data)
+function currentSnapshot(value: number): { timestamp: number; value: number }[] {
+  return [{ timestamp: Date.now(), value }];
 }
 
 export function useITCData(): { indicators: ITCIndicator[]; prices: { BTC: number; ETH: number } | null; loading: boolean; error: string | null; isLive: boolean } {
@@ -68,7 +55,7 @@ export function useITCData(): { indicators: ITCIndicator[]; prices: { BTC: numbe
             real.push({
               ...meta,
               value: val,
-              history: fakeHistory(val),
+              history: currentSnapshot(val),
             });
           }
         }
@@ -78,7 +65,7 @@ export function useITCData(): { indicators: ITCIndicator[]; prices: { BTC: numbe
           const domVal = data.btcDominance / 100; // convert 59.2 → 0.592
           real.push({
             id: 'btc-dominance', name: 'BTC 市占率', nameEn: 'BTC Dominance',
-            value: domVal, history: fakeHistory(domVal),
+            value: domVal, history: currentSnapshot(domVal),
             category: 'crypto',
             description: `BTC市值占加密总市值${data.btcDominance.toFixed(1)}%。高=避险情绪强，低=山寨币季节。`,
           });
@@ -89,7 +76,7 @@ export function useITCData(): { indicators: ITCIndicator[]; prices: { BTC: numbe
           const fgVal = parseInt(data.fearGreed.value) / 100;
           real.push({
             id: 'fear-greed', name: '恐惧贪婪指数', nameEn: 'Fear & Greed',
-            value: fgVal, history: fakeHistory(fgVal),
+            value: fgVal, history: currentSnapshot(fgVal),
             category: 'crypto',
             description: `市场情绪：${data.fearGreed.value_classification}。当前值 ${data.fearGreed.value}/100。`,
           });

@@ -149,10 +149,21 @@ export default function ReviewPage() {
   const [data, setData] = useState<ReviewData | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const [noTrades, setNoTrades] = useState(false);
+  const [noTradesMsg, setNoTradesMsg] = useState('');
+
   useEffect(() => {
-    fetch('/api/review?mode=demo')
+    fetch('/api/review')
       .then(r => r.json())
-      .then(d => { setData(d); setLoading(false); })
+      .then(d => {
+        if (d.noTrades) {
+          setNoTrades(true);
+          setNoTradesMsg(d.message || '暂无交易数据');
+        } else {
+          setData(d);
+        }
+        setLoading(false);
+      })
       .catch(() => setLoading(false));
   }, []);
 
@@ -160,6 +171,21 @@ export default function ReviewPage() {
     return (
       <div className="min-h-screen bg-gray-950 pt-20 flex items-center justify-center">
         <div className="animate-pulse text-gray-500">分析交易数据中...</div>
+      </div>
+    );
+  }
+
+  if (noTrades) {
+    return (
+      <div className="min-h-screen bg-gray-950 pt-20 flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <div className="text-6xl mb-4">📊</div>
+          <h2 className="text-xl font-bold text-white mb-2">暂无交易数据</h2>
+          <p className="text-gray-400 mb-6">{noTradesMsg}</p>
+          <a href="/elite" className="inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-xl transition">
+            前往连接交易所 →
+          </a>
+        </div>
       </div>
     );
   }

@@ -5,6 +5,9 @@ import {
   getReviewByDate,
   saveReview as saveReviewDB,
 } from '@/lib/supabase';
+import { decrypt } from '@/lib/encryption';
+import { cookies } from 'next/headers';
+import { createHmac } from 'crypto';
 
 // AI Trade Review — analyze recent trades and generate insights
 // Elite-only feature: requires exchange connection
@@ -179,31 +182,101 @@ function analyzePatterns(groups: TradeGroup[]) {
   };
 }
 
-// Demo mode — generate sample trades for non-connected users
-function generateDemoTrades(): Trade[] {
-  const now = Date.now();
-  const trades: Trade[] = [];
-  const symbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'];
+// Fetch real trades from Binance
+async function fetchBinanceTrades(apiKey: string, apiSecret: string): Promise<Trade[]> {
+  const BINANCE_BASE = 'https://fapi.binance.com';
+  const timestamp = Date.now();
+  const qs = `timestamp=${timestamp}&limit=500`;
+  const signature = createHmac('sha256', apiSecret).update(qs).digest('hex');
 
-  for (let i = 0; i < 40; i++) {
-    const sym = symbols[Math.floor(Math.random() * symbols.length)];
-    const basePrice = sym === 'BTCUSDT' ? 67000 : sym === 'ETHUSDT' ? 1960 : 135;
-    const isWin = Math.random() > 0.45;
-    const entry = basePrice * (1 + (Math.random() - 0.5) * 0.02);
-    const exit = isWin ? entry * (1 + Math.random() * 0.015) : entry * (1 - Math.random() * 0.01);
-    const qty = sym === 'BTCUSDT' ? 0.01 : sym === 'ETHUSDT' ? 0.1 : 5;
-    const time = now - (40 - i) * 3600000 * (1 + Math.random());
+  const res = await fetch(`${BINANCE_BASE}/fapi/v1/userTrades?${qs}&signature=${signature}`, {
+    headers: { 'X-MBX-APIKEY': apiKey },
+  });
+  if (!res.ok) throw new Error(`Binance API error: ${await res.text()}`);
+  const data = await res.json();
 
-    trades.push({ symbol: sym, side: 'BUY', price: entry, qty, realizedPnl: 0, commission: entry * qty * 0.0004, time });
-    trades.push({ symbol: sym, side: 'SELL', price: exit, qty, realizedPnl: (exit - entry) * qty, commission: exit * qty * 0.0004, time: time + (5 + Math.random() * 60) * 60000 });
+  return data.map((t: any) => ({
+    symbol: t.symbol,
+    side: t.side as 'BUY' | 'SELL',
+    price: parseFloat(t.price),
+    qty: parseFloat(t.qty),
+    realizedPnl: parseFloat(t.realizedPnl || '0'),
+    commission: parseFloat(t.commission || '0'),
+    time: t.time,
+  }));
+}
+
+// Fetch real trades from OKX
+async function fetchOKXTrades(apiKey: string, apiSecret: string, passphrase: string): Promise<Trade[]> {
+  const path = '/api/v5/trade/fills-history?instType=SWAP&limit=100';
+  const ts = new Date().toISOString();
+  const sign = createHmac('sha256', apiSecret).update(ts + 'GET' + path).digest('base64');
+
+  const res = await fetch(`https://www.okx.com${path}`, {
+    headers: {
+      'OK-ACCESS-KEY': apiKey, 'OK-ACCESS-SIGN': sign,
+      'OK-ACCESS-TIMESTAMP': ts, 'OK-ACCESS-PASSPHRASE': passphrase,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!res.ok) throw new Error(`OKX API error: ${await res.text()}`);
+  const data = await res.json();
+  if (data.code !== '0') throw new Error(`OKX error: ${data.msg}`);
+
+  return (data.data || []).map((t: any) => ({
+    symbol: t.instId,
+    side: t.side?.toUpperCase() as 'BUY' | 'SELL',
+    price: parseFloat(t.fillPx),
+    qty: parseFloat(t.fillSz),
+    realizedPnl: parseFloat(t.pnl || '0'),
+    commission: Math.abs(parseFloat(t.fee || '0')),
+    time: parseInt(t.ts),
+  }));
+}
+
+// Fetch real trades from Bybit
+async function fetchBybitTrades(apiKey: string, apiSecret: string): Promise<Trade[]> {
+  const ts = Date.now().toString();
+  const recvWindow = '5000';
+  const qs = 'category=linear&limit=100';
+  const sign = createHmac('sha256', apiSecret).update(ts + apiKey + recvWindow + qs).digest('hex');
+
+  const res = await fetch(`https://api.bybit.com/v5/execution/list?${qs}`, {
+    headers: {
+      'X-BAPI-API-KEY': apiKey, 'X-BAPI-SIGN': sign,
+      'X-BAPI-TIMESTAMP': ts, 'X-BAPI-RECV-WINDOW': recvWindow,
+    },
+  });
+  if (!res.ok) throw new Error(`Bybit API error: ${await res.text()}`);
+  const data = await res.json();
+  if (data.retCode !== 0) throw new Error(`Bybit error: ${data.retMsg}`);
+
+  return (data.result?.list || []).map((t: any) => ({
+    symbol: t.symbol,
+    side: t.side?.toUpperCase() as 'BUY' | 'SELL',
+    price: parseFloat(t.execPrice),
+    qty: parseFloat(t.execQty),
+    realizedPnl: parseFloat(t.closedPnl || '0'),
+    commission: parseFloat(t.execFee || '0'),
+    time: parseInt(t.execTime),
+  }));
+}
+
+async function getExchangeCredentials(): Promise<{ exchange: string; apiKey: string; apiSecret: string; passphrase?: string } | null> {
+  try {
+    const cookieStore = await cookies();
+    const encrypted = cookieStore.get('exchange-creds')?.value;
+    if (!encrypted) return null;
+    const decrypted = decrypt(encrypted);
+    return JSON.parse(decrypted);
+  } catch {
+    return null;
   }
-
-  return trades;
 }
 
 export async function GET(req: NextRequest) {
   try {
-    const mode = req.nextUrl.searchParams.get('mode') || 'demo';
+    const mode = req.nextUrl.searchParams.get('mode') || 'auto';
     const session = await getSession();
 
     // If requesting saved reviews
@@ -223,21 +296,51 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // Analyze trades (demo or live)
-    let trades: Trade[];
+    // Try to fetch real trades from connected exchange
+    const creds = await getExchangeCredentials();
+    let trades: Trade[] = [];
+    let source = 'none';
 
-    if (mode === 'live') {
-      // TODO: fetch from connected exchange via /api/exchange
-      // For now, return demo
-      trades = generateDemoTrades();
-    } else {
-      trades = generateDemoTrades();
+    if (creds) {
+      try {
+        switch (creds.exchange) {
+          case 'binance':
+            trades = await fetchBinanceTrades(creds.apiKey, creds.apiSecret);
+            source = 'binance';
+            break;
+          case 'okx':
+            trades = await fetchOKXTrades(creds.apiKey, creds.apiSecret, creds.passphrase || '');
+            source = 'okx';
+            break;
+          case 'bybit':
+            trades = await fetchBybitTrades(creds.apiKey, creds.apiSecret);
+            source = 'bybit';
+            break;
+          case 'hyperliquid':
+            // HL doesn't have a simple trade history API for read-only
+            source = 'hyperliquid';
+            break;
+        }
+      } catch (e: any) {
+        console.error('Failed to fetch exchange trades:', e.message);
+      }
+    }
+
+    if (trades.length === 0) {
+      return NextResponse.json({
+        connected: !!creds,
+        source,
+        noTrades: true,
+        message: creds
+          ? '已连接交易所但暂无近期交易记录。开始交易后即可使用AI复盘功能。'
+          : '请先在 Elite 控制台连接交易所，即可获取真实交易数据进行AI复盘。',
+      });
     }
 
     const groups = groupTrades(trades);
     const analysis = analyzePatterns(groups);
 
-    return NextResponse.json(analysis, {
+    return NextResponse.json({ ...analysis, connected: true, source }, {
       headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120' },
     });
   } catch (error: any) {

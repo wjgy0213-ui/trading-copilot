@@ -6,7 +6,7 @@ const COINGECKO_API = 'https://api.coingecko.com/api/v3';
 
 // 股票实时价格 — Twelve Data免费API（CORS友好，8/min免费额度）
 const TWELVE_API = 'https://api.twelvedata.com';
-const TWELVE_KEY = 'demo'; // demo key: 8 calls/min, 800/day
+const TWELVE_KEY = process.env.NEXT_PUBLIC_TWELVE_KEY || 'demo'; // demo key: 8 calls/min, 800/day
 
 // 缓存30秒避免超额
 const stockCache: Record<string, { price: number; change: number; ts: number }> = {};
@@ -70,9 +70,10 @@ export async function getPrice(pair: TradingPair = 'BTC/USD'): Promise<PriceData
     const base = fallbacks[pair] || 100;
     return {
       symbol: pair,
-      price: base + (Math.random() - 0.5) * base * 0.01,
+      price: base,
       timestamp: Date.now(),
-      change24h: (Math.random() - 0.5) * 10,
+      change24h: 0,
+      stale: true,
     };
   }
 }
