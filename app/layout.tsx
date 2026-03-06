@@ -1,8 +1,12 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Providers from "@/components/Providers";
 import Analytics from "@/components/Analytics";
+
+export const viewport = {
+  themeColor: '#030712',
+};
 
 export const metadata: Metadata = {
   title: {
