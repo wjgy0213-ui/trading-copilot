@@ -19,6 +19,7 @@ import EliteGate from '@/components/EliteGate';
 import ExchangeConnect from '@/components/ExchangeConnect';
 import RiskManager from '@/components/RiskManager';
 import TelegramNotify from '@/components/TelegramNotify';
+import { useI18n } from '@/lib/i18n';
 
 const SYMBOL_MAP: Record<TradingPair, string> = {
   // Crypto
@@ -43,6 +44,7 @@ const SYMBOL_MAP: Record<TradingPair, string> = {
 };
 
 export default function TradePage() {
+  const { t } = useI18n();
   const [activePair, setActivePair] = useState<TradingPair>('BTC/USD');
   const [activeCategory, setActiveCategory] = useState<AssetCategory>('crypto');
   const [price, setPrice] = useState<PriceData | null>(null);
@@ -97,7 +99,7 @@ export default function TradePage() {
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
         <div className="flex items-center gap-3">
           <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <span className="text-gray-400">加载行情数据...</span>
+          <span className="text-gray-400">{t('trade.loading')}</span>
         </div>
       </div>
     );
@@ -123,7 +125,7 @@ export default function TradePage() {
                       : 'text-gray-500 hover:text-gray-300'
                   }`}
                 >
-                  🪙 加密货币
+                  {t('trade.cat_crypto')}
                 </button>
                 <button
                   onClick={() => { setActiveCategory('stock'); if (TRADING_PAIRS[activePair].category !== 'stock') { setActivePair('NVDA'); setLoading(true); } }}
@@ -133,7 +135,7 @@ export default function TradePage() {
                       : 'text-gray-500 hover:text-gray-300'
                   }`}
                 >
-                  📈 Mag 7
+                  {t('trade.cat_stock')}
                 </button>
               </div>
               {/* Asset selector */}
@@ -176,17 +178,17 @@ export default function TradePage() {
             {/* Account stats */}
             <div className="flex gap-6">
               <div className="text-right">
-                <div className="text-xs text-gray-500 uppercase tracking-wider">余额</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wider">{t('trade.balance')}</div>
                 <div className="text-xl font-bold text-blue-400">${account.balance.toFixed(2)}</div>
               </div>
               <div className="text-right">
-                <div className="text-xs text-gray-500 uppercase tracking-wider">权益</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wider">{t('trade.equity')}</div>
                 <div className={`text-xl font-bold ${equity >= 10000 ? 'text-green-400' : 'text-red-400'}`}>
                   ${equity.toFixed(2)}
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-xs text-gray-500 uppercase tracking-wider">盈亏</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wider">{t('trade.pnl')}</div>
                 <div className={`text-xl font-bold ${account.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                   {account.totalPnl >= 0 ? '+' : ''}${account.totalPnl.toFixed(2)}
                 </div>
@@ -222,7 +224,7 @@ export default function TradePage() {
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-2">
                 <div className="h-px flex-1 bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
-                <span className="text-[10px] text-violet-400 font-bold uppercase tracking-widest">Elite</span>
+                <span className="text-[10px] text-violet-400 font-bold uppercase tracking-widest">{t('trade.elite_label')}</span>
                 <div className="h-px flex-1 bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
               </div>
               <ExchangeConnect />

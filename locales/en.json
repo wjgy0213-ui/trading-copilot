@@ -257,5 +257,12 @@
   "dashboard.modal_cat_onchain": "On-Chain",
   "dashboard.modal_cat_price": "Price Model",
   "dashboard.modal_cat_weightless": "Weightless",
-  "dashboard.modal_cat_macro": "Macro"
+  "dashboard.modal_cat_macro": "Macro",
+  "trade.loading": "Loading market data...",
+  "trade.cat_crypto": "🪙 Crypto",
+  "trade.cat_stock": "📈 Mag 7",
+  "trade.balance": "Balance",
+  "trade.equity": "Equity",
+  "trade.pnl": "P&L",
+  "trade.elite_label": "Elite"
 }

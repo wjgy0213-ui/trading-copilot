@@ -257,5 +257,12 @@
   "dashboard.modal_cat_onchain": "链上",
   "dashboard.modal_cat_price": "价格模型",
   "dashboard.modal_cat_weightless": "无权重",
-  "dashboard.modal_cat_macro": "宏观"
+  "dashboard.modal_cat_macro": "宏观",
+  "trade.loading": "加载行情数据...",
+  "trade.cat_crypto": "🪙 加密货币",
+  "trade.cat_stock": "📈 Mag 7",
+  "trade.balance": "余额",
+  "trade.equity": "权益",
+  "trade.pnl": "盈亏",
+  "trade.elite_label": "Elite"
 }
