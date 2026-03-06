@@ -2,7 +2,6 @@
   "app.name": "Trading Copilot",
   "app.tagline": "AI-Powered Trading Practice System",
   "app.disclaimer": "⚠️ This tool is for educational purposes only. Not financial advice.",
-
   "nav.home": "Home",
   "nav.dashboard": "Dashboard",
   "nav.health": "Health Check",
@@ -28,7 +27,6 @@
   "nav.pricing": "Pricing",
   "nav.account": "Account",
   "nav.login": "Login",
-
   "hero.badge": "AI-Powered Trading Practice System",
   "hero.title": "From Beginner to Trader",
   "hero.subtitle": "Zero Risk Practice · AI Scoring · Backtesting · Parameter Optimization",
@@ -38,12 +36,10 @@
   "hero.trust.noCreditCard": "✓ No credit card required",
   "hero.trust.fullAccess": "✓ Full access for 24 hours",
   "hero.trust.autoRevert": "✓ Auto-reverts to free plan",
-
   "social.traders": "Practice Traders",
   "social.trades": "Simulated Trades",
   "social.templates": "Strategy Templates",
   "social.improvement": "Avg. Improvement",
-
   "features.title": "11 Tools, One System",
   "features.subtitle": "From practice to strategy to live risk control — AI with you every step",
   "features.practice.title": "Trading Practice",
@@ -68,7 +64,6 @@
   "features.dashboard.desc": "ITC Risk, Fear Index, TVL",
   "features.elite.title": "Elite Console",
   "features.elite.desc": "Exchange connect + one-click close",
-
   "howItWorks.title": "3 Steps to Start",
   "howItWorks.step1.title": "Practice Free",
   "howItWorks.step1.desc": "Virtual $500 account, real BTC/ETH/SOL prices",
@@ -76,7 +71,6 @@
   "howItWorks.step2.desc": "Describe your idea, AI builds a backtestable strategy",
   "howItWorks.step3.title": "Backtest",
   "howItWorks.step3.desc": "Test on historical data, optimize parameters, find the best fit",
-
   "pricing.title": "Choose Your Plan",
   "pricing.subtitle": "Start free, upgrade anytime",
   "pricing.free": "Free",
@@ -101,7 +95,6 @@
   "pricing.elite.f3": "Risk Guardian",
   "pricing.elite.f4": "Exchange Integration",
   "pricing.elite.f5": "Telegram Alerts",
-
   "pain.title": "Why You Need a Trading Copilot",
   "pain.p1": "FOMO buying after seeing others' gains, then getting liquidated",
   "pain.p2": "No stop-loss discipline — holding losers, cutting winners",
@@ -112,7 +105,6 @@
   "pain.s2": "AI real-time scoring, corrects bad habits",
   "pain.s3": "8 strategy templates + parameter optimization",
   "pain.s4": "Record every trade, systematic review",
-
   "faq.title": "FAQ",
   "faq.q1": "Is this real money trading?",
   "faq.a1": "No! 100% simulated trading. Virtual $500 account, real market prices, zero risk.",
@@ -124,11 +116,9 @@
   "faq.a4": "We recommend at least 50 simulated trades, 55%+ win rate, and a solid understanding of stop-loss and position sizing.",
   "faq.q5": "Can I cancel anytime?",
   "faq.a5": "Yes. Stripe handles payments. Cancel anytime, keep access until the end of your billing period.",
-
   "cta.title": "Ready to Start?",
   "cta.subtitle": "No login required, no credit card, start now",
   "cta.button": "Start Trading",
-
   "paywall.title": "Pro Feature",
   "paywall.subtitle": "Upgrade to unlock all premium features",
   "paywall.trialButton": "Try Pro Free for 24 Hours",
@@ -145,14 +135,12 @@
   "paywall.trialExpired": "Trial expired, please upgrade to Pro",
   "paywall.trialFailed": "Failed to start trial, please retry",
   "paywall.networkError": "Network error, please retry",
-
   "screenshot.score": "Overall Score",
   "screenshot.grade": "Grade A · Excellent",
   "screenshot.profit": "Total Return",
   "screenshot.backtest": "90-Day Backtest · BTC/USDT",
   "screenshot.aiRecommend": "AI Strategy Picks",
-
-  "dashboard.title": "Dashboard",
+  "dashboard.title": "Market Dashboard",
   "health.title": "Market Health Check",
   "signals.title": "Signal Aggregator",
   "practice.title": "Trading Practice",
@@ -171,7 +159,6 @@
   "course.title": "Buy Course",
   "blog.title": "Blog",
   "waitlist.title": "Waitlist",
-
   "common.loading": "Loading...",
   "common.error": "Something went wrong",
   "common.retry": "Retry",
@@ -195,7 +182,6 @@
   "common.pnl": "PnL",
   "common.winRate": "Win Rate",
   "common.maxDrawdown": "Max Drawdown",
-
   "pricing.badge": "Choose your plan",
   "pricing.heading": "The Complete Path from Learning to Trading",
   "pricing.desc": "Not just another tool — an AI trading copilot from zero to profitable",
@@ -231,7 +217,6 @@
   "pricing.faq.a3": "API keys are encrypted. Trade-only permissions (no withdrawals). Built-in risk controls prevent anomalous trades.",
   "pricing.faq.q4": "Is there a free trial?",
   "pricing.faq.a4": "Yes! Click any Pro feature in Strategy Lab to get 24-hour full Pro access. No credit card required, auto-reverts to free.",
-
   "health.heading": "⚡ Market Health Check",
   "health.subtitle": "One-click market status overview",
   "health.updatedAt": "Updated at",
@@ -250,5 +235,27 @@
   "health.refreshNow": "🔄 Refresh Now",
   "health.operable": "✅ Go",
   "health.wait": "⚠️ Wait",
-  "health.caution": "🔴 Caution"
+  "health.caution": "🔴 Caution",
+  "dashboard.subtitle_indicators": "indicators",
+  "dashboard.subtitle_click": "Click for details",
+  "dashboard.live": "Live",
+  "dashboard.simulated": "Simulated",
+  "dashboard.cat_all": "All",
+  "dashboard.cat_crypto": "Crypto",
+  "dashboard.cat_onchain": "On-Chain",
+  "dashboard.cat_price": "Price Model",
+  "dashboard.cat_weightless": "Weightless",
+  "dashboard.cat_macro": "Macro",
+  "dashboard.low_risk": "Low Risk",
+  "dashboard.mid_risk": "Medium Risk",
+  "dashboard.high_risk": "High Risk",
+  "dashboard.legend_low": "Low Risk(0-30): Buy Zone",
+  "dashboard.legend_mid": "Mid Risk(30-70): Hold Zone",
+  "dashboard.legend_high": "High Risk(70-100): Reduce Zone",
+  "dashboard.modal_category": "Category",
+  "dashboard.modal_cat_crypto": "Crypto",
+  "dashboard.modal_cat_onchain": "On-Chain",
+  "dashboard.modal_cat_price": "Price Model",
+  "dashboard.modal_cat_weightless": "Weightless",
+  "dashboard.modal_cat_macro": "Macro"
 }

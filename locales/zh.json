@@ -2,7 +2,6 @@
   "app.name": "交易陪练",
   "app.tagline": "AI驱动的交易学习系统",
   "app.disclaimer": "⚠️ 本工具仅用于教育目的，不构成投资建议",
-
   "nav.home": "首页",
   "nav.dashboard": "仪表盘",
   "nav.health": "体检",
@@ -28,7 +27,6 @@
   "nav.pricing": "定价",
   "nav.account": "账户设置",
   "nav.login": "登录",
-
   "hero.badge": "AI驱动的交易陪练系统",
   "hero.title": "从韭菜到交易者",
   "hero.subtitle": "零风险练习 · AI实时评分 · 策略回测 · 参数优化",
@@ -38,12 +36,10 @@
   "hero.trust.noCreditCard": "✓ 无需信用卡",
   "hero.trust.fullAccess": "✓ 24小时全功能体验",
   "hero.trust.autoRevert": "✓ 到期自动恢复免费版",
-
   "social.traders": "练习交易者",
   "social.trades": "模拟交易",
   "social.templates": "策略模板",
   "social.improvement": "平均提升",
-
   "features.title": "11个工具，一个系统",
   "features.subtitle": "从练习到策略到实盘风控，每一步都有AI陪你",
   "features.practice.title": "交易陪练",
@@ -68,7 +64,6 @@
   "features.dashboard.desc": "ITC风险、Fear指数、TVL",
   "features.elite.title": "Elite控制台",
   "features.elite.desc": "交易所对接+一键平仓",
-
   "howItWorks.title": "3步开始",
   "howItWorks.step1.title": "免费练习",
   "howItWorks.step1.desc": "虚拟$500账户，真实BTC/ETH/SOL价格",
@@ -76,7 +71,6 @@
   "howItWorks.step2.desc": "描述想法，AI帮你创建可回测的策略",
   "howItWorks.step3.title": "回测验证",
   "howItWorks.step3.desc": "历史数据回测，优化参数，找到最优解",
-
   "pricing.title": "选择你的计划",
   "pricing.subtitle": "免费开始，随时升级",
   "pricing.free": "免费版",
@@ -101,7 +95,6 @@
   "pricing.elite.f3": "风控守门员",
   "pricing.elite.f4": "交易所对接",
   "pricing.elite.f5": "Telegram通知",
-
   "pain.title": "为什么需要交易陪练？",
   "pain.p1": "看着别人晒单心动，冲动梭哈结果爆仓",
   "pain.p2": "没有止损概念，亏损死扛，盈利提前跑",
@@ -112,7 +105,6 @@
   "pain.s2": "AI实时评分，纠正坏习惯",
   "pain.s3": "8种策略模板+参数优化",
   "pain.s4": "记录每笔交易，系统化复盘",
-
   "faq.title": "常见问题",
   "faq.q1": "这是真钱交易吗？",
   "faq.a1": "不是！100%模拟交易。虚拟$500账户，真实市场价格，零风险。",
@@ -124,11 +116,9 @@
   "faq.a4": "建议至少50笔模拟交易，胜率55%+，理解止损和仓位管理后再考虑。",
   "faq.q5": "可以随时取消订阅吗？",
   "faq.a5": "可以，Stripe处理支付，随时取消，当前周期内仍可使用全部功能。",
-
   "cta.title": "准备好了吗？",
   "cta.subtitle": "不需要登录，不需要绑卡，现在就开始",
   "cta.button": "开始交易",
-
   "paywall.title": "Pro 专属功能",
   "paywall.subtitle": "升级解锁全部高级功能",
   "paywall.trialButton": "免费体验 24 小时 Pro",
@@ -145,14 +135,12 @@
   "paywall.trialExpired": "试用已过期，请升级 Pro",
   "paywall.trialFailed": "开启试用失败，请重试",
   "paywall.networkError": "网络错误，请重试",
-
   "screenshot.score": "综合评分",
   "screenshot.grade": "A级 · 优秀",
   "screenshot.profit": "总收益",
   "screenshot.backtest": "90天回测 · BTC/USDT",
   "screenshot.aiRecommend": "AI策略推荐",
-
-  "dashboard.title": "数据仪表盘",
+  "dashboard.title": "市场仪表盘",
   "health.title": "市场体检",
   "signals.title": "信号聚合器",
   "practice.title": "交易陪练",
@@ -171,7 +159,6 @@
   "course.title": "购买课程",
   "blog.title": "Blog",
   "waitlist.title": "候补名单",
-
   "common.loading": "加载中...",
   "common.error": "出错了",
   "common.retry": "重试",
@@ -195,7 +182,6 @@
   "common.pnl": "盈亏",
   "common.winRate": "胜率",
   "common.maxDrawdown": "最大回撤",
-
   "pricing.badge": "选择适合你的计划",
   "pricing.heading": "从学习到实战的完整路径",
   "pricing.desc": "不是冷冰冰的工具，是从零到盈利的AI交易陪练系统",
@@ -231,7 +217,6 @@
   "pricing.faq.a3": "API Key加密存储，仅限交易权限（不可提币），内置风控系统防止异常交易。",
   "pricing.faq.q4": "有试用期吗？",
   "pricing.faq.a4": "有！点击策略工坊中的任意Pro功能，可免费体验24小时全功能Pro版，无需信用卡，到期自动恢复免费版。",
-
   "health.heading": "⚡ 市场体检",
   "health.subtitle": "Market Health Check — 一键掌握市场状态",
   "health.updatedAt": "更新于",
@@ -250,5 +235,27 @@
   "health.refreshNow": "🔄 立即刷新",
   "health.operable": "✅ 可操作",
   "health.wait": "⚠️ 观望",
-  "health.caution": "🔴 谨慎"
+  "health.caution": "🔴 谨慎",
+  "dashboard.subtitle_indicators": "个指标",
+  "dashboard.subtitle_click": "点击查看详情",
+  "dashboard.live": "实时",
+  "dashboard.simulated": "模拟",
+  "dashboard.cat_all": "全部",
+  "dashboard.cat_crypto": "加密",
+  "dashboard.cat_onchain": "链上",
+  "dashboard.cat_price": "价格模型",
+  "dashboard.cat_weightless": "无权重",
+  "dashboard.cat_macro": "宏观",
+  "dashboard.low_risk": "低风险指标",
+  "dashboard.mid_risk": "中风险指标",
+  "dashboard.high_risk": "高风险指标",
+  "dashboard.legend_low": "低风险(0-30): 买入区间",
+  "dashboard.legend_mid": "中风险(30-70): 观望区间",
+  "dashboard.legend_high": "高风险(70-100): 减仓区间",
+  "dashboard.modal_category": "分类",
+  "dashboard.modal_cat_crypto": "加密",
+  "dashboard.modal_cat_onchain": "链上",
+  "dashboard.modal_cat_price": "价格模型",
+  "dashboard.modal_cat_weightless": "无权重",
+  "dashboard.modal_cat_macro": "宏观"
 }

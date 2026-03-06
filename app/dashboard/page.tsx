@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { getRiskColor, getRiskBgColor, getRiskLabel, getRiskStrokeColor, type ITCIndicator } from '@/lib/mockData';
 import { useITCData } from '@/lib/useITCData';
+import { useI18n } from '@/lib/i18n';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Area, AreaChart, ReferenceLine } from 'recharts';
 import { Activity, TrendingUp, TrendingDown, X, Maximize2, BarChart3, Globe, Link2, Wifi, WifiOff, ExternalLink } from 'lucide-react';
 
@@ -43,7 +44,7 @@ function getITCChartUrl(indicatorId: string): string | null {
   return `https://app.intothecryptoverse.com${path}`;
 }
 
-function DetailModal({ indicator, onClose }: { indicator: ITCIndicator; onClose: () => void }) {
+function DetailModal({ indicator, onClose, t }: { indicator: ITCIndicator; onClose: () => void; t: (key: string) => string }) {
   const [range, setRange] = useState<30 | 90 | 180>(90);
   const color = getRiskStrokeColor(indicator.value);
   const data = indicator.history.slice(-range);
@@ -134,12 +135,12 @@ function DetailModal({ indicator, onClose }: { indicator: ITCIndicator; onClose:
               <span className={`text-[10px] font-medium px-2 py-0.5 rounded ${getRiskBgColor(indicator.value)}`}>
                 {getRiskLabel(indicator.value)}
               </span>
-              <span className="text-[10px] text-gray-600">分类: {
-                indicator.category === 'crypto' ? '加密' :
-                indicator.category === 'on-chain' ? '链上' :
-                indicator.category === 'price' ? '价格模型' :
-                indicator.category === 'weightless' ? '无权重' :
-                indicator.category === 'macro' ? '宏观' : '链上'
+              <span className="text-[10px] text-gray-600">{t('dashboard.modal_category')}: {
+                indicator.category === 'crypto' ? t('dashboard.modal_cat_crypto') :
+                indicator.category === 'on-chain' ? t('dashboard.modal_cat_onchain') :
+                indicator.category === 'price' ? t('dashboard.modal_cat_price') :
+                indicator.category === 'weightless' ? t('dashboard.modal_cat_weightless') :
+                indicator.category === 'macro' ? t('dashboard.modal_cat_macro') : t('dashboard.modal_cat_onchain')
               }</span>
             </div>
           </div>
@@ -152,15 +153,16 @@ function DetailModal({ indicator, onClose }: { indicator: ITCIndicator; onClose:
 }
 
 const CATEGORY_TABS = [
-  { id: 'all', label: '全部', icon: BarChart3 },
-  { id: 'crypto', label: '加密', icon: Activity },
-  { id: 'on-chain', label: '链上', icon: Link2 },
-  { id: 'price', label: '价格模型', icon: Activity },
-  { id: 'weightless', label: '无权重', icon: Activity },
-  { id: 'macro', label: '宏观', icon: Globe },
+  { id: 'all', labelKey: 'dashboard.cat_all', icon: BarChart3 },
+  { id: 'crypto', labelKey: 'dashboard.cat_crypto', icon: Activity },
+  { id: 'on-chain', labelKey: 'dashboard.cat_onchain', icon: Link2 },
+  { id: 'price', labelKey: 'dashboard.cat_price', icon: Activity },
+  { id: 'weightless', labelKey: 'dashboard.cat_weightless', icon: Activity },
+  { id: 'macro', labelKey: 'dashboard.cat_macro', icon: Globe },
 ] as const;
 
 export default function DashboardPage() {
+  const { t } = useI18n();
   const [selected, setSelected] = useState<ITCIndicator | null>(null);
   const [category, setCategory] = useState<string>('all');
   const { indicators: ITCIndicators, prices, loading: dataLoading, error: dataError, isLive } = useITCData();
@@ -172,21 +174,21 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h1 className="text-lg font-semibold text-gray-100">市场仪表盘</h1>
+          <h1 className="text-lg font-semibold text-gray-100">{t('dashboard.title')}</h1>
           <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
-            {ITCIndicators.length} 个指标 · 点击查看详情
-            {isLive ? <span className="inline-flex items-center gap-1 text-emerald-400"><Wifi className="w-3 h-3" />实时</span> : <span className="inline-flex items-center gap-1 text-gray-600"><WifiOff className="w-3 h-3" />模拟</span>}
+            {ITCIndicators.length} {t('dashboard.subtitle_indicators')} · {t('dashboard.subtitle_click')}
+            {isLive ? <span className="inline-flex items-center gap-1 text-emerald-400"><Wifi className="w-3 h-3" />{t('dashboard.live')}</span> : <span className="inline-flex items-center gap-1 text-gray-600"><WifiOff className="w-3 h-3" />{t('dashboard.simulated')}</span>}
             {prices && <span className="text-gray-500">BTC ${prices.BTC.toLocaleString()} · ETH ${prices.ETH.toLocaleString()}</span>}
           </p>
         </div>
         <div className="flex gap-1">
-          {CATEGORY_TABS.map(({ id, label, icon: Icon }) => (
+          {CATEGORY_TABS.map(({ id, labelKey, icon: Icon }) => (
             <button key={id} onClick={() => setCategory(id)}
               className={`flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-medium transition-all ${
                 category === id ? 'bg-gray-700 text-white' : 'text-gray-500 hover:bg-gray-800'
               }`}>
               <Icon className="w-3 h-3" />
-              {label}
+              {t(labelKey)}
             </button>
           ))}
         </div>
@@ -195,9 +197,9 @@ export default function DashboardPage() {
       {/* Summary Bar */}
       <div className="grid grid-cols-3 gap-3 mb-5">
         {[
-          { label: '低风险指标', count: ITCIndicators.filter(i => i.value < 0.3).length, color: 'text-emerald-400', bg: 'bg-emerald-500/5 border-emerald-500/20' },
-          { label: '中风险指标', count: ITCIndicators.filter(i => i.value >= 0.3 && i.value < 0.7).length, color: 'text-amber-400', bg: 'bg-amber-500/5 border-amber-500/20' },
-          { label: '高风险指标', count: ITCIndicators.filter(i => i.value >= 0.7).length, color: 'text-red-400', bg: 'bg-red-500/5 border-red-500/20' },
+          { label: t('dashboard.low_risk'), count: ITCIndicators.filter(i => i.value < 0.3).length, color: 'text-emerald-400', bg: 'bg-emerald-500/5 border-emerald-500/20' },
+          { label: t('dashboard.mid_risk'), count: ITCIndicators.filter(i => i.value >= 0.3 && i.value < 0.7).length, color: 'text-amber-400', bg: 'bg-amber-500/5 border-amber-500/20' },
+          { label: t('dashboard.high_risk'), count: ITCIndicators.filter(i => i.value >= 0.7).length, color: 'text-red-400', bg: 'bg-red-500/5 border-red-500/20' },
         ].map(s => (
           <div key={s.label} className={`border rounded-lg p-3 ${s.bg}`}>
             <div className="text-[10px] text-gray-500">{s.label}</div>
@@ -253,14 +255,14 @@ export default function DashboardPage() {
       {/* Info */}
       <div className="mt-5 border border-gray-800 rounded-lg p-3 bg-gray-900/30">
         <div className="flex gap-4 text-[10px] text-gray-500 justify-center">
-          <span><span className="inline-block w-2 h-2 rounded-full bg-emerald-400 mr-1" />低风险(0-30): 买入区间</span>
-          <span><span className="inline-block w-2 h-2 rounded-full bg-amber-400 mr-1" />中风险(30-70): 观望区间</span>
-          <span><span className="inline-block w-2 h-2 rounded-full bg-red-400 mr-1" />高风险(70-100): 减仓区间</span>
+          <span><span className="inline-block w-2 h-2 rounded-full bg-emerald-400 mr-1" />{t('dashboard.legend_low')}</span>
+          <span><span className="inline-block w-2 h-2 rounded-full bg-amber-400 mr-1" />{t('dashboard.legend_mid')}</span>
+          <span><span className="inline-block w-2 h-2 rounded-full bg-red-400 mr-1" />{t('dashboard.legend_high')}</span>
         </div>
       </div>
 
       {/* Detail Modal */}
-      {selected && <DetailModal indicator={selected} onClose={() => setSelected(null)} />}
+      {selected && <DetailModal indicator={selected} onClose={() => setSelected(null)} t={t} />}
     </div>
   );
 }
