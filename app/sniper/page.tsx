@@ -348,14 +348,44 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
             </a>
           )}
 
-          <div className="w-full bg-gray-800/30 rounded-xl p-5 border border-gray-700/30 flex items-center gap-4 opacity-50">
-            <div className="w-12 h-12 bg-gray-500/20 rounded-xl flex items-center justify-center text-2xl">🔗</div>
+          {/* OKX */}
+          <button
+            onClick={() => router.push('/elite')}
+            className="w-full bg-gray-800/60 rounded-xl p-5 border border-gray-700/50 hover:border-blue-500/50 transition-all flex items-center gap-4 text-left"
+          >
+            <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center text-xl font-bold text-blue-400">OK</div>
             <div>
-              <div className="font-bold text-gray-400">更多交易所</div>
-              <div className="text-gray-500 text-sm">OKX · Bybit · 即将支持</div>
+              <div className="font-bold">OKX</div>
+              <div className="text-gray-400 text-sm">API Key 连接 · 需要 Passphrase</div>
             </div>
-            <div className="ml-auto text-xs text-gray-600 bg-gray-700/50 px-2 py-1 rounded">Coming Soon</div>
-          </div>
+            <div className="ml-auto text-gray-500">→</div>
+          </button>
+
+          {/* Bybit */}
+          <button
+            onClick={() => router.push('/elite')}
+            className="w-full bg-gray-800/60 rounded-xl p-5 border border-gray-700/50 hover:border-orange-500/50 transition-all flex items-center gap-4 text-left"
+          >
+            <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center text-xl font-bold text-orange-400">By</div>
+            <div>
+              <div className="font-bold">Bybit</div>
+              <div className="text-gray-400 text-sm">API Key 连接 · Unified 账户</div>
+            </div>
+            <div className="ml-auto text-gray-500">→</div>
+          </button>
+
+          {/* Hyperliquid */}
+          <button
+            onClick={() => router.push('/elite')}
+            className="w-full bg-gray-800/60 rounded-xl p-5 border border-gray-700/50 hover:border-green-500/50 transition-all flex items-center gap-4 text-left"
+          >
+            <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center text-xl font-bold text-green-400">HL</div>
+            <div>
+              <div className="font-bold">Hyperliquid</div>
+              <div className="text-gray-400 text-sm">钱包地址直连 · 无需 API Key</div>
+            </div>
+            <div className="ml-auto text-gray-500">→</div>
+          </button>
         </div>
 
         <div className="mt-6 bg-orange-500/10 rounded-lg p-3 border border-orange-500/20">

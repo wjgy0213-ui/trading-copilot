@@ -31,6 +31,7 @@ export default function ElitePage() {
   const [exchange, setExchange] = useState('binance');
   const [apiKey, setApiKey] = useState('');
   const [apiSecret, setApiSecret] = useState('');
+  const [passphrase, setPassphrase] = useState('');
   const [connecting, setConnecting] = useState(false);
   const [connected, setConnected] = useState(false);
   const [balance, setBalance] = useState<number | null>(null);
@@ -62,7 +63,7 @@ export default function ElitePage() {
       const res = await fetch('/api/exchange/connect', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ exchange, apiKey, apiSecret }),
+        body: JSON.stringify({ exchange, apiKey, apiSecret, passphrase: exchange === 'okx' ? passphrase : undefined }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Connection failed');
@@ -209,37 +210,54 @@ export default function ElitePage() {
                     className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   >
                     <option value="binance">Binance USDT-M Futures</option>
-                    <option value="okx" disabled>OKX (即将支持)</option>
-                    <option value="bybit" disabled>Bybit (即将支持)</option>
-                    <option value="hyperliquid" disabled>Hyperliquid (即将支持)</option>
+                    <option value="okx">OKX</option>
+                    <option value="bybit">Bybit</option>
+                    <option value="hyperliquid">Hyperliquid</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm text-gray-400 mb-2">API Key</label>
+                  <label className="block text-sm text-gray-400 mb-2">
+                    {exchange === 'hyperliquid' ? '钱包地址 (0x...)' : 'API Key'}
+                  </label>
                   <input
                     type="text"
                     value={apiKey}
                     onChange={(e) => setApiKey(e.target.value)}
                     className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    placeholder="输入你的API Key"
+                    placeholder={exchange === 'hyperliquid' ? '0x...' : '输入你的API Key'}
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm text-gray-400 mb-2">API Secret</label>
-                  <input
-                    type="password"
-                    value={apiSecret}
-                    onChange={(e) => setApiSecret(e.target.value)}
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    placeholder="输入你的API Secret"
-                  />
-                </div>
+                {exchange !== 'hyperliquid' && (
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">API Secret</label>
+                    <input
+                      type="password"
+                      value={apiSecret}
+                      onChange={(e) => setApiSecret(e.target.value)}
+                      className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      placeholder="输入你的API Secret"
+                    />
+                  </div>
+                )}
+
+                {exchange === 'okx' && (
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">Passphrase</label>
+                    <input
+                      type="password"
+                      value={passphrase}
+                      onChange={(e) => setPassphrase(e.target.value)}
+                      className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      placeholder="输入你的OKX Passphrase"
+                    />
+                  </div>
+                )}
 
                 <button
                   onClick={connectExchange}
-                  disabled={connecting || !apiKey || !apiSecret}
+                  disabled={connecting || !apiKey || (exchange !== 'hyperliquid' && !apiSecret) || (exchange === 'okx' && !passphrase)}
                   className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-700 disabled:text-gray-500 text-white font-medium py-2.5 rounded-lg transition flex items-center justify-center gap-2"
                 >
                   {connecting ? (
