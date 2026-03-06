@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useSession } from '@/lib/useSession';
 import { Check, Crown, Zap, Shield, Sparkles, ArrowRight, Loader2 } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 
 const PLANS = [
   {
@@ -50,6 +51,7 @@ export default function PricingPageWrapper() {
 }
 
 function PricingPage() {
+  const { t } = useI18n();
   const searchParams = useSearchParams();
   const success = searchParams.get('success');
   const sessionId = searchParams.get('session_id');
@@ -122,13 +124,13 @@ function PricingPage() {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-400 text-xs font-medium px-3 py-1.5 rounded-full mb-4">
-            <Sparkles className="w-3.5 h-3.5" /> 选择适合你的计划
+            <Sparkles className="w-3.5 h-3.5" /> {t('pricing.badge')}
           </div>
-          <h1 className="text-3xl font-bold mb-3">从学习到实战的完整路径</h1>
-          <p className="text-gray-500 max-w-lg mx-auto mb-5">不是冷冰冰的工具，是从零到盈利的AI交易陪练系统</p>
+          <h1 className="text-3xl font-bold mb-3">{t('pricing.heading')}</h1>
+          <p className="text-gray-500 max-w-lg mx-auto mb-5">{t('pricing.desc')}</p>
           {!isPro && (
             <a href="/strategy" className="inline-flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-5 py-2.5 rounded-xl text-sm font-medium transition-all">
-              <Zap className="w-4 h-4" /> 先免费体验 Pro 24小时，再决定是否升级 →
+              <Zap className="w-4 h-4" /> {t('pricing.trialHint')}
             </a>
           )}
         </div>
@@ -138,36 +140,36 @@ function PricingPage() {
           <div className={`border rounded-xl p-4 mb-8 text-center ${activateError ? 'bg-red-500/10 border-red-500/30' : 'bg-emerald-500/10 border-emerald-500/30'}`}>
             {activating ? (
               <p className="text-emerald-400 font-medium flex items-center justify-center gap-2">
-                <Loader2 className="w-4 h-4 animate-spin" /> 正在激活您的订阅…
+                <Loader2 className="w-4 h-4 animate-spin" /> {t('pricing.activating')}
               </p>
             ) : activateError ? (
               <>
-                <p className="text-red-400 font-medium mb-2">⚠️ 激活遇到问题</p>
+                <p className="text-red-400 font-medium mb-2">{t('pricing.activateError')}</p>
                 <p className="text-red-400/70 text-sm mb-3">{activateError}</p>
                 <button onClick={() => sessionId && doActivate(sessionId)}
                   className="text-sm bg-red-500/20 hover:bg-red-500/30 text-red-300 px-4 py-1.5 rounded-lg transition">
-                  重试激活
+                  {t('pricing.retryActivate')}
                 </button>
-                <p className="text-gray-600 text-xs mt-2">如问题持续请联系 support@tradingcopilot.ai（附订单截图）</p>
+                <p className="text-gray-600 text-xs mt-2">{t('pricing.activateHelp')}</p>
               </>
             ) : (
               <>
-                <p className="text-emerald-400 font-medium">🎉 订阅成功！欢迎成为 Pro 会员</p>
-                <p className="text-emerald-400/70 text-sm mt-1">所有高级功能已解锁，开始探索吧</p>
+                <p className="text-emerald-400 font-medium">{t('pricing.success')}</p>
+                <p className="text-emerald-400/70 text-sm mt-1">{t('pricing.successDesc')}</p>
               </>
             )}
           </div>
         )}
         {canceled && (
           <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 mb-8 text-center">
-            <p className="text-yellow-400">支付已取消，随时可以再来 👋</p>
+            <p className="text-yellow-400">{t('pricing.canceled')}</p>
           </div>
         )}
 
         {/* Email input */}
         {!isPro && (
           <div className="max-w-md mx-auto mb-10">
-            <label className="text-xs text-gray-500 block mb-1.5">你的邮箱（用于接收订阅信息）</label>
+            <label className="text-xs text-gray-500 block mb-1.5">{t('pricing.emailLabel')}</label>
             <input type="email" value={email} onChange={e => setEmail(e.target.value)}
               placeholder="your@email.com"
               className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none transition" />
@@ -242,7 +244,7 @@ function PricingPage() {
 
         {/* FAQ */}
         <div className="mt-16 max-w-2xl mx-auto">
-          <h2 className="text-xl font-bold text-center mb-8">常见问题</h2>
+          <h2 className="text-xl font-bold text-center mb-8">{t('pricing.faq.title')}</h2>
           <div className="space-y-4">
             {[
               { q: '可以随时取消吗？', a: '是的，随时可以在设置中取消订阅，当前计费周期内仍可使用全部功能。' },

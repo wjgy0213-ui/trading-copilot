@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useI18n } from '@/lib/i18n';
 
 interface Dimension {
   name: string;
@@ -53,13 +54,14 @@ function ScoreGauge({ score, light }: { score: number; light: string }) {
 }
 
 function TrafficLight({ light }: { light: string }) {
+  const { t } = useI18n();
   return (
     <div className="flex items-center gap-2 justify-center mb-4">
       <div className={`w-6 h-6 rounded-full border-2 ${light === 'red' ? 'bg-red-500 border-red-400 shadow-[0_0_12px_rgba(239,68,68,0.6)]' : 'bg-gray-700 border-gray-600'}`} />
       <div className={`w-6 h-6 rounded-full border-2 ${light === 'yellow' ? 'bg-yellow-500 border-yellow-400 shadow-[0_0_12px_rgba(234,179,8,0.6)]' : 'bg-gray-700 border-gray-600'}`} />
       <div className={`w-6 h-6 rounded-full border-2 ${light === 'green' ? 'bg-green-500 border-green-400 shadow-[0_0_12px_rgba(34,197,94,0.6)]' : 'bg-gray-700 border-gray-600'}`} />
       <span className="ml-2 text-sm font-medium text-gray-300">
-        {light === 'green' ? '✅ 可操作' : light === 'yellow' ? '⚠️ 观望' : '🔴 谨慎'}
+        {light === 'green' ? t('health.operable') : light === 'yellow' ? t('health.wait') : t('health.caution')}
       </span>
     </div>
   );
@@ -90,6 +92,7 @@ function DimensionBar({ dim }: { dim: Dimension }) {
 }
 
 export default function HealthCheckPage() {
+  const { t } = useI18n();
   const [data, setData] = useState<HealthData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -124,25 +127,25 @@ export default function HealthCheckPage() {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">
             <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-              ⚡ 市场体检
+              {t('health.heading')}
             </span>
           </h1>
-          <p className="text-gray-400 text-sm">Market Health Check — 一键掌握市场状态</p>
+          <p className="text-gray-400 text-sm">{t('health.subtitle')}</p>
           {lastUpdate && (
-            <p className="text-gray-600 text-xs mt-1">更新于 {lastUpdate} · 每5分钟刷新</p>
+            <p className="text-gray-600 text-xs mt-1">{t('health.updatedAt')} {lastUpdate} · {t('health.refreshInterval')}</p>
           )}
         </div>
 
         {loading && !data ? (
           <div className="text-center py-20">
             <div className="inline-block w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-            <p className="text-gray-400 mt-3">正在体检...</p>
+            <p className="text-gray-400 mt-3">{t('health.scanning')}</p>
           </div>
         ) : error ? (
           <div className="text-center py-20 text-red-400">
             <p>❌ {error}</p>
             <button onClick={fetchHealth} className="mt-4 px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
-              重试
+              {t('health.retry')}
             </button>
           </div>
         ) : data ? (
@@ -156,28 +159,28 @@ export default function HealthCheckPage() {
 
             {/* Interpretation */}
             <div className="bg-gray-800/30 rounded-xl p-4 border border-gray-700/30 mb-6">
-              <h3 className="text-sm font-medium text-gray-400 mb-2">📖 怎么读这个分数？</h3>
+              <h3 className="text-sm font-medium text-gray-400 mb-2">{t('health.howToRead')}</h3>
               <div className="grid grid-cols-3 gap-2 text-xs">
                 <div className="text-center p-2 rounded-lg bg-red-500/10 border border-red-500/20">
                   <div className="text-red-400 font-bold">0-39</div>
-                  <div className="text-gray-400">危险/极端恐慌</div>
-                  <div className="text-gray-500 mt-1">可能是底部机会</div>
+                  <div className="text-gray-400">{t('health.danger')}</div>
+                  <div className="text-gray-500 mt-1">{t('health.dangerHint')}</div>
                 </div>
                 <div className="text-center p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
                   <div className="text-yellow-400 font-bold">40-59</div>
-                  <div className="text-gray-400">信号混合</div>
-                  <div className="text-gray-500 mt-1">观望为主</div>
+                  <div className="text-gray-400">{t('health.mixed')}</div>
+                  <div className="text-gray-500 mt-1">{t('health.mixedHint')}</div>
                 </div>
                 <div className="text-center p-2 rounded-lg bg-green-500/10 border border-green-500/20">
                   <div className="text-green-400 font-bold">60-100</div>
-                  <div className="text-gray-400">条件有利</div>
-                  <div className="text-gray-500 mt-1">可以寻找机会</div>
+                  <div className="text-gray-400">{t('health.favorable')}</div>
+                  <div className="text-gray-500 mt-1">{t('health.favorableHint')}</div>
                 </div>
               </div>
             </div>
 
             {/* Dimensions */}
-            <h2 className="text-lg font-semibold mb-3">📊 五维分析</h2>
+            <h2 className="text-lg font-semibold mb-3">{t('health.dimensions')}</h2>
             <div className="space-y-3 mb-8">
               {data.dimensions.map((dim) => (
                 <DimensionBar key={dim.name} dim={dim} />
@@ -191,7 +194,7 @@ export default function HealthCheckPage() {
                 disabled={loading}
                 className="px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
               >
-                {loading ? '刷新中...' : '🔄 立即刷新'}
+                {loading ? t('health.refreshing') : t('health.refreshNow')}
               </button>
             </div>
           </>
