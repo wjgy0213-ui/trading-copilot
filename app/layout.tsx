@@ -9,6 +9,9 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
+  verification: {
+    google: '7BwDIMV3DNn8jAtcwY4ZfWBTeCRDiUsOQ4hO7HpUkqc',
+  },
   title: {
     default: "交易陪练 AI — 策略回测 · AI生成 · 蒙特卡洛模拟",
     template: "%s | 交易陪练 AI",
