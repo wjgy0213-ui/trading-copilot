@@ -144,18 +144,7 @@ function DetailModal({ indicator, onClose }: { indicator: ITCIndicator; onClose:
             </div>
           </div>
 
-          {/* ITC Chart Link */}
-          {getITCChartUrl(indicator.id) && (
-            <a
-              href={getITCChartUrl(indicator.id)!}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 flex items-center justify-center gap-2 w-full bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg py-2.5 text-blue-400 text-sm font-medium transition-all"
-            >
-              <ExternalLink className="w-4 h-4" />
-              查看完整历史图表 (ITC)
-            </a>
-          )}
+          {/* ITC chart link removed per user request */}
         </div>
       </div>
     </div>

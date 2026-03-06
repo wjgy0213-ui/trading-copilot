@@ -51,43 +51,43 @@ async function calcRunningROI(btcPrice: number): Promise<{ value: number; risk: 
     const price365ago = values[0].y;
     if (!price365ago) return null;
     const roi = (btcPrice / price365ago) - 1;
-    // Risk: ROI > 3x (200%) = high risk, < 0 = low risk
-    const risk = Math.min(1, Math.max(0, roi / 3));
-    return { value: roi, risk };
+    // Risk: ROI > 200% = high risk, < 0 = low risk (buying opportunity)
+    const risk = roi > 0 ? Math.min(1, roi / 3) : 0;
+    return { value: parseFloat(roi.toFixed(3)), risk };
   } catch { return null; }
 }
 
 // Logarithmic Regression Risk
-// BTC log regression: log(price) = a * log(days_since_genesis) + b
+// BTC power law: price = 10^(a * log10(days) - b)
 // Genesis: 2009-01-03
 function calcLogRegressionRisk(btcPrice: number): { value: number; risk: number } {
   const genesis = new Date('2009-01-03').getTime();
   const daysSinceGenesis = (Date.now() - genesis) / 86400000;
-  // Regression coefficients (fitted to BTC historical data)
-  const a = 5.84;
-  const b = -17.01;
-  const logFairValue = a * Math.log(daysSinceGenesis) + b;
-  const fairValue = Math.exp(logFairValue);
+  // Power law coefficients (fitted to BTC historical data, log10 scale)
+  const a = 5.82;
+  const b = 17.01;
+  const log10Fair = a * Math.log10(daysSinceGenesis) - b;
+  const fairValue = Math.pow(10, log10Fair);
   const ratio = btcPrice / fairValue;
-  // ratio < 0.5 = extremely undervalued, > 3 = extremely overvalued
+  // ratio < 0.5 = undervalued, ~1 = fair, > 2 = overvalued
   const risk = Math.min(1, Math.max(0, (ratio - 0.3) / 2.7));
-  return { value: ratio, risk };
+  return { value: parseFloat(ratio.toFixed(3)), risk };
 }
 
 // Cowen Corridor — price position within log growth channel
 function calcCowenCorridor(btcPrice: number): { value: number; risk: number } {
   const genesis = new Date('2009-01-03').getTime();
   const daysSinceGenesis = (Date.now() - genesis) / 86400000;
-  // Lower band (support) and upper band (resistance) of log corridor
-  const logLower = 4.5 * Math.log(daysSinceGenesis) - 15.5;
-  const logUpper = 6.2 * Math.log(daysSinceGenesis) - 16.5;
-  const lower = Math.exp(logLower);
-  const upper = Math.exp(logUpper);
-  const logPrice = Math.log(btcPrice);
+  // Lower and upper bands in log10 scale
+  const log10Lower = 5.2 * Math.log10(daysSinceGenesis) - 15.5;
+  const log10Upper = 5.2 * Math.log10(daysSinceGenesis) - 13.5;
+  const lower = Math.pow(10, log10Lower);
+  const upper = Math.pow(10, log10Upper);
+  const log10Price = Math.log10(btcPrice);
   // Position within corridor: 0 = at lower band, 1 = at upper band
-  const position = (logPrice - logLower) / (logUpper - logLower);
+  const position = (log10Price - log10Lower) / (log10Upper - log10Lower);
   const risk = Math.min(1, Math.max(0, position));
-  return { value: position, risk };
+  return { value: parseFloat(position.toFixed(3)), risk };
 }
 
 // Market Cap to Thermocap approximation
@@ -150,15 +150,15 @@ export async function GET() {
 
     metrics.push({
       id: 'log-regression', name: 'Logarithmic Regression', nameEn: 'Log Regression',
-      value: parseFloat(logRegression.value.toFixed(3)), risk: parseFloat(logRegression.risk.toFixed(3)),
-      description: `当前价格/对数回归公允价值 = ${logRegression.value.toFixed(2)}x。>1为高于均衡，<1为低于。`,
+      value: logRegression.value, risk: parseFloat(logRegression.risk.toFixed(3)),
+      description: `BTC当前价 $${btcPrice.toLocaleString()} / 对数回归公允价值 = ${logRegression.value.toFixed(2)}x。>1=高估，<1=低估，当前${logRegression.value < 1 ? '低于' : '高于'}均衡。`,
       category: 'price',
     });
 
     metrics.push({
       id: 'cowen-corridor', name: 'Cowen Corridor', nameEn: 'Cowen Corridor',
-      value: parseFloat(cowenCorridor.value.toFixed(3)), risk: parseFloat(cowenCorridor.risk.toFixed(3)),
-      description: `对数增长通道内位置 ${(cowenCorridor.value * 100).toFixed(0)}%。接近上轨=过热，接近下轨=超跌。`,
+      value: cowenCorridor.value, risk: parseFloat(cowenCorridor.risk.toFixed(3)),
+      description: `对数增长通道位置 ${(cowenCorridor.risk * 100).toFixed(0)}%。0%=下轨(超跌)，100%=上轨(过热)。当前处于通道${cowenCorridor.risk < 0.3 ? '底部' : cowenCorridor.risk < 0.7 ? '中段' : '顶部'}。`,
       category: 'price',
     });
 

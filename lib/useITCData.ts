@@ -90,12 +90,14 @@ export function useITCData(): { indicators: ITCIndicator[]; prices: { BTC: numbe
         if (onChainRes?.ok) {
           const onChain = await onChainRes.json();
           for (const m of (onChain.metrics || [])) {
+            // Use risk (0-1) for display since dashboard expects 0-1 range
+            const displayValue = Math.min(1, Math.max(0, m.risk));
             real.push({
               id: m.id,
               name: m.name,
               nameEn: m.nameEn,
-              value: m.risk, // use risk as the 0-1 value for display consistency
-              history: currentSnapshot(m.risk),
+              value: displayValue,
+              history: currentSnapshot(displayValue),
               category: m.category === 'on-chain' ? 'on-chain' as any : m.category === 'weightless' ? 'weightless' as any : 'crypto',
               description: m.description,
             });
