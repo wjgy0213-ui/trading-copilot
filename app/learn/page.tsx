@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Lock, CheckCircle, ChevronRight, ChevronDown, Sparkles, ArrowLeft } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import Link from 'next/link';
 import { COURSE_CHAPTERS, Chapter, Lesson, QuizQuestion } from '@/lib/courseData';
 import { CHAPTER_QUIZZES } from '@/lib/chapterQuizzes';
@@ -465,10 +466,18 @@ function ChapterSection({ chapter, isPro, chapterIndex }: { chapter: Chapter; is
 }
 
 export default function LearnPage() {
+  const { session, isPro: sessionIsPro, hasCourse } = useSession();
   const [isPro, setIsPro] = useState(() => {
     if (typeof window !== 'undefined') return isProUser();
     return false;
   });
+
+  // Sync server-side auth: if user has paid plan or course access, unlock
+  useEffect(() => {
+    if (sessionIsPro || hasCourse) {
+      setIsPro(true);
+    }
+  }, [sessionIsPro, hasCourse]);
 
   const totalLessons = COURSE_CHAPTERS.reduce((acc, ch) => acc + ch.lessons.length, 0);
   const freeLessons = COURSE_CHAPTERS.filter(ch => ch.tier === 'free').reduce((acc, ch) => acc + ch.lessons.length, 0);
