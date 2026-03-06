@@ -1,11 +1,22 @@
 import { MetadataRoute } from 'next';
+import { getAllPosts } from '@/lib/blog';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = 'https://trading-copilot-delta.vercel.app';
   const now = new Date();
 
+  // Blog post URLs
+  const blogUrls: MetadataRoute.Sitemap = getAllPosts().map(post => ({
+    url: `${base}/blog/${post.slug}`,
+    lastModified: new Date(post.date),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }));
+
   return [
+    ...blogUrls,
     { url: base, lastModified: now, changeFrequency: 'daily', priority: 1.0 },
+    { url: `${base}/blog`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${base}/practice`, lastModified: now, changeFrequency: 'daily', priority: 0.95 },
     { url: `${base}/health`, lastModified: now, changeFrequency: 'daily', priority: 0.9 },
     { url: `${base}/signals`, lastModified: now, changeFrequency: 'daily', priority: 0.9 },

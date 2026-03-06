@@ -56,6 +56,7 @@ const GROUPS: NavGroup[] = [
   {
     label: '更多',
     items: [
+      { href: '/blog', label: 'Blog', icon: BookOpen },
       { href: '/learn', label: '免费课程', icon: BookOpen },
       { href: '/course', label: '购买课程', icon: BookOpen, premium: true },
       { href: '/pricing', label: '定价', icon: CreditCard },
