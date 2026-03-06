@@ -23,6 +23,11 @@ export async function GET() {
     effectivePlan = 'elite'; // gifted Elite from course purchase still active
   }
 
+  // Check active free trial
+  if (effectivePlan === 'free' && userData.trialExpiresAt && userData.trialExpiresAt > Date.now()) {
+    effectivePlan = 'pro'; // active trial grants Pro access
+  }
+
   // If JWT is outdated, refresh it
   if (session.plan !== effectivePlan) {
     const token = await createSession({
@@ -41,5 +46,6 @@ export async function GET() {
     status: userData.status,
     expiresAt: userData.expiresAt,
     courseAccess: userData.courseAccess || false,
+    trialExpiresAt: userData.trialExpiresAt || null,
   });
 }

@@ -3,19 +3,18 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useSession } from '@/lib/useSession';
-import { isProUser, isOnFreeTrial, getTrialExpiryMs, startFreeTrial } from '@/lib/paywall';
 import { Lock, Sparkles, Clock, Zap } from 'lucide-react';
 import { trackEvent } from '@/components/Analytics';
 
 function TrialCountdown() {
+  const { session } = useSession();
   const [remaining, setRemaining] = useState('');
 
   useEffect(() => {
     const update = () => {
-      const expiry = getTrialExpiryMs();
-      if (!expiry) { setRemaining(''); return; }
+      const expiry = session?.trialExpiresAt;
+      if (!expiry || expiry <= Date.now()) { setRemaining(''); return; }
       const diff = expiry - Date.now();
-      if (diff <= 0) { setRemaining(''); return; }
       const h = Math.floor(diff / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
       setRemaining(`${h}小时${m}分钟`);
@@ -23,7 +22,7 @@ function TrialCountdown() {
     update();
     const t = setInterval(update, 60000);
     return () => clearInterval(t);
-  }, []);
+  }, [session?.trialExpiresAt]);
 
   if (!remaining) return null;
   return (
@@ -47,37 +46,55 @@ export function PaywallBanner() {
 export { TrialCountdown };
 
 export default function Paywall({ children, feature }: { children: React.ReactNode; feature?: string }) {
-  const { isPro, loading } = useSession();
-  const [localPro, setLocalPro] = useState(false);
-  const [trialStarted, setTrialStarted] = useState(false);
+  const { session, isPro, loading, refresh } = useSession();
+  const [starting, setStarting] = useState(false);
+  const [error, setError] = useState('');
   const [showActivate, setShowActivate] = useState(false);
   const [code, setCode] = useState('');
   const [codeError, setCodeError] = useState('');
 
-  useEffect(() => {
-    setLocalPro(isProUser());
-  }, []);
-
   if (loading) return <>{children}</>;
-  if (isPro || localPro) return <>{children}</>;
+  if (isPro) return <>{children}</>;
 
-  const handleStartTrial = () => {
-    startFreeTrial();
-    setTrialStarted(true);
-    setLocalPro(true);
-    trackEvent('start_trial', 'conversion', feature || 'general');
+  const handleStartTrial = async () => {
+    // Must be logged in
+    if (!session?.email) {
+      // Redirect to login, then come back
+      window.location.href = '/api/auth/signin?callbackUrl=' + encodeURIComponent(window.location.pathname);
+      return;
+    }
+
+    setStarting(true);
+    setError('');
+    try {
+      const res = await fetch('/api/auth/trial', { method: 'POST' });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        trackEvent('start_trial', 'conversion', feature || 'general');
+        refresh(); // re-fetch session to get updated plan
+        // Small delay for KV propagation
+        setTimeout(() => window.location.reload(), 500);
+      } else if (data.error === 'trial_used') {
+        setError(data.message || '试用已过期，请升级 Pro');
+      } else {
+        setError('开启试用失败，请重试');
+      }
+    } catch {
+      setError('网络错误，请重试');
+    } finally {
+      setStarting(false);
+    }
   };
 
-  const handleActivateCode = () => {
-    const { activatePro } = require('@/lib/paywall');
+  const handleActivateCode = async () => {
+    // Keep activation codes client-side for now (legacy)
+    const { activatePro } = await import('@/lib/paywall');
     if (activatePro(code)) {
-      setLocalPro(true);
+      window.location.reload();
     } else {
       setCodeError('激活码无效，请重试');
     }
   };
-
-  if (trialStarted) return <>{children}</>;
 
   return (
     <div className="relative">
@@ -100,11 +117,14 @@ export default function Paywall({ children, feature }: { children: React.ReactNo
           {/* Primary CTA: Free Trial */}
           <button
             onClick={handleStartTrial}
-            className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white px-5 py-3 rounded-xl text-sm font-semibold transition-all mb-3"
+            disabled={starting}
+            className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white px-5 py-3 rounded-xl text-sm font-semibold transition-all mb-3 disabled:opacity-50"
           >
             <Zap className="w-4 h-4" />
-            免费体验 24 小时 Pro
+            {starting ? '开启中...' : session?.email ? '免费体验 24 小时 Pro' : '登录后免费体验 24 小时'}
           </button>
+
+          {error && <p className="text-xs text-red-400 mb-3">{error}</p>}
 
           {/* Secondary: Upgrade */}
           <Link href="/pricing"
@@ -135,7 +155,9 @@ export default function Paywall({ children, feature }: { children: React.ReactNo
           )}
           {codeError && <p className="text-xs text-red-400 mt-1">{codeError}</p>}
 
-          <p className="text-[10px] text-gray-700 mt-4">试用期间无需信用卡 · 到期自动恢复免费版</p>
+          <p className="text-[10px] text-gray-700 mt-4">
+            {session?.email ? '每个账号仅限一次试用 · 到期自动恢复免费版' : '需要 Google 账号登录 · 每个账号仅限一次试用'}
+          </p>
         </div>
       </div>
     </div>

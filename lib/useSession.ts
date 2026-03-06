@@ -6,6 +6,7 @@ export interface ClientSession {
   email: string;
   plan: 'free' | 'pro' | 'elite';
   courseAccess?: boolean;
+  trialExpiresAt?: number | null;
 }
 
 export function useSession() {
@@ -42,6 +43,7 @@ export function useSession() {
   const isPro = session?.plan === 'pro' || session?.plan === 'elite';
   const isElite = session?.plan === 'elite';
   const hasCourse = session?.courseAccess === true;
+  const isOnTrial = !!(session?.trialExpiresAt && session.trialExpiresAt > Date.now());
 
   const logout = () => {
     fetch('/api/auth/logout', { method: 'POST' }).then(() => {
@@ -50,7 +52,7 @@ export function useSession() {
     });
   };
 
-  return { session, loading, isPro, isElite, hasCourse, logout, refresh: () => {
+  return { session, loading, isPro, isElite, hasCourse, isOnTrial, logout, refresh: () => {
     fetch('/api/auth/me').then(r => r.ok ? r.json() : null).then(setSession);
   }};
 }

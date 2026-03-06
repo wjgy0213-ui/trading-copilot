@@ -14,6 +14,8 @@ export interface UserRecord {
   courseAccess?: boolean;        // lifetime course access
   coursePurchasedAt?: number;
   courseEliteExpiresAt?: number; // gifted Elite expiry from course purchase
+  // Free trial
+  trialExpiresAt?: number;      // 24h trial expiry timestamp (ms)
 }
 
 const userKey = (email: string) => `user:${email.toLowerCase()}`;
