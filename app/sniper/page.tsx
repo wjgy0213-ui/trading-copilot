@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface Position {
   symbol: string;
@@ -210,6 +211,52 @@ function OfficialLabStats() {
 
 /* ========== Live Mode Connect Screen ========== */
 function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (exchange: LiveExchange) => void }) {
+  const router = useRouter();
+  const [showBinanceForm, setShowBinanceForm] = useState(false);
+  const [apiKey, setApiKey] = useState('');
+  const [apiSecret, setApiSecret] = useState('');
+  const [connecting, setConnecting] = useState(false);
+  const [error, setError] = useState('');
+  const [phantomStatus, setPhantomStatus] = useState<'idle' | 'connecting' | 'no-wallet'>('idle');
+
+  const connectBinance = async () => {
+    if (!apiKey || !apiSecret) { setError('请填写 API Key 和 Secret'); return; }
+    setConnecting(true);
+    setError('');
+    try {
+      const res = await fetch('/api/exchange/connect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ exchange: 'binance', apiKey, apiSecret }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || '连接失败');
+      onConnect('binance');
+    } catch (e: any) {
+      setError(e.message);
+    } finally {
+      setConnecting(false);
+    }
+  };
+
+  const connectPhantom = async () => {
+    try {
+      const provider = (window as any).phantom?.solana || (window as any).solana;
+      if (!provider?.isPhantom) {
+        setPhantomStatus('no-wallet');
+        return;
+      }
+      setPhantomStatus('connecting');
+      const resp = await provider.connect();
+      const pubkey = resp.publicKey.toString();
+      localStorage.setItem('sniper_phantom_pubkey', pubkey);
+      onConnect('phantom');
+    } catch (e: any) {
+      setError(e.message || 'Phantom 连接失败');
+      setPhantomStatus('idle');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex items-center justify-center px-4">
       <div className="max-w-lg w-full">
@@ -222,30 +269,84 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
           <p className="text-gray-400 mt-2">选择你的交易所或钱包</p>
         </div>
 
-        <div className="space-y-4">
-          <button
-            onClick={() => onConnect('binance')}
-            className="w-full bg-gray-800/60 rounded-xl p-5 border border-gray-700/50 hover:border-yellow-500/50 transition-all flex items-center gap-4 text-left"
-          >
-            <div className="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center text-2xl">🟡</div>
-            <div>
-              <div className="font-bold">币安 Binance</div>
-              <div className="text-gray-400 text-sm">API Key 连接 · 支持现货交易</div>
-            </div>
-            <div className="ml-auto text-gray-500">→</div>
-          </button>
+        {error && (
+          <div className="mb-4 bg-red-500/10 rounded-lg p-3 border border-red-500/20 text-red-300 text-sm">
+            ❌ {error}
+          </div>
+        )}
 
+        <div className="space-y-4">
+          {/* Binance */}
+          <div className="bg-gray-800/60 rounded-xl border border-gray-700/50 hover:border-yellow-500/50 transition-all overflow-hidden">
+            <button
+              onClick={() => setShowBinanceForm(!showBinanceForm)}
+              className="w-full p-5 flex items-center gap-4 text-left"
+            >
+              <div className="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center text-2xl">🟡</div>
+              <div>
+                <div className="font-bold">币安 Binance</div>
+                <div className="text-gray-400 text-sm">API Key 连接 · 支持现货交易</div>
+              </div>
+              <div className="ml-auto text-gray-500">{showBinanceForm ? '↑' : '→'}</div>
+            </button>
+            {showBinanceForm && (
+              <div className="px-5 pb-5 space-y-3">
+                <div>
+                  <label className="text-xs text-gray-400 block mb-1">API Key</label>
+                  <input
+                    type="text" value={apiKey} onChange={(e) => setApiKey(e.target.value)}
+                    placeholder="输入你的 Binance API Key"
+                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:border-yellow-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-gray-400 block mb-1">API Secret</label>
+                  <input
+                    type="password" value={apiSecret} onChange={(e) => setApiSecret(e.target.value)}
+                    placeholder="输入你的 Binance API Secret"
+                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:border-yellow-500 focus:outline-none"
+                  />
+                </div>
+                <div className="text-xs text-gray-500 bg-gray-900/60 rounded-lg p-2">
+                  💡 建议只开启「现货读取+交易」权限，关闭提币权限。<br/>
+                  API Key 使用 AES-256 加密存储，不以明文保存。
+                </div>
+                <button
+                  onClick={connectBinance} disabled={connecting}
+                  className="w-full bg-yellow-600 hover:bg-yellow-500 disabled:opacity-50 text-black font-bold py-2.5 rounded-lg transition-all text-sm"
+                >
+                  {connecting ? '连接中...' : '🔗 连接币安'}
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Phantom */}
           <button
-            onClick={() => onConnect('phantom')}
+            onClick={connectPhantom}
+            disabled={phantomStatus === 'connecting'}
             className="w-full bg-gray-800/60 rounded-xl p-5 border border-gray-700/50 hover:border-purple-500/50 transition-all flex items-center gap-4 text-left"
           >
             <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center text-2xl">👻</div>
             <div>
               <div className="font-bold">Phantom 钱包</div>
-              <div className="text-gray-400 text-sm">链上直连 · Solana DEX 交易</div>
+              <div className="text-gray-400 text-sm">
+                {phantomStatus === 'connecting' ? '连接中...' :
+                 phantomStatus === 'no-wallet' ? '未检测到 Phantom，请先安装扩展' :
+                 '链上直连 · Solana DEX 交易'}
+              </div>
             </div>
-            <div className="ml-auto text-gray-500">→</div>
+            <div className="ml-auto text-gray-500">
+              {phantomStatus === 'connecting' ? '⏳' : '→'}
+            </div>
           </button>
+
+          {phantomStatus === 'no-wallet' && (
+            <a href="https://phantom.app/download" target="_blank" rel="noopener noreferrer"
+              className="block text-center text-purple-400 hover:text-purple-300 text-xs underline">
+              下载 Phantom 钱包 →
+            </a>
+          )}
 
           <div className="w-full bg-gray-800/30 rounded-xl p-5 border border-gray-700/30 flex items-center gap-4 opacity-50">
             <div className="w-12 h-12 bg-gray-500/20 rounded-xl flex items-center justify-center text-2xl">🔗</div>
@@ -713,8 +814,6 @@ export default function SniperPage() {
   if (mode === 'live' && !liveExchange) {
     return <LiveConnect onBack={goBack} onConnect={(ex) => {
       setLiveExchange(ex);
-      // TODO: implement actual exchange connection
-      alert(`${ex === 'binance' ? '币安' : 'Phantom'} 连接功能即将上线，敬请期待！`);
     }} />;
   }
 
