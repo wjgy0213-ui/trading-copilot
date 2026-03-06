@@ -15,7 +15,27 @@ export function useSession() {
   useEffect(() => {
     fetch('/api/auth/me')
       .then(r => r.ok ? r.json() : null)
-      .then(data => { setSession(data); setLoading(false); })
+      .then(data => {
+        if (data) {
+          setSession(data);
+          setLoading(false);
+        } else {
+          // tc-session missing — try syncing from NextAuth (Google/email login)
+          fetch('/api/auth/sync')
+            .then(r => r.ok ? r.json() : null)
+            .then(syncData => {
+              if (syncData?.ok) {
+                // Sync succeeded, re-fetch session
+                fetch('/api/auth/me')
+                  .then(r => r.ok ? r.json() : null)
+                  .then(d => { setSession(d); setLoading(false); });
+              } else {
+                setLoading(false);
+              }
+            })
+            .catch(() => setLoading(false));
+        }
+      })
       .catch(() => setLoading(false));
   }, []);
 

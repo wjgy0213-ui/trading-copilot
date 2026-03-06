@@ -53,7 +53,11 @@ export default function CoursePage() {
 
   const handleBuy = async (planId: string) => {
     const userEmail = session?.email || email;
-    if (!userEmail) return;
+    if (!userEmail) {
+      // Not logged in and no email entered → redirect to login
+      window.location.href = '/login';
+      return;
+    }
     setLoading(planId);
     try {
       const r = await fetch('/api/checkout/course', {
@@ -171,7 +175,7 @@ export default function CoursePage() {
 
               <button
                 onClick={() => handleBuy(plan.id)}
-                disabled={loading !== null || (!session && !email)}
+                disabled={loading !== null}
                 className={`w-full py-3 rounded-xl font-medium text-white flex items-center justify-center gap-2 transition-all ${
                   plan.popular
                     ? 'bg-violet-600 hover:bg-violet-500 shadow-lg shadow-violet-900/30'

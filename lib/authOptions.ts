@@ -70,7 +70,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.email = user.email;
         token.name = user.name;
-        token.plan = 'free'; // Default plan, updated on Stripe webhook
+        token.plan = 'free';
         token.provider = account?.provider || 'email';
       }
       return token;
