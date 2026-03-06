@@ -93,4 +93,5 @@ export interface PriceData {
   price: number;
   timestamp: number;
   change24h: number;
+  stale?: boolean;
 }
