@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Shield, AlertTriangle, TrendingDown, Layers, Link2, Zap, Target, RefreshCw, ChevronRight } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 
 interface RiskData {
   score: { overall: number; concentration: number; leverage: number; drawdown: number; correlation: number; liquidation: number };
@@ -13,16 +14,17 @@ interface RiskData {
 }
 
 const DIMENSIONS = [
-  { key: 'concentration', label: '集中度', icon: Target, desc: '单一标的占比' },
-  { key: 'leverage', label: '杠杆', icon: Zap, desc: '加权杠杆水平' },
-  { key: 'drawdown', label: '回撤', icon: TrendingDown, desc: '当前浮亏' },
-  { key: 'correlation', label: '相关性', icon: Link2, desc: '持仓相关度' },
-  { key: 'liquidation', label: '爆仓距离', icon: AlertTriangle, desc: '距爆仓价' },
+  { key: 'concentration', labelKey: 'guardian.concentration', icon: Target, descKey: 'guardian.concentration_desc' },
+  { key: 'leverage', labelKey: 'guardian.leverage', icon: Zap, descKey: 'guardian.leverage_desc' },
+  { key: 'drawdown', labelKey: 'guardian.drawdown', icon: TrendingDown, descKey: 'guardian.drawdown_desc' },
+  { key: 'correlation', labelKey: 'guardian.correlation', icon: Link2, descKey: 'guardian.correlation_desc' },
+  { key: 'liquidation', labelKey: 'guardian.liquidation', icon: AlertTriangle, descKey: 'guardian.liquidation_desc' },
 ] as const;
 
 function ScoreGauge({ score }: { score: number }) {
+  const { t } = useI18n();
   const color = score >= 80 ? '#10b981' : score >= 60 ? '#3b82f6' : score >= 40 ? '#f59e0b' : score >= 20 ? '#f97316' : '#ef4444';
-  const label = score >= 80 ? '安全' : score >= 60 ? '良好' : score >= 40 ? '注意' : score >= 20 ? '危险' : '极危';
+  const label = score >= 80 ? t('guardian.safe') : score >= 60 ? t('guardian.good') : score >= 40 ? t('guardian.caution') : score >= 20 ? t('guardian.danger') : t('guardian.critical');
   const circumference = 2 * Math.PI * 58;
   const offset = circumference - (score / 100) * circumference * 0.75; // 270 degree arc
 
@@ -40,7 +42,7 @@ function ScoreGauge({ score }: { score: number }) {
   );
 }
 
-function DimensionBar({ label, score, icon: Icon, desc }: { label: string; score: number; icon: any; desc: string }) {
+function DimensionBar({ label, score, icon: Icon, desc }: { label: string; score: number; icon: any; desc?: string }) {
   const color = score >= 80 ? 'bg-emerald-500' : score >= 60 ? 'bg-blue-500' : score >= 40 ? 'bg-yellow-500' : score >= 20 ? 'bg-orange-500' : 'bg-red-500';
   const textColor = score >= 80 ? 'text-emerald-400' : score >= 60 ? 'text-blue-400' : score >= 40 ? 'text-yellow-400' : score >= 20 ? 'text-orange-400' : 'text-red-400';
 
@@ -90,6 +92,7 @@ function AlertCard({ alert }: { alert: RiskData['alerts'][0] }) {
 }
 
 function PositionRow({ p }: { p: any }) {
+  const { t } = useI18n();
   const pnlColor = p.unrealizedPnl >= 0 ? 'text-emerald-400' : 'text-red-400';
   const liqDist = p.liquidationPrice > 0 ? Math.abs(p.markPrice - p.liquidationPrice) / p.markPrice * 100 : 999;
   const liqColor = liqDist < 5 ? 'text-red-400' : liqDist < 10 ? 'text-yellow-400' : 'text-gray-400';
@@ -105,15 +108,15 @@ function PositionRow({ p }: { p: any }) {
       </div>
       <div className="flex items-center gap-6 text-right">
         <div>
-          <div className="text-xs text-gray-500">仓位</div>
+          <div className="text-xs text-gray-500">{t('guardian.position_size')}</div>
           <div className="text-sm text-gray-300">${p.size.toLocaleString()}</div>
         </div>
         <div>
-          <div className="text-xs text-gray-500">浮盈亏</div>
+          <div className="text-xs text-gray-500">{t('guardian.unrealized_pnl')}</div>
           <div className={`text-sm font-semibold ${pnlColor}`}>{p.unrealizedPnl >= 0 ? '+' : ''}${p.unrealizedPnl.toFixed(2)}</div>
         </div>
         <div>
-          <div className="text-xs text-gray-500">距爆仓</div>
+          <div className="text-xs text-gray-500">{t('guardian.liq_distance')}</div>
           <div className={`text-sm font-semibold ${liqColor}`}>{liqDist.toFixed(1)}%</div>
         </div>
       </div>
@@ -122,6 +125,7 @@ function PositionRow({ p }: { p: any }) {
 }
 
 export default function GuardianPage() {
+  const { t } = useI18n();
   const [data, setData] = useState<RiskData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -138,13 +142,13 @@ export default function GuardianPage() {
 
   if (loading) return (
     <div className="min-h-screen bg-gray-950 pt-20 flex items-center justify-center">
-      <div className="animate-pulse text-gray-500">扫描风险中...</div>
+      <div className="animate-pulse text-gray-500">{t('guardian.loading')}</div>
     </div>
   );
 
   if (!data) return (
     <div className="min-h-screen bg-gray-950 pt-20 flex items-center justify-center">
-      <div className="text-red-400">加载失败</div>
+      <div className="text-red-400">{t('guardian.error')}</div>
     </div>
   );
 
@@ -156,9 +160,9 @@ export default function GuardianPage() {
           <div>
             <div className="flex items-center gap-2">
               <Shield className="w-6 h-6 text-orange-400" />
-              <h1 className="text-2xl font-bold text-gray-100">风控守门员</h1>
+              <h1 className="text-2xl font-bold text-gray-100">{t('guardian.title')}</h1>
             </div>
-            <p className="text-sm text-gray-500 mt-1">实时扫描持仓风险，防止重大亏损</p>
+            <p className="text-sm text-gray-500 mt-1">{t('guardian.subtitle')}</p>
           </div>
           <button onClick={() => fetchData(true)} className={`p-2 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition ${refreshing ? 'animate-spin' : ''}`}>
             <RefreshCw className="w-4 h-4 text-gray-400" />
@@ -170,24 +174,24 @@ export default function GuardianPage() {
           <div className="bg-gray-900/50 border border-gray-800/50 rounded-xl p-6 flex flex-col items-center">
             <ScoreGauge score={data.score.overall} />
             <div className="flex items-center gap-4 mt-4 text-xs text-gray-500">
-              <span>持仓 {data.positions.length} 个</span>
-              <span>总敞口 ${data.totalNotional.toLocaleString()}</span>
+              <span>{t('guardian.positions_count')} {data.positions.length}</span>
+              <span>{t('guardian.total_exposure')} ${data.totalNotional.toLocaleString()}</span>
               <span className={data.totalPnl >= 0 ? 'text-emerald-400' : 'text-red-400'}>
-                浮盈亏 {data.totalPnl >= 0 ? '+' : ''}${data.totalPnl.toFixed(2)}
+                {t('guardian.unrealized_pnl')} {data.totalPnl >= 0 ? '+' : ''}${data.totalPnl.toFixed(2)}
               </span>
             </div>
           </div>
           <div className="bg-gray-900/50 border border-gray-800/50 rounded-xl p-5">
-            <h3 className="text-xs font-semibold text-gray-400 mb-2">五维风控</h3>
+            <h3 className="text-xs font-semibold text-gray-400 mb-2">{t('guardian.five_dims')}</h3>
             {DIMENSIONS.map(d => (
-              <DimensionBar key={d.key} label={d.label} score={(data.score as any)[d.key]} icon={d.icon} desc={d.desc} />
+              <DimensionBar key={d.key} label={t(d.labelKey)} score={(data.score as any)[d.key]} icon={d.icon} desc={t(d.descKey)} />
             ))}
           </div>
         </div>
 
         {/* Alerts */}
         <div className="bg-gray-900/50 border border-gray-800/50 rounded-xl p-5">
-          <h2 className="text-sm font-semibold text-gray-300 mb-3">⚡ 风险警报</h2>
+          <h2 className="text-sm font-semibold text-gray-300 mb-3">{t('guardian.alerts')}</h2>
           <div className="space-y-2">
             {data.alerts.map((a, i) => <AlertCard key={i} alert={a} />)}
           </div>
@@ -196,7 +200,7 @@ export default function GuardianPage() {
         {/* Positions */}
         <div className="bg-gray-900/50 border border-gray-800/50 rounded-xl overflow-hidden">
           <div className="px-4 py-3 border-b border-gray-800/50">
-            <h3 className="text-sm font-semibold text-gray-300">当前持仓</h3>
+            <h3 className="text-sm font-semibold text-gray-300">{t('guardian.current_positions')}</h3>
           </div>
           <div className="divide-y divide-gray-800/20">
             {data.positions.map((p, i) => <PositionRow key={i} p={p} />)}
@@ -205,10 +209,10 @@ export default function GuardianPage() {
 
         {/* CTA */}
         <div className="text-center py-6 bg-gradient-to-r from-orange-500/5 to-red-500/5 border border-orange-500/10 rounded-xl">
-          <p className="text-sm text-gray-400 mb-2">当前展示 Demo 数据</p>
-          <p className="text-xs text-gray-500 mb-4">连接交易所后，风控守门员将实时监控你的真实持仓</p>
+          <p className="text-sm text-gray-400 mb-2">{t('guardian.demo_title')}</p>
+          <p className="text-xs text-gray-500 mb-4">{t('guardian.demo_desc')}</p>
           <a href="/elite" className="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-600 hover:bg-orange-500 text-white text-sm font-semibold rounded-lg transition">
-            <Shield className="w-4 h-4" /> 连接交易所 →
+            <Shield className="w-4 h-4" /> {t('guardian.connect_exchange')}
           </a>
         </div>
       </div>
