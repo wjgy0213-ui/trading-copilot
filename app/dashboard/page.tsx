@@ -97,7 +97,13 @@ function DetailModal({ indicator, onClose }: { indicator: ITCIndicator; onClose:
               <span className={`text-[10px] font-medium px-2 py-0.5 rounded ${getRiskBgColor(indicator.value)}`}>
                 {getRiskLabel(indicator.value)}
               </span>
-              <span className="text-[10px] text-gray-600">分类: {indicator.category === 'crypto' ? '加密' : indicator.category === 'macro' ? '宏观' : '链上'}</span>
+              <span className="text-[10px] text-gray-600">分类: {
+                indicator.category === 'crypto' ? '加密' :
+                indicator.category === 'on-chain' ? '链上' :
+                indicator.category === 'price' ? '价格模型' :
+                indicator.category === 'weightless' ? '无权重' :
+                indicator.category === 'macro' ? '宏观' : '链上'
+              }</span>
             </div>
           </div>
         </div>
@@ -109,7 +115,9 @@ function DetailModal({ indicator, onClose }: { indicator: ITCIndicator; onClose:
 const CATEGORY_TABS = [
   { id: 'all', label: '全部', icon: BarChart3 },
   { id: 'crypto', label: '加密', icon: Activity },
-  { id: 'onchain', label: '链上', icon: Link2 },
+  { id: 'on-chain', label: '链上', icon: Link2 },
+  { id: 'price', label: '价格模型', icon: Activity },
+  { id: 'weightless', label: '无权重', icon: Activity },
   { id: 'macro', label: '宏观', icon: Globe },
 ] as const;
 

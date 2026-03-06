@@ -7,7 +7,7 @@ export interface ITCIndicator {
   value: number;
   history: { timestamp: number; value: number }[];
   description: string;
-  category: 'crypto' | 'macro' | 'onchain';
+  category: 'crypto' | 'macro' | 'onchain' | 'on-chain' | 'weightless' | 'price';
 }
 
 function generateHistory(baseValue: number, volatility: number = 0.1, days: number = 180): { timestamp: number; value: number }[] {

@@ -42,9 +42,13 @@ export function useITCData(): { indicators: ITCIndicator[]; prices: { BTC: numbe
     let cancelled = false;
     async function load() {
       try {
-        const res = await fetch('/api/itc');
-        if (!res.ok) throw new Error(`API ${res.status}`);
-        const data: APIResponse = await res.json();
+        // Fetch both ITC price-based and on-chain metrics in parallel
+        const [itcRes, onChainRes] = await Promise.all([
+          fetch('/api/itc'),
+          fetch('/api/itc/on-chain').catch(() => null),
+        ]);
+        if (!itcRes.ok) throw new Error(`API ${itcRes.status}`);
+        const data: APIResponse = await itcRes.json();
         if (cancelled) return;
 
         // Build indicators from real ITC data
@@ -62,7 +66,7 @@ export function useITCData(): { indicators: ITCIndicator[]; prices: { BTC: numbe
 
         // Add BTC Dominance from CoinGecko
         if (data.btcDominance !== undefined && data.btcDominance !== null) {
-          const domVal = data.btcDominance / 100; // convert 59.2 → 0.592
+          const domVal = data.btcDominance / 100;
           real.push({
             id: 'btc-dominance', name: 'BTC 市占率', nameEn: 'BTC Dominance',
             value: domVal, history: currentSnapshot(domVal),
@@ -82,6 +86,22 @@ export function useITCData(): { indicators: ITCIndicator[]; prices: { BTC: numbe
           });
         }
 
+        // Add on-chain metrics
+        if (onChainRes?.ok) {
+          const onChain = await onChainRes.json();
+          for (const m of (onChain.metrics || [])) {
+            real.push({
+              id: m.id,
+              name: m.name,
+              nameEn: m.nameEn,
+              value: m.risk, // use risk as the 0-1 value for display consistency
+              history: currentSnapshot(m.risk),
+              category: m.category === 'on-chain' ? 'on-chain' as any : m.category === 'weightless' ? 'weightless' as any : 'crypto',
+              description: m.description,
+            });
+          }
+        }
+
         setIndicators(real);
         setPrices(data.prices);
         setIsLive(true);
@@ -89,7 +109,6 @@ export function useITCData(): { indicators: ITCIndicator[]; prices: { BTC: numbe
       } catch (e: any) {
         if (!cancelled) {
           setError(e.message);
-          // Keep mock data as fallback
         }
       } finally {
         if (!cancelled) setLoading(false);
