@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useI18n } from '@/lib/i18n';
 
 interface Position {
   id: string;
@@ -45,10 +46,10 @@ const COIN_IDS: Record<string, string> = {
 };
 
 const TIERS = {
-  bronze:   { balance: 10000,  label: '🥉 Bronze', color: 'from-orange-600 to-orange-800', next: 'silver', req: '盈利20%+, 胜率45%+, 20笔+' },
-  silver:   { balance: 50000,  label: '🥈 Silver', color: 'from-gray-400 to-gray-600', next: 'gold', req: '盈利50%+, 胜率50%+, 50笔+' },
-  gold:     { balance: 100000, label: '🥇 Gold', color: 'from-yellow-500 to-yellow-700', next: 'platinum', req: '盈利100%+, 胜率55%+, 100笔+' },
-  platinum: { balance: 500000, label: '💎 Platinum', color: 'from-purple-500 to-purple-700', next: null, req: '最高段位' },
+  bronze:   { balance: 10000,  label: '🥉 Bronze', color: 'from-orange-600 to-orange-800', next: 'silver', reqKey: 'practice.tier_bronze_req' },
+  silver:   { balance: 50000,  label: '🥈 Silver', color: 'from-gray-400 to-gray-600', next: 'gold', reqKey: 'practice.tier_silver_req' },
+  gold:     { balance: 100000, label: '🥇 Gold', color: 'from-yellow-500 to-yellow-700', next: 'platinum', reqKey: 'practice.tier_gold_req' },
+  platinum: { balance: 500000, label: '💎 Platinum', color: 'from-purple-500 to-purple-700', next: null, reqKey: 'practice.tier_platinum_req' },
 };
 
 function formatUsd(n: number): string {
@@ -56,6 +57,7 @@ function formatUsd(n: number): string {
 }
 
 export default function PracticePage() {
+  const { t } = useI18n();
   const [prices, setPrices] = useState<Record<string, { usd: number; usd_24h_change: number }>>({});
   const [tier, setTier] = useState<keyof typeof TIERS>('bronze');
   const [balance, setBalance] = useState(10000);
@@ -227,10 +229,10 @@ export default function PracticePage() {
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <span>🎮</span>
               <span className={`bg-gradient-to-r ${tierInfo.color} bg-clip-text text-transparent`}>
-                交易陪练 {tierInfo.label}
+                {t('practice.title')} {tierInfo.label}
               </span>
             </h1>
-            <p className="text-gray-500 text-sm">虚拟资金 · AI教练 · 分级解锁</p>
+            <p className="text-gray-500 text-sm">{t('practice.subtitle')}</p>
           </div>
           <div className="text-right">
             <div className="text-2xl font-bold">{formatUsd(balance)}</div>
@@ -243,23 +245,23 @@ export default function PracticePage() {
         {/* Stats Bar */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           <div className="bg-gray-800/60 rounded-xl p-3 border border-gray-700/50 text-center">
-            <div className="text-gray-400 text-xs">交易次数</div>
+            <div className="text-gray-400 text-xs">{t('practice.stats_trades')}</div>
             <div className="text-lg font-bold">{stats.totalTrades}</div>
           </div>
           <div className="bg-gray-800/60 rounded-xl p-3 border border-gray-700/50 text-center">
-            <div className="text-gray-400 text-xs">胜率</div>
+            <div className="text-gray-400 text-xs">{t('practice.stats_winrate')}</div>
             <div className={`text-lg font-bold ${winRate >= 50 ? 'text-green-400' : winRate > 0 ? 'text-red-400' : 'text-gray-400'}`}>
               {winRate.toFixed(0)}%
             </div>
           </div>
           <div className="bg-gray-800/60 rounded-xl p-3 border border-gray-700/50 text-center">
-            <div className="text-gray-400 text-xs">最佳交易</div>
+            <div className="text-gray-400 text-xs">{t('practice.stats_best')}</div>
             <div className="text-lg font-bold text-green-400">
               {stats.bestTrade > 0 ? `+${stats.bestTrade.toFixed(1)}%` : '-'}
             </div>
           </div>
           <div className="bg-gray-800/60 rounded-xl p-3 border border-gray-700/50 text-center">
-            <div className="text-gray-400 text-xs">最大回撤</div>
+            <div className="text-gray-400 text-xs">{t('practice.stats_drawdown')}</div>
             <div className="text-lg font-bold text-red-400">
               {stats.maxDrawdown < 0 ? `${stats.maxDrawdown.toFixed(1)}%` : '0%'}
             </div>
@@ -271,13 +273,13 @@ export default function PracticePage() {
           <div className="bg-gray-800/30 rounded-xl p-3 border border-gray-700/30 mb-6">
             <div className="flex justify-between text-xs text-gray-400 mb-1">
               <span>{tierInfo.label}</span>
-              <span>下一级: {TIERS[tierInfo.next as keyof typeof TIERS].label}</span>
+              <span>{t('practice.next_tier')}: {TIERS[tierInfo.next as keyof typeof TIERS].label}</span>
             </div>
             <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-yellow-500 to-green-500 rounded-full transition-all" 
                 style={{ width: `${Math.min(100, Math.max(0, totalPnl / 20 * 100))}%` }} />
             </div>
-            <div className="text-xs text-gray-500 mt-1">解锁条件: {tierInfo.req}</div>
+            <div className="text-xs text-gray-500 mt-1">{t('practice.unlock_req')}: {t(tierInfo.reqKey)}</div>
           </div>
         )}
 
@@ -285,7 +287,7 @@ export default function PracticePage() {
           {/* Left: Order Form */}
           <div className="lg:col-span-1">
             <div className="bg-gray-800/60 rounded-xl p-4 border border-gray-700/50">
-              <h3 className="font-semibold mb-3">📝 下单</h3>
+              <h3 className="font-semibold mb-3">📝 {t('practice.order')}</h3>
 
               {/* Coin selector */}
               <div className="flex gap-1 mb-3">
@@ -301,8 +303,8 @@ export default function PracticePage() {
 
               {/* Price display */}
               <div className="text-center mb-3">
-                <span className="text-gray-400 text-xs">当前价格</span>
-                <div className="text-xl font-bold">{currentPrice(selectedCoin) ? formatUsd(currentPrice(selectedCoin)) : '加载中...'}</div>
+                <span className="text-gray-400 text-xs">{t('practice.current_price')}</span>
+                <div className="text-xl font-bold">{currentPrice(selectedCoin) ? formatUsd(currentPrice(selectedCoin)) : t('practice.loading')}</div>
               </div>
 
               {/* Side */}
@@ -310,16 +312,16 @@ export default function PracticePage() {
                 <button onClick={() => setOrderSide('long')}
                   className={`flex-1 py-2 rounded-lg font-medium ${
                     orderSide === 'long' ? 'bg-green-600 text-white' : 'bg-gray-700 text-gray-400'
-                  }`}>🟢 做多</button>
+                  }`}>🟢 {t('practice.long')}</button>
                 <button onClick={() => setOrderSide('short')}
                   className={`flex-1 py-2 rounded-lg font-medium ${
                     orderSide === 'short' ? 'bg-red-600 text-white' : 'bg-gray-700 text-gray-400'
-                  }`}>🔴 做空</button>
+                  }`}>🔴 {t('practice.short')}</button>
               </div>
 
               {/* Size */}
               <div className="mb-2">
-                <label className="text-xs text-gray-400">仓位 (USD)</label>
+                <label className="text-xs text-gray-400">{t('practice.size')}</label>
                 <input type="number" value={orderSize} onChange={e => setOrderSize(e.target.value)}
                   className="w-full bg-gray-700 rounded-lg px-3 py-2 text-white mt-1" placeholder="500" />
                 <div className="flex gap-1 mt-1">
@@ -332,7 +334,7 @@ export default function PracticePage() {
 
               {/* Leverage */}
               <div className="mb-2">
-                <label className="text-xs text-gray-400">杠杆 {orderLeverage}x</label>
+                <label className="text-xs text-gray-400">{t('practice.leverage')} {orderLeverage}x</label>
                 <input type="range" min="1" max="20" value={orderLeverage} onChange={e => setOrderLeverage(e.target.value)}
                   className="w-full mt-1" />
               </div>
@@ -340,20 +342,20 @@ export default function PracticePage() {
               {/* SL/TP */}
               <div className="grid grid-cols-2 gap-2 mb-3">
                 <div>
-                  <label className="text-xs text-gray-400">止损价</label>
+                  <label className="text-xs text-gray-400">{t('practice.stop_loss')}</label>
                   <input type="number" value={orderSL} onChange={e => setOrderSL(e.target.value)}
-                    className="w-full bg-gray-700 rounded-lg px-3 py-2 text-white mt-1 text-sm" placeholder="可选" />
+                    className="w-full bg-gray-700 rounded-lg px-3 py-2 text-white mt-1 text-sm" placeholder={t('practice.optional')} />
                 </div>
                 <div>
-                  <label className="text-xs text-gray-400">止盈价</label>
+                  <label className="text-xs text-gray-400">{t('practice.take_profit')}</label>
                   <input type="number" value={orderTP} onChange={e => setOrderTP(e.target.value)}
-                    className="w-full bg-gray-700 rounded-lg px-3 py-2 text-white mt-1 text-sm" placeholder="可选" />
+                    className="w-full bg-gray-700 rounded-lg px-3 py-2 text-white mt-1 text-sm" placeholder={t('practice.optional')} />
                 </div>
               </div>
 
               {/* Margin preview */}
               <div className="text-xs text-gray-400 mb-3">
-                所需保证金: {formatUsd(parseFloat(orderSize || '0') / parseFloat(orderLeverage || '1'))}
+                {t('practice.margin_req')}: {formatUsd(parseFloat(orderSize || '0') / parseFloat(orderLeverage || '1'))}
               </div>
 
               <button onClick={openPosition} disabled={!currentPrice(selectedCoin)}
@@ -362,14 +364,14 @@ export default function PracticePage() {
                     ? 'bg-green-600 hover:bg-green-500 text-white' 
                     : 'bg-red-600 hover:bg-red-500 text-white'
                 } disabled:opacity-30`}>
-                {orderSide === 'long' ? '🟢 开多' : '🔴 开空'} {selectedCoin}
+                {orderSide === 'long' ? `🟢 ${t('practice.open_long')}` : `🔴 ${t('practice.open_short')}`} {selectedCoin}
               </button>
             </div>
 
             {/* AI Grade */}
             {lastGrade && (
               <div className="bg-gray-800/60 rounded-xl p-4 border border-gray-700/50 mt-3">
-                <h3 className="font-semibold mb-2">🤖 AI教练评分</h3>
+                <h3 className="font-semibold mb-2">🤖 {t('practice.ai_score')}</h3>
                 <div className="flex items-center gap-3 mb-2">
                   <div className={`text-3xl font-bold ${
                     lastGrade.score >= 70 ? 'text-green-400' : lastGrade.score >= 40 ? 'text-yellow-400' : 'text-red-400'
@@ -385,11 +387,11 @@ export default function PracticePage() {
           <div className="lg:col-span-2 space-y-4">
             {/* Active Positions */}
             <div>
-              <h3 className="font-semibold mb-2">📊 持仓 ({positions.length})</h3>
+              <h3 className="font-semibold mb-2">📊 {t('practice.positions')} ({positions.length})</h3>
               {positions.length === 0 ? (
                 <div className="bg-gray-800/30 rounded-xl p-6 border border-gray-700/30 text-center text-gray-500">
                   <p className="text-2xl mb-2">🎯</p>
-                  <p>暂无持仓 — 选择币种开始交易</p>
+                  <p>{t('practice.no_positions')}</p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -416,10 +418,10 @@ export default function PracticePage() {
                           </span>
                         </div>
                         <div className="flex items-center justify-between text-xs text-gray-400">
-                          <span>入场 {formatUsd(pos.entryPrice)} · 仓位 {formatUsd(pos.size)}</span>
+                          <span>{t('practice.entry')} {formatUsd(pos.entryPrice)} · {t('practice.position_size')} {formatUsd(pos.size)}</span>
                           <button onClick={() => closePosition(pos.id, 'manual')}
                             className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-lg text-white">
-                            平仓
+                            {t('practice.close')}
                           </button>
                         </div>
                       </div>
@@ -431,10 +433,10 @@ export default function PracticePage() {
 
             {/* Trade History */}
             <div>
-              <h3 className="font-semibold mb-2">📜 交易记录 ({history.length})</h3>
+              <h3 className="font-semibold mb-2">📜 {t('practice.history')} ({history.length})</h3>
               <div className="space-y-2 max-h-80 overflow-y-auto">
                 {history.length === 0 ? (
-                  <div className="text-center text-gray-500 text-sm py-4">完成交易后这里会显示记录和AI评分</div>
+                  <div className="text-center text-gray-500 text-sm py-4">{t('practice.no_history')}</div>
                 ) : (
                   history.map((t, i) => (
                     <div key={i} className="bg-gray-800/40 rounded-lg p-3 border border-gray-700/30">
@@ -468,10 +470,10 @@ export default function PracticePage() {
 
         {/* Footer */}
         <div className="mt-8 text-center text-xs text-gray-600 space-y-1">
-          <p>🎮 虚拟资金 · 不涉及真实交易 · AI评分仅供参考</p>
-          <p>数据存储在浏览器本地 · 清除缓存会重置进度</p>
+          <p>{t('practice.footer1')}</p>
+          <p>{t('practice.footer2')}</p>
           <button onClick={() => { localStorage.removeItem('practice_state'); window.location.reload(); }}
-            className="text-gray-600 hover:text-red-400 transition-colors mt-2">重置进度</button>
+            className="text-gray-600 hover:text-red-400 transition-colors mt-2">{t('practice.reset')}</button>
         </div>
       </div>
     </div>
