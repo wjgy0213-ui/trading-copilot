@@ -4,7 +4,44 @@ import { useState } from 'react';
 import { getRiskColor, getRiskBgColor, getRiskLabel, getRiskStrokeColor, type ITCIndicator } from '@/lib/mockData';
 import { useITCData } from '@/lib/useITCData';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Area, AreaChart, ReferenceLine } from 'recharts';
-import { Activity, TrendingUp, TrendingDown, X, Maximize2, BarChart3, Globe, Link2, Wifi, WifiOff } from 'lucide-react';
+import { Activity, TrendingUp, TrendingDown, X, Maximize2, BarChart3, Globe, Link2, Wifi, WifiOff, ExternalLink } from 'lucide-react';
+
+// ITC chart URL mapping — click to view full historical chart
+const ITC_CHART_URLS: Record<string, string> = {
+  'btc-risk': '/charts/risk',
+  'eth-risk': '/charts/risk',
+  'sol-risk': '/charts/risk',
+  'total-market-risk': '/charts/market-cap-logarithmic-regression',
+  'btc-dominance-risk': '/charts/dominance',
+  'xrp-risk': '/charts/risk',
+  'link-risk': '/charts/risk',
+  'doge-risk': '/charts/risk',
+  'bnb-risk': '/charts/risk',
+  'avax-risk': '/charts/risk',
+  'btc-dominance': '/charts/dominance',
+  'fear-greed': '/charts/fear-greed-index',
+  // On-chain metrics
+  'puell-multiple': '/charts/puell-multiple',
+  'log-regression': '/charts/logarithmic-regression',
+  'cowen-corridor': '/charts/cowen-corridor',
+  'running-roi': '/charts/running-roi',
+  'mctc-ratio': '/charts/mcap-thermocap',
+  // Additional ITC charts
+  'mvrv': '/charts/mvrv',
+  'mvrv-z-score': '/charts/mvrv-z-score',
+  'rhodl-ratio': '/charts/rhodl-ratio',
+  'supply-in-profit': '/charts/supply-in-profit',
+  'nupl': '/charts/nupl',
+  'sopr': '/charts/sopr',
+  'terminal-price': '/charts/terminal-price',
+  'nvt': '/charts/nvt',
+};
+
+function getITCChartUrl(indicatorId: string): string | null {
+  const path = ITC_CHART_URLS[indicatorId];
+  if (!path) return null;
+  return `https://app.intothecryptoverse.com${path}`;
+}
 
 function DetailModal({ indicator, onClose }: { indicator: ITCIndicator; onClose: () => void }) {
   const [range, setRange] = useState<30 | 90 | 180>(90);
@@ -106,6 +143,19 @@ function DetailModal({ indicator, onClose }: { indicator: ITCIndicator; onClose:
               }</span>
             </div>
           </div>
+
+          {/* ITC Chart Link */}
+          {getITCChartUrl(indicator.id) && (
+            <a
+              href={getITCChartUrl(indicator.id)!}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 flex items-center justify-center gap-2 w-full bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg py-2.5 text-blue-400 text-sm font-medium transition-all"
+            >
+              <ExternalLink className="w-4 h-4" />
+              查看完整历史图表 (ITC)
+            </a>
+          )}
         </div>
       </div>
     </div>
