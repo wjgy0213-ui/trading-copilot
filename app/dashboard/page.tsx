@@ -5,44 +5,7 @@ import { getRiskColor, getRiskBgColor, getRiskLabel, getRiskStrokeColor, type IT
 import { useITCData } from '@/lib/useITCData';
 import { useI18n } from '@/lib/i18n';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Area, AreaChart, ReferenceLine } from 'recharts';
-import { Activity, TrendingUp, TrendingDown, X, Maximize2, BarChart3, Globe, Link2, Wifi, WifiOff, ExternalLink } from 'lucide-react';
-
-// ITC chart URL mapping — click to view full historical chart
-const ITC_CHART_URLS: Record<string, string> = {
-  'btc-risk': '/charts/risk',
-  'eth-risk': '/charts/risk',
-  'sol-risk': '/charts/risk',
-  'total-market-risk': '/charts/market-cap-logarithmic-regression',
-  'btc-dominance-risk': '/charts/dominance',
-  'xrp-risk': '/charts/risk',
-  'link-risk': '/charts/risk',
-  'doge-risk': '/charts/risk',
-  'bnb-risk': '/charts/risk',
-  'avax-risk': '/charts/risk',
-  'btc-dominance': '/charts/dominance',
-  'fear-greed': '/charts/fear-greed-index',
-  // On-chain metrics
-  'puell-multiple': '/charts/puell-multiple',
-  'log-regression': '/charts/logarithmic-regression',
-  'cowen-corridor': '/charts/cowen-corridor',
-  'running-roi': '/charts/running-roi',
-  'mctc-ratio': '/charts/mcap-thermocap',
-  // Additional ITC charts
-  'mvrv': '/charts/mvrv',
-  'mvrv-z-score': '/charts/mvrv-z-score',
-  'rhodl-ratio': '/charts/rhodl-ratio',
-  'supply-in-profit': '/charts/supply-in-profit',
-  'nupl': '/charts/nupl',
-  'sopr': '/charts/sopr',
-  'terminal-price': '/charts/terminal-price',
-  'nvt': '/charts/nvt',
-};
-
-function getITCChartUrl(indicatorId: string): string | null {
-  const path = ITC_CHART_URLS[indicatorId];
-  if (!path) return null;
-  return `https://app.intothecryptoverse.com${path}`;
-}
+import { Activity, TrendingUp, TrendingDown, X, Maximize2, BarChart3, Globe, Link2, Wifi, WifiOff } from 'lucide-react';
 
 function DetailModal({ indicator, onClose, t }: { indicator: ITCIndicator; onClose: () => void; t: (key: string) => string }) {
   const [range, setRange] = useState<30 | 90 | 180>(90);
