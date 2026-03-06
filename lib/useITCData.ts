@@ -90,8 +90,20 @@ export function useITCData(): { indicators: ITCIndicator[]; prices: { BTC: numbe
         if (onChainRes?.ok) {
           const onChain = await onChainRes.json();
           for (const m of (onChain.metrics || [])) {
-            // Use risk (0-1) for display since dashboard expects 0-1 range
-            const displayValue = Math.min(1, Math.max(0, m.risk));
+            // For display: use risk (0-1) when meaningful, otherwise derive from value
+            let displayValue: number;
+            if (m.id === 'running-roi') {
+              // ROI: map -50%..+200% → 0..1 scale (negative=low risk, high positive=high risk)
+              displayValue = Math.min(1, Math.max(0, (m.value + 0.5) / 2.5));
+            } else if (m.id === 'log-regression') {
+              // Ratio to fair value: 0..2 → 0..1 (below 1 = undervalued)
+              displayValue = Math.min(1, Math.max(0, m.value / 2));
+            } else if (m.id === 'cowen-corridor') {
+              // Already 0-1 (position in corridor)
+              displayValue = Math.min(1, Math.max(0, m.value));
+            } else {
+              displayValue = Math.min(1, Math.max(0, m.risk));
+            }
             real.push({
               id: m.id,
               name: m.name,
