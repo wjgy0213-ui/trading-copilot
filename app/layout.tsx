@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Providers from "@/components/Providers";
 import Analytics from "@/components/Analytics";
+import JsonLd from "@/components/JsonLd";
 
 export const viewport = {
   themeColor: '#030712',
@@ -50,6 +51,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh">
+      <head>
+        <JsonLd />
+      </head>
       <body className="bg-gray-950 text-gray-100 antialiased font-sans">
         <Analytics />
         <Providers>
