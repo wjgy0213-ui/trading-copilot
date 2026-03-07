@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { getAllPosts } from '@/lib/blog';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://trading-copilot-delta.vercel.app';
+  const base = 'https://www.tradingcopilot.app';
   const now = new Date();
 
   // Blog post URLs

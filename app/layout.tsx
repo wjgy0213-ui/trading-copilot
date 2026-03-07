@@ -18,7 +18,10 @@ export const metadata: Metadata = {
   },
   description: "11个AI交易工具：模拟陪练、市场体检、信号聚合、Meme Sniper、鲸鱼追踪、AI复盘、风控守门员、策略工坊、参数优化。从练习到实盘，科学交易。",
   keywords: ["交易策略", "回测", "AI交易", "量化交易", "交易陪练", "模拟交易", "Meme币", "鲸鱼追踪", "风控", "crypto trading", "backtest", "trading bot", "paper trading"],
-  metadataBase: new URL('https://trading-copilot-delta.vercel.app'),
+  metadataBase: new URL('https://www.tradingcopilot.app'),
+  alternates: {
+    canonical: 'https://www.tradingcopilot.app',
+  },
   openGraph: {
     title: "交易陪练 AI — 你的AI交易策略平台",
     description: "11个AI交易工具 · 模拟陪练 · 信号聚合 · 鲸鱼追踪 · 风控守门员。免费开始。",
