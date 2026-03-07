@@ -17,7 +17,7 @@ export const PLANS = {
     name: 'Pro',
     price: 39.99,
     priceId: process.env.STRIPE_PRO_PRICE_ID || '',
-    features: ['AI策略定制', '高级回测', '参数优化器', '8大策略模板', '回测报告导出'],
+    features: ['AI策略定制', '高级回测', '参数优化器', '12+策略模板', '回测报告导出'],
   },
   elite: {
     name: 'Elite',

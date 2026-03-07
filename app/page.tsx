@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, Target, TrendingUp, Brain, BarChart3, ChevronDown, Sparkles, Shield, Zap, Crown, LineChart, Search, Activity, Crosshair, Fish, Gamepad2, ShieldAlert, Radio } from 'lucide-react';
+import { ArrowRight, Target, TrendingUp, Brain, BarChart3, ChevronDown, Sparkles, Shield, Zap, Crown, LineChart, Search, Activity, Crosshair, Fish, Gamepad2, ShieldAlert, Radio, BookOpen, Package, Gift } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n';
@@ -103,7 +103,7 @@ export default function LandingPage() {
           {[
             { n: 1247, s: '+', labelKey: 'social.traders', color: 'text-blue-400' },
             { n: 15328, s: '+', labelKey: 'social.trades', color: 'text-green-400' },
-            { n: 8, s: '', labelKey: 'social.templates', color: 'text-violet-400' },
+            {n: 12, s: '+', labelKey: 'social.templates', color: 'text-violet-400' },
             { n: 68, s: '%', labelKey: 'social.improvement', color: 'text-amber-400' },
           ].map((d, i) => (
             <div key={i}>
@@ -164,6 +164,58 @@ export default function LandingPage() {
               </Link>
             </motion.div>
           ))}
+        </div>
+      </div>
+
+      {/* Course & Toolkit */}
+      <div className="container mx-auto px-4 py-16">
+        <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          className="text-3xl md:text-4xl font-bold text-center mb-4">{t('course.sectionTitle', '学习 & 工具包')}</motion.h2>
+        <p className="text-gray-500 text-center mb-12 max-w-2xl mx-auto">{t('course.sectionDesc', '系统化学习交易，从入门到进阶')}</p>
+        <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
+            <Link href="/learn" className="block bg-gradient-to-br from-emerald-900/30 to-gray-900/50 rounded-2xl p-6 border border-emerald-500/30 hover:border-emerald-500/60 transition-all hover:scale-[1.02] group h-full">
+              <div className="flex items-center gap-2 mb-3">
+                <Gift className="w-6 h-6 text-emerald-400" />
+                <span className="text-xs font-medium bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full">{t('course.free', '免费')}</span>
+              </div>
+              <h3 className="text-xl font-bold mb-2">{t('course.freeTitle', '交易入门课程')}</h3>
+              <p className="text-sm text-gray-400 mb-4">{t('course.freeDesc', '6节核心课程，从零开始建立交易认知。技术分析、风险管理、交易心理一网打尽')}</p>
+              <ul className="space-y-1.5 text-xs text-gray-500 mb-4">
+                <li>✓ {t('course.freeF1', '6节视频课程')}</li><li>✓ {t('course.freeF2', '永久免费观看')}</li><li>✓ {t('course.freeF3', '配套练习题')}</li>
+              </ul>
+              <span className="inline-flex items-center gap-1 text-emerald-400 text-sm font-medium group-hover:gap-2 transition-all">
+                {t('course.freeCta', '免费开始学习')} <ArrowRight className="w-4 h-4" />
+              </span>
+            </Link>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.15 }}>
+            <Link href="/course" className="block bg-gradient-to-br from-violet-900/30 to-gray-900/50 rounded-2xl p-6 border border-violet-500/30 hover:border-violet-500/60 transition-all hover:scale-[1.02] group h-full relative">
+              <div className="absolute -top-3 right-4 bg-violet-500 text-white text-[10px] font-bold px-3 py-1 rounded-full">{t('course.hot', '热门')}</div>
+              <BookOpen className="w-6 h-6 text-violet-400 mb-3" />
+              <h3 className="text-xl font-bold mb-2">{t('course.paidTitle', '进阶课程包')}</h3>
+              <p className="text-sm text-gray-400 mb-4">{t('course.paidDesc', '深度策略拆解、实战案例分析、蒙特卡洛回测方法论。从入门到盈利的完整路径')}</p>
+              <ul className="space-y-1.5 text-xs text-gray-500 mb-4">
+                <li>✓ {t('course.paidF1', '20+实战案例')}</li><li>✓ {t('course.paidF2', '终身访问')}</li><li>✓ {t('course.paidF3', '赠送Pro/Elite体验')}</li>
+              </ul>
+              <span className="inline-flex items-center gap-1 text-violet-400 text-sm font-medium group-hover:gap-2 transition-all">
+                {t('course.paidCta', '从 $49 起')} <ArrowRight className="w-4 h-4" />
+              </span>
+            </Link>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.3 }}>
+            <Link href="/pricing" className="block bg-gradient-to-br from-amber-900/30 to-gray-900/50 rounded-2xl p-6 border border-amber-500/30 hover:border-amber-500/60 transition-all hover:scale-[1.02] group h-full">
+              <Package className="w-6 h-6 text-amber-400 mb-3" />
+              <h3 className="text-xl font-bold mb-2">{t('course.toolkitTitle', 'Pro 工具包')}</h3>
+              <p className="text-sm text-gray-400 mb-4">{t('course.toolkitDesc', 'AI策略生成器、参数优化器、Monte Carlo模拟、风控守门员...全套专业工具')}</p>
+              <ul className="space-y-1.5 text-xs text-gray-500 mb-4">
+                <li>✓ {t('course.toolkitF1', '12+策略模板')}</li><li>✓ {t('course.toolkitF2', 'AI策略生成')}</li><li>✓ {t('course.toolkitF3', '24小时免费试用')}</li>
+              </ul>
+              <span className="inline-flex items-center gap-1 text-amber-400 text-sm font-medium group-hover:gap-2 transition-all">
+                {t('course.toolkitCta', '$39.99/月 起')} <ArrowRight className="w-4 h-4" />
+              </span>
+            </Link>
+          </motion.div>
         </div>
       </div>
 
