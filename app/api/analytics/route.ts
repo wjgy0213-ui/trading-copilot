@@ -4,6 +4,15 @@ import { kv } from '@vercel/kv';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
+const COUNTER_FIELDS: Record<string, string> = {
+  page_view: 'pageviews',
+  waitlist_submit: 'waitlists',
+  trial_start: 'trials',
+  checkout_click: 'checkout_clicks',
+  checkout_success: 'checkout_successes',
+  activation_success: 'activation_successes',
+};
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -20,17 +29,35 @@ export async function POST(req: NextRequest) {
 
     const listKey = `analytics:${dateKey}`;
     const len = await kv.llen(listKey);
-    if (len < 500) {
+    if (len < 1000) {
       await kv.rpush(listKey, JSON.stringify(entry));
       if (len === 0) await kv.expire(listKey, 30 * 86400);
     }
 
     const counterKey = `stats:${dateKey}`;
-    await kv.hincrby(counterKey, 'pageviews', 1);
-    if (body.event === 'signup') await kv.hincrby(counterKey, 'signups', 1);
-    if (body.event === 'checkout') await kv.hincrby(counterKey, 'checkouts', 1);
-    if (body.event === 'trial_start') await kv.hincrby(counterKey, 'trials', 1);
-    if (body.page) await kv.hincrby(counterKey, `page:${body.page}`, 1);
+    const event = String(body.event || 'unknown');
+
+    if (COUNTER_FIELDS[event]) {
+      await kv.hincrby(counterKey, COUNTER_FIELDS[event], 1);
+    }
+
+    if (body.page && event === 'page_view') {
+      await kv.hincrby(counterKey, `page:${body.page}`, 1);
+    }
+
+    await kv.hincrby(counterKey, `event:${event}`, 1);
+
+    if (body.props?.plan) {
+      await kv.hincrby(counterKey, `plan:${body.props.plan}:${event}`, 1);
+    }
+
+    if (body.props?.cta_id) {
+      await kv.hincrby(counterKey, `cta:${body.props.cta_id}`, 1);
+    }
+
+    if (body.props?.source) {
+      await kv.hincrby(counterKey, `source:${body.props.source}:${event}`, 1);
+    }
 
     const ttl = await kv.ttl(counterKey);
     if (ttl < 0) await kv.expire(counterKey, 90 * 86400);

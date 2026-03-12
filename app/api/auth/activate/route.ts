@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe';
 import { createSession, setSessionCookie } from '@/lib/auth';
 import { activateSubscription, isSessionActivated, getUser } from '@/lib/db';
+import { trackServerEvent } from '@/lib/analytics-server';
 
 export async function POST(req: NextRequest) {
   try {
@@ -47,6 +48,14 @@ export async function POST(req: NextRequest) {
     });
 
     await setSessionCookie(token);
+
+    await trackServerEvent('activation_success', {
+      props: {
+        plan: planId,
+        email,
+        session_id: sessionId,
+      },
+    });
 
     return NextResponse.json({ success: true, plan: planId, email });
   } catch (error: any) {

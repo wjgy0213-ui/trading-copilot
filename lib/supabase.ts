@@ -28,6 +28,78 @@ export function isSupabaseConfigured(): boolean {
   return !!(supabaseUrl && supabaseServiceKey);
 }
 
+// ==================== Leads / Waitlist ====================
+
+export interface LeadRecord {
+  id?: string;
+  email?: string | null;
+  wechat?: string | null;
+  phone?: string | null;
+  name?: string | null;
+  source?: string;
+  utm_source?: string | null;
+  utm_medium?: string | null;
+  utm_campaign?: string | null;
+  utm_content?: string | null;
+  utm_term?: string | null;
+  referrer?: string | null;
+  landing_page?: string | null;
+  status?: string;
+  priority?: string;
+  owner?: string | null;
+  tags?: string[];
+  notes?: string | null;
+  first_contact_at?: string | null;
+  last_contact_at?: string | null;
+  next_follow_up_at?: string | null;
+  converted_at?: string | null;
+  trial_started_at?: string | null;
+  paid_plan?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export async function upsertLead(lead: LeadRecord): Promise<boolean> {
+  const client = getSupabase();
+  if (!client) return false;
+
+  const normalizedEmail = lead.email?.trim().toLowerCase() || null;
+  const normalizedWechat = lead.wechat?.trim() || null;
+
+  if (!normalizedEmail && !normalizedWechat) return false;
+
+  try {
+    let existing: { id: string } | null = null;
+
+    if (normalizedEmail) {
+      const { data } = await client.from('leads').select('id').eq('email', normalizedEmail).maybeSingle();
+      existing = data;
+    }
+
+    if (!existing && normalizedWechat) {
+      const { data } = await client.from('leads').select('id').eq('wechat', normalizedWechat).maybeSingle();
+      existing = data;
+    }
+
+    const payload = {
+      ...(existing?.id ? { id: existing.id } : {}),
+      ...lead,
+      email: normalizedEmail,
+      wechat: normalizedWechat,
+      source: lead.source || 'waitlist-page',
+      status: lead.status || 'new',
+      updated_at: new Date().toISOString(),
+    };
+
+    const { error } = await client.from('leads').upsert(payload);
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('[Supabase] upsertLead error:', error);
+    return false;
+  }
+}
+
 // ==================== Practice ====================
 
 export interface PracticePortfolio {

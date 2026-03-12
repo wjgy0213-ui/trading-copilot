@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: process.env.EMAIL_FROM || 'Trading Copilot <onboarding@resend.dev>',
+          from: process.env.EMAIL_FROM || 'Trading Copilot <noreply@tradingcopilot.app>',
           to: email,
           subject: `验证码: ${code} — 交易陪练 AI`,
           html: `
@@ -41,7 +41,11 @@ export async function POST(req: NextRequest) {
       const resData = await res.json();
       if (!res.ok) {
         console.error('[AUTH] Resend error:', resData);
-        return NextResponse.json({ error: `邮件发送失败: ${resData.message || JSON.stringify(resData)}` }, { status: 500 });
+        const detail = String(resData?.message || JSON.stringify(resData));
+        const friendly = /testing emails|verify a domain|only to your own email/i.test(detail)
+          ? '邮件系统尚未正式上线：当前发信域名还没在 Resend 完成验证，所以只能发到站长自己的邮箱，外部邮箱（含 QQ 邮箱）会失败。'
+          : `邮件发送失败: ${detail}`;
+        return NextResponse.json({ error: friendly }, { status: 500 });
       }
     } else {
       return NextResponse.json({ error: 'RESEND_API_KEY未配置' }, { status: 500 });

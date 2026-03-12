@@ -5,6 +5,7 @@ import { ArrowRight, Target, TrendingUp, Brain, BarChart3, ChevronDown, Sparkles
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n';
+import { analytics } from '@/lib/analytics';
 
 function CountUpNumber({ target, suffix = '' }: { target: number; suffix?: string }) {
   const [count, setCount] = useState(0);
@@ -70,23 +71,29 @@ export default function LandingPage() {
           </motion.div>
           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
             className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            {t('hero.title')}
+            少犯错，比多赚一点更重要
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
             className="text-xl md:text-2xl text-gray-300 mb-4">
-            {t('hero.subtitle')}
+            帮你减少冲动交易、乱开杠杆、无止损死扛这些高成本错误
           </motion.p>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}
             className="text-lg text-gray-500 mb-10 max-w-2xl mx-auto">
-            {t('hero.desc')}
+            用模拟练习、AI评分、复盘和风控提醒，帮你在真正拿真钱上场前先暴露问题、修正行为、建立纪律。
           </motion.p>
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.5 }}
             className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/strategy" className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all hover:scale-105 shadow-lg shadow-emerald-900/30">
-              {t('hero.cta.trial')} <ArrowRight className="w-5 h-5" />
+            <Link
+              href="/practice"
+              onClick={() => analytics.ctaClick({ cta_id: 'hero_primary', cta_text: 'free_start_training', target: '/practice', page: '/', location: 'hero' })}
+              className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all hover:scale-105 shadow-lg shadow-emerald-900/30">
+              免费开始训练 <ArrowRight className="w-5 h-5" />
             </Link>
-            <Link href="/trade" className="inline-flex items-center justify-center gap-2 bg-gray-800/80 hover:bg-gray-700/80 text-gray-200 border border-gray-700 px-8 py-4 rounded-xl text-lg font-semibold transition-all">
-              <Zap className="w-5 h-5 text-emerald-400" /> {t('hero.cta.practice')}
+            <Link
+              href="/pricing"
+              onClick={() => analytics.ctaClick({ cta_id: 'hero_secondary', cta_text: 'view_pricing', target: '/pricing', page: '/', location: 'hero' })}
+              className="inline-flex items-center justify-center gap-2 bg-gray-800/80 hover:bg-gray-700/80 text-gray-200 border border-gray-700 px-8 py-4 rounded-xl text-lg font-semibold transition-all">
+              <Zap className="w-5 h-5 text-emerald-400" /> 了解升级路径
             </Link>
           </motion.div>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.8 }}

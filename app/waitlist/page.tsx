@@ -1,14 +1,24 @@
 'use client'
 
-import { useState } from 'react'
-import { trackEvent } from '@/components/Analytics'
+import { useEffect, useState } from 'react'
+import { analytics } from '@/lib/analytics'
 
 export default function WaitlistPage() {
   const [email, setEmail] = useState('')
   const [wechat, setWechat] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
-  const [count] = useState(47) // Social proof counter (seed number)
+  const [count] = useState(47) // TODO: replace with real count from leads table
+
+  useEffect(() => {
+    analytics.ctaClick({
+      cta_id: 'waitlist_view',
+      cta_text: 'waitlist_landing',
+      target: '/waitlist',
+      page: '/waitlist',
+      location: 'page_load',
+    })
+  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -20,15 +30,31 @@ export default function WaitlistPage() {
     setErrorMsg('')
 
     try {
+      const method = email && wechat ? 'both' : email ? 'email' : 'wechat'
+      const utm = typeof window !== 'undefined'
+        ? Object.fromEntries(new URLSearchParams(window.location.search).entries())
+        : {}
+
       const res = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, wechat, source: 'waitlist-page' }),
+        body: JSON.stringify({
+          email,
+          wechat,
+          source: (utm.utm_source as string) || 'waitlist-page',
+          utm_source: utm.utm_source,
+          utm_medium: utm.utm_medium,
+          utm_campaign: utm.utm_campaign,
+          utm_content: utm.utm_content,
+          utm_term: utm.utm_term,
+          referrer: typeof document !== 'undefined' ? document.referrer : '',
+          landing_page: typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/waitlist',
+        }),
       })
       const data = await res.json()
       if (res.ok) {
         setStatus('success')
-        trackEvent('waitlist_signup', 'conversion', email ? 'email' : 'wechat')
+        analytics.waitlistSubmit({ method, source: ((utm.utm_source as string) || 'waitlist-page'), page: '/waitlist' })
       } else {
         setErrorMsg(data.error || '提交失败')
         setStatus('error')

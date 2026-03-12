@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe';
 import { activateSubscription, cancelByEmail, getUser, setUser } from '@/lib/db';
+import { trackServerEvent } from '@/lib/analytics-server';
 import type Stripe from 'stripe';
 
 export async function POST(req: NextRequest) {
@@ -57,6 +58,13 @@ export async function POST(req: NextRequest) {
           session.subscription as string,
           session.id,
         );
+        await trackServerEvent('checkout_success', {
+          props: {
+            plan: planId,
+            email,
+            session_id: session.id,
+          },
+        });
         console.log(`✅ KV: Subscription activated: ${email} → ${planId}`);
       }
       break;

@@ -83,9 +83,9 @@ export default function AdminPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
             { icon: Eye, label: 'Total Views (14d)', value: total('pageviews'), color: 'text-blue-400' },
-            { icon: Users, label: 'Signups', value: total('signups'), color: 'text-emerald-400' },
+            { icon: Users, label: 'Waitlists', value: total('waitlists'), color: 'text-emerald-400' },
             { icon: TrendingUp, label: 'Trial Starts', value: total('trials'), color: 'text-amber-400' },
-            { icon: CreditCard, label: 'Checkouts', value: total('checkouts'), color: 'text-violet-400' },
+            { icon: CreditCard, label: 'Checkout Success', value: total('checkout_successes'), color: 'text-violet-400' },
           ].map((card, i) => (
             <div key={i} className="bg-gray-900 border border-gray-800 rounded-xl p-5">
               <div className="flex items-center gap-2 mb-2">
@@ -108,19 +108,19 @@ export default function AdminPage() {
                 <tr className="text-gray-500 border-b border-gray-800">
                   <th className="text-left py-2 px-3">Date</th>
                   <th className="text-right py-2 px-3">Views</th>
-                  <th className="text-right py-2 px-3">Signups</th>
+                  <th className="text-right py-2 px-3">Waitlists</th>
                   <th className="text-right py-2 px-3">Trials</th>
-                  <th className="text-right py-2 px-3">Checkouts</th>
+                  <th className="text-right py-2 px-3">Checkout OK</th>
                 </tr>
               </thead>
               <tbody>
                 {stats.map((d, i) => (
                   <tr key={i} className="border-b border-gray-800/50 hover:bg-gray-800/30">
                     <td className="py-2 px-3 text-gray-300">{d.date}</td>
-                    <td className="py-2 px-3 text-right">{d.pageviews || 0}</td>
-                    <td className="py-2 px-3 text-right text-emerald-400">{d.signups || 0}</td>
-                    <td className="py-2 px-3 text-right text-amber-400">{d.trials || 0}</td>
-                    <td className="py-2 px-3 text-right text-violet-400">{d.checkouts || 0}</td>
+                    <td className="py-2 px-3 text-right">{Number(d.pageviews) || 0}</td>
+                    <td className="py-2 px-3 text-right text-emerald-400">{Number(d.waitlists) || 0}</td>
+                    <td className="py-2 px-3 text-right text-amber-400">{Number(d.trials) || 0}</td>
+                    <td className="py-2 px-3 text-right text-violet-400">{Number(d.checkout_successes) || 0}</td>
                   </tr>
                 ))}
                 {stats.length === 0 && (

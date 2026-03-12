@@ -1,9 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { upsertLead } from '@/lib/supabase'
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, wechat, source } = await req.json()
+    const {
+      email,
+      wechat,
+      source,
+      utm_source,
+      utm_medium,
+      utm_campaign,
+      utm_content,
+      utm_term,
+      referrer,
+      landing_page,
+    } = await req.json()
 
     if (!email && !wechat) {
       return NextResponse.json({ error: '请填写联系方式' }, { status: 400 })
@@ -17,12 +29,26 @@ export async function POST(req: NextRequest) {
     const timestamp = new Date().toISOString()
     const entry = { email, wechat, source: source || 'waitlist', timestamp }
 
+    await upsertLead({
+      email,
+      wechat,
+      source: source || 'waitlist-page',
+      utm_source,
+      utm_medium,
+      utm_campaign,
+      utm_content,
+      utm_term,
+      referrer,
+      landing_page,
+      status: 'new',
+    })
+
     const resend = new Resend(process.env.RESEND_API_KEY)
 
     // Notify owner
     try {
       await resend.emails.send({
-        from: 'onboarding@resend.dev',
+        from: process.env.EMAIL_FROM || 'Trading Copilot <noreply@tradingcopilot.app>',
         to: 'a6723372291@gmail.com',
         subject: `🎉 Trading Copilot 新候补用户`,
         html: `
@@ -41,7 +67,7 @@ export async function POST(req: NextRequest) {
     if (email) {
       try {
         await resend.emails.send({
-          from: 'onboarding@resend.dev',
+          from: process.env.EMAIL_FROM || 'Trading Copilot <noreply@tradingcopilot.app>',
           to: email,
           subject: `✅ 你已成功加入 Trading Copilot 候补名单`,
           html: `

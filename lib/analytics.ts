@@ -1,39 +1,107 @@
 'use client';
 
-// Simple analytics - tracks events to /api/analytics
-// No external dependencies, privacy-friendly
+export type AnalyticsEventName =
+  | 'page_view'
+  | 'cta_click'
+  | 'waitlist_submit'
+  | 'trial_start'
+  | 'checkout_click'
+  | 'checkout_success'
+  | 'activation_success';
 
-export function trackEvent(name: string, props?: Record<string, string | number>) {
+export interface AnalyticsPayload {
+  event: AnalyticsEventName;
+  page?: string;
+  props?: Record<string, string | number | boolean | null | undefined>;
+  url?: string;
+  referrer?: string;
+  timestamp?: number;
+  screen?: string;
+}
+
+function send(payload: AnalyticsPayload) {
   if (typeof window === 'undefined') return;
+
+  const body = JSON.stringify({
+    ...payload,
+    page: payload.page || window.location.pathname,
+    url: payload.url || window.location.pathname + window.location.search,
+    referrer: payload.referrer ?? document.referrer ?? '',
+    timestamp: payload.timestamp || Date.now(),
+    screen: payload.screen || `${window.screen.width}x${window.screen.height}`,
+  });
+
   try {
-    const payload = {
-      event: name,
-      page: window.location.pathname,
-      props: props || {},
-      url: window.location.pathname,
-      referrer: document.referrer || '',
-      timestamp: Date.now(),
-      screen: `${window.screen.width}x${window.screen.height}`,
-    };
-    // Use sendBeacon for reliability (doesn't block navigation)
     if (navigator.sendBeacon) {
-      navigator.sendBeacon('/api/analytics', JSON.stringify(payload));
+      navigator.sendBeacon('/api/analytics', body);
     } else {
-      fetch('/api/analytics', { method: 'POST', body: JSON.stringify(payload), keepalive: true });
+      fetch('/api/analytics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+        keepalive: true,
+      });
     }
-  } catch { /* silent fail */ }
+  } catch {
+    // silent fail
+  }
 }
 
-// Auto-track page views
-export function trackPageView() {
-  trackEvent('pageview');
+export function track(event: AnalyticsEventName, props?: Record<string, string | number | boolean | null | undefined>) {
+  send({ event, props });
 }
 
-// Common events
-export const events = {
-  strategyRun: (strategyId: string) => trackEvent('strategy_run', { strategyId }),
-  aiGenerate: (prompt: string) => trackEvent('ai_generate', { prompt: prompt.slice(0, 100) }),
-  optimizerRun: (strategyId: string) => trackEvent('optimizer_run', { strategyId }),
-  checkoutClick: (plan: string) => trackEvent('checkout_click', { plan }),
-  tradeOpen: (symbol: string, side: string) => trackEvent('trade_open', { symbol, side }),
+export const analytics = {
+  pageView(page?: string, props?: Record<string, string | number | boolean | null | undefined>) {
+    send({ event: 'page_view', page, props });
+  },
+  ctaClick(props: {
+    cta_id: string;
+    cta_text?: string;
+    target?: string;
+    plan?: string;
+    feature?: string;
+    page?: string;
+    location?: string;
+  }) {
+    send({ event: 'cta_click', page: props.page, props });
+  },
+  waitlistSubmit(props: {
+    method: 'email' | 'wechat' | 'both';
+    source?: string;
+    page?: string;
+  }) {
+    send({ event: 'waitlist_submit', page: props.page, props });
+  },
+  trialStart(props: {
+    feature?: string;
+    page?: string;
+    user_state?: string;
+    trial_expires_at?: number;
+  }) {
+    send({ event: 'trial_start', page: props.page, props });
+  },
+  checkoutClick(props: {
+    plan: string;
+    page?: string;
+    email_present?: boolean;
+  }) {
+    send({ event: 'checkout_click', page: props.page, props });
+  },
+  checkoutSuccess(props: {
+    plan?: string;
+    email?: string;
+    session_id?: string;
+    page?: string;
+  }) {
+    send({ event: 'checkout_success', page: props.page, props });
+  },
+  activationSuccess(props: {
+    plan?: string;
+    email?: string;
+    session_id?: string;
+    page?: string;
+  }) {
+    send({ event: 'activation_success', page: props.page, props });
+  },
 };

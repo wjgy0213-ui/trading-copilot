@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from '@/lib/useSession';
 import { useI18n } from '@/lib/i18n';
 import { Lock, Sparkles, Clock, Zap } from 'lucide-react';
-import { trackEvent } from '@/components/Analytics';
+import { analytics } from '@/lib/analytics';
 
 function TrialCountdown() {
   const { session } = useSession();
@@ -69,10 +69,24 @@ export default function Paywall({ children, feature }: { children: React.ReactNo
     setStarting(true);
     setError('');
     try {
+      analytics.ctaClick({
+        cta_id: 'start_trial',
+        cta_text: session?.email ? 'start_trial' : 'login_first',
+        target: '/api/auth/trial',
+        feature: feature || 'general',
+        page: window.location.pathname,
+        location: 'paywall',
+      });
+
       const res = await fetch('/api/auth/trial', { method: 'POST' });
       const data = await res.json();
       if (res.ok && data.ok) {
-        trackEvent('start_trial', 'conversion', feature || 'general');
+        analytics.trialStart({
+          feature: feature || 'general',
+          page: window.location.pathname,
+          user_state: session?.email ? 'logged_in' : 'anonymous',
+          trial_expires_at: data.expiresAt,
+        });
         refresh();
         setTimeout(() => window.location.reload(), 500);
       } else if (data.error === 'trial_used') {

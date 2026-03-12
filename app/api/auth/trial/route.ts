@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { getUser, setUser } from '@/lib/db';
+import { trackServerEvent } from '@/lib/analytics-server';
 
 const TRIAL_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
 
@@ -34,6 +35,14 @@ export async function POST() {
     trialExpiresAt: expiresAt,
   };
   await setUser(email, updated);
+  await trackServerEvent('trial_start', {
+    props: {
+      page: '/pricing',
+      feature: 'paywall',
+      user_state: 'logged_in',
+      trial_expires_at: expiresAt,
+    },
+  });
 
   return NextResponse.json({ ok: true, expiresAt });
 }

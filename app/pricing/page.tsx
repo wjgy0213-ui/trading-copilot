@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useSession } from '@/lib/useSession';
 import { Check, Crown, Zap, Shield, Sparkles, ArrowRight, Loader2 } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
+import { analytics } from '@/lib/analytics';
 
 const PLANS = [
   {
@@ -76,6 +77,12 @@ function PricingPage() {
       if (!r.ok || data.error) {
         setActivateError(data.error || '激活失败，请联系支持');
       } else {
+        analytics.activationSuccess({
+          plan: data.plan,
+          email: data.email,
+          session_id: sid,
+          page: '/pricing',
+        });
         await refresh();
       }
     } catch {
@@ -101,6 +108,11 @@ function PricingPage() {
     }
     setLoading(planId);
     try {
+      analytics.checkoutClick({
+        plan: planId,
+        page: '/pricing',
+        email_present: !!email,
+      });
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

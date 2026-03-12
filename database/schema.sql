@@ -4,6 +4,51 @@
 -- Enable UUID extension
 create extension if not exists "uuid-ossp";
 
+-- Leads / CRM
+create table if not exists leads (
+  id uuid primary key default gen_random_uuid(),
+  email text unique,
+  wechat text unique,
+  phone text,
+  name text,
+  source text not null default 'waitlist-page',
+  utm_source text,
+  utm_medium text,
+  utm_campaign text,
+  utm_content text,
+  utm_term text,
+  referrer text,
+  landing_page text,
+  status text not null default 'new',
+  priority text default 'normal',
+  owner text,
+  tags text[] default '{}',
+  notes text,
+  first_contact_at timestamptz,
+  last_contact_at timestamptz,
+  next_follow_up_at timestamptz,
+  converted_at timestamptz,
+  trial_started_at timestamptz,
+  paid_plan text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create index if not exists leads_status_created_idx on leads(status, created_at desc);
+create index if not exists leads_source_created_idx on leads(source, created_at desc);
+
+create table if not exists lead_activities (
+  id uuid primary key default gen_random_uuid(),
+  lead_id uuid not null references leads(id) on delete cascade,
+  type text not null,
+  content text,
+  operator text,
+  meta jsonb default '{}',
+  created_at timestamptz default now()
+);
+
+create index if not exists lead_activities_lead_id_idx on lead_activities(lead_id, created_at desc);
+
 -- Users (extends NextAuth)
 create table profiles (
   id uuid primary key default gen_random_uuid(),
@@ -121,12 +166,33 @@ on conflict (id) do nothing;
 
 -- Row Level Security (RLS) policies
 -- Enable RLS on all tables
+alter table leads enable row level security;
+alter table lead_activities enable row level security;
 alter table profiles enable row level security;
 alter table practice_portfolios enable row level security;
 alter table practice_trades enable row level security;
 alter table reviews enable row level security;
 alter table sniper_state enable row level security;
 alter table sniper_trades enable row level security;
+
+-- Leads / CRM: service role only for now
+create policy "Leads service role read"
+  on leads for select
+  using (auth.role() = 'service_role');
+
+create policy "Leads service role write"
+  on leads for all
+  using (auth.role() = 'service_role')
+  with check (auth.role() = 'service_role');
+
+create policy "Lead activities service role read"
+  on lead_activities for select
+  using (auth.role() = 'service_role');
+
+create policy "Lead activities service role write"
+  on lead_activities for all
+  using (auth.role() = 'service_role')
+  with check (auth.role() = 'service_role');
 
 -- Profiles: users can read their own profile
 create policy "Users can read own profile"
