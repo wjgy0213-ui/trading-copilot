@@ -3,6 +3,21 @@
 import { useState, useEffect } from 'react';
 import { BarChart3, Users, Eye, CreditCard, TrendingUp, RefreshCw } from 'lucide-react';
 
+interface LeadItem {
+  id: string;
+  email?: string | null;
+  wechat?: string | null;
+  source?: string | null;
+  status?: string | null;
+  priority?: string | null;
+  notes?: string | null;
+  paid_plan?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+  trial_started_at?: string | null;
+  converted_at?: string | null;
+}
+
 interface DayStat {
   date: string;
   pageviews?: number;
@@ -14,6 +29,7 @@ interface DayStat {
 
 export default function AdminPage() {
   const [stats, setStats] = useState<DayStat[]>([]);
+  const [leads, setLeads] = useState<LeadItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [secret, setSecret] = useState('');
   const [authed, setAuthed] = useState(false);
@@ -21,15 +37,29 @@ export default function AdminPage() {
   const fetchStats = async (key: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/analytics?key=${key}&days=14`);
-      if (res.ok) {
-        const data = await res.json();
+      const [statsRes, leadsRes] = await Promise.all([
+        fetch(`/api/analytics?key=${key}&days=14`),
+        fetch(`/api/admin/leads?key=${key}&limit=20`),
+      ]);
+
+      if (statsRes.ok) {
+        const data = await statsRes.json();
         setStats(data.stats || []);
         setAuthed(true);
       } else {
         setAuthed(false);
       }
-    } catch { setAuthed(false); }
+
+      if (leadsRes.ok) {
+        const leadData = await leadsRes.json();
+        setLeads(leadData.leads || []);
+      } else {
+        setLeads([]);
+      }
+    } catch {
+      setAuthed(false);
+      setLeads([]);
+    }
     setLoading(false);
   };
 
@@ -133,7 +163,7 @@ export default function AdminPage() {
 
         {/* Page Breakdown */}
         {pages.length > 0 && (
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-8">
             <h2 className="text-lg font-semibold mb-4">📄 Today&apos;s Pages</h2>
             <div className="space-y-2">
               {pages.map((p, i) => (
@@ -145,6 +175,38 @@ export default function AdminPage() {
             </div>
           </div>
         )}
+
+        {/* Leads Snapshot */}
+        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+          <h2 className="text-lg font-semibold mb-4">🧾 Latest Leads</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-gray-500 border-b border-gray-800">
+                  <th className="text-left py-2 px-3">Contact</th>
+                  <th className="text-left py-2 px-3">Source</th>
+                  <th className="text-left py-2 px-3">Status</th>
+                  <th className="text-left py-2 px-3">Plan</th>
+                  <th className="text-left py-2 px-3">Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leads.map((lead) => (
+                  <tr key={lead.id} className="border-b border-gray-800/50 hover:bg-gray-800/30">
+                    <td className="py-2 px-3 text-gray-300">{lead.email || lead.wechat || '—'}</td>
+                    <td className="py-2 px-3 text-gray-400">{lead.source || '—'}</td>
+                    <td className="py-2 px-3 text-emerald-400">{lead.status || 'new'}</td>
+                    <td className="py-2 px-3 text-violet-400">{lead.paid_plan || '—'}</td>
+                    <td className="py-2 px-3 text-gray-500">{lead.created_at ? new Date(lead.created_at).toLocaleString() : '—'}</td>
+                  </tr>
+                ))}
+                {leads.length === 0 && (
+                  <tr><td colSpan={5} className="py-8 text-center text-gray-600">No leads yet</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );
