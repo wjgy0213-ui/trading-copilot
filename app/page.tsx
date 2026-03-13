@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, Target, TrendingUp, Brain, BarChart3, ChevronDown, Sparkles, Shield, Zap, Crown, LineChart, Search, Activity, Crosshair, Fish, Gamepad2, ShieldAlert, Radio, BookOpen, Package, Gift } from 'lucide-react';
+import { ArrowRight, TrendingUp, Brain, BarChart3, ChevronDown, Sparkles, Shield, Zap, LineChart, Activity, Crosshair, Fish, Gamepad2, ShieldAlert, Radio, BookOpen, Package, Gift, CircleDot } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n';
@@ -71,23 +71,23 @@ export default function LandingPage() {
           </motion.div>
           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
             className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
-            少犯错，比多赚一点更重要
+            给交易者的决策层 AI 助手
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
             className="text-xl md:text-2xl text-gray-300 mb-4">
-            帮你减少冲动交易、乱开杠杆、无止损死扛这些高成本错误
+            不是替你下单，而是帮你先看清环境、校准执行、再做更系统的策略决策
           </motion.p>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-lg text-gray-500 mb-10 max-w-2xl mx-auto">
-            用模拟练习、AI评分、复盘和风控提醒，帮你在真正拿真钱上场前先暴露问题、修正行为、建立纪律。
+            className="text-lg text-gray-500 mb-10 max-w-3xl mx-auto">
+            把市场体检、Practice 训练、AI 策略工坊、复盘与风控串成一条完整工作流，减少冲动交易、降低高成本错误，让你更稳定地做出一致决策。
           </motion.p>
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.5 }}
             className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/practice"
-              onClick={() => analytics.ctaClick({ cta_id: 'hero_primary', cta_text: 'free_start_training', target: '/practice', page: '/', location: 'hero' })}
+              href="/health"
+              onClick={() => analytics.ctaClick({ cta_id: 'hero_primary', cta_text: 'start_market_health', target: '/health', page: '/', location: 'hero' })}
               className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all hover:scale-105 shadow-lg shadow-emerald-900/30">
-              免费开始训练 <ArrowRight className="w-5 h-5" />
+              从市场体检开始 <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               href="/pricing"
@@ -100,6 +100,46 @@ export default function LandingPage() {
             className="text-xs text-gray-600 mt-4">
             {t('hero.trust.noCreditCard')} &nbsp;·&nbsp; {t('hero.trust.fullAccess')} &nbsp;·&nbsp; {t('hero.trust.autoRevert')}
           </motion.p>
+        </div>
+      </div>
+
+      {/* Decision Workflow */}
+      <div className="container mx-auto px-4 pb-12">
+        <div className="max-w-5xl mx-auto rounded-3xl border border-gray-800 bg-gray-900/60 p-6 md:p-8">
+          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between mb-6">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300">
+                <CircleDot className="w-3 h-3" /> Start Here
+              </div>
+              <h2 className="mt-3 text-2xl md:text-3xl font-bold">3 步进入状态，而不是先被功能淹没</h2>
+              <p className="mt-2 max-w-2xl text-sm md:text-base text-gray-400">
+                新用户最容易卡住的不是功能不够，而是不知道先用什么。我们把价值最短路径收成一条线：先看环境，再练执行，最后做策略。
+              </p>
+            </div>
+            <Link href="/dashboard" className="inline-flex items-center gap-2 text-sm font-medium text-emerald-300 hover:text-emerald-200">
+              进入 Dashboard 统一入口 <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            {[
+              { step: '01', title: '市场体检', desc: '先看当前风险环境和结构状态，避免在坏位置硬开单。', href: '/health', icon: Activity, color: 'text-emerald-400' },
+              { step: '02', title: 'Practice', desc: '用模拟训练暴露执行问题，别用真钱交学费。', href: '/practice', icon: Gamepad2, color: 'text-cyan-400' },
+              { step: '03', title: '策略工坊', desc: '把思路变成可验证参数和策略，不再靠感觉拍脑袋。', href: '/strategy', icon: Sparkles, color: 'text-violet-400' },
+            ].map((item) => (
+              <Link key={item.step} href={item.href} className="group rounded-2xl border border-gray-800 bg-black/20 p-5 hover:border-gray-700 hover:bg-black/30 transition-all">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold tracking-[0.2em] text-gray-500">STEP {item.step}</span>
+                  <item.icon className={`w-5 h-5 ${item.color}`} />
+                </div>
+                <h3 className="mt-4 text-xl font-semibold text-white">{item.title}</h3>
+                <p className="mt-2 text-sm text-gray-400">{item.desc}</p>
+                <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-gray-200 group-hover:text-white">
+                  立即开始 <ArrowRight className="w-4 h-4" />
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -302,7 +342,7 @@ export default function LandingPage() {
         className="container mx-auto px-4 py-20 text-center">
         <h2 className="text-3xl font-bold mb-4">{t('cta.title')}</h2>
         <p className="text-gray-500 mb-8">{t('cta.subtitle')}</p>
-        <Link href="/trade" className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white px-10 py-5 rounded-xl text-xl font-semibold transition-all hover:scale-105">
+        <Link href="/dashboard" className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white px-10 py-5 rounded-xl text-xl font-semibold transition-all hover:scale-105">
           {t('cta.button')} <ArrowRight className="w-6 h-6" />
         </Link>
       </motion.div>
