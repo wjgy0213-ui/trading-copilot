@@ -1,11 +1,12 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { getRiskColor, getRiskBgColor, getRiskLabel, getRiskStrokeColor, type ITCIndicator } from '@/lib/mockData';
 import { useITCData } from '@/lib/useITCData';
 import { useI18n } from '@/lib/i18n';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Area, AreaChart, ReferenceLine } from 'recharts';
-import { Activity, TrendingUp, TrendingDown, X, Maximize2, BarChart3, Globe, Link2, Wifi, WifiOff } from 'lucide-react';
+import { Activity, TrendingUp, TrendingDown, X, Maximize2, BarChart3, Globe, Link2, Wifi, WifiOff, ArrowRight, CircleDot, Gamepad2, Sparkles } from 'lucide-react';
 
 function DetailModal({ indicator, onClose, t }: { indicator: ITCIndicator; onClose: () => void; t: (key: string) => string }) {
   const [range, setRange] = useState<30 | 90 | 180>(90);
@@ -124,6 +125,36 @@ const CATEGORY_TABS = [
   { id: 'macro', labelKey: 'dashboard.cat_macro', icon: Globe },
 ] as const;
 
+const START_HERE_PATHS = [
+  {
+    title: '新手起步',
+    subtitle: '先看结构，再练手，再做策略。',
+    badge: 'Beginner',
+    accent: 'emerald',
+    fit: '适合刚注册、还不知道先点哪里的人',
+    ctaHref: '/health',
+    ctaLabel: '从市场体检开始',
+  },
+  {
+    title: '进阶交易者',
+    subtitle: '先确认风险环境，再去 Practice 校准执行。',
+    badge: 'Intermediate',
+    accent: 'cyan',
+    fit: '适合已有交易经验，但想提升一致性的人',
+    ctaHref: '/practice',
+    ctaLabel: '直接进入 Practice',
+  },
+  {
+    title: '高频研究者',
+    subtitle: '先筛掉坏环境，再把想法送进策略工坊。',
+    badge: 'Researcher',
+    accent: 'violet',
+    fit: '适合每天都在看信号、做验证、调参数的人',
+    ctaHref: '/strategy',
+    ctaLabel: '打开策略工坊',
+  },
+] as const;
+
 export default function DashboardPage() {
   const { t } = useI18n();
   const [selected, setSelected] = useState<ITCIndicator | null>(null);
@@ -154,6 +185,70 @@ export default function DashboardPage() {
               {t(labelKey)}
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* Start Here */}
+      <div className="mb-5 rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 via-gray-900 to-emerald-950/30 p-5">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between mb-5">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300">
+              <CircleDot className="w-3 h-3" /> Start Here
+            </div>
+            <h2 className="mt-3 text-2xl font-semibold text-white">先按路径开始，不要在 20 个功能里乱跳</h2>
+            <p className="mt-2 max-w-3xl text-sm text-gray-400">
+              推荐顺序统一成一条线：先做市场体检，确认当前环境；再去 Practice 校准执行；最后把想法送进策略工坊做结构化验证。
+            </p>
+          </div>
+          <div className="rounded-xl border border-gray-800 bg-black/20 px-4 py-3 text-sm text-gray-300">
+            <div className="text-[11px] uppercase tracking-[0.16em] text-gray-500">Recommended path</div>
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-sm font-medium">
+              <Link href="/health" className="rounded-full bg-gray-800 px-3 py-1.5 hover:bg-gray-700 transition-colors">1. 市场体检</Link>
+              <ArrowRight className="w-4 h-4 text-gray-600" />
+              <Link href="/practice" className="rounded-full bg-gray-800 px-3 py-1.5 hover:bg-gray-700 transition-colors">2. Practice</Link>
+              <ArrowRight className="w-4 h-4 text-gray-600" />
+              <Link href="/strategy" className="rounded-full bg-gray-800 px-3 py-1.5 hover:bg-gray-700 transition-colors">3. 策略工坊</Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid gap-4 lg:grid-cols-3">
+          {START_HERE_PATHS.map((path) => {
+            const badgeStyles = {
+              emerald: 'border-emerald-500/20 bg-emerald-500/10 text-emerald-300',
+              cyan: 'border-cyan-500/20 bg-cyan-500/10 text-cyan-300',
+              violet: 'border-violet-500/20 bg-violet-500/10 text-violet-300',
+            }[path.accent];
+
+            return (
+              <div key={path.title} className="rounded-xl border border-gray-800 bg-gray-950/60 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ${badgeStyles}`}>
+                      {path.badge}
+                    </div>
+                    <h3 className="mt-3 text-lg font-semibold text-white">{path.title}</h3>
+                    <p className="mt-1 text-sm text-gray-400">{path.subtitle}</p>
+                  </div>
+                </div>
+
+                <p className="mt-4 text-xs text-gray-500">{path.fit}</p>
+
+                <div className="mt-4 space-y-2 rounded-xl border border-gray-800 bg-gray-900/50 p-3 text-sm text-gray-300">
+                  <div className="flex items-center gap-2"><Activity className="w-4 h-4 text-emerald-400" /> 先看市场体检，避免在坏环境里硬做。</div>
+                  <div className="flex items-center gap-2"><Gamepad2 className="w-4 h-4 text-cyan-400" /> 再去 Practice，把执行问题先暴露出来。</div>
+                  <div className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-violet-400" /> 最后开策略工坊，把想法变成可验证方案。</div>
+                </div>
+
+                <Link
+                  href={path.ctaHref}
+                  className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-white hover:text-emerald-300 transition-colors"
+                >
+                  {path.ctaLabel} <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            );
+          })}
         </div>
       </div>
 
