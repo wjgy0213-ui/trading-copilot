@@ -28,8 +28,8 @@ const MAIN_ITEMS: NavItem[] = [
   { href: '/', labelKey: 'nav.home', icon: Home },
   { href: '/dashboard', labelKey: 'nav.dashboard', icon: LineChart },
   { href: '/health', labelKey: 'nav.health', icon: Activity },
-  { href: '/signals', labelKey: 'nav.signals', icon: Radio, premium: true },
-  { href: '/news', labelKey: 'nav.news', icon: Newspaper },
+  { href: '/practice', labelKey: 'nav.practice', icon: Gamepad2 },
+  { href: '/strategy', labelKey: 'nav.strategy', icon: Sparkles, premium: true },
 ];
 
 const GROUPS: NavGroup[] = [
@@ -37,11 +37,12 @@ const GROUPS: NavGroup[] = [
     labelKey: 'nav.trading',
     items: [
       { href: '/trade', labelKey: 'nav.liveTrade', icon: Zap },
-      { href: '/practice', labelKey: 'nav.practice', icon: Gamepad2 },
-      { href: '/sniper', labelKey: 'nav.memeSniper', icon: Crosshair },
-      { href: '/whales', labelKey: 'nav.whales', icon: Fish },
+      { href: '/signals', labelKey: 'nav.signals', icon: Radio, premium: true },
+      { href: '/news', labelKey: 'nav.news', icon: Newspaper },
       { href: '/backtest', labelKey: 'nav.backtest', icon: TrendingUp },
       { href: '/history', labelKey: 'nav.history', icon: History },
+      { href: '/sniper', labelKey: 'nav.memeSniper', icon: Crosshair },
+      { href: '/whales', labelKey: 'nav.whales', icon: Fish },
     ],
   },
   {
