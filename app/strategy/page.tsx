@@ -811,6 +811,37 @@ function StrategyPage() {
               </Paywall>
 
               <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4"><TradeTable trades={latest.trades} /></div>
+
+              {/* ── Result Interpretation ── */}
+              <div className="mt-6 rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-gray-900 p-5">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300 mb-3">📖 这些数字意味着什么</div>
+                <div className="grid gap-3 sm:grid-cols-2 text-sm text-gray-400 leading-relaxed">
+                  <div>
+                    <span className="text-gray-200 font-medium">胜率 {latest.winRate.toFixed(1)}%</span>
+                    <p className="mt-1">{latest.winRate >= 50 ? '超过半数交易盈利。但胜率高不等于赚钱——关键看盈亏比是否匹配。' : '不到一半交易盈利。这没问题——只要每次赢的比输的多，低胜率也能稳定赚钱。趋势策略通常 35-45% 胜率。'}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-200 font-medium">最大回撤 {latest.maxDrawdown.toFixed(1)}%</span>
+                    <p className="mt-1">{latest.maxDrawdown <= 15 ? '回撤控制出色，15% 以下说明策略稳健。' : latest.maxDrawdown <= 30 ? '中等水平。实盘中你能承受账户缩水这么多吗？心理承受力是关键。' : '回撤偏大，实盘可能很难坚持。建议降低仓位或加紧止损来压缩回撤。'}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-200 font-medium">总交易 {latest.totalTrades} 笔</span>
+                    <p className="mt-1">{latest.totalTrades >= 50 ? '样本量足够，结果有统计意义。' : '交易笔数偏少，结果可能受个别交易影响较大。建议拉长回测周期增加样本。'}</p>
+                  </div>
+                  <div>
+                    <span className="text-gray-200 font-medium">总收益 {latest.totalReturnPercent > 0 ? '+' : ''}{latest.totalReturnPercent.toFixed(1)}%</span>
+                    <p className="mt-1">{latest.totalReturnPercent > 0 ? '策略整体盈利。但别忘了：过去盈利不保证未来——用蒙特卡洛看看在不同运气下表现如何。' : '策略整体亏损。先检查止损是否太紧、入场信号是否有效，再考虑参数优化。'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Next Step CTA ── */}
+              <div className="mt-4 rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/5 to-gray-900 p-5">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">下一步</div>
+                <h3 className="mt-2 text-lg font-semibold text-white">回测验证完？去 Practice 用真实价格练手</h3>
+                <p className="mt-2 text-sm text-gray-400">回测是纸上谈兵，Practice 是实战模拟。用虚拟资金在真实行情中执行你的策略，检验自己的纪律性和执行力。</p>
+                <a href="/practice" className="mt-4 inline-flex items-center gap-2 rounded-full bg-cyan-500 px-4 py-2 text-sm font-medium text-black transition hover:bg-cyan-400">去 Practice 训练 →</a>
+              </div>
             </>)}
           </div>
         </div>
