@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import Link from 'next/link';
 import { useI18n } from '@/lib/i18n';
 
 interface Position {
@@ -465,6 +466,26 @@ export default function PracticePage() {
                 )}
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Next Step CTA */}
+        <div className="mt-8 grid gap-4 lg:grid-cols-2">
+          <div className="rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-500/10 to-gray-900 p-5">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-violet-300">练完之后</div>
+            <h3 className="mt-2 text-lg font-semibold text-white">把你的交易直觉变成可回测策略</h3>
+            <p className="mt-2 text-sm text-gray-400">在 Practice 里校准了手感？去策略工坊，把你的入场逻辑参数化、回测验证，看看到底能不能长期跑正。</p>
+            <Link href="/strategy" className="mt-4 inline-flex items-center gap-2 rounded-full bg-violet-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-violet-400">
+              去策略工坊 →
+            </Link>
+          </div>
+          <div className="rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-gray-900 p-5">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-300">升级 Pro</div>
+            <h3 className="mt-2 text-lg font-semibold text-white">解锁 AI 教练深度分析 & 更多训练模式</h3>
+            <p className="mt-2 text-sm text-gray-400">Pro 会员可用自动寻参优化器、蒙特卡洛概率模拟、AI 教练逐笔点评，让训练效率翻倍。</p>
+            <Link href="/pricing" className="mt-4 inline-flex items-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-medium text-black transition hover:bg-amber-400">
+              查看定价 →
+            </Link>
           </div>
         </div>
 
