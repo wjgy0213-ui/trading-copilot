@@ -92,7 +92,7 @@ export default function AccountPage() {
               <div>
                 <div className={`text-xl font-bold ${planColor}`}>{planName}</div>
                 <div className="text-sm text-gray-500">
-                  {session.plan === 'free' ? t('account.basic_features') : session.plan === 'pro' ? '$39.99/月' : '$79.99/月'}
+                  {session.plan === 'free' ? t('account.basic_features') : session.plan === 'pro' ? '$39.99/mo' : '$79.99/mo'}
                 </div>
               </div>
             </div>

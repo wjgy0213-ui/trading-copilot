@@ -7,7 +7,6 @@ import { openPosition } from '@/lib/tradingEngine';
 import { scoreEntry } from '@/lib/aiScoring';
 import { getAccount, saveAIScore } from '@/lib/storage';
 import { PositionSide } from '@/lib/types';
-import { useI18n } from '@/lib/i18n';
 
 interface TradingPanelProps {
   currentPrice: number;

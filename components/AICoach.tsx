@@ -27,7 +27,7 @@ export default function AICoach() {
         const lesson = JSON.parse(lessonData);
         lessonMsg = {
           type: 'coach',
-          text: `📚 课程练习模式：${lesson.lessonTitle}\n\n${lesson.homework}\n\n完成后回到课程继续学习！`,
+          text: `📚 ${lesson.lessonTitle}\n\n${lesson.homework}`,
           timestamp: Date.now() - 5000,
           variant: 'info',
         };

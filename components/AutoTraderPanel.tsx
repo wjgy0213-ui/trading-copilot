@@ -11,7 +11,6 @@ import {
 } from '@/lib/autoTrader';
 import { openPosition } from '@/lib/tradingEngine';
 import { getAccount } from '@/lib/storage';
-import { useI18n } from '@/lib/i18n';
 
 interface AutoTraderPanelProps {
   currentPrice: number;

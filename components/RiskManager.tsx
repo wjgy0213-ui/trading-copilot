@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { Shield, AlertTriangle, Activity, XCircle, History } from 'lucide-react';
 import EliteGate from './EliteGate';
 import { useI18n } from '@/lib/i18n';
-import { useI18n } from '@/lib/i18n';
 
 interface RiskSettings {
   maxRiskPerTrade: number; // %

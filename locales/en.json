@@ -712,5 +712,10 @@
   "exchange.missing_fields": "Please enter API Key and Secret",
   "exchange.saved": "Config saved (unencrypted, demo only)",
   "exchange.save_first": "Please save config first",
-  "exchange.connect_success": "Connected! Account balance:"
+  "exchange.connect_success": "Connected! Account balance:",
+  "learn.questions_count": " questions",
+  "trading.ai_score_label": "AI Coach Score: ",
+  "auto.sl_label": "SL",
+  "auto.tp_label": "TP",
+  "auto.max_position_label": "Max Position"
 }

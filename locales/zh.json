@@ -712,5 +712,10 @@
   "exchange.missing_fields": "请输入 API Key 和 Secret",
   "exchange.saved": "配置已保存（未加密，仅用于演示）",
   "exchange.save_first": "请先保存配置",
-  "exchange.connect_success": "连接成功！账户余额:"
+  "exchange.connect_success": "连接成功！账户余额:",
+  "learn.questions_count": "题",
+  "trading.ai_score_label": "AI教练评分：",
+  "auto.sl_label": "止损",
+  "auto.tp_label": "止盈",
+  "auto.max_position_label": "最大仓位"
 }

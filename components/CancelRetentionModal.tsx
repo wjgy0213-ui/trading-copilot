@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { X, Gift, ArrowRight, Loader2 } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
-import { useI18n } from '@/lib/i18n';
 
 interface CancelRetentionModalProps {
   isOpen: boolean;
@@ -13,7 +12,6 @@ interface CancelRetentionModalProps {
 }
 
 export default function CancelRetentionModal({ isOpen, onClose, currentPlan, email }: CancelRetentionModalProps) {
-  const { t } = useI18n();
   const { t } = useI18n();
   const [loading, setLoading] = useState(false);
 
