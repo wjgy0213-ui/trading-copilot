@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Send, Bell, CheckCircle2, AlertCircle } from 'lucide-react';
 import EliteGate from './EliteGate';
+import { useI18n } from '@/lib/i18n';
+import { useI18n } from '@/lib/i18n';
 
 interface TelegramConfig {
   botToken: string;
@@ -29,6 +31,7 @@ const DEFAULT_CONFIG: TelegramConfig = {
 };
 
 export default function TelegramNotify() {
+  const { t } = useI18n();
   const [config, setConfig] = useState<TelegramConfig>(DEFAULT_CONFIG);
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
@@ -46,17 +49,17 @@ export default function TelegramNotify() {
 
   const saveConfig = () => {
     if (!config.botToken.trim() || !config.chatId.trim()) {
-      setTestResult({ success: false, message: '请输入 Bot Token 和 Chat ID' });
+      setTestResult({ success: false, message: t('telegram.missing_config') });
       return;
     }
 
     localStorage.setItem('tc-telegram-config', JSON.stringify(config));
-    setTestResult({ success: true, message: '配置已保存' });
+    setTestResult({ success: true, message: t('telegram.saved') });
   };
 
   const testNotification = async () => {
     if (!config.botToken.trim() || !config.chatId.trim()) {
-      setTestResult({ success: false, message: '请先保存配置' });
+      setTestResult({ success: false, message: t('telegram.save_first') });
       return;
     }
 
@@ -70,8 +73,8 @@ export default function TelegramNotify() {
     setTestResult({
       success,
       message: success
-        ? '✅ 测试消息已发送到 Telegram！'
-        : '❌ 发送失败，请检查 Bot Token 和 Chat ID 是否正确',
+        ? t('telegram.test_success')
+        : t('telegram.test_failed'),
     });
     setTesting(false);
   };
@@ -87,11 +90,11 @@ export default function TelegramNotify() {
   };
 
   const notificationItems = [
-    { key: 'openPosition' as const, label: '开仓通知', icon: '📈' },
-    { key: 'closePosition' as const, label: '平仓通知', icon: '📉' },
-    { key: 'stopLoss' as const, label: '止损触发', icon: '🛑' },
-    { key: 'riskAlert' as const, label: '风控警报', icon: '⚠️' },
-    { key: 'dailySummary' as const, label: '每日摘要', icon: '📊' },
+    { key: 'openPosition' as const, label: t('telegram.open_position'), icon: '📈' },
+    { key: 'closePosition' as const, label: t('telegram.close_position'), icon: '📉' },
+    { key: 'stopLoss' as const, label: t('telegram.stop_loss'), icon: '🛑' },
+    { key: 'riskAlert' as const, label: t('telegram.risk_alert'), icon: '⚠️' },
+    { key: 'dailySummary' as const, label: t('telegram.daily_summary'), icon: '📊' },
   ];
 
   return (
@@ -99,13 +102,13 @@ export default function TelegramNotify() {
       <div className="bg-gray-900 rounded-lg border border-gray-800 p-6">
         <div className="flex items-center gap-3 mb-6">
           <Send className="w-6 h-6 text-violet-400" />
-          <h2 className="text-xl font-bold text-white">Telegram 通知</h2>
+          <h2 className="text-xl font-bold text-white">{t('telegram.title')}</h2>
         </div>
 
         {/* Bot Token Input */}
         <div className="mb-4">
           <label className="block text-sm text-gray-400 mb-2">
-            Bot Token
+            {t('telegram.bot_token')}
           </label>
           <input
             type="text"
@@ -119,7 +122,7 @@ export default function TelegramNotify() {
         {/* Chat ID Input */}
         <div className="mb-6">
           <label className="block text-sm text-gray-400 mb-2">
-            Chat ID
+            {t('telegram.chat_id')}
           </label>
           <input
             type="text"
@@ -135,11 +138,11 @@ export default function TelegramNotify() {
           <div className="flex items-start gap-2">
             <AlertCircle className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
             <div className="text-xs text-blue-400">
-              <strong>如何获取？</strong>
+              <strong>{t('telegram.how_to')}</strong>
               <ol className="list-decimal ml-4 mt-1 space-y-1">
-                <li>在 Telegram 搜索 @BotFather 创建 Bot，获取 Token</li>
-                <li>将 Bot 添加到你的频道或群组</li>
-                <li>使用 @userinfobot 获取你的 Chat ID</li>
+                <li>{t('telegram.step1')}</li>
+                <li>{t('telegram.step2')}</li>
+                <li>{t('telegram.step3')}</li>
               </ol>
             </div>
           </div>
@@ -149,7 +152,7 @@ export default function TelegramNotify() {
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">
             <Bell className="w-4 h-4 text-gray-400" />
-            <h3 className="text-sm font-medium text-gray-400">通知类型</h3>
+            <h3 className="text-sm font-medium text-gray-400">{t('telegram.notify_types')}</h3>
           </div>
           <div className="space-y-2">
             {notificationItems.map(item => (
@@ -203,7 +206,7 @@ export default function TelegramNotify() {
             onClick={saveConfig}
             className="flex-1 px-4 py-3 bg-violet-600 hover:bg-violet-700 text-white font-medium rounded-lg transition-all"
           >
-            保存配置
+            {t('telegram.save_config')}
           </button>
           <button
             onClick={testNotification}
@@ -211,7 +214,7 @@ export default function TelegramNotify() {
             className="flex-1 px-4 py-3 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <Send className="w-4 h-4" />
-            {testing ? '发送中...' : '测试通知'}
+            {testing ? t('telegram.testing') : t('telegram.test')}
           </button>
         </div>
       </div>

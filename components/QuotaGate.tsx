@@ -84,23 +84,23 @@ export default function QuotaGate({
             <Lock className="w-6 h-6 text-amber-400" />
           </div>
 
-          <h3 className="font-bold text-lg mb-1">今日免费次数已用完</h3>
+          <h3 className="font-bold text-lg mb-1">{t('quota.exhausted')}</h3>
           <p className="text-sm text-gray-500 mb-2">
-            {feature ? `${feature} — ` : ''}每天 {getFreeQuotaLimit()} 次免费市场分析
+            {feature ? `${feature} — ` : ''}{t('quota.daily_limit').replace('{limit}', String(getFreeQuotaLimit()))}
           </p>
           <p className="text-xs text-gray-600 mb-5">
-            明天将自动恢复，或升级 Pro 解锁无限使用
+            {t('quota.reset_tomorrow')}
           </p>
 
           <Link href="/pricing"
             className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white px-5 py-3 rounded-xl text-sm font-semibold transition-all mb-3">
             <Crown className="w-4 h-4" />
-            升级 Pro 解锁无限使用
+            {t('quota.upgrade_pro')}
           </Link>
 
           <div className="flex items-center gap-2 justify-center text-xs text-gray-600">
             <Sparkles className="w-3 h-3" />
-            年付仅 $19.99/月，省50%
+            {t('quota.yearly_hint')}
           </div>
         </div>
       </div>

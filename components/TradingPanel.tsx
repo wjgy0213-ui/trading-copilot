@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import { TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 import { openPosition } from '@/lib/tradingEngine';
 import { scoreEntry } from '@/lib/aiScoring';
 import { getAccount, saveAIScore } from '@/lib/storage';
 import { PositionSide } from '@/lib/types';
+import { useI18n } from '@/lib/i18n';
 
 interface TradingPanelProps {
   currentPrice: number;
@@ -13,6 +15,7 @@ interface TradingPanelProps {
 }
 
 export default function TradingPanel({ currentPrice, onTradeComplete }: TradingPanelProps) {
+  const { t } = useI18n();
   const [side, setSide] = useState<PositionSide>('long');
   const [size, setSize] = useState<number>(100);
   const [leverage, setLeverage] = useState<number>(1);
@@ -42,7 +45,7 @@ export default function TradingPanel({ currentPrice, onTradeComplete }: TradingP
       saveAIScore(aiScore);
       
       // 显示反馈
-      alert(result.message + '\n\nAI教练评分：' + aiScore.entryScore + '/100\n' + aiScore.feedback.entry.join('\n'));
+      alert(result.message + '\n\n' + t('trading.ai_score_label') + aiScore.entryScore + '/100\n' + aiScore.feedback.entry.join('\n'));
       setShowAIFeedback(true);
     }
 
@@ -71,11 +74,11 @@ export default function TradingPanel({ currentPrice, onTradeComplete }: TradingP
 
   return (
     <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-      <h2 className="text-2xl font-bold mb-6">开仓交易</h2>
+      <h2 className="text-2xl font-bold mb-6">{t('trading.title')}</h2>
 
       {/* Direction */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-400 mb-3">交易方向</label>
+        <label className="block text-sm font-medium text-gray-400 mb-3">{t('trading.direction')}</label>
         <div className="grid grid-cols-2 gap-4">
           <button
             onClick={() => setSide('long')}
@@ -86,7 +89,7 @@ export default function TradingPanel({ currentPrice, onTradeComplete }: TradingP
             }`}
           >
             <TrendingUp className="w-5 h-5" />
-            做多 (看涨)
+            {t('trading.long_bullish')}
           </button>
           <button
             onClick={() => setSide('short')}
@@ -97,7 +100,7 @@ export default function TradingPanel({ currentPrice, onTradeComplete }: TradingP
             }`}
           >
             <TrendingDown className="w-5 h-5" />
-            做空 (看跌)
+            {t('trading.short_bearish')}
           </button>
         </div>
       </div>
@@ -105,7 +108,7 @@ export default function TradingPanel({ currentPrice, onTradeComplete }: TradingP
       {/* Size */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-400 mb-2">
-          投入金额 (USD)
+          {t('trading.size_label')}
         </label>
         <input
           type="number"
@@ -120,7 +123,7 @@ export default function TradingPanel({ currentPrice, onTradeComplete }: TradingP
       {/* Leverage */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-400 mb-2">
-          杠杆倍数: {leverage}x
+          {t('trading.leverage_label')}: {leverage}x
         </label>
         <input
           type="range"
@@ -140,13 +143,13 @@ export default function TradingPanel({ currentPrice, onTradeComplete }: TradingP
       {/* Stop Loss */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-400 mb-2">
-          止损价格 (可选但强烈建议)
+          {t('trading.sl_label')}
         </label>
         <input
           type="number"
           value={stopLoss}
           onChange={(e) => setStopLoss(e.target.value)}
-          placeholder={`建议: ${side === 'long' ? (currentPrice * 0.95).toFixed(2) : (currentPrice * 1.05).toFixed(2)}`}
+          placeholder={`${t('trading.sl_suggest')}: ${side === 'long' ? (currentPrice * 0.95).toFixed(2) : (currentPrice * 1.05).toFixed(2)}`}
           className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           step="0.01"
         />
@@ -155,13 +158,13 @@ export default function TradingPanel({ currentPrice, onTradeComplete }: TradingP
       {/* Take Profit */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-400 mb-2">
-          止盈价格 (可选)
+          {t('trading.tp_label')}
         </label>
         <input
           type="number"
           value={takeProfit}
           onChange={(e) => setTakeProfit(e.target.value)}
-          placeholder={`建议: ${side === 'long' ? (currentPrice * 1.1).toFixed(2) : (currentPrice * 0.9).toFixed(2)}`}
+          placeholder={`${t('trading.sl_suggest')}: ${side === 'long' ? (currentPrice * 1.1).toFixed(2) : (currentPrice * 0.9).toFixed(2)}`}
           className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           step="0.01"
         />
@@ -170,24 +173,24 @@ export default function TradingPanel({ currentPrice, onTradeComplete }: TradingP
       {/* Potential P&L */}
       {pnl && (
         <div className="mb-6 p-4 bg-gray-700 rounded-lg">
-          <div className="text-sm text-gray-400 mb-2">预估盈亏</div>
+          <div className="text-sm text-gray-400 mb-2">{t('trading.estimated_pnl')}</div>
           <div className="flex justify-between">
             {stopLoss && (
               <div className="text-red-400">
-                <div className="text-xs">最大亏损</div>
+                <div className="text-xs">{t('trading.max_loss')}</div>
                 <div className="font-semibold">-${pnl.potentialLoss.toFixed(2)}</div>
               </div>
             )}
             {takeProfit && (
               <div className="text-green-400">
-                <div className="text-xs">目标盈利</div>
+                <div className="text-xs">{t('trading.target_profit')}</div>
                 <div className="font-semibold">+${pnl.potentialProfit.toFixed(2)}</div>
               </div>
             )}
           </div>
           {stopLoss && takeProfit && (
             <div className="mt-2 text-xs text-gray-400">
-              风险回报比: 1:{(pnl.potentialProfit / pnl.potentialLoss).toFixed(2)}
+              {t('trading.risk_reward')}: 1:{(pnl.potentialProfit / pnl.potentialLoss).toFixed(2)}
             </div>
           )}
         </div>
@@ -198,7 +201,7 @@ export default function TradingPanel({ currentPrice, onTradeComplete }: TradingP
         <div className="mb-6 p-4 bg-yellow-900/20 border border-yellow-700 rounded-lg flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
           <div className="text-sm text-yellow-200">
-            <strong>风险提示：</strong> 未设置止损可能导致巨额亏损。强烈建议设置止损价格！
+            <strong>{t('trading.risk_warning')}</strong> {t('trading.no_sl_warning')}
           </div>
         </div>
       )}
@@ -212,7 +215,7 @@ export default function TradingPanel({ currentPrice, onTradeComplete }: TradingP
             : 'bg-red-600 hover:bg-red-700 text-white'
         }`}
       >
-        {side === 'long' ? '开多单' : '开空单'}
+        {side === 'long' ? t('trading.open_long') : t('trading.open_short')}
       </button>
     </div>
   );

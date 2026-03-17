@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Shield, AlertTriangle, Activity, XCircle, History } from 'lucide-react';
 import EliteGate from './EliteGate';
+import { useI18n } from '@/lib/i18n';
+import { useI18n } from '@/lib/i18n';
 
 interface RiskSettings {
   maxRiskPerTrade: number; // %
@@ -25,6 +27,7 @@ const DEFAULT_SETTINGS: RiskSettings = {
 };
 
 export default function RiskManager() {
+  const { t } = useI18n();
   const [settings, setSettings] = useState<RiskSettings>(DEFAULT_SETTINGS);
   const [currentRisk, setCurrentRisk] = useState({
     riskLevel: 'safe' as 'safe' | 'warning' | 'danger',
@@ -81,7 +84,7 @@ export default function RiskManager() {
 
   const saveSettings = () => {
     localStorage.setItem('tc-risk-settings', JSON.stringify(settings));
-    addEvent('warning', '风控参数已更新');
+    addEvent('warning', t('risk.settings_updated'));
   };
 
   const addEvent = (type: RiskEvent['type'], message: string) => {
@@ -96,17 +99,17 @@ export default function RiskManager() {
   };
 
   const emergencyStop = async () => {
-    if (!confirm('确认一键平仓所有持仓？此操作不可撤销！')) return;
+    if (!confirm(t('risk.confirm_emergency'))) return;
 
     setEmergencyLoading(true);
-    addEvent('emergency', '执行紧急止损：平仓所有持仓');
+    addEvent('emergency', t('risk.emergency_exec'));
 
     // 模拟平仓操作
     await new Promise(resolve => setTimeout(resolve, 2000));
 
     setEmergencyLoading(false);
-    addEvent('trigger', '紧急止损完成：已平仓 0 个持仓');
-    alert('紧急止损完成（模拟）');
+    addEvent('trigger', t('risk.emergency_done'));
+    alert(t('risk.emergency_sim'));
   };
 
   const getRiskColor = () => {
@@ -130,7 +133,7 @@ export default function RiskManager() {
       <div className="bg-gray-900 rounded-lg border border-gray-800 p-6">
         <div className="flex items-center gap-3 mb-6">
           <Shield className="w-6 h-6 text-violet-400" />
-          <h2 className="text-xl font-bold text-white">智能风控</h2>
+          <h2 className="text-xl font-bold text-white">{t('risk.title')}</h2>
         </div>
 
         {/* Current Risk Status */}
@@ -139,24 +142,24 @@ export default function RiskManager() {
             <div className="flex items-center gap-2">
               <span className="text-2xl">{getRiskIcon()}</span>
               <span className="font-bold">
-                {currentRisk.riskLevel === 'safe' && '安全'}
-                {currentRisk.riskLevel === 'warning' && '警告'}
-                {currentRisk.riskLevel === 'danger' && '危险'}
+                {currentRisk.riskLevel === 'safe' && t('risk.safe')}
+                {currentRisk.riskLevel === 'warning' && t('risk.warning')}
+                {currentRisk.riskLevel === 'danger' && t('risk.danger')}
               </span>
             </div>
             <Activity className="w-5 h-5 animate-pulse" />
           </div>
           <div className="grid grid-cols-3 gap-3 text-xs">
             <div>
-              <div className="text-gray-400">日亏损</div>
+              <div className="text-gray-400">{t('risk.daily_loss')}</div>
               <div className="font-bold">{currentRisk.dailyLoss.toFixed(2)}%</div>
             </div>
             <div>
-              <div className="text-gray-400">持仓数</div>
+              <div className="text-gray-400">{t('risk.position_count')}</div>
               <div className="font-bold">{currentRisk.openPositions}</div>
             </div>
             <div>
-              <div className="text-gray-400">平均杠杆</div>
+              <div className="text-gray-400">{t('risk.avg_leverage')}</div>
               <div className="font-bold">{currentRisk.avgLeverage.toFixed(1)}x</div>
             </div>
           </div>
@@ -166,7 +169,7 @@ export default function RiskManager() {
         <div className="space-y-4 mb-6">
           <div>
             <label className="block text-sm text-gray-400 mb-2">
-              最大单笔风险 (%)
+              {t('risk.max_risk_per_trade')}
             </label>
             <input
               type="number"
@@ -181,7 +184,7 @@ export default function RiskManager() {
 
           <div>
             <label className="block text-sm text-gray-400 mb-2">
-              每日最大亏损 (%)
+              {t('risk.max_daily_loss')}
             </label>
             <input
               type="number"
@@ -196,7 +199,7 @@ export default function RiskManager() {
 
           <div>
             <label className="block text-sm text-gray-400 mb-2">
-              最大持仓数
+              {t('risk.max_positions')}
             </label>
             <input
               type="number"
@@ -210,7 +213,7 @@ export default function RiskManager() {
 
           <div>
             <label className="block text-sm text-gray-400 mb-2">
-              最大杠杆
+              {t('risk.max_leverage')}
             </label>
             <input
               type="number"
@@ -229,7 +232,7 @@ export default function RiskManager() {
             onClick={saveSettings}
             className="flex-1 px-4 py-3 bg-violet-600 hover:bg-violet-700 text-white font-medium rounded-lg transition-all"
           >
-            保存设置
+            {t('risk.save_settings')}
           </button>
           <button
             onClick={emergencyStop}
@@ -237,7 +240,7 @@ export default function RiskManager() {
             className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <XCircle className="w-4 h-4" />
-            {emergencyLoading ? '执行中...' : '紧急止损'}
+            {emergencyLoading ? t('risk.executing') : t('risk.emergency_stop')}
           </button>
         </div>
 
@@ -245,11 +248,11 @@ export default function RiskManager() {
         <div>
           <div className="flex items-center gap-2 mb-3">
             <History className="w-4 h-4 text-gray-400" />
-            <h3 className="text-sm font-medium text-gray-400">触发历史</h3>
+            <h3 className="text-sm font-medium text-gray-400">{t('risk.event_history')}</h3>
           </div>
           <div className="space-y-2 max-h-48 overflow-y-auto">
             {events.length === 0 ? (
-              <div className="text-xs text-gray-500 text-center py-4">暂无记录</div>
+              <div className="text-xs text-gray-500 text-center py-4">{t('risk.no_events')}</div>
             ) : (
               events.map((event, idx) => (
                 <div

@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { X, Gift, ArrowRight, Loader2 } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
+import { useI18n } from '@/lib/i18n';
 
 interface CancelRetentionModalProps {
   isOpen: boolean;
@@ -11,6 +13,8 @@ interface CancelRetentionModalProps {
 }
 
 export default function CancelRetentionModal({ isOpen, onClose, currentPlan, email }: CancelRetentionModalProps) {
+  const { t } = useI18n();
+  const { t } = useI18n();
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
@@ -32,7 +36,7 @@ export default function CancelRetentionModal({ isOpen, onClose, currentPlan, ema
         window.location.href = data.url;
       }
     } catch {
-      alert('网络错误，请重试');
+      alert(t('cancel_modal.network_error'));
     }
     setLoading(false);
   };
@@ -50,20 +54,20 @@ export default function CancelRetentionModal({ isOpen, onClose, currentPlan, ema
             <Gift className="w-8 h-8 text-amber-400" />
           </div>
 
-          <h2 className="text-xl font-bold mb-2">取消前最后机会</h2>
+          <h2 className="text-xl font-bold mb-2">{t('cancel_modal.title')}</h2>
           <p className="text-gray-400 text-sm mb-6">
-            切换年付再享 <span className="text-amber-400 font-bold">7折</span> 优惠
+            {t('cancel_modal.desc').replace('{discount}', '30%')}
           </p>
 
           <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-5 mb-6">
             <div className="text-3xl font-bold text-white mb-1">
-              ${monthlyEquiv}<span className="text-base text-gray-400 font-normal">/月</span>
+              ${monthlyEquiv}<span className="text-base text-gray-400 font-normal">{t('cancel_modal.per_month')}</span>
             </div>
             <div className="text-sm text-gray-500">
-              按年付费 ${discountedPrice}/年
+              {t('cancel_modal.yearly_billed')} ${discountedPrice}
             </div>
             <div className="mt-2 inline-flex items-center gap-1 bg-amber-500/10 text-amber-400 text-xs font-medium px-2.5 py-1 rounded-full">
-              省 ${(yearlyPrice - discountedPrice).toFixed(2)}/年
+              {t('cancel_modal.save_per_year').replace('{amount}', `$${(yearlyPrice - discountedPrice).toFixed(2)}`)}
             </div>
           </div>
 
@@ -73,7 +77,7 @@ export default function CancelRetentionModal({ isOpen, onClose, currentPlan, ema
             className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white px-5 py-3.5 rounded-xl text-sm font-semibold transition-all mb-3 disabled:opacity-50"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
-              <>切换年付，立省 {Math.round((1 - 0.7) * 100)}% <ArrowRight className="w-4 h-4" /></>
+              <>{t('cancel_modal.switch_yearly').replace('{pct}', String(Math.round((1 - 0.7) * 100)))} <ArrowRight className="w-4 h-4" /></>
             )}
           </button>
 
@@ -81,7 +85,7 @@ export default function CancelRetentionModal({ isOpen, onClose, currentPlan, ema
             onClick={onClose}
             className="w-full text-gray-500 hover:text-gray-300 text-sm py-2 transition"
           >
-            不了，继续取消
+            {t('cancel_modal.dismiss')}
           </button>
         </div>
       </div>
