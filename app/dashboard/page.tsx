@@ -8,7 +8,7 @@ import { useI18n } from '@/lib/i18n';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Area, AreaChart, ReferenceLine } from 'recharts';
 import { Activity, TrendingUp, TrendingDown, X, Maximize2, BarChart3, Globe, Link2, Wifi, WifiOff, ArrowRight, CircleDot, Gamepad2, Sparkles } from 'lucide-react';
 
-function DetailModal({ indicator, onClose, t }: { indicator: ITCIndicator; onClose: () => void; t: (key: string) => string }) {
+function DetailModal({ indicator, onClose, t, locale }: { indicator: ITCIndicator; onClose: () => void; t: (key: string) => string; locale: string }) {
   const [range, setRange] = useState<30 | 90 | 180>(90);
   const color = getRiskStrokeColor(indicator.value);
   const data = indicator.history.slice(-range);
@@ -19,6 +19,9 @@ function DetailModal({ indicator, onClose, t }: { indicator: ITCIndicator; onClo
   const change30d = ((indicator.value - prev30) / prev30 * 100).toFixed(1);
   const min = Math.min(...data.map(d => d.value));
   const max = Math.max(...data.map(d => d.value));
+  
+  const displayName = locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name;
+  const displayDesc = locale === 'en' ? (displayDescEn || displayDesc) : displayDesc;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
@@ -26,8 +29,7 @@ function DetailModal({ indicator, onClose, t }: { indicator: ITCIndicator; onClo
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-gray-800">
           <div>
-            <h2 className="text-xl font-semibold">{indicator.name}</h2>
-            <p className="text-xs text-gray-500">{indicator.nameEn}</p>
+            <h2 className="text-xl font-semibold">{displayName}</h2>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-lg transition-colors">
             <X className="w-5 h-5 text-gray-400" />
@@ -77,7 +79,7 @@ function DetailModal({ indicator, onClose, t }: { indicator: ITCIndicator; onClo
               <YAxis domain={[0, 1]} tickFormatter={v => Math.round(v * 100).toString()} tick={{ fill: '#6b7280', fontSize: 10 }} stroke="#374151" />
               <Tooltip contentStyle={{ background: '#111827', border: '1px solid #374151', borderRadius: 8, fontSize: 12 }}
                 labelFormatter={v => new Date(v).toLocaleDateString('zh-CN')}
-                formatter={(v: number | undefined) => [Math.round((v || 0) * 100), indicator.name]} />
+                formatter={(v: number | undefined) => [Math.round((v || 0) * 100), displayName]} />
               <ReferenceLine y={0.3} stroke="#34d399" strokeDasharray="5 5" strokeOpacity={0.4} />
               <ReferenceLine y={0.7} stroke="#f87171" strokeDasharray="5 5" strokeOpacity={0.4} />
               <defs>
@@ -94,7 +96,7 @@ function DetailModal({ indicator, onClose, t }: { indicator: ITCIndicator; onClo
         {/* Description */}
         <div className="px-5 pb-5">
           <div className="bg-gray-800/30 rounded-lg p-3">
-            <p className="text-xs text-gray-400 leading-relaxed">{indicator.description}</p>
+            <p className="text-xs text-gray-400 leading-relaxed">{displayDesc}</p>
             <div className="flex items-center gap-2 mt-2">
               <span className={`text-[10px] font-medium px-2 py-0.5 rounded ${getRiskBgColor(indicator.value)}`}>
                 {getRiskLabel(indicator.value)}
@@ -156,7 +158,7 @@ const START_HERE_PATHS = [
 ] as const;
 
 export default function DashboardPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [selected, setSelected] = useState<ITCIndicator | null>(null);
   const [category, setCategory] = useState<string>('all');
   const { indicators: ITCIndicators, prices, loading: dataLoading, error: dataError, isLive } = useITCData();
@@ -278,7 +280,7 @@ export default function DashboardPage() {
             <div key={indicator.id} onClick={() => setSelected(indicator)}
               className="border border-gray-800/50 rounded-lg p-3.5 bg-gray-900/30 hover:bg-gray-900/60 hover:border-gray-700 transition-all cursor-pointer group">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-gray-400">{indicator.name}</span>
+                <span className="text-xs font-medium text-gray-400">{locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name}</span>
                 <Maximize2 className="w-3 h-3 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
 
@@ -303,7 +305,7 @@ export default function DashboardPage() {
                 <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${getRiskBgColor(indicator.value)}`}>
                   {getRiskLabel(indicator.value)}
                 </span>
-                <span className="text-[9px] text-gray-600">{indicator.nameEn}</span>
+                <span className="text-[9px] text-gray-600">{locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name}</span>
               </div>
             </div>
           );
@@ -347,7 +349,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Detail Modal */}
-      {selected && <DetailModal indicator={selected} onClose={() => setSelected(null)} t={t} />}
+      {selected && <DetailModal indicator={selected} onClose={() => setSelected(null)} t={t} locale={locale} />}
     </div>
   );
 }

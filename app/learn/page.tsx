@@ -297,9 +297,9 @@ function QuizSection({ quiz, lessonId }: { quiz: QuizQuestion[]; lessonId: strin
       <div className="space-y-5">
         {quiz.map((q, qi) => (
           <div key={qi}>
-            <p className="text-sm font-medium mb-2">{qi + 1}. {q.question}</p>
+            <p className="text-sm font-medium mb-2">{qi + 1}. {en && q.questionEn ? q.questionEn : q.question}</p>
             <div className="space-y-1.5">
-              {q.options.map((opt, oi) => {
+              {(en && q.optionsEn ? q.optionsEn : q.options).map((opt, oi) => {
                 const selected = answers[qi] === oi;
                 const isCorrect = q.correctIndex === oi;
                 let cls = 'bg-gray-800 border-gray-700 text-gray-300 hover:border-gray-600';
@@ -315,7 +315,7 @@ function QuizSection({ quiz, lessonId }: { quiz: QuizQuestion[]; lessonId: strin
               })}
             </div>
             {showResults && answers[qi] !== undefined && (
-              <p className="text-xs text-gray-400 mt-2 pl-2 border-l-2 border-gray-700">{q.explanation}</p>
+              <p className="text-xs text-gray-400 mt-2 pl-2 border-l-2 border-gray-700">{en && q.explanationEn ? q.explanationEn : q.explanation}</p>
             )}
           </div>
         ))}
@@ -338,7 +338,8 @@ function QuizSection({ quiz, lessonId }: { quiz: QuizQuestion[]; lessonId: strin
 }
 
 function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; chapterTitle: string }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const en = locale === 'en';
   const quiz = CHAPTER_QUIZZES[chapterId];
   if (!quiz || quiz.length === 0) return null;
 

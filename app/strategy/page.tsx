@@ -197,7 +197,7 @@ function CompareTable({ results }: { results: BacktestResult[] }) {
   return (
     <div className="overflow-x-auto"><table className="w-full text-sm">
       <thead><tr className="border-b border-gray-800"><th className="text-left py-2 px-3 text-gray-500">{tr('strategy.metric')}</th>
-        {results.map((r, i) => <th key={i} className="text-right py-2 px-3"><span className="flex items-center justify-end gap-1.5"><span className="w-2 h-2 rounded-full" style={{background: colors[i]}} /><span className="text-gray-300">{STRATEGY_TEMPLATES.find(t => t.id === r.strategyName)?.name || r.strategyName}</span></span></th>)}
+        {results.map((r, i) => <th key={i} className="text-right py-2 px-3"><span className="flex items-center justify-end gap-1.5"><span className="w-2 h-2 rounded-full" style={{background: colors[i]}} /><span className="text-gray-300">{(locale === 'en' ? (STRATEGY_TEMPLATES.find(t => t.id === r.strategyName)?.nameEn || STRATEGY_TEMPLATES.find(t => t.id === r.strategyName)?.name) : STRATEGY_TEMPLATES.find(t => t.id === r.strategyName)?.name) || r.strategyName}</span></span></th>)}
       </tr></thead>
       <tbody>{metrics.map(m => <tr key={m.label} className="border-b border-gray-800/50"><td className="py-2 px-3 text-gray-400">{m.label}</td>
         {results.map((r, i) => <td key={i} className="py-2 px-3 text-right font-mono text-gray-200">{m.fn(r)}</td>)}
@@ -610,7 +610,7 @@ function StrategyPage() {
               {showShareCard && (
                 <ShareCard
                   result={latest}
-                  strategyName={STRATEGY_TEMPLATES.find(t => t.id === selectedId)?.name || selectedId}
+                  strategyName={(locale === 'en' ? (STRATEGY_TEMPLATES.find(t => t.id === selectedId)?.nameEn || STRATEGY_TEMPLATES.find(t => t.id === selectedId)?.name) : STRATEGY_TEMPLATES.find(t => t.id === selectedId)?.name) || selectedId}
                   symbol={symbol}
                   timeframe={timeframe}
                   onClose={() => setShowShareCard(false)}
@@ -628,7 +628,7 @@ function StrategyPage() {
                           symbol: symbol,
                           timeframe: timeframe,
                           riskParams: { stopLoss, takeProfit, maxPosition },
-                          name: STRATEGY_TEMPLATES.find(t => t.id === selectedId)?.name,
+                          name: (locale === 'en' ? (STRATEGY_TEMPLATES.find(t => t.id === selectedId)?.nameEn || STRATEGY_TEMPLATES.find(t => t.id === selectedId)?.name) : STRATEGY_TEMPLATES.find(t => t.id === selectedId)?.name),
                         });
                         router.push('/trade');
                       }}
@@ -655,7 +655,7 @@ function StrategyPage() {
               <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">
                 <div className="text-xs text-gray-500 font-medium mb-3">{tr('strategy.equityChart')}</div>
                 <EquityCurve data={latest.equityCurve} color={colors[results.length-1]}
-                  compareData={results.slice(0,-1).map((r,i) => ({ data: r.equityCurve, color: colors[i], name: STRATEGY_TEMPLATES.find(t => t.id === r.strategyName)?.name || r.strategyName }))} />
+                  compareData={results.slice(0,-1).map((r,i) => ({ data: r.equityCurve, color: colors[i], name: (locale === 'en' ? (STRATEGY_TEMPLATES.find(t => t.id === r.strategyName)?.nameEn || STRATEGY_TEMPLATES.find(t => t.id === r.strategyName)?.name) : STRATEGY_TEMPLATES.find(t => t.id === r.strategyName)?.name) || r.strategyName }))} />
               </div>
 
               <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">
