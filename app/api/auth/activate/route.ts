@@ -15,14 +15,14 @@ export async function POST(req: NextRequest) {
     const checkoutSession = await getStripe().checkout.sessions.retrieve(sessionId);
     
     if (checkoutSession.payment_status !== 'paid') {
-      return NextResponse.json({ error: '支付未完成' }, { status: 400 });
+      return NextResponse.json({ error: 'Payment not completed' }, { status: 400 });
     }
 
     const planId = checkoutSession.metadata?.planId as 'pro' | 'elite' || 'pro';
     const email = checkoutSession.metadata?.email || checkoutSession.customer_email || '';
 
     if (!email) {
-      return NextResponse.json({ error: '无法获取邮箱' }, { status: 400 });
+      return NextResponse.json({ error: 'Unable to get email' }, { status: 400 });
     }
 
     // Check if already activated (prevent replay)

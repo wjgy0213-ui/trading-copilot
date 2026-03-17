@@ -50,7 +50,7 @@ export async function DELETE(req: NextRequest) {
 
     console.log(`🗓️ Subscription set to cancel: ${session.email} (expires: ${new Date(sub.current_period_end * 1000).toISOString()})`);
 
-    return NextResponse.json({ ok: true, message: '订阅将在当前周期结束后取消' });
+    return NextResponse.json({ ok: true, message: 'Subscription will be canceled at end of current period' });
   } catch (e: any) {
     console.error('Subscription cancellation error:', e);
     return NextResponse.json({ error: e.message }, { status: 500 });

@@ -18,12 +18,12 @@ export async function POST(req: NextRequest) {
     } = await req.json()
 
     if (!email && !wechat) {
-      return NextResponse.json({ error: '请填写联系方式' }, { status: 400 })
+      return NextResponse.json({ error: 'Please provide contact information' }, { status: 400 })
     }
 
     // Basic email validation
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json({ error: '邮箱格式不正确' }, { status: 400 })
+      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 })
     }
 
     const timestamp = new Date().toISOString()
@@ -120,6 +120,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, message: '已加入候补名单' })
   } catch (err) {
     console.error('Waitlist error:', err)
-    return NextResponse.json({ error: '提交失败，请重试' }, { status: 500 })
+    return NextResponse.json({ error: 'Submission failed, please try again' }, { status: 500 })
   }
 }

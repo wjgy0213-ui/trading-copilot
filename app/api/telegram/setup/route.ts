@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: chatId,
-          text: '✅ Trading Copilot Elite 通知已连接！\n\n您将收到：\n• 持仓变化通知\n• 风控状态警报\n• 平仓确认',
+          text: '✅ Trading Copilot Elite notifications connected!\n\nYou will receive:\n• Position updates\n• Risk alerts\n• 平仓确认',
         }),
       });
 

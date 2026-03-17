@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
   try {
     const { email } = await req.json();
     if (!email || !email.includes('@')) {
-      return NextResponse.json({ error: '请输入有效邮箱' }, { status: 400 });
+      return NextResponse.json({ error: 'Please enter a valid email' }, { status: 400 });
     }
 
     const code = generateVerifyCode(email);
@@ -25,10 +25,10 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify({
           from: process.env.EMAIL_FROM || 'Trading Copilot <noreply@tradingcopilot.app>',
           to: email,
-          subject: `验证码: ${code} — 交易陪练 AI`,
+          subject: `Verification Code: ${code} — Trading Copilot`,
           html: `
             <div style="font-family:sans-serif;max-width:400px;margin:0 auto;padding:32px;background:#0d1117;color:#e6edf3;border-radius:12px;">
-              <h2 style="color:#10b981;margin:0 0 16px;">交易陪练 AI</h2>
+              <h2 style="color:#10b981;margin:0 0 16px;">Trading Copilot</h2>
               <p style="color:#8b949e;font-size:14px;">你的验证码是：</p>
               <div style="font-size:36px;font-weight:bold;letter-spacing:8px;color:#fff;background:#161b22;padding:16px 24px;border-radius:8px;text-align:center;margin:16px 0;">
                 ${code}

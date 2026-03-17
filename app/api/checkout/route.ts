@@ -10,10 +10,10 @@ export async function POST(req: NextRequest) {
     };
     
     if (!planId || !PLANS[planId]) {
-      return NextResponse.json({ error: '无效的计划' }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
     }
     if (!email || !email.includes('@')) {
-      return NextResponse.json({ error: '请输入有效的邮箱' }, { status: 400 });
+      return NextResponse.json({ error: 'Please enter a valid email' }, { status: 400 });
     }
 
     const plan = PLANS[planId];
@@ -32,6 +32,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ url: session.url });
   } catch (error: any) {
     console.error('Checkout error:', error);
-    return NextResponse.json({ error: error.message || '创建支付失败' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Failed to create checkout' }, { status: 500 });
   }
 }
