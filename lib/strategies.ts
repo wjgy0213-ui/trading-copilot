@@ -82,7 +82,7 @@ export const STRATEGY_TEMPLATES: StrategyTemplate[] = [
   },
   {
     id: 'donchian', name: '通道突破', nameEn: 'Channel Breakout', icon: '🔔',
-    description: 'Donchian通道突破。海龟交易法核心策略。', descriptionEn: 'Donchian channel breakout. Core Turtle trading strategy.', descriptionEn: 'Donchian channel breakout. Core Turtle trading strategy.',
+    description: 'Donchian通道突破。海龟交易法核心策略。', descriptionEn: 'Donchian channel breakout. Core Turtle trading strategy.',
     params: [
       { key: 'period', label: '通道周期', labelEn: 'Channel Period', min: 10, max: 100, step: 1, default: 20 },
     ],
@@ -118,8 +118,8 @@ export const STRATEGY_TEMPLATES: StrategyTemplate[] = [
     pseudoCode: (p) => `// 双均线+量能策略\nfastEMA = EMA(close, ${p.fastPeriod})\nslowEMA = EMA(close, ${p.slowPeriod})\nvolumeSMA = SMA(volume, 20)\n\n做多: fastEMA上穿slowEMA 且 volume > volumeSMA×${p.volumeMult}\n做空: fastEMA下穿slowEMA 且 volume > volumeSMA×${p.volumeMult}`,
   },
   {
-    id: 'donchian', name: '通道突破', icon: '🔔',
-    description: 'Donchian通道突破。海龟交易法核心策略。', descriptionEn: 'Donchian channel breakout. Core Turtle trading strategy.', descriptionEn: 'Donchian channel breakout. Core Turtle trading strategy.',
+    id: 'donchian', name: '通道突破', nameEn: 'Channel Breakout', icon: '🔔',
+    description: 'Donchian通道突破。海龟交易法核心策略。', descriptionEn: 'Donchian channel breakout. Core Turtle trading strategy.',
     params: [
       { key: 'period', label: '通道周期', labelEn: 'Channel Period', min: 10, max: 100, step: 1, default: 20 },
     ],
@@ -133,7 +133,7 @@ export const DEFAULT_RISK: RiskParams = { stopLoss: 3, takeProfit: 6, maxPositio
 export type Timeframe = '1h' | '4h' | '1d';
 export type Symbol = 'BTCUSDT' | 'ETHUSDT' | 'SOLUSDT';
 
-export const TIMEFRAMES: { value: Timeframe; label: string }[] = [
+export const TIMEFRAMES: { value: Timeframe; label: string; labelEn?: string }[] = [
   { value: '1h', label: '1小时', labelEn: '1 Hour' }, { value: '4h', label: '4小时', labelEn: '4 Hours' }, { value: '1d', label: '1天', labelEn: '1 Day' },
 ];
 export const SYMBOLS: { value: Symbol; label: string }[] = [

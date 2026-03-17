@@ -95,7 +95,7 @@ function TradeTable({ trades }: { trades: BacktestResult['trades'] }) {
             <tbody>{trades.map((t, i) => (
               <tr key={i} className="border-b border-gray-800/50 hover:bg-gray-800/30">
                 <td className="py-1.5 px-2 text-gray-400">{new Date(t.entryTime).toLocaleDateString()}</td>
-                <td className="py-1.5 px-2"><span className={t.direction === 'long' ? 'text-green-400' : 'text-red-400'}>{t.direction === 'long' ? '多' : '空'}</span></td>
+                <td className="py-1.5 px-2"><span className={t.direction === 'long' ? 'text-green-400' : 'text-red-400'}>{t.direction === 'long' ? tr('strategy.long') : tr('strategy.short')}</span></td>
                 <td className="py-1.5 px-2 text-right font-mono text-gray-300">${t.entryPrice.toFixed(2)}</td>
                 <td className="py-1.5 px-2 text-right font-mono text-gray-300">${t.exitPrice.toFixed(2)}</td>
                 <td className={`py-1.5 px-2 text-right font-mono ${t.pnl > 0 ? 'text-green-400' : 'text-red-400'}`}>{t.pnl > 0 ? '+' : ''}${t.pnl.toFixed(2)}</td>
@@ -192,7 +192,7 @@ function CompareTable({ results }: { results: BacktestResult[] }) {
     { label: tr('strategy.profitFactor'), fn: (r: BacktestResult) => r.profitFactor === Infinity ? '∞' : r.profitFactor.toFixed(2) },
     { label: tr('strategy.maxDrawdown'), fn: (r: BacktestResult) => `${r.maxDrawdownPercent.toFixed(2)}%` },
     { label: tr('strategy.sharpeRatio'), fn: (r: BacktestResult) => r.sharpeRatio.toFixed(2) },
-    { label: tr('strategy.totalTrades'), fn: (r: BacktestResult) => `${r.totalTrades}笔` },
+    { label: tr('strategy.totalTrades'), fn: (r: BacktestResult) => `${r.totalTrades} ${tr('strategy.tradeUnit2')}` },
   ];
   return (
     <div className="overflow-x-auto"><table className="w-full text-sm">
@@ -239,7 +239,7 @@ function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
     miniSVG = pts;
   }
 
-  const shareText = `${tr('strategy.shareText')}\n📊 ${strategyName} (${symbolLabel} ${tfLabel[timeframe]})\n⭐ 综合评分 ${score}分 (${grade}级)\n💰 总收益 ${result.totalReturnPercent > 0 ? '+' : ''}${result.totalReturnPercent.toFixed(1)}%\n✅ 胜率 ${result.winRate.toFixed(1)}%  📉 最大回撤 ${result.maxDrawdownPercent.toFixed(1)}%\n\n免费试用 👉 trading-copilot-delta.vercel.app`;
+  const shareText = `${tr('strategy.shareText')}\n📊 ${strategyName} (${symbolLabel} ${tfLabel[timeframe]})\n⭐ 综合评分 ${score} ${tr('strategy.scoreLabel')} (${grade}级)\n💰 总收益 ${result.totalReturnPercent > 0 ? '+' : ''}${result.totalReturnPercent.toFixed(1)}%\n✅ 胜率 ${result.winRate.toFixed(1)}%  📉 最大回撤 ${result.maxDrawdownPercent.toFixed(1)}%\n\n免费试用 👉 trading-copilot-delta.vercel.app`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareText).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
@@ -343,6 +343,7 @@ export default function StrategyPageWrapper() {
 }
 
 function StrategyPage() {
+  const { t: tr, locale } = useI18n();
   const router = useRouter();
   const searchParams = useSearchParams();
   const urlSid = searchParams.get('sid');
@@ -499,7 +500,7 @@ function StrategyPage() {
             </div>
 
             <button onClick={() => setShowCode(!showCode)} className="flex items-center gap-2 text-xs text-gray-500 hover:text-gray-300 transition">
-              {showCode ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />} 策略逻辑预览
+              {showCode ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />} {tr('strategy.logicPreviewLabel')}
             </button>
             {showCode && <pre className="bg-gray-900 border border-gray-800 rounded-xl p-4 text-xs text-emerald-300 font-mono whitespace-pre-wrap">{selected.pseudoCode(params)}</pre>}
 
@@ -558,7 +559,7 @@ function StrategyPage() {
               className={`w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition ${optimizing ? 'bg-gray-800 text-gray-500 cursor-wait' : 'bg-violet-700 hover:bg-violet-600 text-white'}`}>
               {optimizing
                 ? <><div className="w-4 h-4 border-2 border-gray-600 border-t-violet-400 rounded-full animate-spin" /> {tr('strategy.searching')}…</>
-                : <><Search className="w-4 h-4" /> 🔍 自动寻参</>}
+                : <><Search className="w-4 h-4" /> {tr('strategy.autoSearchLabel')}</>}
             </button>
             {optimizing && optProgress.total > 0 && (
               <div className="space-y-1">
@@ -574,7 +575,7 @@ function StrategyPage() {
                     <thead><tr className="text-gray-600 border-b border-gray-800">
                       <th className="text-left py-1 pr-2">#</th>
                       <th className="text-right py-1 pr-2">{tr('strategy.sharpeCol')}</th>
-                      <th className="text-right py-1 pr-2">收益%</th>
+                      <th className="text-right py-1 pr-2">{tr('strategy.returnCol')}</th>
                       <th className="text-right py-1 pr-2">{tr('strategy.winRateCol')}</th>
                       <th className="text-right py-1">{tr('strategy.drawdownCol')}</th>
                       <th className="py-1"></th>
@@ -643,11 +644,11 @@ function StrategyPage() {
                 <div className="grid grid-cols-4 gap-2">
                   {(() => { const s = calcScore(latest); const color = s >= 61 ? 'text-green-400' : s >= 31 ? 'text-yellow-400' : 'text-red-400'; const grade = s >= 80 ? 'S级' : s >= 61 ? 'A级' : s >= 31 ? 'B级' : 'C级'; return <StatCard label="综合评分" value={`${s}`} sub={grade} color={color} />; })()}
                   <StatCard label={tr('strategy.totalReturn')} value={`${latest.totalReturnPercent > 0 ? '+' : ''}${latest.totalReturnPercent.toFixed(2)}%`} sub={`$${latest.totalReturn.toFixed(0)}`} color={latest.totalReturnPercent > 0 ? 'text-green-400' : 'text-red-400'} />
-                  <StatCard label={tr('strategy.winRateLabel')} value={`${latest.winRate.toFixed(1)}%`} sub={`${latest.winTrades}胜 ${latest.lossTrades}负`} color={latest.winRate >= 50 ? 'text-green-400' : 'text-yellow-400'} />
+                  <StatCard label={tr('strategy.winRateLabel')} value={`${latest.winRate.toFixed(1)}%`} sub={`${latest.winTrades} ${tr('strategy.winLabel')} ${latest.lossTrades} ${tr('strategy.loseLabel')}`} color={latest.winRate >= 50 ? 'text-green-400' : 'text-yellow-400'} />
                   <StatCard label={tr('strategy.profitFactor')} value={latest.profitFactor === Infinity ? '∞' : latest.profitFactor.toFixed(2)} color={latest.profitFactor >= 1.5 ? 'text-green-400' : latest.profitFactor >= 1 ? 'text-yellow-400' : 'text-red-400'} />
                   <StatCard label={tr('strategy.maxDrawdown')} value={`${latest.maxDrawdownPercent.toFixed(2)}%`} sub={`$${latest.maxDrawdown.toFixed(0)}`} color={latest.maxDrawdownPercent < 10 ? 'text-green-400' : latest.maxDrawdownPercent < 20 ? 'text-yellow-400' : 'text-red-400'} />
                   <StatCard label={tr('strategy.sharpeRatio')} value={latest.sharpeRatio.toFixed(2)} color={latest.sharpeRatio > 1 ? 'text-green-400' : latest.sharpeRatio > 0 ? 'text-yellow-400' : 'text-red-400'} />
-                  <StatCard label={tr('strategy.totalTrades')} value={`${latest.totalTrades}笔`} sub={`平均${latest.avgHoldBars.toFixed(1)}根K线`} />
+                  <StatCard label={tr('strategy.totalTrades')} value={`${latest.totalTrades} ${tr('strategy.tradeUnit2')}`} sub={`平均${latest.avgHoldBars.toFixed(1)}根K线`} />
                 </div>
               </div>
 
@@ -658,24 +659,24 @@ function StrategyPage() {
               </div>
 
               <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">
-                <div className="text-xs text-gray-500 font-medium mb-3">回撤水下图</div>
+                <div className="text-xs text-gray-500 font-medium mb-3">{tr('strategy.drawdownUW')}</div>
                 <DrawdownChart data={latest.equityCurve} />
               </div>
 
-              {results.length >= 2 && <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4"><div className="text-xs text-gray-500 font-medium mb-3">策略对比</div><CompareTable results={results} /></div>}
+              {results.length >= 2 && <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4"><div className="text-xs text-gray-500 font-medium mb-3">{tr('strategy.compareChart')}</div><CompareTable results={results} /></div>}
 
               {latest.monthlyReturns.length > 0 && <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4"><div className="text-xs text-gray-500 font-medium mb-3">{tr('strategy.monthlyReturn')}</div><MonthlyHeatmap data={latest.monthlyReturns} /></div>}
 
               <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">
-                <div className="text-xs text-gray-500 font-medium mb-3">盈亏散点图</div>
+                <div className="text-xs text-gray-500 font-medium mb-3">{tr('strategy.pnlScatter')}</div>
                 <TradeScatter trades={latest.trades} />
               </div>
 
               {/* Monte Carlo Simulation */}
-              <Paywall feature="蒙特卡洛模拟">
+              <Paywall feature={tr('strategy.mcPaywall')}>
               <div className="bg-gray-900/30 border border-emerald-800/40 rounded-xl p-4 space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="text-xs text-emerald-400 font-medium">🎲 蒙特卡洛模拟</div>
+                  <div className="text-xs text-emerald-400 font-medium">{tr('strategy.mcTitle')}</div>
                   <button onClick={() => {
                     if (!latest || latest.trades.length < 2) return;
                     setMcRunning(true);
@@ -688,10 +689,10 @@ function StrategyPage() {
                     }, 50);
                   }} disabled={mcRunning || !latest || latest.trades.length < 2}
                     className={`text-xs px-3 py-1.5 rounded-lg font-medium transition ${mcRunning ? 'bg-gray-800 text-gray-500 cursor-wait' : 'bg-emerald-700 hover:bg-emerald-600 text-white'}`}>
-                    {mcRunning ? '模拟中…' : '运行 1000 次模拟'}
+                    {mcRunning ? tr('strategy.mcRunning') : tr('strategy.mcRun1000')}
                   </button>
                 </div>
-                <p className="text-[10px] text-gray-600">随机打乱交易顺序，模拟1000条不同路径，评估策略的鲁棒性和概率分布</p>
+                <p className="text-[10px] text-gray-600">{tr('strategy.mcDesc')}</p>
 
                 {mcResult && (<>
                   {/* Probability Cards */}
@@ -703,17 +704,17 @@ function StrategyPage() {
                       </div>
                     </div>
                     <div className="bg-gray-900/50 rounded-lg p-2.5 text-center">
-                      <div className="text-[10px] text-gray-500 mb-1">翻倍概率</div>
+                      <div className="text-[10px] text-gray-500 mb-1">{tr('strategy.doubleProb')}</div>
                       <div className="text-lg font-bold font-mono text-emerald-400">{(mcResult.probDouble * 100).toFixed(0)}%</div>
                     </div>
                     <div className="bg-gray-900/50 rounded-lg p-2.5 text-center">
-                      <div className="text-[10px] text-gray-500 mb-1">爆仓概率</div>
+                      <div className="text-[10px] text-gray-500 mb-1">{tr('strategy.blowupProb')}</div>
                       <div className={`text-lg font-bold font-mono ${mcResult.probRuin <= 0.05 ? 'text-green-400' : mcResult.probRuin <= 0.15 ? 'text-yellow-400' : 'text-red-400'}`}>
                         {(mcResult.probRuin * 100).toFixed(0)}%
                       </div>
                     </div>
                     <div className="bg-gray-900/50 rounded-lg p-2.5 text-center">
-                      <div className="text-[10px] text-gray-500 mb-1">跑赢持有</div>
+                      <div className="text-[10px] text-gray-500 mb-1">{tr('strategy.beatHold')}</div>
                       <div className="text-lg font-bold font-mono text-violet-400">{(mcResult.probBeatBuyHold * 100).toFixed(0)}%</div>
                     </div>
                   </div>
@@ -721,23 +722,23 @@ function StrategyPage() {
                   {/* Return Distribution */}
                   <div className="grid grid-cols-2 gap-3">
                     <div className="bg-gray-900/50 rounded-lg p-3">
-                      <div className="text-[10px] text-gray-500 mb-2">收益分布</div>
+                      <div className="text-[10px] text-gray-500 mb-2">{tr('strategy.returnDist')}</div>
                       <div className="space-y-1.5 text-xs">
-                        <div className="flex justify-between"><span className="text-gray-500">最佳</span><span className="text-green-400 font-mono">+{mcResult.bestCase.toFixed(1)}%</span></div>
-                        <div className="flex justify-between"><span className="text-gray-500">75分位</span><span className="text-green-400 font-mono">+{mcResult.percentiles.find(p => p.level === 0.75)?.returnPercent.toFixed(1)}%</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">{tr('strategy.best')}</span><span className="text-green-400 font-mono">+{mcResult.bestCase.toFixed(1)}%</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">{tr('strategy.p75')}</span><span className="text-green-400 font-mono">+{mcResult.percentiles.find(p => p.level === 0.75)?.returnPercent.toFixed(1)}%</span></div>
                         <div className="flex justify-between font-medium"><span className="text-gray-400">{tr('strategy.median')}</span><span className={`font-mono ${mcResult.medianReturn > 0 ? 'text-emerald-400' : 'text-red-400'}`}>{mcResult.medianReturn > 0 ? '+' : ''}{mcResult.medianReturn.toFixed(1)}%</span></div>
-                        <div className="flex justify-between"><span className="text-gray-500">25分位</span><span className={`font-mono ${(mcResult.percentiles.find(p => p.level === 0.25)?.returnPercent || 0) > 0 ? 'text-green-400' : 'text-red-400'}`}>{mcResult.percentiles.find(p => p.level === 0.25)?.returnPercent.toFixed(1)}%</span></div>
-                        <div className="flex justify-between"><span className="text-gray-500">最差</span><span className="text-red-400 font-mono">{mcResult.worstCase.toFixed(1)}%</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">{tr('strategy.p25')}</span><span className={`font-mono ${(mcResult.percentiles.find(p => p.level === 0.25)?.returnPercent || 0) > 0 ? 'text-green-400' : 'text-red-400'}`}>{mcResult.percentiles.find(p => p.level === 0.25)?.returnPercent.toFixed(1)}%</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">{tr('strategy.worst')}</span><span className="text-red-400 font-mono">{mcResult.worstCase.toFixed(1)}%</span></div>
                       </div>
                     </div>
                     <div className="bg-gray-900/50 rounded-lg p-3">
-                      <div className="text-[10px] text-gray-500 mb-2">回撤分布</div>
+                      <div className="text-[10px] text-gray-500 mb-2">{tr('strategy.drawdownDist')}</div>
                       <div className="space-y-1.5 text-xs">
-                        <div className="flex justify-between"><span className="text-gray-500">平均回撤</span><span className="text-yellow-400 font-mono">{mcResult.meanMaxDrawdown.toFixed(1)}%</span></div>
-                        <div className="flex justify-between font-medium"><span className="text-gray-400">中位回撤</span><span className="text-yellow-400 font-mono">{mcResult.medianMaxDrawdown.toFixed(1)}%</span></div>
-                        <div className="flex justify-between"><span className="text-gray-500">最大回撤</span><span className="text-red-400 font-mono">{mcResult.worstDrawdown.toFixed(1)}%</span></div>
-                        <div className="flex justify-between"><span className="text-gray-500">平均收益</span><span className="text-gray-300 font-mono">{mcResult.meanReturn > 0 ? '+' : ''}{mcResult.meanReturn.toFixed(1)}%</span></div>
-                        <div className="flex justify-between"><span className="text-gray-500">标准差</span><span className="text-gray-300 font-mono">±{mcResult.stdReturn.toFixed(1)}%</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">{tr('strategy.avgDrawdown')}</span><span className="text-yellow-400 font-mono">{mcResult.meanMaxDrawdown.toFixed(1)}%</span></div>
+                        <div className="flex justify-between font-medium"><span className="text-gray-400">{tr('strategy.medianDrawdown')}</span><span className="text-yellow-400 font-mono">{mcResult.medianMaxDrawdown.toFixed(1)}%</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">{tr('strategy.maxDDLabel')}</span><span className="text-red-400 font-mono">{mcResult.worstDrawdown.toFixed(1)}%</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">{tr('strategy.avgReturn')}</span><span className="text-gray-300 font-mono">{mcResult.meanReturn > 0 ? '+' : ''}{mcResult.meanReturn.toFixed(1)}%</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">{tr('strategy.stdDev')}</span><span className="text-gray-300 font-mono">±{mcResult.stdReturn.toFixed(1)}%</span></div>
                       </div>
                     </div>
                   </div>
@@ -746,10 +747,10 @@ function StrategyPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs">
                       <thead><tr className="text-gray-600 border-b border-gray-800">
-                        <th className="text-left py-1.5 px-2">置信度</th>
-                        <th className="text-right py-1.5 px-2">最终资金</th>
-                        <th className="text-right py-1.5 px-2">收益率</th>
-                        <th className="text-right py-1.5 px-2">最大回撤</th>
+                        <th className="text-left py-1.5 px-2">{tr('strategy.confidence')}</th>
+                        <th className="text-right py-1.5 px-2">{tr('strategy.finalCapital')}</th>
+                        <th className="text-right py-1.5 px-2">{tr('strategy.returnRate')}</th>
+                        <th className="text-right py-1.5 px-2">{tr('strategy.maxDDCol')}</th>
                       </tr></thead>
                       <tbody>{mcResult.percentiles.map(p => (
                         <tr key={p.level} className={`border-b border-gray-800/50 ${p.level === 0.5 ? 'bg-emerald-500/5' : ''}`}>
@@ -764,7 +765,7 @@ function StrategyPage() {
 
                   {/* MC Equity Fan Chart (SVG) */}
                   <div>
-                    <div className="text-[10px] text-gray-500 mb-2">1000条模拟路径（绿=盈利 红=亏损）</div>
+                    <div className="text-[10px] text-gray-500 mb-2">{tr('strategy.mc1000paths')}</div>
                     <svg viewBox="0 0 600 200" className="w-full" style={{background: 'transparent'}}>
                       {mcResult.paths.map((path, i) => {
                         const pts = path.equityCurve;
@@ -811,7 +812,7 @@ function StrategyPage() {
                   </div>
 
                   <div className="text-[10px] text-gray-600 text-center">
-                    基于 {latest.totalTrades} 笔历史交易 × 1000 次随机排列 | 绿线=中位数路径
+                    {tr('strategy.mcBasis').replace('{trades}', String(latest.totalTrades))}
                   </div>
                 </>)}
               </div>
@@ -821,7 +822,7 @@ function StrategyPage() {
 
               {/* ── Result Interpretation ── */}
               <div className="mt-6 rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-gray-900 p-5">
-                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300 mb-3">📖 这些数字意味着什么</div>
+                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300 mb-3">{tr('strategy.whatMeans')}</div>
                 <div className="grid gap-3 sm:grid-cols-2 text-sm text-gray-400 leading-relaxed">
                   <div>
                     <span className="text-gray-200 font-medium">胜率 {latest.winRate.toFixed(1)}%</span>
@@ -844,9 +845,9 @@ function StrategyPage() {
 
               {/* ── Next Step CTA ── */}
               <div className="mt-4 rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/5 to-gray-900 p-5">
-                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">下一步</div>
-                <h3 className="mt-2 text-lg font-semibold text-white">回测验证完？去 Practice 用真实价格练手</h3>
-                <p className="mt-2 text-sm text-gray-400">回测是纸上谈兵，Practice 是实战模拟。用虚拟资金在真实行情中执行你的策略，检验自己的纪律性和执行力。</p>
+                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">{tr('strategy.nextStepLabel')}</div>
+                <h3 className="mt-2 text-lg font-semibold text-white">{tr('strategy.nextStepTitle')}</h3>
+                <p className="mt-2 text-sm text-gray-400">{tr('strategy.nextStepDesc')}</p>
                 <a href="/practice" className="mt-4 inline-flex items-center gap-2 rounded-full bg-cyan-500 px-4 py-2 text-sm font-medium text-black transition hover:bg-cyan-400">去 Practice 训练 →</a>
               </div>
             </>)}

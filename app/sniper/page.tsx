@@ -701,7 +701,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                         <ScoreBadge score={pos.score} />
                         {pos.partial_sold && (
                           <span className="px-2 py-0.5 rounded text-xs bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
-                            部分止盈
+                            {t('sniper.partialTPLabel')}
                           </span>
                         )}
                       </div>

@@ -1,26 +1,36 @@
 export interface QuizQuestion {
   question: string;
+  questionEn?: string;
   options: string[];
+  optionsEn?: string[];
   correctIndex: number;
   explanation: string;
+  explanationEn?: string;
 }
 
 export interface Lesson {
   id: string;
   title: string;
+  titleEn?: string;
   description: string;
+  descriptionEn?: string;
   icon: string;
   duration: string;
+  durationEn?: string;
   tier: 'free' | 'pro';
   content: string;
+  contentEn?: string;
   quiz?: QuizQuestion[];
   homework?: string;
+  homeworkEn?: string;
 }
 
 export interface Chapter {
   id: string;
   title: string;
+  titleEn?: string;
   description: string;
+  descriptionEn?: string;
   icon: string;
   tier: 'free' | 'pro';
   lessons: Lesson[];
@@ -35,13 +45,16 @@ export const COURSE_CHAPTERS: Chapter[] = [
   {
     id: 'ch0',
     title: '交易入门：心态与纪律',
+    titleEn: 'Trading Basics: Mindset & Discipline',
     description: '在学任何技术之前，先建立正确的交易心态。这是一切的基础。',
+    descriptionEn: 'Before learning any technical skills, build the right trading mindset. This is the foundation of everything.',
     icon: '🧠',
     tier: 'free',
     lessons: [
       {
-        id: 'ch0-1', title: '为什么90%的人亏钱', icon: '💀', duration: '8分钟', tier: 'free',
+        id: 'ch0-1', title: '为什么90%的人亏钱', titleEn: 'Why 90% of Traders Lose Money', icon: '💀', duration: '8分钟', durationEn: '8 min', tier: 'free',
         description: '理解交易的残酷真相，以及如何成为那10%',
+        descriptionEn: 'Understand the harsh reality of trading, and how to be in the top 10%',
         content: `# 为什么90%的人亏钱
 
 ## 残酷的数据
