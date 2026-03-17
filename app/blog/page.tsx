@@ -71,10 +71,15 @@ export default function BlogPage() {
         {/* CTA */}
         <div className="mt-16 border border-emerald-500/20 rounded-xl p-8 bg-emerald-500/5 text-center">
           <h3 className="text-xl font-bold mb-2">Ready to trade smarter?</h3>
-          <p className="text-gray-400 mb-4">Try Trading Copilot — AI-powered market analysis, risk management, and trade review.</p>
-          <Link href="/pricing" className="inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-xl transition">
-            Start Free Trial →
-          </Link>
+          <p className="text-gray-400 mb-4">Try Trading Copilot — AI-powered market analysis, risk management, and trade review. 3 free uses/day.</p>
+          <div className="flex gap-3 justify-center flex-wrap">
+            <Link href="/pricing" className="inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-xl transition">
+              Get Started Free →
+            </Link>
+            <Link href="/features/health" className="inline-block bg-gray-800 hover:bg-gray-700 text-white font-medium px-6 py-3 rounded-xl transition">
+              Explore Features
+            </Link>
+          </div>
         </div>
       </div>
     </div>

@@ -13,8 +13,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
+  // Feature landing pages
+  const featurePages = ['health', 'sniper', 'practice', 'signals', 'review', 'guardian', 'whales'];
+  const featureUrls: MetadataRoute.Sitemap = featurePages.map(f => ({
+    url: `${base}/features/${f}`,
+    lastModified: now,
+    changeFrequency: 'weekly' as const,
+    priority: 0.85,
+  }));
+
   return [
     ...blogUrls,
+    ...featureUrls,
     { url: base, lastModified: now, changeFrequency: 'daily', priority: 1.0 },
     { url: `${base}/blog`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${base}/practice`, lastModified: now, changeFrequency: 'daily', priority: 0.95 },

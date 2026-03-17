@@ -140,10 +140,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         {/* CTA */}
         <div className="mt-16 border border-emerald-500/20 rounded-xl p-8 bg-emerald-500/5 text-center">
           <h3 className="text-xl font-bold mb-2">Try Trading Copilot</h3>
-          <p className="text-gray-400 mb-4">AI-powered market analysis with 15+ real indicators. Free trial, no credit card required.</p>
-          <div className="flex gap-3 justify-center">
+          <p className="text-gray-400 mb-4">AI-powered market analysis with 15+ real indicators. 3 free uses/day, no credit card required.</p>
+          <div className="flex gap-3 justify-center flex-wrap">
             <Link href="/pricing" className="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-xl transition">
-              Start Free Trial →
+              Get Started Free →
             </Link>
             <Link href="/dashboard" className="bg-gray-800 hover:bg-gray-700 text-white font-medium px-6 py-3 rounded-xl transition">
               View Dashboard
