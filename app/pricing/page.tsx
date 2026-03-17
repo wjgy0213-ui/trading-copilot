@@ -10,48 +10,14 @@ import CancelRetentionModal from '@/components/CancelRetentionModal';
 
 type BillingInterval = 'monthly' | 'yearly';
 
-const PLANS = [
-  {
-    id: 'free' as const,
-    name: '免费版',
-    monthlyPrice: 0,
-    yearlyMonthly: 0,
-    yearlyPrice: 0,
-    description: '每天3次免费市场分析',
-    features: ['模拟交易', '3个基础策略', '基础仪表盘', '入门课程', '每日资讯', '每天3次市场分析'],
-    cta: '当前方案',
-    disabled: true,
-    icon: Zap,
-    color: 'gray',
-  },
-  {
-    id: 'pro' as const,
-    name: 'Pro',
-    monthlyPrice: 39.99,
-    yearlyMonthly: 19.99,
-    yearlyPrice: 239.88,
-    description: 'AI驱动的策略定制与回测',
-    features: ['无限市场分析', 'AI策略定制', '8大策略模板', '高级回测引擎', '参数优化器', '回测报告导出', 'Monte Carlo模拟'],
-    cta: '升级 Pro',
-    disabled: false,
-    icon: Crown,
-    color: 'emerald',
-    popular: true,
-  },
-  {
-    id: 'elite' as const,
-    name: 'Elite',
-    monthlyPrice: 79.99,
-    yearlyMonthly: 39.99,
-    yearlyPrice: 479.88,
-    description: '从策略到实盘的完整闭环',
-    features: ['Pro全部功能', '4大交易所API对接（Binance/OKX/Bybit/Hyperliquid）', '智能风控系统（单笔/日亏损/杠杆限制）', '风控实时监控（绿/黄/红灯）', '紧急一键平仓', 'Telegram机器人通知', '1对1优先支持'],
-    cta: '升级 Elite',
-    disabled: false,
-    icon: Shield,
-    color: 'violet',
-  },
-];
+const PLAN_IDS = ['free', 'pro', 'elite'] as const;
+type PlanId = typeof PLAN_IDS[number];
+
+const PLAN_META = {
+  free: { icon: Zap, color: 'gray', popular: false, disabled: true, monthlyPrice: 0, yearlyPrice: 0, yearlyMonthly: 0 },
+  pro: { icon: Crown, color: 'emerald', popular: true, disabled: false, monthlyPrice: 39.99, yearlyPrice: 239.88, yearlyMonthly: 19.99 },
+  elite: { icon: Shield, color: 'violet', popular: false, disabled: false, monthlyPrice: 79.99, yearlyPrice: 479.88, yearlyMonthly: 39.99 },
+} as const;
 
 export default function PricingPageWrapper() {
   return <Suspense fallback={<div className="min-h-screen bg-gray-950" />}><PricingPage /></Suspense>;
@@ -83,7 +49,7 @@ function PricingPage() {
       });
       const data = await r.json();
       if (!r.ok || data.error) {
-        setActivateError(data.error || '激活失败，请联系支持');
+        setActivateError(data.error || t('pricing.error.activate'));
       } else {
         analytics.activationSuccess({
           plan: data.plan,
@@ -94,7 +60,7 @@ function PricingPage() {
         await refresh();
       }
     } catch {
-      setActivateError('网络错误，请刷新页面重试');
+      setActivateError(t('pricing.error.network'));
     } finally {
       setActivating(false);
     }
@@ -111,7 +77,7 @@ function PricingPage() {
 
   const handleCheckout = async (planId: string) => {
     if (!email || !email.includes('@')) {
-      alert('请输入有效的邮箱地址');
+      alert(t('pricing.error.email'));
       return;
     }
     setLoading(planId);
@@ -130,13 +96,28 @@ function PricingPage() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert(data.error || '创建支付失败');
+        alert(data.error || t('pricing.error.checkout'));
       }
     } catch {
-      alert('网络错误，请重试');
+      alert(t('pricing.error.network'));
     }
     setLoading(null);
   };
+
+  // Build plans dynamically with i18n
+  const plans = PLAN_IDS.map((id) => {
+    const meta = PLAN_META[id];
+    const featureCount = id === 'free' ? 6 : id === 'pro' ? 7 : 7;
+    const features = Array.from({ length: featureCount }, (_, i) => t(`pricing.${id}.f${i+1}`));
+    return {
+      id,
+      name: t(`pricing.${id}.name`),
+      description: t(`pricing.${id}.desc`),
+      cta: t(`pricing.${id}.cta`),
+      features,
+      ...meta,
+    };
+  });
 
   return (
     <div className="min-h-screen bg-gray-950 text-white pt-20 pb-12">
@@ -159,7 +140,7 @@ function PricingPage() {
                   : 'text-gray-500 hover:text-gray-300'
               }`}
             >
-              月付
+              {t('pricing.monthly')}
             </button>
             <button
               onClick={() => setBillingInterval('yearly')}
@@ -169,9 +150,9 @@ function PricingPage() {
                   : 'text-gray-500 hover:text-gray-300'
               }`}
             >
-              年付
+              {t('pricing.yearly')}
               <span className="bg-amber-500/20 text-amber-400 text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                省50%
+                {t('pricing.save50')}
               </span>
             </button>
           </div>
@@ -220,7 +201,7 @@ function PricingPage() {
 
         {/* Plans */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {PLANS.map(plan => {
+          {plans.map(plan => {
             const Icon = plan.icon;
             const isCurrentPlan = (session?.plan || 'free') === plan.id;
             const borderColor = plan.popular ? 'border-emerald-500/50' : 'border-gray-800';
@@ -235,7 +216,7 @@ function PricingPage() {
                 className={`relative bg-gray-900/50 border ${borderColor} rounded-2xl p-6 flex flex-col ${plan.popular ? 'ring-1 ring-emerald-500/20' : ''}`}>
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full">
-                    最受欢迎
+                    {t('pricing.mostPopular')}
                   </div>
                 )}
                 
@@ -252,12 +233,12 @@ function PricingPage() {
                 
                 <div className="mb-1">
                   <span className="text-3xl font-bold">${displayPrice}</span>
-                  <span className="text-gray-500 text-sm">/月</span>
+                  <span className="text-gray-500 text-sm">{t('pricing.perMonth')}</span>
                 </div>
                 {plan.id !== 'free' && billingInterval === 'yearly' && (
                   <p className="text-xs text-gray-500 mb-3">
-                    按年付费 <span className="text-emerald-400">${plan.yearlyPrice}/年</span>
-                    <span className="ml-1.5 text-amber-400">（省50%）</span>
+                    {t('pricing.billedYearly')} <span className="text-emerald-400">${plan.yearlyPrice}{t('pricing.perYear')}</span>
+                    <span className="ml-1.5 text-amber-400">({t('pricing.save50')})</span>
                   </p>
                 )}
                 {plan.id !== 'free' && billingInterval === 'monthly' && (
@@ -319,7 +300,7 @@ function PricingPage() {
               { q: '可以随时取消吗？', a: '是的，随时可以在设置中取消订阅，当前计费周期内仍可使用全部功能。' },
               { q: '支持哪些支付方式？', a: '通过Stripe支持信用卡、借记卡、Apple Pay、Google Pay等主流支付方式。' },
               { q: 'Elite的实盘自动化安全吗？', a: 'API Key加密存储，仅限交易权限（不可提币），内置风控系统防止异常交易。' },
-              { q: '免费版能做什么？', a: '注册用户每天可免费使用3次市场分析（市场体检、信号聚合等核心功能），模拟交易和基础策略不限次数。' },
+              { q: t('pricing.faq1.q'), a: t('pricing.faq1.a') },
               { q: '年付和月付有什么区别？', a: '年付享受5折优惠，相当于买6个月送6个月。可以随时从月付切换到年付。' },
             ].map(({ q, a }) => (
               <div key={q} className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">

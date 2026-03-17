@@ -93,8 +93,9 @@ function PaywallBanner({ onUnlock }: { onUnlock: () => void }) {
 }
 
 function LessonCard({ lesson, index, locked }: { lesson: Lesson; index: number; locked: boolean }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [expanded, setExpanded] = useState(false);
+  const en = locale === 'en';
 
   return (
     <motion.div
@@ -115,10 +116,10 @@ function LessonCard({ lesson, index, locked }: { lesson: Lesson; index: number; 
         <span className="text-2xl">{lesson.icon}</span>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h4 className="font-semibold text-sm">{lesson.title}</h4>
+            <h4 className="font-semibold text-sm">{en && lesson.titleEn ? lesson.titleEn : lesson.title}</h4>
             {locked && <Lock className="w-3.5 h-3.5 text-gray-600" />}
           </div>
-          <p className="text-xs text-gray-500 mt-0.5">{lesson.description}</p>
+          <p className="text-xs text-gray-500 mt-0.5">{en && lesson.descriptionEn ? lesson.descriptionEn : lesson.description}</p>
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">
           {!locked && (
@@ -135,7 +136,7 @@ function LessonCard({ lesson, index, locked }: { lesson: Lesson; index: number; 
           {lesson.homework && (
             <div className="mt-6 p-4 bg-blue-600/10 border border-blue-500/20 rounded-xl">
               <div className="text-sm font-semibold text-blue-400 mb-2">{t('learn.homework')}</div>
-              <p className="text-sm text-gray-300">{lesson.homework}</p>
+              <p className="text-sm text-gray-300">{en && lesson.homeworkEn ? lesson.homeworkEn : lesson.homework}</p>
               <Link
                 href={`/trade?lesson=${lesson.id}`}
                 className="mt-3 inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 px-4 py-2 rounded-lg transition-all"
@@ -275,7 +276,8 @@ function renderInline(text: string): React.ReactNode {
 }
 
 function QuizSection({ quiz, lessonId }: { quiz: QuizQuestion[]; lessonId: string }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const en = locale === 'en';
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
 

@@ -146,26 +146,38 @@ export const COURSE_CHAPTERS: Chapter[] = [
             question: '以下哪个是散户亏钱的最常见原因？',
             options: ['市场被操控', '没有交易计划和情绪化交易', '技术分析不够好', '资金太少'],
             correctIndex: 1,
-            explanation: '虽然市场操控和资金量也有影响，但研究表明，缺乏计划和情绪化交易是散户亏损的首要原因。大部分亏损可以通过纪律来避免。'
+            explanation: '虽然市场操控和资金量也有影响，但研究表明，缺乏计划和情绪化交易是散户亏损的首要原因。大部分亏损可以通过纪律来避免。',
+            questionEn: 'Which is the most common reason retail traders lose money?',
+            optionsEn: ['Market manipulation', 'No trading plan and emotional trading', 'Insufficient technical analysis', 'Not enough capital'],
+            explanationEn: 'While market manipulation and capital size matter, research shows lack of planning and emotional trading are the primary causes. Most losses can be avoided through discipline.'
           },
           {
             question: '亏损50%后，需要上涨多少才能回本？',
             options: ['50%', '75%', '100%', '150%'],
             correctIndex: 2,
-            explanation: '如果从$100跌到$50（-50%），需要从$50涨到$100（+100%）才能回本。这就是为什么止损如此重要——让亏损保持小才能快速恢复。'
+            explanation: '如果从$100跌到$50（-50%），需要从$50涨到$100（+100%）才能回本。这就是为什么止损如此重要——让亏损保持小才能快速恢复。',
+            questionEn: 'After a 50% loss, how much gain is needed to break even?',
+            optionsEn: ['50%', '75%', '100%', '150%'],
+            explanationEn: 'If $100 drops to $50 (-50%), it needs to go from $50 to $100 (+100%) to break even. This is why stop losses are critical — keeping losses small enables faster recovery.'
           },
           {
             question: '关于杠杆，以下哪个说法正确？',
             options: ['杠杆越高赚钱越快', '杠杆放大收益也放大风险', '新手应该用高杠杆快速积累', '10x杠杆很安全'],
             correctIndex: 1,
-            explanation: '杠杆是双刃剑，放大一切。10x杠杆意味着10%的反向波动就爆仓。新手建议1-3x。'
+            explanation: '杠杆是双刃剑，放大一切。10x杠杆意味着10%的反向波动就爆仓。新手建议1-3x。',
+            questionEn: 'Which statement about leverage is correct?',
+            optionsEn: ['Higher leverage = faster profits', 'Leverage amplifies both gains and risks', 'Beginners should use high leverage to accumulate fast', '10x leverage is safe'],
+            explanationEn: 'Leverage is a double-edged sword that amplifies everything. 10x leverage means a 10% adverse move wipes you out. Beginners should stick to 1-3x.'
           },
         ],
         homework: '打开交易陪练AI的模拟交易页面，用$500虚拟资金做一笔交易。记录：为什么买/卖？止损设在哪？目标是什么？',
+                homeworkEn: 'Open the Trading Copilot AI practice page and make one trade with $500 virtual funds. Record: Why buy/sell? Where is stop loss? What is the target?',
       },
       {
         id: 'ch0-2', title: '风险管理：活下来才能赚钱', icon: '🛡️', duration: '10分钟', tier: 'free',
+            titleEn: 'Risk Management: Survive First, Profit Later',
         description: '仓位管理、止损设置、杠杆控制的完整框架',
+            descriptionEn: 'A complete framework for position sizing, stop loss placement, and leverage control',
         content: `# 风险管理：活下来才能赚钱
 
 ## 核心理念
@@ -314,32 +326,47 @@ export const COURSE_CHAPTERS: Chapter[] = [
             question: '账户$1000，风险控制在3%，最大单笔亏损是多少？',
             options: ['$10', '$30', '$50', '$100'],
             correctIndex: 1,
-            explanation: '$1000 × 3% = $30。这意味着不管你多看好一笔交易，止损触发时的亏损不应超过$30。'
+            explanation: '$1000 × 3% = $30。这意味着不管你多看好一笔交易，止损触发时的亏损不应超过$30。',
+            questionEn: 'With a $1000 account and 3% risk control, what is the max single-trade loss?',
+            optionsEn: ['$10', '$30', '$50', '$100'],
+            explanationEn: '$1000 × 3% = $30. No matter how confident, your stop-loss loss should not exceed $30.'
           },
           {
             question: '以下哪种止损方式最合理？',
             options: ['亏$50就止损', '价格跌破关键支撑位止损', '亏20%就止损', '感觉不对就止损'],
             correctIndex: 1,
-            explanation: '止损应该基于市场结构（支撑位、趋势线等），而不是固定金额或感觉。基于结构的止损有逻辑依据。'
+            explanation: '止损应该基于市场结构（支撑位、趋势线等），而不是固定金额或感觉。基于结构的止损有逻辑依据。',
+            questionEn: 'Which stop loss method is most reasonable?',
+            optionsEn: ['Stop at $50 loss', 'Stop when price breaks key support', 'Stop at 20% loss', 'Stop when it feels wrong'],
+            explanationEn: 'Stop losses should be based on market structure (support levels, trendlines), not fixed amounts or feelings. Structure-based stops have logical foundation.'
           },
           {
             question: '一笔交易止损$20，目标盈利$60，R:R是多少？',
             options: ['1:1', '1:2', '1:3', '3:1'],
             correctIndex: 2,
-            explanation: 'R:R = 止损:目标 = $20:$60 = 1:3。这是非常好的风险回报比，即使只有35%胜率长期也是赚钱的。'
+            explanation: 'R:R = 止损:目标 = $20:$60 = 1:3。这是非常好的风险回报比，即使只有35%胜率长期也是赚钱的。',
+            questionEn: 'A trade has $20 stop loss and $60 target. What is the R:R?',
+            optionsEn: ['1:1', '1:2', '1:3', '3:1'],
+            explanationEn: 'R:R = Stop:Target = $20:$60 = 1:3. Excellent risk-reward — profitable long-term even at 35% win rate.'
           },
           {
             question: '新手应该使用多少倍杠杆？',
             options: ['10x以上，快速积累', '5-10x，平衡风险', '1-3x，先学习', '不用杠杆'],
             correctIndex: 2,
-            explanation: '新手阶段最重要的是学习和生存，不是快速赚钱。1-3x杠杆给你足够的容错空间。等稳定盈利后再考虑提高。'
+            explanation: '新手阶段最重要的是学习和生存，不是快速赚钱。1-3x杠杆给你足够的容错空间。等稳定盈利后再考虑提高。',
+            questionEn: 'How much leverage should beginners use?',
+            optionsEn: ['10x+, accumulate fast', '5-10x, balanced', '1-3x, learn first', 'No leverage'],
+            explanationEn: 'For beginners, learning and survival matter most. 1-3x gives ample room for error. Only increase after consistent profitability.'
           },
         ],
         homework: '在模拟交易中，按照本课的公式计算仓位大小：假设账户$500、风险3%、止损5%，你的仓位应该是多少？然后按这个仓位做一笔交易。',
+                homeworkEn: 'In the simulator, calculate position size: with $500 account, 3% risk, 5% stop loss, what should your position be? Then execute a trade at that size.',
       },
       {
         id: 'ch0-3', title: '入场与出场的基本逻辑', icon: '🎯', duration: '8分钟', tier: 'free',
+            titleEn: 'Entry & Exit Logic Fundamentals',
         description: '什么时候买、什么时候卖的基础决策框架',
+            descriptionEn: 'The basic decision framework for when to buy and when to sell',
         content: `# 入场与出场的基本逻辑
 
 ## 交易不是"猜涨跌"
@@ -461,26 +488,38 @@ export const COURSE_CHAPTERS: Chapter[] = [
             question: '入场前最应该先确定什么？',
             options: ['精确的入场价格', '用多少杠杆', '市场大方向（偏向）', '今天的涨跌幅'],
             correctIndex: 2,
-            explanation: '偏向第一，入场第二。先确定市场大方向，再找入场点。方向判断正确比入场时机精确更重要。'
+            explanation: '偏向第一，入场第二。先确定市场大方向，再找入场点。方向判断正确比入场时机精确更重要。',
+            questionEn: 'What should you determine first before entering a trade?',
+            optionsEn: ['Exact entry price', 'How much leverage', 'Market direction (bias)', 'Today\'s price change'],
+            explanationEn: 'Bias first, entry second. Determine the overall direction before finding entry points. Getting direction right matters more than precise timing.'
           },
           {
             question: '什么情况下应该放弃一笔交易？',
             options: ['止损太远导致R:R不到1:1.5', '群里有人说会跌', '已经涨了很多', '其他币在涨但这个没动'],
             correctIndex: 0,
-            explanation: '如果计算出R:R低于1:1.5（止盈空间不够大），说明这笔交易的期望值不好，应该等更好的机会。'
+            explanation: '如果计算出R:R低于1:1.5（止盈空间不够大），说明这笔交易的期望值不好，应该等更好的机会。',
+            questionEn: 'When should you skip a trade?',
+            optionsEn: ['Stop loss too far, R:R below 1:1.5', 'Someone in the group says it\'ll drop', 'It has already gone up a lot', 'Other coins are rising but this one isn\'t'],
+            explanationEn: 'If calculated R:R is below 1:1.5 (insufficient profit room), the trade has poor expected value. Wait for a better opportunity.'
           },
           {
             question: '新手最适合用哪种止盈方式？',
             options: ['凭感觉卖', '固定目标价止盈', '永远不卖（HODL）', '别人喊卖就卖'],
             correctIndex: 1,
-            explanation: '固定目标价止盈最简单、最有纪律。设好1:2的R:R，到了就走。等技术成熟后再学移动止损。'
+            explanation: '固定目标价止盈最简单、最有纪律。设好1:2的R:R，到了就走。等技术成熟后再学移动止损。',
+            questionEn: 'Which take-profit method is best for beginners?',
+            optionsEn: ['Sell by feeling', 'Fixed target price', 'Never sell (HODL)', 'Sell when others say to'],
+            explanationEn: 'Fixed target is simplest and most disciplined. Set R:R at 1:2, take profit when reached. Learn trailing stops after skills mature.'
           },
         ],
         homework: '在模拟交易中做一笔完整的交易：写下4问检查清单的答案，设好止损和目标价（R:R ≥ 1:2），执行后记录结果。',
+                homeworkEn: 'Complete one full trade in the simulator: answer the 4-question checklist, set stop loss and target (R:R ≥ 1:2), execute and record the result.',
       },
       {
         id: 'ch0-4', title: '交易日志：你的成长加速器', icon: '📔', duration: '6分钟', tier: 'free',
+            titleEn: 'Trading Journal: Your Growth Accelerator',
         description: '为什么记录每笔交易是进步最快的方式',
+            descriptionEn: 'Why recording every trade is the fastest way to improve',
         content: `# 交易日志：你的成长加速器
 
 ## 为什么要记录？
@@ -564,20 +603,29 @@ export const COURSE_CHAPTERS: Chapter[] = [
             question: '交易日志中最容易被忽略但最有价值的项目是？',
             options: ['入场价格', '情绪状态', '交易对', '时间'],
             correctIndex: 1,
-            explanation: '情绪状态是大多数人不记录但最有价值的。通过记录情绪，你能发现"焦虑时做的交易90%亏损"这类关键模式。'
+            explanation: '情绪状态是大多数人不记录但最有价值的。通过记录情绪，你能发现"焦虑时做的交易90%亏损"这类关键模式。',
+            questionEn: 'Which trading journal item is most commonly overlooked but most valuable?',
+            optionsEn: ['Entry price', 'Emotional state', 'Trading pair', 'Time'],
+            explanationEn: 'Emotional state is most overlooked yet most valuable. Recording emotions reveals patterns like \'90% of anxious trades resulted in losses.\''
           },
           {
             question: '多久应该做一次交易复盘？',
             options: ['每笔交易后', '每周+每月', '每月一次', '赚钱时不用复盘'],
             correctIndex: 1,
-            explanation: '每周30分钟快速复盘+每月一次深度复盘是最佳节奏。每笔交易后记录，但分析要有足够的样本量才有意义。'
+            explanation: '每周30分钟快速复盘+每月一次深度复盘是最佳节奏。每笔交易后记录，但分析要有足够的样本量才有意义。',
+            questionEn: 'How often should you review your trades?',
+            optionsEn: ['After every trade', 'Weekly + monthly', 'Once a month', 'No need when profitable'],
+            explanationEn: 'Weekly 30-min quick review + monthly deep review is ideal. Record after each trade, but analysis needs sufficient sample size.'
           },
         ],
         homework: '在纸上或笔记软件中创建你的交易日志模板（参照课程中的表格），然后在模拟交易中记录3笔完整的交易。',
+                homeworkEn: 'Create your trading journal template on paper or in a note app (use the table from this lesson), then record 3 complete trades in the simulator.',
       },
       {
         id: 'ch0-5', title: '新手常犯的5个致命错误', icon: '⚠️', duration: '6分钟', tier: 'free',
+            titleEn: '5 Fatal Mistakes Beginners Make',
         description: '避开这些坑，少走3年弯路',
+            descriptionEn: 'Avoid these pitfalls and save yourself 3 years of costly lessons',
         content: `# 新手常犯的5个致命错误
 
 > 以下每一个错误都是真金白银买来的教训。
@@ -678,22 +726,32 @@ $368账户，5天160笔交易。手续费$330（占本金90%）。不是被市�
             question: '$500账户用10x杠杆每天交易10次，一个月手续费大约是？',
             options: ['$50', '$100', '$500', '$1000'],
             correctIndex: 3,
-            explanation: '每笔名义价值$5000，每天20次交易（开+平），手续费0.05%。$5000×20×0.05%×20天=$1000。比本金还多！这就是过度交易的隐形杀手。'
+            explanation: '每笔名义价值$5000，每天20次交易（开+平），手续费0.05%。$5000×20×0.05%×20天=$1000。比本金还多！这就是过度交易的隐形杀手。',
+            questionEn: '$500 account, 10x leverage, 10 trades/day — monthly fees approximately?',
+            optionsEn: ['$50', '$100', '$500', '$1000'],
+            explanationEn: 'Notional $5000/trade × 20 trades/day (open+close) × 0.05% × 20 days = $1000. More than the principal! The hidden killer of overtrading.'
           },
           {
             question: '10次满仓交易（每次90%把握），全部存活的概率是？',
             options: ['90%', '65%', '35%', '10%'],
             correctIndex: 2,
-            explanation: '0.9的10次方 = 0.35，即35%。换句话说，即使每次90%把握，10次满仓交易后有65%概率至少遇到一次爆仓。这就是为什么永远不要满仓。'
+            explanation: '0.9的10次方 = 0.35，即35%。换句话说，即使每次90%把握，10次满仓交易后有65%概率至少遇到一次爆仓。这就是为什么永远不要满仓。',
+            questionEn: '10 all-in trades (90% confidence each) — survival probability?',
+            optionsEn: ['90%', '65%', '35%', '10%'],
+            explanationEn: '0.9^10 = 0.35, or 35%. Even at 90% confidence per trade, 10 all-in trades give a 65% chance of at least one wipeout.'
           },
           {
             question: '以下哪个学习方式最有效？',
             options: ['每天学一个新指标', '选一个体系深度练习', '看越多KOL越好', '只做模拟不学理论'],
             correctIndex: 1,
-            explanation: '100个策略各学10%不如1个策略学100%。选一个完整体系（比如本课程），深度练习到能稳定执行。'
+            explanation: '100个策略各学10%不如1个策略学100%。选一个完整体系（比如本课程），深度练习到能稳定执行。',
+            questionEn: 'Which learning approach is most effective?',
+            optionsEn: ['Learn a new indicator daily', 'Pick one system and practice deeply', 'Follow more KOLs', 'Only practice, no theory'],
+            explanationEn: 'Learning 10% of 100 strategies < 100% of one. Choose a complete system (like this course) and practice deeply until consistent.'
           },
         ],
         homework: '回顾你在模拟交易中的所有交易记录。找出是否犯了以上5个错误中的任何一个。写下你的发现和改进计划。',
+                homeworkEn: 'Review all your trades in the simulator. Check if you made any of the 5 mistakes above. Write down findings and improvement plan.',
       },
     ],
   },
@@ -703,13 +761,17 @@ $368账户，5天160笔交易。手续费$330（占本金90%）。不是被市�
   {
     id: 'ch1',
     title: '技术分析基础',
+        titleEn: 'Technical Analysis Fundamentals',
     description: '看懂图表的第一课——K线、支撑阻力、趋势、成交量',
+        descriptionEn: 'Your first chart-reading lesson — candlesticks, support & resistance, trends, and volume',
     icon: '📊',
     tier: 'pro',
     lessons: [
       {
         id: 'ch1-1', title: 'K线语言：一根K线告诉你的信息', icon: '🕯️', duration: '12分钟', tier: 'pro',
+            titleEn: 'Candlestick Language: What One Candle Tells You',
         description: '理解K线的开盘价、收盘价、最高价、最低价，以及常见K线形态的含义',
+            descriptionEn: 'Understanding open, close, high, low prices and common candlestick pattern meanings',
         content: `# K线语言：一根K线告诉你的信息
 
 ## 什么是K线？
@@ -793,20 +855,29 @@ K线（Candlestick）是最基本的图表单位。每根K线包含4个价格：
             question: '一根K线有长下影线和小实体（锤子线），在下跌趋势底部出现，这说明什么？',
             options: ['卖方很强，继续跌', '买方在低位接住了价格，可能反转', '没有意义，是随机波动', '应该立刻做空'],
             correctIndex: 1,
-            explanation: '锤子线的长下影线说明价格虽然跌了很多，但被买方拉回来了。在下跌趋势底部出现是潜在的反转信号。'
+            explanation: '锤子线的长下影线说明价格虽然跌了很多，但被买方拉回来了。在下跌趋势底部出现是潜在的反转信号。',
+            questionEn: 'A candle with a long lower wick and small body (hammer) at the bottom of a downtrend indicates?',
+            optionsEn: ['Sellers are strong, more downside', 'Buyers caught price at lows, potential reversal', 'No significance, random', 'Should short immediately'],
+            explanationEn: 'The hammer\'s long lower wick shows price dropped but buyers pulled it back. At a downtrend bottom, it\'s a potential reversal signal.'
           },
           {
             question: '看到一根看涨吞没K线，应该立刻买入吗？',
             options: ['是的，吞没形态是强烈信号', '不一定，还要看位置、趋势和成交量', '不应该，吞没形态不可靠', '只有在1分钟图上才有效'],
             correctIndex: 1,
-            explanation: '单根K线形态不构成完整的交易信号。需要结合位置（是否在支撑位）、趋势方向、成交量确认等因素综合判断。'
+            explanation: '单根K线形态不构成完整的交易信号。需要结合位置（是否在支撑位）、趋势方向、成交量确认等因素综合判断。',
+            questionEn: 'Should you buy immediately upon seeing a bullish engulfing candle?',
+            optionsEn: ['Yes, strong signal', 'Not necessarily — check location, trend, and volume too', 'No, engulfing is unreliable', 'Only valid on 1-min charts'],
+            explanationEn: 'A single candlestick pattern isn\'t a complete signal. Combine with location (at support?), trend direction, and volume confirmation.'
           },
         ],
         homework: '打开TradingView，切换到BTC日线图。找出最近1个月内的3个锤子线或射击之星，标注它们出现的位置和之后价格的走势。',
+                homeworkEn: 'Open TradingView, switch to BTC daily chart. Find 3 hammers or shooting stars from the past month. Note their positions and subsequent price action.',
       },
       {
         id: 'ch1-2', title: '支撑与阻力：价格的记忆', icon: '📏', duration: '12分钟', tier: 'pro',
+            titleEn: 'Support & Resistance: The Memory of Price',
         description: '如何识别关键价格水平，以及为什么价格会在这些位置"停留"',
+            descriptionEn: 'How to identify key price levels and why price tends to pause at these zones',
         content: `# 支撑与阻力：价格的记忆
 
 ## 核心概念
@@ -879,20 +950,29 @@ K线（Candlestick）是最基本的图表单位。每根K线包含4个价格：
             question: '一个价格水平被多次测试但都没有被突破，这说明什么？',
             options: ['这个水平不重要', '这个支撑/阻力很强', '应该忽略它', '即将被突破'],
             correctIndex: 1,
-            explanation: '被测试的次数越多说明这个水平越重要。多次测试不破=该水平有强烈的买/卖力量。'
+            explanation: '被测试的次数越多说明这个水平越重要。多次测试不破=该水平有强烈的买/卖力量。',
+            questionEn: 'A price level tested multiple times without breaking indicates?',
+            optionsEn: ['Unimportant level', 'Strong support/resistance', 'Should be ignored', 'About to break'],
+            explanationEn: 'More tests = more important. Multiple tests without breaking = strong buying/selling force at that level.'
           },
           {
             question: '$65,000是一个强支撑位，被跌破后价格反弹回$65,000附近，这时候应该？',
             options: ['在$65,000做多', '注意$65,000现在可能变成阻力', '忽略这个价格', '加大杠杆做多'],
             correctIndex: 1,
-            explanation: '被突破的支撑变阻力。之前的支撑位$65,000现在可能成为价格上涨的"天花板"，需要观察能否突破回去。'
+            explanation: '被突破的支撑变阻力。之前的支撑位$65,000现在可能成为价格上涨的"天花板"，需要观察能否突破回去。',
+            questionEn: '$65,000 was strong support, now broken. Price bounces back near $65,000. What now?',
+            optionsEn: ['Go long at $65,000', 'Note $65,000 may now act as resistance', 'Ignore this price', 'Go long with high leverage'],
+            explanationEn: 'Broken support becomes resistance. Former support at $65,000 may now act as a ceiling. Watch whether price can break back above.'
           },
         ],
         homework: '在TradingView的BTC 4小时图上，画出当前价格附近的3个主要支撑位和3个主要阻力位。截图保存。',
+                homeworkEn: 'On TradingView\'s BTC 4-hour chart, draw 3 major support and 3 major resistance levels near the current price. Save a screenshot.',
       },
       {
         id: 'ch1-3', title: '趋势与均线：跟着大方向走', icon: '📈', duration: '10分钟', tier: 'pro',
+            titleEn: 'Trends & Moving Averages: Follow the Big Picture',
         description: '趋势的定义、判断方法，以及移动平均线的实用技巧',
+            descriptionEn: 'Trend definitions, identification methods, and practical moving average techniques',
         content: `# 趋势与均线：跟着大方向走
 
 ## 趋势的定义
@@ -945,20 +1025,29 @@ K线（Candlestick）是最基本的图表单位。每根K线包含4个价格：
             question: '上升趋势的定义是？',
             options: ['价格在涨', '不断创新高且回调不破前低', 'MA金叉', '成交量放大'],
             correctIndex: 1,
-            explanation: '上升趋势的严格定义是Higher Highs + Higher Lows（不断创新高且回调不破前低）。只是"在涨"不够精确。'
+            explanation: '上升趋势的严格定义是Higher Highs + Higher Lows（不断创新高且回调不破前低）。只是"在涨"不够精确。',
+            questionEn: 'What is the definition of an uptrend?',
+            optionsEn: ['Price is rising', 'Continuously higher highs and higher lows', 'MA golden cross', 'Volume increasing'],
+            explanationEn: 'Uptrend = Higher Highs + Higher Lows. Simply \'rising\' isn\'t precise enough.'
           },
           {
             question: '在上升趋势中，最佳买入时机是？',
             options: ['价格创新高时', '价格回调到MA或支撑位附近时', '跌破MA时', '随时都可以'],
             correctIndex: 1,
-            explanation: '上升趋势中，价格回调到MA或支撑位附近是最佳买入时机——既顺势，又买在相对低位。追高买入风险更大。'
+            explanation: '上升趋势中，价格回调到MA或支撑位附近是最佳买入时机——既顺势，又买在相对低位。追高买入风险更大。',
+            questionEn: 'In an uptrend, the best time to buy is?',
+            optionsEn: ['When price makes a new high', 'When price pulls back to MA or support', 'When it breaks below MA', 'Anytime'],
+            explanationEn: 'In an uptrend, buying pullbacks to MA or support is ideal — following the trend while buying relatively low. Chasing highs is riskier.'
           },
         ],
         homework: '在TradingView上给BTC日线图添加EMA9、EMA21和MA200。观察当前价格与这些均线的关系，判断当前处于什么趋势。',
+                homeworkEn: 'Add EMA9, EMA21, and MA200 to BTC daily chart on TradingView. Observe the price vs. these MAs and determine the current trend.',
       },
       {
         id: 'ch1-4', title: '成交量：价格背后的真相', icon: '📶', duration: '10分钟', tier: 'pro',
+            titleEn: 'Volume: The Truth Behind Price',
         description: '成交量如何确认或否定价格信号，以及常见的量价关系',
+            descriptionEn: 'How volume confirms or invalidates price signals, and common volume-price relationships',
         content: `# 成交量：价格背后的真相
 
 ## 为什么成交量重要？
@@ -1013,29 +1102,40 @@ K线（Candlestick）是最基本的图表单位。每根K线包含4个价格：
             question: '价格突破阻力位但成交量没有明显放大，最可能的情况是？',
             options: ['强势突破，可以追', '可能是假突破，需要警惕', '成交量不重要', '应该立刻做空'],
             correctIndex: 1,
-            explanation: '有效的突破通常伴随成交量放大。无量突破往往是假突破——价格很可能回到原来的区间内。'
+            explanation: '有效的突破通常伴随成交量放大。无量突破往往是假突破——价格很可能回到原来的区间内。',
+            questionEn: 'Price breaks resistance but volume doesn\'t increase notably — most likely?',
+            optionsEn: ['Strong breakout, follow it', 'Likely false breakout, stay cautious', 'Volume doesn\'t matter', 'Short immediately'],
+            explanationEn: 'Valid breakouts come with increased volume. Breakout without volume is often false — price likely returns to the prior range.'
           },
           {
             question: '在下跌趋势中出现极端放量的大阴线，这可能意味着？',
             options: ['还会继续跌', '恐慌性抛售，可能接近底部', '应该追空', '成交量有问题'],
             correctIndex: 1,
-            explanation: '极端放量暴跌通常是"投降式抛售"——所有想卖的人都卖完了。这反而可能是底部的信号。但要结合其他指标确认。'
+            explanation: '极端放量暴跌通常是"投降式抛售"——所有想卖的人都卖完了。这反而可能是底部的信号。但要结合其他指标确认。',
+            questionEn: 'Extreme volume spike with a large red candle in a downtrend might mean?',
+            optionsEn: ['More downside ahead', 'Panic selling, possibly near bottom', 'Chase the short', 'Volume data error'],
+            explanationEn: 'Extreme volume crash = capitulation. Everyone wanting to sell already has — paradoxically a potential bottom signal. Confirm with other indicators.'
           },
         ],
         homework: '在TradingView上观察BTC最近3次突破关键价位时的成交量。哪次是真突破？哪次是假突破？用成交量来验证你的判断。',
+                homeworkEn: 'On TradingView, examine volume during BTC\'s last 3 breakouts of key levels. Which was real? Which was fake? Use volume to validate.',
       },
     ],
   },
   {
     id: 'ch2',
     title: '偏向判定系统',
+        titleEn: 'Bias Determination System',
     description: '如何在任何时间框架上判断市场方向——交易的第一性原理',
+        descriptionEn: 'How to determine market direction on any timeframe — the first principle of trading',
     icon: '🧭',
     tier: 'pro',
     lessons: [
       {
         id: 'ch2-1', title: '什么是偏向？为什么它比入场更重要', icon: '🎯', duration: '12分钟', tier: 'pro',
+            titleEn: 'What Is Bias? Why It Matters More Than Entry',
         description: '理解偏向的概念，以及为什么方向判断是一切交易的基础',
+            descriptionEn: 'Understanding the concept of bias and why directional judgment is the foundation of all trading',
         content: `# 偏向判定：交易的第一性原理
 
 ## 什么是偏向（Bias）？
@@ -1125,20 +1225,29 @@ K线（Candlestick）是最基本的图表单位。每根K线包含4个价格：
             question: '偏向正确但入场点不好，结果通常是？',
             options: ['一定亏钱', '还是能赚钱（需要耐心持仓）', '跟偏向无关', '应该立刻止损'],
             correctIndex: 1,
-            explanation: '如果大方向判断正确（比如看涨偏向确实涨了），即使买贵了一点，只要有耐心持仓，趋势会带你盈利。这就是"偏向第一"的含义。'
+            explanation: '如果大方向判断正确（比如看涨偏向确实涨了），即使买贵了一点，只要有耐心持仓，趋势会带你盈利。这就是"偏向第一"的含义。',
+            questionEn: 'Correct bias but poor entry — typical result?',
+            optionsEn: ['Guaranteed loss', 'Can still profit (with patience)', 'Bias doesn\'t matter', 'Stop loss immediately'],
+            explanationEn: 'If direction is right, even buying slightly expensive, patience lets the trend carry you to profit. This is why \'bias first.\''
           },
           {
             question: '做2天的波段交易，应该看什么时间框架来判断偏向？',
             options: ['1小时图', '4小时图', '日线图', '月线图'],
             correctIndex: 3,
-            explanation: '根据×12乘数法则：2天执行 × 12 ≈ 月线偏向。做波段交易需要看月线级别的方向来确定大偏向。'
+            explanation: '根据×12乘数法则：2天执行 × 12 ≈ 月线偏向。做波段交易需要看月线级别的方向来确定大偏向。',
+            questionEn: 'For 2-day swing trades, what timeframe for bias?',
+            optionsEn: ['1-hour', '4-hour', 'Daily', 'Monthly'],
+            explanationEn: '×12 rule: 2 days × 12 ≈ monthly. Swing trading requires the monthly timeframe for the big-picture direction.'
           },
         ],
         homework: '用4问框架分析当前BTC市场：1. 你想交易什么时间框架？2. 上一层偏向？3. 上两层偏向？4. 你应该做什么？写下来。',
+                homeworkEn: 'Analyze the current BTC market with the 4-question framework: 1. Your timeframe? 2. Bias one level up? 3. Two levels up? 4. What should you do? Write it down.',
       },
       {
         id: 'ch2-2', title: '时间框架层级与偏向溢出', icon: '🔄', duration: '12分钟', tier: 'pro',
+            titleEn: 'Timeframe Hierarchy & Bias Spillover',
         description: '不同时间框架之间的关系，偏向如何从高级别传导到低级别',
+            descriptionEn: 'How different timeframes relate and how bias flows from higher to lower timeframes',
         content: `# 时间框架层级与偏向溢出
 
 ## 时间框架层级
@@ -1203,14 +1312,20 @@ K线（Candlestick）是最基本的图表单位。每根K线包含4个价格：
             question: '月线偏向刚转看跌，周线偏向仍然看涨。应该怎么做？',
             options: ['立刻做空', '跟着周线做多，等周线也转空再做空', '什么都不做', '加大杠杆做空'],
             correctIndex: 1,
-            explanation: '偏向转换需要时间溢出。月线转空但周线还在涨=可能还有最后一波上涨。正确做法是跟着当前交易时间框架（周线）的偏向操作。'
+            explanation: '偏向转换需要时间溢出。月线转空但周线还在涨=可能还有最后一波上涨。正确做法是跟着当前交易时间框架（周线）的偏向操作。',
+            questionEn: 'Monthly bias just turned bearish, weekly still bullish. What to do?',
+            optionsEn: ['Short immediately', 'Follow weekly long, short after weekly turns bearish too', 'Do nothing', 'Short with high leverage'],
+            explanationEn: 'Bias spillover takes time. Monthly bearish + weekly bullish = possible final rally. Follow current trading timeframe (weekly) bias.'
           },
         ],
         homework: '打开BTC月线图和周线图，分别判断当前的偏向。两个偏向是否一致？如果不一致，根据本课学到的"偏向溢出"原则，你应该怎么操作？',
+                homeworkEn: 'Open BTC monthly and weekly charts. Determine current bias for each. Aligned? If not, based on bias spillover, how should you trade?',
       },
       {
         id: 'ch2-3', title: '低相关性信号系统', icon: '🔗', duration: '15分钟', tier: 'pro',
+            titleEn: 'Low-Correlation Signal System',
         description: '用6个不同维度的指标构建你的偏向确认系统',
+            descriptionEn: 'Build your bias confirmation system using 6 different dimensional indicators',
         content: `# 低相关性信号系统
 
 ## 大多数人犯的错误
@@ -1277,23 +1392,31 @@ K线（Candlestick）是最基本的图表单位。每根K线包含4个价格：
             question: '用RSI+MACD+MA同时看涨，这等于3倍确信度吗？',
             options: ['是的，3个指标都看涨很可靠', '不是，它们高度相关，实际只是1个信号', '要看时间框架', 'RSI最准其他不用看'],
             correctIndex: 1,
-            explanation: 'RSI、MACD、MA都是从价格衍生的，高度相关。它们同时看涨只是同一个信号的不同表达，不是独立确认。需要用不同维度（价格、时间、成交量、波动率等）的指标才能真正提高确信度。'
+            explanation: 'RSI、MACD、MA都是从价格衍生的，高度相关。它们同时看涨只是同一个信号的不同表达，不是独立确认。需要用不同维度（价格、时间、成交量、波动率等）的指标才能真正提高确信度。',
+            questionEn: 'RSI + MACD + MA all bullish — equals 3x confidence?',
+            optionsEn: ['Yes, 3 bullish indicators are reliable', 'No, they\'re highly correlated — effectively 1 signal', 'Depends on timeframe', 'RSI is most accurate, ignore others'],
+            explanationEn: 'All three derive from price, highly correlated. Same signal in different packaging. Use different dimensions (volume, volatility, positioning) for true independent confirmation.'
           },
         ],
         homework: '建一个Excel表格：列出6个维度，每个维度选1个你能获取的指标，给当前市场打分。计算综合分数。',
+                homeworkEn: 'Create an Excel sheet: list 6 dimensions, pick 1 accessible indicator per dimension, score the current market. Calculate the composite score.',
       },
     ],
   },
   {
     id: 'ch3',
     title: '顶底信号系统',
+        titleEn: 'Top & Bottom Signal System',
     description: '量化判断市场周期顶部和底部的完整评分体系',
+        descriptionEn: 'A complete quantitative scoring system for identifying market cycle tops and bottoms',
     icon: '📈',
     tier: 'pro',
     lessons: [
       {
         id: 'ch3-1', title: '顶部信号的6个维度', icon: '🔺', duration: '15分钟', tier: 'pro',
+            titleEn: 'Top Signals: The 6 Dimensions',
         description: '从价格、时间、成交量等6个维度识别周期顶部',
+            descriptionEn: 'Identifying cycle tops from 6 dimensions: price, time, volume, and more',
         content: `# 顶部信号的6个维度
 
 ## 为什么需要"顶部分数"？
@@ -1397,14 +1520,20 @@ K线（Candlestick）是最基本的图表单位。每根K线包含4个价格：
             question: '顶部分数0.5意味着什么？',
             options: ['立刻卖出', '接近但不急，准备卖出计划', '远离顶部', '已经确认是顶'],
             correctIndex: 1,
-            explanation: '0.5-0.7区间意味着"接近但不需要恐慌"。正确做法是开始制定卖出计划，而不是立刻行动。'
+            explanation: '0.5-0.7区间意味着"接近但不需要恐慌"。正确做法是开始制定卖出计划，而不是立刻行动。',
+            questionEn: 'What does a top score of 0.5 mean?',
+            optionsEn: ['Sell immediately', 'Approaching but not urgent — prepare a sell plan', 'Far from top', 'Top confirmed'],
+            explanationEn: '0.5-0.7 means approaching but no panic needed. Start preparing a sell plan, don\'t act immediately.'
           },
         ],
         homework: '用CoinGlass查看当前BTC的聚合资金费率。正还是负？查看过去3个月的趋势。这告诉你什么？',
+                homeworkEn: 'Check current BTC aggregate funding rate on CoinGlass. Positive or negative? Review the 3-month trend. What does it tell you?',
       },
       {
         id: 'ch3-2', title: '底部信号与买入时机', icon: '🔻', duration: '15分钟', tier: 'pro',
+            titleEn: 'Bottom Signals & Buy Timing',
         description: '用底部评分系统量化判断买入时机',
+            descriptionEn: 'Using a bottom scoring system to quantitatively determine buy timing',
         content: `# 底部信号与买入时机
 
 ## 底部分数的设计哲学
@@ -1527,14 +1656,20 @@ fib从通道低点画到翻绿后最高点。回撤越深 = 底部越可靠 = �
             question: '底部分数0.38，应该怎么做？',
             options: ['全仓买入', '观望等待，准备资金', '做空', '无视'],
             correctIndex: 1,
-            explanation: '0.38还没到0.4的买入阈值。正确做法是关注和准备资金，等分数上升到0.4+再开始小仓位试探。'
+            explanation: '0.38还没到0.4的买入阈值。正确做法是关注和准备资金，等分数上升到0.4+再开始小仓位试探。',
+            questionEn: 'Bottom score is 0.38 — what to do?',
+            optionsEn: ['Go all in', 'Watch and wait, prepare capital', 'Short', 'Ignore'],
+            explanationEn: '0.38 hasn\'t reached the 0.4 buy threshold. Monitor and prepare capital. Wait for score to rise above 0.4 before testing with small positions.'
           },
         ],
         homework: '查找BTC的CVDD当前值（链上数据网站可查）。它告诉你BTC的"绝对底线"在哪里？当前价格距离它多远？',
+                homeworkEn: 'Find the current BTC CVDD value on an on-chain data site. Where is BTC\'s absolute floor? How far is the current price from it?',
       },
       {
         id: 'ch3-3', title: '波段交易6步系统', icon: '🔁', duration: '12分钟', tier: 'pro',
+            titleEn: 'Swing Trading 6-Step System',
         description: '从偏向到入场到出场的机械化执行系统',
+            descriptionEn: 'A mechanical execution system from bias to entry to exit',
         content: `# 波段交易6步系统
 
 ## 为什么需要"机械化"？
@@ -1661,23 +1796,31 @@ fib从通道低点画到翻绿后最高点。回撤越深 = 底部越可靠 = �
             question: '波段交易6步系统的第一步是？',
             options: ['找入场点', '判断周期位置（顶底分数）', '设止损', '选交易对'],
             correctIndex: 1,
-            explanation: '第一步永远是判断大环境——你在周期的什么位置。这决定了你应该做多还是做空。入场只是第三步。'
+            explanation: '第一步永远是判断大环境——你在周期的什么位置。这决定了你应该做多还是做空。入场只是第三步。',
+            questionEn: 'What is the first step of the Swing Trading 6-Step System?',
+            optionsEn: ['Find entry points', 'Determine cycle position (top/bottom score)', 'Set stop loss', 'Choose trading pair'],
+            explanationEn: 'Step one is always determining the big picture — where in the cycle you are. This decides long or short. Entry is only step three.'
           },
         ],
         homework: '用TradingView的Replay功能，回到2024年底，按照6步系统模拟执行一次波段交易。记录每一步的决策。',
+                homeworkEn: 'Use TradingView Replay to go back to late 2024. Simulate one swing trade using the 6-step system. Record each step\'s decision.',
       },
     ],
   },
   {
     id: 'ch4',
     title: '情绪与市场心理',
+        titleEn: 'Sentiment & Market Psychology',
     description: '理解市场情绪周期，用情绪指标确认交易信号',
+        descriptionEn: 'Understand market sentiment cycles and use sentiment indicators to confirm trading signals',
     icon: '🎭',
     tier: 'pro',
     lessons: [
       {
         id: 'ch4-1', title: '情绪指标：市场的体温计', icon: '🌡️', duration: '12分钟', tier: 'pro',
+            titleEn: 'Sentiment Indicators: The Market\\\'s Thermometer',
         description: '0-1量表的情绪指标如何帮你判断市场拐点',
+            descriptionEn: 'How a 0-1 scale sentiment indicator helps identify market turning points',
         content: `# 情绪指标：市场的体温计
 
 ## 情绪 vs 价格的不同步
@@ -1754,10 +1897,14 @@ fib从通道低点画到翻绿后最高点。回撤越深 = 底部越可靠 = �
             question: '情绪指标降到0.10但还在下降，应该买入吗？',
             options: ['是的，已经到极端了', '不急，等情绪指标开始上升（转绿）再买', '应该做空', '情绪指标不可靠'],
             correctIndex: 1,
-            explanation: '买入条件是"情绪<0.15 + 开始转绿"。光是到了低位不够，需要看到改善趋势才入场。情绪可以在极端位置停留很长时间。'
+            explanation: '买入条件是"情绪<0.15 + 开始转绿"。光是到了低位不够，需要看到改善趋势才入场。情绪可以在极端位置停留很长时间。',
+            questionEn: 'Sentiment drops to 0.10 but still falling. Should you buy?',
+            optionsEn: ['Yes, already extreme', 'No rush — wait for it to start rising (turning green)', 'Should short', 'Sentiment indicators are unreliable'],
+            explanationEn: 'Buy condition: <0.15 AND starting to turn green. Just reaching a low isn\'t enough — sentiment can stay extreme for extended periods.'
           },
         ],
         homework: '查看当前的Fear & Greed Index值。查看过去30天的走势。当前的恐惧程度在历史上处于什么水平？',
+                homeworkEn: 'Check the current Fear & Greed Index value. Review the 30-day trend. Where does the current fear level stand historically?',
       },
     ],
   },
@@ -1767,13 +1914,17 @@ fib从通道低点画到翻绿后最高点。回撤越深 = 底部越可靠 = �
   {
     id: 'ch5',
     title: '交易心理学',
+        titleEn: 'Trading Psychology',
     description: '90%的交易失败来自心理而非技术。这可能是最值钱的一章。',
+        descriptionEn: '90% of trading failures come from psychology, not technique. This may be the most valuable chapter.',
     icon: '🧘',
     tier: 'pro',
     lessons: [
       {
         id: 'ch5-1', title: 'FOMO与恐惧：你的大脑在骗你', icon: '😰', duration: '12分钟', tier: 'pro',
+            titleEn: 'FOMO & Fear: Your Brain Is Lying to You',
         description: '理解FOMO和恐惧的生物学根源，以及如何识别和克服它们',
+            descriptionEn: 'Understanding the biological roots of FOMO and fear, and how to identify and overcome them',
         content: `# FOMO与恐惧：你的大脑在骗你
 
 ## 你的大脑不适合交易
@@ -1867,26 +2018,38 @@ fib从通道低点画到翻绿后最高点。回撤越深 = 底部越可靠 = �
             question: 'BTC突然暴涨8%，你强烈想买入。最好的做法是？',
             options: ['立刻买入，不能再错过了', '强制等待至少15分钟，看冲动是否消退', '加杠杆追涨', '全仓买入'],
             correctIndex: 1,
-            explanation: 'FOMO是最常见的亏损原因。强制延迟决策可以让前额叶（理性脑）重新接管。大多数FOMO冲动在等待中会消退。如果15分钟后仍然有逻辑的理由入场，再考虑。'
+            explanation: 'FOMO是最常见的亏损原因。强制延迟决策可以让前额叶（理性脑）重新接管。大多数FOMO冲动在等待中会消退。如果15分钟后仍然有逻辑的理由入场，再考虑。',
+            questionEn: 'BTC surges 8%, you desperately want to buy. Best action?',
+            optionsEn: ['Buy immediately', 'Force wait at least 15 minutes, see if urge subsides', 'Chase with leverage', 'Go all in'],
+            explanationEn: 'FOMO is the most common loss cause. Forced delay lets the rational brain regain control. Most FOMO urges fade during the wait.'
           },
           {
             question: '连续亏损3笔后，你感到害怕不敢入场。一个好的信号出现了，怎么办？',
             options: ['跳过，太害怕了', '用小仓位执行（降低情绪压力）', '加大仓位回本', '等别人确认后再买'],
             correctIndex: 1,
-            explanation: '连亏后的恐惧是正常的，但不应该阻止你执行好的交易。解决方法是降低仓位——小到"亏了不心疼"。这样既能执行计划，又能控制情绪压力。'
+            explanation: '连亏后的恐惧是正常的，但不应该阻止你执行好的交易。解决方法是降低仓位——小到"亏了不心疼"。这样既能执行计划，又能控制情绪压力。',
+            questionEn: 'After 3 consecutive losses, you\'re scared to enter. A good signal appears. What to do?',
+            optionsEn: ['Skip it, too scared', 'Execute with smaller position (reduce emotional pressure)', 'Go bigger to recover', 'Wait for others to confirm'],
+            explanationEn: 'Post-loss fear is normal but shouldn\'t prevent good trades. Reduce position to \'losing won\'t hurt\' level — follow the plan while managing emotions.'
           },
           {
             question: '人类对亏损的痛苦感是对获利快感的几倍？',
             options: ['1倍（一样的）', '1.5倍', '2-2.5倍', '5倍'],
             correctIndex: 2,
-            explanation: '行为经济学研究表明，亏损的心理痛苦大约是同等金额获利快感的2-2.5倍。这就是"损失厌恶"，是不愿止损的生物学根源。'
+            explanation: '行为经济学研究表明，亏损的心理痛苦大约是同等金额获利快感的2-2.5倍。这就是"损失厌恶"，是不愿止损的生物学根源。',
+            questionEn: 'The pain of loss is how many times the pleasure of gain?',
+            optionsEn: ['1x (same)', '1.5x', '2-2.5x', '5x'],
+            explanationEn: 'Behavioral economics shows loss aversion coefficient is ~2-2.5x. The biological root of reluctance to take stop losses.'
           },
         ],
         homework: '回忆你过去因为FOMO或恐惧做的一笔交易（真实或模拟）。写下：当时的情绪状态是什么？决策过程是什么？结果如何？如果重来你会怎么做？',
+                homeworkEn: 'Recall a trade you made from FOMO or fear (real or simulated). Write down: emotional state, decision process, result, and what you\'d do differently.',
       },
       {
         id: 'ch5-2', title: '亏损心理：为什么止损这么难', icon: '💔', duration: '10分钟', tier: 'pro',
+            titleEn: 'Loss Psychology: Why Stop Losses Are So Hard',
         description: '深入理解止损背后的心理障碍，以及重新定义"亏损"',
+            descriptionEn: 'Deep dive into psychological barriers behind stop losses, and redefining loss',
         content: `# 亏损心理：为什么止损这么难
 
 ## 止损之所以难，因为它违反人性
@@ -1965,20 +2128,29 @@ fib从通道低点画到翻绿后最高点。回撤越深 = 底部越可靠 = �
             question: '"我已经亏了$200了，再亏一点也无所谓" — 这是什么心理陷阱？',
             options: ['FOMO', '沉没成本谬误', '确认偏误', '锚定效应'],
             correctIndex: 1,
-            explanation: '沉没成本谬误让你因为已经投入的成本而做出非理性决策。正确思考方式是：忽略已经亏的钱，只问"从现在开始，这笔交易值不值得继续持有？"'
+            explanation: '沉没成本谬误让你因为已经投入的成本而做出非理性决策。正确思考方式是：忽略已经亏的钱，只问"从现在开始，这笔交易值不值得继续持有？"',
+            questionEn: '\'I\'ve already lost $200, a bit more doesn\'t matter\' — what trap is this?',
+            optionsEn: ['FOMO', 'Sunk cost fallacy', 'Confirmation bias', 'Anchoring effect'],
+            explanationEn: 'Sunk cost fallacy: irrational decisions based on already-invested costs. Only ask \'from now on, is this trade worth holding?\''
           },
           {
             question: '专业交易者的正常胜率大约是？',
             options: ['80-90%', '60-80%', '40-60%', '30%以下'],
             correctIndex: 2,
-            explanation: '大多数成功的交易者胜率在40-60%之间。他们盈利的关键不是高胜率，而是"赢的时候赚得多，输的时候亏得少"（好的R:R）。'
+            explanation: '大多数成功的交易者胜率在40-60%之间。他们盈利的关键不是高胜率，而是"赢的时候赚得多，输的时候亏得少"（好的R:R）。',
+            questionEn: 'What is the normal win rate for professional traders?',
+            optionsEn: ['80-90%', '60-80%', '40-60%', 'Below 30%'],
+            explanationEn: 'Successful traders typically have 40-60% win rates. Key isn\'t high win rate but \'win big, lose small\' (good R:R).'
           },
         ],
         homework: '在模拟交易中，设置5笔仓位极小但止损很近的交易。目标不是赚钱，是练习被止损后保持冷静。记录每次被止损后的情绪变化。',
+                homeworkEn: 'In the simulator, set 5 tiny-position trades with tight stops. Goal: practice staying calm after stop-outs. Record emotional changes after each.',
       },
       {
         id: 'ch5-3', title: '过度交易：忙≠赚钱', icon: '🎰', duration: '8分钟', tier: 'pro',
+            titleEn: 'Overtrading: Busy ≠ Profitable',
         description: '为什么交易越多不代表赚越多，以及如何识别过度交易',
+            descriptionEn: 'Why more trades doesn\\\'t mean more profit, and how to spot overtrading',
         content: `# 过度交易：忙≠赚钱
 
 ## 你可能是过度交易者的5个信号
@@ -2044,14 +2216,20 @@ fib从通道低点画到翻绿后最高点。回撤越深 = 底部越可靠 = �
             question: '连续亏损2笔后，最好的做法是？',
             options: ['加大仓位回本', '当天停止交易，冷静后再来', '反手做', '换一个交易对试试'],
             correctIndex: 1,
-            explanation: '连亏后情绪状态不适合继续交易。休息一晚让大脑恢复理性，明天的你会做出更好的决策。报复性交易是资金杀手。'
+            explanation: '连亏后情绪状态不适合继续交易。休息一晚让大脑恢复理性，明天的你会做出更好的决策。报复性交易是资金杀手。',
+            questionEn: 'After 2 consecutive losses, the best action is?',
+            optionsEn: ['Increase position to recover', 'Stop trading for the day, come back calmer', 'Reverse direction', 'Try a different pair'],
+            explanationEn: 'Post-loss emotional state is unsuitable for trading. Rest overnight for rational recovery. Revenge trading is a capital killer.'
           },
         ],
         homework: '下周实施"每日最多3笔"规则。每天记录：做了几笔？有没有想做但忍住的？一周后统计结果。',
+                homeworkEn: 'Implement the max-3-trades-per-day rule next week. Daily record: how many trades? Any you resisted? Tally results after one week.',
       },
       {
         id: 'ch5-4', title: '连亏后的心理重建', icon: '🔧', duration: '10分钟', tier: 'pro',
+            titleEn: 'Mental Recovery After a Losing Streak',
         description: '如何从大亏损中恢复信心，重新找回交易节奏',
+            descriptionEn: 'How to rebuild confidence after major losses and regain your trading rhythm',
         content: `# 连亏后的心理重建
 
 ## 每个交易者都会经历这个
@@ -2122,20 +2300,29 @@ fib从通道低点画到翻绿后最高点。回撤越深 = 底部越可靠 = �
             question: '连亏后最应该做的第一件事是？',
             options: ['加大仓位搏回来', '暂停交易24-72小时', '换一个策略', '借钱加仓'],
             correctIndex: 1,
-            explanation: '连亏后大脑处于高压状态，不适合做决策。先暂停，让压力激素恢复正常，再冷静复盘。任何在高情绪状态下的交易决策都是危险的。'
+            explanation: '连亏后大脑处于高压状态，不适合做决策。先暂停，让压力激素恢复正常，再冷静复盘。任何在高情绪状态下的交易决策都是危险的。',
+            questionEn: 'First thing to do after a losing streak?',
+            optionsEn: ['Increase position to recover', 'Pause trading 24-72 hours', 'Switch strategies', 'Borrow money to add more'],
+            explanationEn: 'After a streak, your brain is highly stressed. Pause first, normalize stress hormones, then review calmly. Emotional trading decisions are dangerous.'
           },
           {
             question: '连亏后恢复交易时，仓位应该？',
             options: ['加大（快速回本）', '保持不变', '缩小到平时的1/3', '全仓梭哈'],
             correctIndex: 2,
-            explanation: '缩小仓位的目的是重建节奏和信心，同时限制进一步亏损的风险。连续盈利5笔后再恢复正常仓位。'
+            explanation: '缩小仓位的目的是重建节奏和信心，同时限制进一步亏损的风险。连续盈利5笔后再恢复正常仓位。',
+            questionEn: 'When resuming after a losing streak, position size should be?',
+            optionsEn: ['Larger (recover fast)', 'Same as before', 'Reduced to 1/3 of normal', 'All-in'],
+            explanationEn: 'Reduced position rebuilds rhythm and confidence while limiting further loss risk. Return to normal after 5 consecutive wins.'
           },
         ],
         homework: '写一份个人的"连亏应急预案"：1. 连亏几笔后暂停？2. 暂停多久？3. 恢复时仓位多大？4. 什么条件恢复正常仓位？把它打印出来贴在电脑旁边。',
+                homeworkEn: 'Write a personal losing-streak emergency plan: 1. Stop after how many losses? 2. Pause how long? 3. Resume position size? 4. Conditions to restore normal size? Print and post by your screen.',
       },
       {
         id: 'ch5-5', title: '建立你的交易仪式', icon: '📋', duration: '8分钟', tier: 'pro',
+            titleEn: 'Building Your Trading Ritual',
         description: '用固定的交易流程替代随机决策，让纪律变成习惯',
+            descriptionEn: 'Replace random decisions with a fixed trading process — turn discipline into habit',
         content: `# 建立你的交易仪式
 
 ## 为什么需要"仪式"？
@@ -2214,16 +2401,23 @@ fib从通道低点画到翻绿后最高点。回撤越深 = 底部越可靠 = �
             question: '交易前发现自己情绪状态只有4/10（焦虑/烦躁），应该怎么做？',
             options: ['照常交易，情绪不影响', '今天不交易或大幅缩小仓位', '用交易来转移注意力', '加大仓位赚钱改善心情'],
             correctIndex: 1,
-            explanation: '情绪状态差（<6分）时，决策质量会明显下降。最好的选择是不交易或大幅缩小仓位。用交易来"转移注意力"或"改善心情"是最危险的——这正是过度交易的根源。'
+            explanation: '情绪状态差（<6分）时，决策质量会明显下降。最好的选择是不交易或大幅缩小仓位。用交易来"转移注意力"或"改善心情"是最危险的——这正是过度交易的根源。',
+            questionEn: 'Pre-trade emotional state is only 4/10 (anxious/irritable). What to do?',
+            optionsEn: ['Trade as usual', 'Don\'t trade or significantly reduce position', 'Use trading to distract yourself', 'Increase positions to feel better'],
+            explanationEn: 'Poor emotions (<6/10) = degraded decisions. Skip trading or cut position. Trading to \'improve mood\' is the root of overtrading.'
           },
           {
             question: '以下哪个最能帮助你保持交易纪律？',
             options: ['更强的意志力', '把流程变成固定仪式和习惯', '赚到钱自然就有纪律了', '找一个大师带'],
             correctIndex: 1,
-            explanation: '意志力是有限资源，不可持续。仪式和习惯不消耗意志力——一旦养成，执行变成自动的。这就是为什么需要建立固定的交易流程。'
+            explanation: '意志力是有限资源，不可持续。仪式和习惯不消耗意志力——一旦养成，执行变成自动的。这就是为什么需要建立固定的交易流程。',
+            questionEn: 'Which best helps maintain trading discipline?',
+            optionsEn: ['Stronger willpower', 'Turning processes into fixed rituals and habits', 'Discipline comes with profits', 'Find a guru'],
+            explanationEn: 'Willpower is limited. Rituals/habits don\'t consume willpower — once formed, execution is automatic. Build a fixed trading process.'
           },
         ],
         homework: '根据本课的模板，写出你自己的"交易仪式"清单（交易前、交易中、交易后各3-5条）。打印出来贴在交易桌旁。接下来一周严格执行。',
+                homeworkEn: 'Using this lesson\'s template, write your own trading ritual checklist (3-5 items each for pre/during/post-trade). Print and post it. Follow strictly for one week.',
       },
     ],
   },
@@ -2233,13 +2427,17 @@ fib从通道低点画到翻绿后最高点。回撤越深 = 底部越可靠 = �
   {
     id: 'ch6',
     title: '实战交易策略',
+        titleEn: 'Practical Trading Strategies',
     description: '从理论到实践——完整的交易策略和资金管理',
+        descriptionEn: 'From theory to practice — complete trading strategies and capital management',
     icon: '⚔️',
     tier: 'pro',
     lessons: [
       {
         id: 'ch6-1', title: 'Retest策略：横盘中的低风险机会', icon: '🔁', duration: '15分钟', tier: 'pro',
+            titleEn: 'Retest Strategy: Low-Risk Opportunities in Ranges',
         description: '在横盘市场中通过Retest策略捕捉低风险入场',
+            descriptionEn: 'Capturing low-risk entries through the Retest strategy in ranging markets',
         content: `# Retest策略：横盘中的低风险机会
 
 ## 为什么Retest是最安全的入场之一？
@@ -2386,14 +2584,20 @@ fib从通道低点画到翻绿后最高点。回撤越深 = 底部越可靠 = �
             question: 'Retest最安全的入场时机是？',
             options: ['价格刚突破时立刻追', '回撤到突破位并确认支撑后', '不等确认直接买', '破位时做空'],
             correctIndex: 1,
-            explanation: 'Retest策略的核心是等待确认——价格回到突破位并获得支撑后再入场。这比追突破更安全，止损更明确。'
+            explanation: 'Retest策略的核心是等待确认——价格回到突破位并获得支撑后再入场。这比追突破更安全，止损更明确。',
+            questionEn: 'The safest entry timing for Retest is?',
+            optionsEn: ['Right at breakout', 'After pullback to breakout level with support confirmed', 'Without waiting for confirmation', 'Short on breakdown'],
+            explanationEn: 'Retest core: wait for confirmation — enter after price returns to breakout level and holds. Safer than chasing breakouts with clearer stop loss.'
           },
         ],
         homework: '在TradingView上找出BTC最近3个月的一个Retest案例。标注4部分结构，标出理想的入场点和止损位。',
+                homeworkEn: 'On TradingView, find one Retest example from BTC\'s last 3 months. Label the 4-part structure and mark the ideal entry and stop loss.',
       },
       {
         id: 'ch6-2', title: '资金分类与周期投资策略', icon: '💰', duration: '10分钟', tier: 'pro',
+            titleEn: 'Capital Classification & Cycle Investment Strategy',
         description: '如何区分投资仓位和交易仓位，在周期中最优配置资金',
+            descriptionEn: 'How to separate investment and trading positions for optimal capital allocation across cycles',
         content: `# 资金分类与周期投资策略
 
 ## 为什么要分类？
@@ -2511,10 +2715,14 @@ fib从通道低点画到翻绿后最高点。回撤越深 = 底部越可靠 = �
             question: '为什么要分批买入而不是一次性买入？',
             options: ['显得更专业', '因为无法精确判断最低点，分批可以获得更好的平均成本', '手续费更低', '没有区别'],
             correctIndex: 1,
-            explanation: '没有人能精确预测最低点。分批买入可以平滑入场成本，降低单次判断失误的风险。即使第一笔买贵了，后续更低的价格会拉低平均成本。'
+            explanation: '没有人能精确预测最低点。分批买入可以平滑入场成本，降低单次判断失误的风险。即使第一笔买贵了，后续更低的价格会拉低平均成本。',
+            questionEn: 'Why buy in batches instead of all at once?',
+            optionsEn: ['Looks professional', 'Can\'t pinpoint exact bottom; batching gets better average cost', 'Lower fees', 'No difference'],
+            explanationEn: 'Nobody predicts exact bottoms. Batch buying smooths entry cost and reduces single-judgment risk.'
           },
         ],
         homework: '假设你有$5000准备在底部建仓BTC。根据底部分数的分批策略，制定你的买入计划表：什么分数买多少。',
+                homeworkEn: 'With $5000 to build a BTC position at the bottom, create your batch-buy plan: what score triggers what amount.',
       },
     ],
   },
@@ -2524,13 +2732,17 @@ fib从通道低点画到翻绿后最高点。回撤越深 = 底部越可靠 = �
   {
     id: 'ch7',
     title: '真实案例分析',
+        titleEn: 'Real Case Studies',
     description: '真实发生的交易惨案——每个案例都是用真金白银换来的血泪教训',
+        descriptionEn: 'Real trading disasters — each case is a lesson paid for in blood and tears',
     icon: '🔬',
     tier: 'pro',
     lessons: [
       {
         id: 'ch7-1', title: '案例：LUNA崩盘中的百万美元教训', icon: '💸', duration: '15分钟', tier: 'pro',
+            titleEn: 'Case Study: Million-Dollar Lessons from the LUNA Crash',
         description: 'Do Kwon的UST/LUNA崩盘如何让无数交易者一夜归零——完整复盘与教训',
+            descriptionEn: 'How the UST/LUNA collapse wiped out countless traders overnight — full post-mortem and lessons',
         content: `# 案例：LUNA崩盘中的百万美元教训
 
 > 📝 来源：多位公开分享经历的交易者，综合Reddit r/terraluna、Twitter公开帖子、Bloomberg报道
@@ -2632,20 +2844,29 @@ fib从通道低点画到翻绿后最高点。回撤越深 = 底部越可靠 = �
             question: 'LUNA崩盘案例中，散户最大的错误是什么？',
             options: ['买入时机不对', '杠杆太高', '单一资产过度集中 + 不理解底层机制', '选错了交易所'],
             correctIndex: 2,
-            explanation: '大多数LUNA受害者的核心问题是：把大部分积蓄放在单一项目，且不理解"算法稳定币"和"银行存款"的本质区别。分散风险和理解投资标的是保护自己的第一步。'
+            explanation: '大多数LUNA受害者的核心问题是：把大部分积蓄放在单一项目，且不理解"算法稳定币"和"银行存款"的本质区别。分散风险和理解投资标的是保护自己的第一步。',
+            questionEn: 'In the LUNA crash, what was retail investors\' biggest mistake?',
+            optionsEn: ['Bad timing', 'Over-concentration in single asset + not understanding the mechanism', 'Wrong timeframe', 'Too much leverage'],
+            explanationEn: 'Most put most savings in one project without understanding \'algorithmic stablecoin\' vs \'bank deposit.\' Diversification and understanding are key.'
           },
           {
             question: 'UST脱锚初期（跌到$0.98）就退出，最多亏多少？',
             options: ['2%', '20%', '50%', '98%'],
             correctIndex: 0,
-            explanation: '在脱锚初期只亏2%。但大多数人选择"再等等"，最终亏了98%+。这就是止损的价值：小亏vs大亏。'
+            explanation: '在脱锚初期只亏2%。但大多数人选择"再等等"，最终亏了98%+。这就是止损的价值：小亏vs大亏。',
+            questionEn: 'Exiting during UST\'s early de-peg ($0.98) — max loss?',
+            optionsEn: ['2%', '20%', '50%', '98%'],
+            explanationEn: 'Initially just 2%. But \'just wait\' turned 2% into 98%+. Stop loss value: small loss vs total loss.'
           },
         ],
         homework: '选一个你目前持有或关注的项目，回答：1. 它的收益从哪里来？2. 什么情况下它会归零？3. 你能承受多大的亏损？如果答不上来，你需要更多研究。',
+                homeworkEn: 'Pick a project you hold or watch. Answer: 1. Where does its yield come from? 2. What could make it go to zero? 3. How much loss can you handle? If you can\'t answer, research more.',
       },
       {
         id: 'ch7-2', title: '案例：从$8000到$150万再到负债——一个期货交易者的过山车', icon: '📉', duration: '15分钟', tier: 'pro',
+            titleEn: 'Case Study: From $8K to $1.5M to Debt — A Futures Trader\\\'s Rollercoaster',
         description: '一个真实的"暴富后爆仓"故事——高杠杆的甜蜜与毒药',
+            descriptionEn: 'A true get-rich-then-go-broke story — the sweet poison of high leverage',
         content: `# 案例：从$8000到$150万再到负债
 
 > 📝 来源：Reddit用户 u/TheTrueWayOfThings，r/wallstreetbets公开帖（2021年），经Reddit公开记录引用。部分细节基于类似公开案例综合整理。
@@ -2759,16 +2980,23 @@ fib从通道低点画到翻绿后最高点。回撤越深 = 底部越可靠 = �
             question: '这个案例中，交易者最关键的错误是哪个？',
             options: ['最初买入时机不对', '没有在盈利时锁定利润', '选错了币种', '用的交易所不好'],
             correctIndex: 1,
-            explanation: '$1.5M的峰值时如果提出50%（$750K），即使后面全亏也还有$750K。"利润不锁定=从未赚到"是本案例最重要的教训。'
+            explanation: '$1.5M的峰值时如果提出50%（$750K），即使后面全亏也还有$750K。"利润不锁定=从未赚到"是本案例最重要的教训。',
+            questionEn: 'In this case, the trader\'s most critical mistake was?',
+            optionsEn: ['Wrong initial timing', 'Failed to lock in profits when winning', 'Wrong coin', 'Wrong exchange'],
+            explanationEn: 'If they withdrew 50% at $1.5M peak ($750K), even losing everything else, $750K remains. \'Profits not locked in = never earned.\''
           },
           {
             question: '为什么说"牛市让每个人觉得自己是天才"？',
             options: ['因为牛市很短', '因为上涨趋势中几乎所有资产都在涨，赚钱不需要技术', '因为牛市手续费低', '因为牛市杠杆高'],
             correctIndex: 1,
-            explanation: '在牛市（如2020-2021年）中，BTC/ETH/几乎所有加密资产都在涨。在这种环境下做多=赚钱，跟个人能力关系不大。真正的技术是在熊市中保住利润。'
+            explanation: '在牛市（如2020-2021年）中，BTC/ETH/几乎所有加密资产都在涨。在这种环境下做多=赚钱，跟个人能力关系不大。真正的技术是在熊市中保住利润。',
+            questionEn: 'Why \'a bull market makes everyone feel like a genius\'?',
+            optionsEn: ['Bull markets are short', 'In uptrends nearly all assets rise — profit needs no skill', 'Lower fees in bull markets', 'Higher leverage in bull markets'],
+            explanationEn: 'In a bull market, going long = profit regardless of skill. True skill is preserving profits in a bear market.'
           },
         ],
         homework: '如果你的账户从$1000涨到$10,000，你的提款计划是什么？写下具体的规则：涨到多少提多少，放到哪里。现在写，不要等到那一天再想。',
+                homeworkEn: 'If your account grew from $1,000 to $10,000, what is your withdrawal plan? Write specific rules: at what amount, withdraw how much, to where. Write it NOW.',
       },
     ],
   },
