@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from '@/lib/useSession';
 import { getFreeQuotaRemaining, getFreeQuotaLimit, useFreeQuota } from '@/lib/freeQuota';
 import { Lock, Sparkles, Zap, Crown } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 
 /**
  * QuotaGate: Replaces the old trial-based Paywall.
@@ -25,6 +26,7 @@ export default function QuotaGate({
   children: React.ReactNode;
   feature?: string;
 }) {
+  const { t } = useI18n();
   const { isPro, loading } = useSession();
   const [allowed, setAllowed] = useState<boolean | null>(null);
   const [remaining, setRemaining] = useState(0);
@@ -59,9 +61,9 @@ export default function QuotaGate({
         {!isPro && (
           <div className="flex items-center gap-2 bg-gray-900/50 border border-gray-800 rounded-lg px-3 py-2 mb-4 text-xs text-gray-400">
             <Zap className="w-3.5 h-3.5 text-amber-400" />
-            今日免费次数剩余：<span className="text-white font-medium">{remaining}/{getFreeQuotaLimit()}</span>
+            {t('quota.remaining')}<span className="text-white font-medium">{remaining}/{getFreeQuotaLimit()}</span>
             <Link href="/pricing" className="ml-auto text-emerald-400 hover:text-emerald-300 transition">
-              升级 Pro 解锁无限 →
+              {t('quota.upgrade_unlimited')}
             </Link>
           </div>
         )}

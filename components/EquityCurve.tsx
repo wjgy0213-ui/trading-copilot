@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { Trade } from '@/lib/types';
+import { useI18n } from '@/lib/i18n';
 
 interface EquityCurveProps {
   trades: Trade[];
@@ -9,7 +10,13 @@ interface EquityCurveProps {
 }
 
 export default function EquityCurve({ trades, initialBalance }: EquityCurveProps) {
+  const { t } = useI18n();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const tEquityTitle = t('equity.title');
+  const tInitial = t('equity.initial');
+  const tMaxDrawdown = t('equity.max_drawdown');
+  const tTradeNth = (n: number) => t('equity.trade_nth').replace('{n}', String(n));
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -99,7 +106,7 @@ export default function EquityCurve({ trades, initialBalance }: EquityCurveProps
     ctx.fillStyle = '#888';
     ctx.font = '10px system-ui';
     ctx.textAlign = 'left';
-    ctx.fillText(`初始 $${initialBalance}`, padding.left + 4, baseY - 6);
+    ctx.fillText(`${tInitial} $${initialBalance}`, padding.left + 4, baseY - 6);
 
     // Gradient fill under curve
     const gradient = ctx.createLinearGradient(0, padding.top, 0, H - padding.bottom);
@@ -181,7 +188,7 @@ export default function EquityCurve({ trades, initialBalance }: EquityCurveProps
       ctx.font = 'bold 10px system-ui';
       ctx.textAlign = 'center';
       ctx.fillText(
-        `最大回撤 ${(maxDd * 100).toFixed(1)}%`,
+        `${tMaxDrawdown} ${(maxDd * 100).toFixed(1)}%`,
         (scaleX(peakIdx) + scaleX(ddEnd)) / 2,
         padding.top + 14
       );
@@ -191,7 +198,7 @@ export default function EquityCurve({ trades, initialBalance }: EquityCurveProps
     ctx.fillStyle = '#eee';
     ctx.font = 'bold 14px system-ui';
     ctx.textAlign = 'left';
-    ctx.fillText('资金曲线', padding.left, padding.top - 10);
+    ctx.fillText(tEquityTitle, padding.left, padding.top - 10);
 
     // Current equity label
     ctx.textAlign = 'right';
@@ -208,21 +215,21 @@ export default function EquityCurve({ trades, initialBalance }: EquityCurveProps
     ctx.fillStyle = '#666';
     ctx.font = '10px system-ui';
     ctx.textAlign = 'center';
-    ctx.fillText('第1笔', scaleX(1), H - padding.bottom + 16);
+    ctx.fillText(tTradeNth(1), scaleX(1), H - padding.bottom + 16);
     if (points.length > 2) {
-      ctx.fillText(`第${points.length - 1}笔`, scaleX(points.length - 1), H - padding.bottom + 16);
+      ctx.fillText(tTradeNth(points.length - 1), scaleX(points.length - 1), H - padding.bottom + 16);
     }
     if (points.length > 5) {
       const mid = Math.floor(points.length / 2);
-      ctx.fillText(`第${mid}笔`, scaleX(mid), H - padding.bottom + 16);
+      ctx.fillText(tTradeNth(mid), scaleX(mid), H - padding.bottom + 16);
     }
 
-  }, [trades, initialBalance]);
+  }, [trades, initialBalance, tEquityTitle, tInitial, tMaxDrawdown]);
 
   if (trades.filter(t => t.closedAt).length === 0) {
     return (
       <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700 text-center text-gray-500">
-        <p>完成至少一笔交易后显示资金曲线</p>
+        <p>{t('equity.empty')}</p>
       </div>
     );
   }

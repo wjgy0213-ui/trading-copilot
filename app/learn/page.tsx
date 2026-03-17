@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Lock, CheckCircle, ChevronRight, ChevronDown, Sparkles, ArrowLeft } from 'lucide-react';
 import { useSession } from '@/lib/useSession';
+import { useI18n } from '@/lib/i18n';
 import Link from 'next/link';
 import { COURSE_CHAPTERS, Chapter, Lesson, QuizQuestion } from '@/lib/courseData';
 import { CHAPTER_QUIZZES } from '@/lib/chapterQuizzes';
 import { isProUser, activatePro } from '@/lib/paywall';
 
 function PaywallBanner({ onUnlock }: { onUnlock: () => void }) {
+  const { t } = useI18n();
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [showInput, setShowInput] = useState(false);
@@ -18,10 +20,12 @@ function PaywallBanner({ onUnlock }: { onUnlock: () => void }) {
     if (activatePro(code)) {
       onUnlock();
     } else {
-      setError('激活码无效');
+      setError(t('learn.code_invalid'));
       setTimeout(() => setError(''), 3000);
     }
   };
+
+  const tags = [t('learn.tag_chapters'), t('learn.tag_lessons'), t('learn.tag_strategies'), t('learn.tag_scoring'), t('learn.tag_lifetime')];
 
   return (
     <motion.div
@@ -34,13 +38,12 @@ function PaywallBanner({ onUnlock }: { onUnlock: () => void }) {
           <Sparkles className="w-6 h-6 text-white" />
         </div>
         <div className="flex-1">
-          <h3 className="text-xl font-bold mb-2">解锁完整课程</h3>
+          <h3 className="text-xl font-bold mb-2">{t('learn.unlock_full')}</h3>
           <p className="text-gray-400 text-sm mb-4">
-            高级课程包含偏向判定系统、顶底信号评分、波段交易6步系统、情绪指标等核心内容。
-            由经历过多轮周期的实战交易者编写，每一课都是真金白银换来的经验。
+            {t('learn.unlock_desc')}
           </p>
           <div className="flex flex-wrap gap-3 mb-6">
-            {['4大章节', '10+课时', '实战策略', '评分体系', '终身访问'].map((tag) => (
+            {tags.map((tag) => (
               <span key={tag} className="text-xs bg-purple-600/20 text-purple-300 px-3 py-1 rounded-full">
                 {tag}
               </span>
@@ -53,7 +56,7 @@ function PaywallBanner({ onUnlock }: { onUnlock: () => void }) {
                 onClick={() => setShowInput(true)}
                 className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105"
               >
-                输入激活码
+                {t('learn.enter_code')}
               </button>
               <a
                 href="https://t.me/SlowManJW"
@@ -61,7 +64,7 @@ function PaywallBanner({ onUnlock }: { onUnlock: () => void }) {
                 rel="noopener noreferrer"
                 className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-xl font-semibold transition-all border border-gray-700"
               >
-                获取激活码 →
+                {t('learn.get_code')}
               </a>
             </div>
           ) : (
@@ -71,14 +74,14 @@ function PaywallBanner({ onUnlock }: { onUnlock: () => void }) {
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleActivate()}
-                placeholder="输入激活码..."
+                placeholder={t('learn.code_placeholder')}
                 className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
               <button
                 onClick={handleActivate}
                 className="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-xl font-semibold transition"
               >
-                激活
+                {t('learn.activate')}
               </button>
             </div>
           )}
@@ -90,6 +93,7 @@ function PaywallBanner({ onUnlock }: { onUnlock: () => void }) {
 }
 
 function LessonCard({ lesson, index, locked }: { lesson: Lesson; index: number; locked: boolean }) {
+  const { t } = useI18n();
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -130,7 +134,7 @@ function LessonCard({ lesson, index, locked }: { lesson: Lesson; index: number; 
           </div>
           {lesson.homework && (
             <div className="mt-6 p-4 bg-blue-600/10 border border-blue-500/20 rounded-xl">
-              <div className="text-sm font-semibold text-blue-400 mb-2">📝 课后作业</div>
+              <div className="text-sm font-semibold text-blue-400 mb-2">{t('learn.homework')}</div>
               <p className="text-sm text-gray-300">{lesson.homework}</p>
               <Link
                 href={`/trade?lesson=${lesson.id}`}
@@ -145,7 +149,7 @@ function LessonCard({ lesson, index, locked }: { lesson: Lesson; index: number; 
                   }
                 }}
               >
-                去模拟交易练习 →
+                {t('learn.go_practice')}
               </Link>
             </div>
           )}
@@ -271,6 +275,7 @@ function renderInline(text: string): React.ReactNode {
 }
 
 function QuizSection({ quiz, lessonId }: { quiz: QuizQuestion[]; lessonId: string }) {
+  const { t } = useI18n();
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
 
@@ -284,7 +289,7 @@ function QuizSection({ quiz, lessonId }: { quiz: QuizQuestion[]; lessonId: strin
   return (
     <div className="border border-gray-800 rounded-xl p-5 bg-gray-900/50">
       <h4 className="font-bold text-sm mb-4 flex items-center gap-2">
-        📋 小测试（{quiz.length}题）
+        {t('learn.quiz')}（{quiz.length}题）
         {showResults && <span className={`text-xs px-2 py-0.5 rounded-full ${score === quiz.length ? 'bg-green-600/20 text-green-400' : 'bg-yellow-600/20 text-yellow-400'}`}>{score}/{quiz.length}</span>}
       </h4>
       <div className="space-y-5">
@@ -319,11 +324,11 @@ function QuizSection({ quiz, lessonId }: { quiz: QuizQuestion[]; lessonId: strin
           disabled={Object.keys(answers).length < quiz.length}
           className={`mt-4 px-5 py-2 rounded-lg text-sm font-medium transition ${Object.keys(answers).length === quiz.length ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-gray-800 text-gray-600 cursor-not-allowed'}`}
         >
-          提交答案
+          {t('learn.submit_answers')}
         </button>
       ) : (
         <button onClick={() => { setAnswers({}); setShowResults(false); }} className="mt-4 px-5 py-2 rounded-lg text-sm font-medium bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
-          重新答题
+          {t('learn.retry_quiz')}
         </button>
       )}
     </div>
@@ -331,6 +336,7 @@ function QuizSection({ quiz, lessonId }: { quiz: QuizQuestion[]; lessonId: strin
 }
 
 function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; chapterTitle: string }) {
+  const { t } = useI18n();
   const quiz = CHAPTER_QUIZZES[chapterId];
   if (!quiz || quiz.length === 0) return null;
 
@@ -354,7 +360,7 @@ function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; ch
       >
         <span className="text-xl">📝</span>
         <div className="flex-1">
-          <span className="font-semibold text-sm">章节测试：{chapterTitle}</span>
+          <span className="font-semibold text-sm">{t('learn.chapter_quiz')}：{chapterTitle}</span>
           <span className="text-xs text-gray-500 ml-2">（{quiz.length}题）</span>
           {showResults && (
             <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${score >= quiz.length * 0.8 ? 'bg-green-600/20 text-green-400' : score >= quiz.length * 0.6 ? 'bg-yellow-600/20 text-yellow-400' : 'bg-red-600/20 text-red-400'}`}>
@@ -398,11 +404,11 @@ function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; ch
                 disabled={!allAnswered}
                 className={`px-5 py-2 rounded-lg text-sm font-medium transition ${allAnswered ? 'bg-purple-600 hover:bg-purple-500 text-white' : 'bg-gray-800 text-gray-600 cursor-not-allowed'}`}
               >
-                提交测试（{Object.keys(answers).length}/{quiz.length}）
+                {t('learn.submit_test')}（{Object.keys(answers).length}/{quiz.length}）
               </button>
             ) : (
               <button onClick={() => { setAnswers({}); setShowResults(false); }} className="px-5 py-2 rounded-lg text-sm font-medium bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
-                重新测试
+                {t('learn.retry_test')}
               </button>
             )}
           </div>
@@ -413,6 +419,7 @@ function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; ch
 }
 
 function ChapterSection({ chapter, isPro, chapterIndex }: { chapter: Chapter; isPro: boolean; chapterIndex: number }) {
+  const { t } = useI18n();
   const locked = chapter.tier === 'pro' && !isPro;
   
   return (
@@ -431,12 +438,12 @@ function ChapterSection({ chapter, isPro, chapterIndex }: { chapter: Chapter; is
               <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                 isPro ? 'bg-green-600/20 text-green-400' : 'bg-purple-600/20 text-purple-400'
               }`}>
-                {isPro ? '✓ 已解锁' : '🔒 PRO'}
+                {isPro ? t('learn.unlocked') : t('learn.locked_pro')}
               </span>
             )}
             {chapter.comingSoon && (
               <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-yellow-600/20 text-yellow-400">
-                🔄 更新中
+                {t('learn.updating')}
               </span>
             )}
           </div>
@@ -456,7 +463,7 @@ function ChapterSection({ chapter, isPro, chapterIndex }: { chapter: Chapter; is
         <div className="mt-4 ml-2 p-4 bg-gray-900/30 border border-gray-800/50 rounded-xl opacity-60">
           <div className="flex items-center gap-2">
             <span className="text-xl">📝</span>
-            <span className="text-sm text-gray-500">章节测试（{CHAPTER_QUIZZES[chapter.id].length}题）— 解锁后可用</span>
+            <span className="text-sm text-gray-500">{t('learn.chapter_quiz')}（{CHAPTER_QUIZZES[chapter.id].length}题）{t('learn.chapter_quiz_locked')}</span>
             <Lock className="w-3.5 h-3.5 text-gray-600" />
           </div>
         </div>
@@ -466,6 +473,7 @@ function ChapterSection({ chapter, isPro, chapterIndex }: { chapter: Chapter; is
 }
 
 export default function LearnPage() {
+  const { t } = useI18n();
   const { session, isPro: sessionIsPro, hasCourse } = useSession();
   const [isPro, setIsPro] = useState(() => {
     if (typeof window !== 'undefined') return isProUser();
@@ -492,19 +500,19 @@ export default function LearnPage() {
           className="mb-10"
         >
           <h1 className="text-3xl md:text-4xl font-black mb-3">
-            📚 交易课程
+            {t('learn.heading')}
           </h1>
           <p className="text-gray-400">
-            从零基础到系统化交易者。{totalLessons}节课，{freeLessons}节免费，持续更新中。
+            {t('learn.desc').replace('{total}', String(totalLessons)).replace('{free}', String(freeLessons))}
           </p>
           <div className="flex items-center gap-4 mt-4 text-sm text-gray-500">
             <span className="flex items-center gap-1">
               <CheckCircle className="w-4 h-4 text-green-400" />
-              {freeLessons}节免费
+              {freeLessons} {t('learn.free_lessons')}
             </span>
             <span className="flex items-center gap-1">
               {isPro ? <CheckCircle className="w-4 h-4 text-green-400" /> : <Lock className="w-4 h-4 text-purple-400" />}
-              {totalLessons - freeLessons}节高级
+              {totalLessons - freeLessons} {t('learn.premium_lessons')}
             </span>
           </div>
         </motion.div>
@@ -520,15 +528,15 @@ export default function LearnPage() {
         {/* Bottom CTA */}
         {!isPro && (
           <div className="text-center py-12 border-t border-gray-800 mt-12">
-            <h3 className="text-2xl font-bold mb-3">准备好升级了吗？</h3>
-            <p className="text-gray-400 mb-6">解锁全部高级课程，系统化提升你的交易能力</p>
+            <h3 className="text-2xl font-bold mb-3">{t('learn.ready_upgrade')}</h3>
+            <p className="text-gray-400 mb-6">{t('learn.upgrade_desc')}</p>
             <a
               href="https://t.me/SlowManJW"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl font-bold transition-all hover:scale-105"
             >
-              获取激活码
+              {t('learn.get_activation')}
               <ChevronRight className="w-5 h-5" />
             </a>
           </div>

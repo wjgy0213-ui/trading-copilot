@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { MessageSquare, Sparkles } from 'lucide-react';
 import { getAIScores } from '@/lib/storage';
+import { useI18n } from '@/lib/i18n';
 
 interface ChatMessage {
   type: 'coach' | 'system';
@@ -13,6 +14,7 @@ interface ChatMessage {
 }
 
 export default function AICoach() {
+  const { t } = useI18n();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -39,7 +41,7 @@ export default function AICoach() {
       ...(lessonMsg ? [lessonMsg] : []),
       {
         type: 'coach',
-        text: lessonMsg ? '按照课程要求完成交易，教练会自动评分。' : '开盘前先想清楚今天的计划。每笔交易完成后，这里会给你复盘点评。',
+        text: lessonMsg ? t('coach.lesson_welcome') : t('coach.welcome'),
         timestamp: Date.now() - 10000,
         variant: 'info',
       },
@@ -87,10 +89,10 @@ export default function AICoach() {
           <MessageSquare className="w-5 h-5 text-white" />
         </div>
         <div>
-          <div className="text-sm font-semibold">教练反馈</div>
+          <div className="text-sm font-semibold">{t('coach.title')}</div>
           <div className="text-xs text-gray-500 flex items-center gap-1">
             <span className="w-1.5 h-1.5 bg-green-400 rounded-full inline-block" />
-            实时监控中
+            {t('coach.monitoring')}
           </div>
         </div>
       </div>
@@ -116,7 +118,7 @@ export default function AICoach() {
         ))}
         {messages.length <= 1 && (
           <div className="text-center text-gray-600 text-sm py-8">
-            做完第一笔交易，复盘就开始了
+            {t('coach.first_trade')}
           </div>
         )}
       </div>

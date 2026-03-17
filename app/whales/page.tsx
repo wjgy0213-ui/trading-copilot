@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useI18n } from '@/lib/i18n';
 
 interface Position {
   coin: string;
@@ -68,6 +69,7 @@ function BiasIndicator({ longPct }: { longPct: number }) {
 }
 
 export default function WhalesPage() {
+  const { t } = useI18n();
   const [data, setData] = useState<WhaleData | null>(null);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -92,7 +94,7 @@ export default function WhalesPage() {
       <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-gray-400 mt-3">追踪鲸鱼中...</p>
+          <p className="text-gray-400 mt-3">{t('whales.loading')}</p>
         </div>
       </div>
     );
@@ -101,7 +103,7 @@ export default function WhalesPage() {
   if (!data) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 flex items-center justify-center text-gray-400">
-        <p>🐋 数据加载失败</p>
+        <p>{t('whales.load_failed')}</p>
       </div>
     );
   }
@@ -119,25 +121,25 @@ export default function WhalesPage() {
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <span>🐋</span>
               <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-                鲸鱼跟踪器
+                {t('whales.tracker')}
               </span>
             </h1>
-            <p className="text-gray-500 text-sm">Hyperliquid 顶级交易员实时持仓 · 每分钟更新</p>
+            <p className="text-gray-500 text-sm">{t('whales.subtitle')}</p>
           </div>
           <button onClick={fetchData} className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm text-gray-400">
-            🔄 刷新
+            {t('whales.refresh')}
           </button>
         </div>
 
         {/* Consensus Overview */}
         <div className="bg-gradient-to-r from-cyan-900/20 to-blue-900/20 rounded-2xl p-6 border border-cyan-500/20 mb-6">
-          <h2 className="text-sm text-gray-400 mb-3">📊 鲸鱼共识 — {summary.totalWhales} 个顶级交易员</h2>
+          <h2 className="text-sm text-gray-400 mb-3">{t('whales.consensus')} — {summary.totalWhales} {t('whales.top_traders')}</h2>
           
           {/* Long/Short Ratio */}
           <div className="mb-4">
             <div className="flex justify-between text-sm mb-1">
-              <span className="text-green-400">多头 {formatUsd(summary.totalLongExposure)}</span>
-              <span className="text-red-400">空头 {formatUsd(summary.totalShortExposure)}</span>
+              <span className="text-green-400">{t('whales.long')} {formatUsd(summary.totalLongExposure)}</span>
+              <span className="text-red-400">{t('whales.short')} {formatUsd(summary.totalShortExposure)}</span>
             </div>
             <BiasIndicator longPct={longPct} />
           </div>
@@ -155,7 +157,7 @@ export default function WhalesPage() {
                 <div className={`text-xs mt-0.5 ${
                   tc.bias === 'LONG' ? 'text-green-400' : tc.bias === 'SHORT' ? 'text-red-400' : 'text-gray-400'
                 }`}>
-                  {tc.bias === 'LONG' ? '🟢 偏多' : tc.bias === 'SHORT' ? '🔴 偏空' : '⚪ 分歧'}
+                  {tc.bias === 'LONG' ? t('whales.bias_long') : tc.bias === 'SHORT' ? t('whales.bias_short') : t('whales.bias_neutral')}
                 </div>
                 <div className="text-xs text-gray-500">{formatUsd(tc.totalSize)}</div>
               </div>
@@ -164,7 +166,7 @@ export default function WhalesPage() {
         </div>
 
         {/* Whale List */}
-        <h2 className="text-lg font-semibold mb-3">🐋 交易员列表</h2>
+        <h2 className="text-lg font-semibold mb-3">{t('whales.trader_list')}</h2>
         <div className="space-y-3">
           {whales.map(w => {
             const isExpanded = expanded === w.address;
@@ -185,8 +187,8 @@ export default function WhalesPage() {
                     </div>
                     <div className="flex items-center gap-4 mt-1 text-sm">
                       <span className="text-gray-400">💰 {formatUsd(w.accountValue)}</span>
-                      <span className="text-gray-400">📊 {w.positions.length} 持仓</span>
-                      <span>今日 <PnlBadge value={w.dayPnl} /></span>
+                      <span className="text-gray-400">📊 {w.positions.length} {t('whales.positions')}</span>
+                      <span>{t('whales.today')} <PnlBadge value={w.dayPnl} /></span>
                     </div>
                   </div>
                   <div className="w-32 hidden sm:block">
@@ -233,7 +235,7 @@ export default function WhalesPage() {
                         rel="noopener noreferrer"
                         className="text-xs text-cyan-400 hover:text-cyan-300"
                       >
-                        在 Hyperliquid 查看 ↗
+                        {t('whales.view_on_hl')}
                       </a>
                     </div>
                   </div>
@@ -245,8 +247,8 @@ export default function WhalesPage() {
 
         {/* Footer */}
         <div className="mt-8 text-center text-xs text-gray-600">
-          <p>数据来源: Hyperliquid API · 每分钟自动更新</p>
-          <p className="mt-1">仅供参考，不构成投资建议 · 鲸鱼也会亏钱</p>
+          <p>{t('whales.data_source')}</p>
+          <p className="mt-1">{t('whales.disclaimer')}</p>
         </div>
       </div>
     </div>

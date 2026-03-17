@@ -4,6 +4,7 @@ import { DollarSign, TrendingUp, Percent, AlertCircle, RotateCcw, TrendingDown, 
 import Link from 'next/link';
 import { Account } from '@/lib/types';
 import { resetAccount } from '@/lib/storage';
+import { useI18n } from '@/lib/i18n';
 import { calculateEquity } from '@/lib/tradingEngine';
 import { analyzePerformance, getRecentPerformanceSummary } from '@/lib/tradeAnalyzer';
 import RankBadge from './RankBadge';
@@ -14,6 +15,7 @@ interface AccountPanelProps {
 }
 
 export default function AccountPanel({ account, currentPrice }: AccountPanelProps) {
+  const { t } = useI18n();
   const equity = calculateEquity(account, currentPrice);
   const initialBalance = 10000;
   const totalReturn = ((equity - initialBalance) / initialBalance) * 100;
@@ -23,9 +25,7 @@ export default function AccountPanel({ account, currentPrice }: AccountPanelProp
   const recentSummary = getRecentPerformanceSummary(account.closedTrades, 7);
 
   const handleReset = () => {
-    const confirmed = confirm(
-      '确定要重置账户吗？所有交易记录和AI评分将被清空，无法恢复！'
-    );
+    const confirmed = confirm(t('account_panel.confirm_reset'));
     if (confirmed) {
       resetAccount();
       window.location.reload();
@@ -43,32 +43,32 @@ export default function AccountPanel({ account, currentPrice }: AccountPanelProp
 
       {/* Account Summary */}
       <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-        <h2 className="text-xl font-bold mb-4">账户总览</h2>
+        <h2 className="text-xl font-bold mb-4">{t('account_panel.overview')}</h2>
         
         <div className="space-y-4">
           <StatItem
             icon={<DollarSign className="w-5 h-5" />}
-            label="可用余额"
+            label={t('account_panel.balance')}
             value={`$${account.balance.toFixed(2)}`}
             valueColor="text-blue-400"
           />
           
           <StatItem
             icon={<TrendingUp className="w-5 h-5" />}
-            label="总权益"
+            label={t('account_panel.equity')}
             value={`$${equity.toFixed(2)}`}
             valueColor={equity >= initialBalance ? 'text-green-400' : 'text-red-400'}
           />
           
           <StatItem
             icon={<Percent className="w-5 h-5" />}
-            label="总收益率"
+            label={t('account_panel.total_return')}
             value={`${totalReturn >= 0 ? '+' : ''}${totalReturn.toFixed(2)}%`}
             valueColor={totalReturn >= 0 ? 'text-green-400' : 'text-red-400'}
           />
 
           <div className="pt-4 border-t border-gray-700">
-            <div className="text-sm text-gray-400 mb-2">初始资金</div>
+            <div className="text-sm text-gray-400 mb-2">{t('account_panel.initial_balance')}</div>
             <div className="text-lg font-semibold">${initialBalance.toLocaleString()}.00</div>
           </div>
         </div>
@@ -76,37 +76,37 @@ export default function AccountPanel({ account, currentPrice }: AccountPanelProp
 
       {/* Trading Stats */}
       <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-        <h2 className="text-xl font-bold mb-4">交易统计</h2>
+        <h2 className="text-xl font-bold mb-4">{t('account_panel.trading_stats')}</h2>
         
         <div className="space-y-4">
           <StatItem
             icon={<TrendingUp className="w-5 h-5" />}
-            label="总盈亏"
+            label={t('account_panel.total_pnl')}
             value={`${account.totalPnl >= 0 ? '+' : ''}$${account.totalPnl.toFixed(2)}`}
             valueColor={account.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'}
           />
           
           <StatItem
             icon={<Percent className="w-5 h-5" />}
-            label="胜率"
+            label={t('account_panel.win_rate')}
             value={account.closedTrades.length > 0 ? `${(account.winRate * 100).toFixed(1)}%` : '-'}
             valueColor="text-blue-400"
           />
           
           <StatItem
             icon={<AlertCircle className="w-5 h-5" />}
-            label="最大回撤"
+            label={t('account_panel.max_drawdown')}
             value={account.maxDrawdown > 0 ? `${(account.maxDrawdown * 100).toFixed(1)}%` : '-'}
             valueColor={account.maxDrawdown > 0.2 ? 'text-red-400' : 'text-yellow-400'}
           />
 
           <div className="pt-4 border-t border-gray-700 grid grid-cols-2 gap-4">
             <div>
-              <div className="text-sm text-gray-400 mb-1">持仓中</div>
+              <div className="text-sm text-gray-400 mb-1">{t('account_panel.open_positions')}</div>
               <div className="text-lg font-semibold">{account.positions.length}</div>
             </div>
             <div>
-              <div className="text-sm text-gray-400 mb-1">已平仓</div>
+              <div className="text-sm text-gray-400 mb-1">{t('account_panel.closed_trades')}</div>
               <div className="text-lg font-semibold">{account.closedTrades.length}</div>
             </div>
           </div>
@@ -118,25 +118,25 @@ export default function AccountPanel({ account, currentPrice }: AccountPanelProp
         <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
             <Activity className="w-5 h-5 text-purple-400" />
-            表现分析
+            {t('account_panel.performance')}
           </h2>
           
           {/* 最近表现 */}
           <div className="mb-4 pb-4 border-b border-gray-700">
-            <div className="text-sm text-gray-400 mb-1">最近7天</div>
+            <div className="text-sm text-gray-400 mb-1">{t('account_panel.recent_7d')}</div>
             <div className="text-sm text-gray-300">{recentSummary}</div>
           </div>
 
           {/* 关键指标 */}
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="bg-gray-900/50 rounded-lg p-3">
-              <div className="text-xs text-gray-500 mb-1">盈亏比</div>
+              <div className="text-xs text-gray-500 mb-1">{t('account_panel.rr_ratio')}</div>
               <div className={`text-xl font-bold ${analysis.avgRR >= 1.5 ? 'text-green-400' : analysis.avgRR >= 1 ? 'text-yellow-400' : 'text-red-400'}`}>
                 {analysis.avgRR.toFixed(2)}
               </div>
             </div>
             <div className="bg-gray-900/50 rounded-lg p-3">
-              <div className="text-xs text-gray-500 mb-1">盈利因子</div>
+              <div className="text-xs text-gray-500 mb-1">{t('account_panel.profit_factor')}</div>
               <div className={`text-xl font-bold ${analysis.profitFactor >= 1.5 ? 'text-green-400' : analysis.profitFactor >= 1 ? 'text-yellow-400' : 'text-red-400'}`}>
                 {analysis.profitFactor === Infinity ? '∞' : analysis.profitFactor.toFixed(2)}
               </div>
@@ -145,7 +145,7 @@ export default function AccountPanel({ account, currentPrice }: AccountPanelProp
 
           {/* 优化建议 */}
           <div>
-            <h3 className="text-sm font-semibold mb-2 text-purple-300">💡 优化建议</h3>
+            <h3 className="text-sm font-semibold mb-2 text-purple-300">{t('account_panel.suggestions')}</h3>
             <ul className="space-y-2">
               {analysis.suggestions.map((suggestion, index) => (
                 <li key={index} className="flex items-start gap-2 text-xs text-gray-300">
@@ -162,7 +162,7 @@ export default function AccountPanel({ account, currentPrice }: AccountPanelProp
               href="/strategy"
               className="mt-4 w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-500 text-white py-2.5 rounded-lg transition font-medium text-sm">
               <TrendingUp className="w-4 h-4" />
-              优化我的策略 <ArrowRight className="w-4 h-4" />
+              {t('account_panel.optimize_strategy')} <ArrowRight className="w-4 h-4" />
             </Link>
           )}
         </div>
@@ -171,23 +171,23 @@ export default function AccountPanel({ account, currentPrice }: AccountPanelProp
       {/* 新手建议（无交易记录时显示） */}
       {analysis.totalTrades === 0 && (
         <div className="bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-lg p-6 border border-blue-700/50">
-          <h3 className="font-semibold mb-3 text-blue-300">💡 新手指南</h3>
+          <h3 className="font-semibold mb-3 text-blue-300">{t('account_panel.beginner_guide')}</h3>
           <ul className="space-y-2 text-sm text-gray-300">
             <li className="flex items-start gap-2">
               <span className="text-blue-400">•</span>
-              <span>每笔交易都设置止损，保护本金</span>
+              <span>{t('account_panel.tip1')}</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-blue-400">•</span>
-              <span>单笔仓位不超过总资金的20%</span>
+              <span>{t('account_panel.tip2')}</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-blue-400">•</span>
-              <span>新手建议使用1-3x杠杆</span>
+              <span>{t('account_panel.tip3')}</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-blue-400">•</span>
-              <span>先在策略工坊回测，验证策略有效性</span>
+              <span>{t('account_panel.tip4')}</span>
             </li>
           </ul>
         </div>
@@ -199,7 +199,7 @@ export default function AccountPanel({ account, currentPrice }: AccountPanelProp
         className="w-full flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-gray-300 py-3 rounded-lg transition"
       >
         <RotateCcw className="w-4 h-4" />
-        重置账户
+        {t('account_panel.reset')}
       </button>
     </div>
   );

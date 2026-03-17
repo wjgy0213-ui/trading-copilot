@@ -5,6 +5,7 @@ import { X, TrendingUp, TrendingDown } from 'lucide-react';
 import { getAccount } from '@/lib/storage';
 import { closePosition, calculatePnL } from '@/lib/tradingEngine';
 import { Trade } from '@/lib/types';
+import { useI18n } from '@/lib/i18n';
 
 interface PositionsPanelProps {
   currentPrice: number;
@@ -12,6 +13,7 @@ interface PositionsPanelProps {
 }
 
 export default function PositionsPanel({ currentPrice, onPositionClosed }: PositionsPanelProps) {
+  const { t } = useI18n();
   const [positions, setPositions] = useState<Trade[]>([]);
 
   useEffect(() => {
@@ -20,7 +22,7 @@ export default function PositionsPanel({ currentPrice, onPositionClosed }: Posit
   }, [currentPrice]);
 
   const handleClose = (tradeId: string) => {
-    const confirmed = confirm('确定要平仓吗？');
+    const confirmed = confirm(t('positions.confirm_close'));
     if (!confirmed) return;
 
     const result = closePosition(tradeId, currentPrice);
@@ -34,9 +36,9 @@ export default function PositionsPanel({ currentPrice, onPositionClosed }: Posit
   if (positions.length === 0) {
     return (
       <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-        <h2 className="text-xl font-bold mb-4">当前持仓</h2>
+        <h2 className="text-xl font-bold mb-4">{t('positions.title')}</h2>
         <div className="text-center text-gray-500 py-8">
-          暂无持仓
+          {t('positions.no_positions')}
         </div>
       </div>
     );
@@ -44,7 +46,7 @@ export default function PositionsPanel({ currentPrice, onPositionClosed }: Posit
 
   return (
     <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-      <h2 className="text-xl font-bold mb-4">当前持仓 ({positions.length})</h2>
+      <h2 className="text-xl font-bold mb-4">{t('positions.title')} ({positions.length})</h2>
       
       <div className="space-y-4">
         {positions.map((position) => {
@@ -71,17 +73,17 @@ export default function PositionsPanel({ currentPrice, onPositionClosed }: Posit
                     ) : (
                       <TrendingDown className="w-4 h-4" />
                     )}
-                    {position.side === 'long' ? '做多' : '做空'}
+                    {position.side === 'long' ? t('positions.long') : t('positions.short')}
                   </div>
                   <div className="text-sm text-gray-400">
-                    {position.leverage}x 杠杆
+                    {position.leverage}x {t('positions.leverage')}
                   </div>
                 </div>
                 
                 <button
                   onClick={() => handleClose(position.id)}
                   className="text-gray-400 hover:text-white transition"
-                  title="平仓"
+                  title={t('positions.close')}
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -89,19 +91,19 @@ export default function PositionsPanel({ currentPrice, onPositionClosed }: Posit
 
               <div className="grid grid-cols-2 gap-4 mb-3">
                 <div>
-                  <div className="text-xs text-gray-400">入场价格</div>
+                  <div className="text-xs text-gray-400">{t('positions.entry_price')}</div>
                   <div className="font-semibold">${position.entryPrice.toFixed(2)}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-400">当前价格</div>
+                  <div className="text-xs text-gray-400">{t('positions.current_price')}</div>
                   <div className="font-semibold">${currentPrice.toFixed(2)}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-400">投入金额</div>
+                  <div className="text-xs text-gray-400">{t('positions.invested')}</div>
                   <div className="font-semibold">${position.size.toFixed(2)}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-400">未实现盈亏</div>
+                  <div className="text-xs text-gray-400">{t('positions.unrealized_pnl')}</div>
                   <div className={`font-semibold ${isProfitable ? 'text-green-400' : 'text-red-400'}`}>
                     {isProfitable ? '+' : ''}${unrealizedPnL.toFixed(2)}
                     <span className="text-xs ml-1">
@@ -116,7 +118,7 @@ export default function PositionsPanel({ currentPrice, onPositionClosed }: Posit
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     {position.stopLoss && (
                       <div>
-                        <span className="text-gray-400">止损: </span>
+                        <span className="text-gray-400">{t('positions.stop_loss')}: </span>
                         <span className="text-red-400 font-semibold">
                           ${position.stopLoss.toFixed(2)}
                         </span>
@@ -124,7 +126,7 @@ export default function PositionsPanel({ currentPrice, onPositionClosed }: Posit
                     )}
                     {position.takeProfit && (
                       <div>
-                        <span className="text-gray-400">止盈: </span>
+                        <span className="text-gray-400">{t('positions.take_profit')}: </span>
                         <span className="text-green-400 font-semibold">
                           ${position.takeProfit.toFixed(2)}
                         </span>
@@ -143,7 +145,7 @@ export default function PositionsPanel({ currentPrice, onPositionClosed }: Posit
                       : 'bg-red-600 hover:bg-red-700 text-white'
                   }`}
                 >
-                  平仓
+                  {t('positions.close')}
                 </button>
               </div>
             </div>

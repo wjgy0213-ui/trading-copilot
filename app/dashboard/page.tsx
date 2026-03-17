@@ -319,6 +319,33 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* Next Step Recommendations */}
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-gray-900 p-5">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300">下一步推荐</div>
+          <h3 className="mt-2 text-lg font-semibold text-white">做完市场体检后，去 Practice 校准执行</h3>
+          <p className="mt-2 text-sm text-gray-400">先看懂当前环境，再用模拟训练检查你的入场、止损和仓位控制，避免在实盘里交学费。</p>
+          <Link
+            href="/practice"
+            className="mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-sm font-medium text-black transition hover:bg-emerald-400"
+          >
+            去 Practice <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        <div className="rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-500/10 to-gray-900 p-5">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-violet-300">下一步推荐</div>
+          <h3 className="mt-2 text-lg font-semibold text-white">Practice 跑顺后，把想法送进策略工坊</h3>
+          <p className="mt-2 text-sm text-gray-400">当执行动作更稳定，就把你的交易思路带去回测，验证它到底是可重复策略，还是只是几次运气好。</p>
+          <Link
+            href="/strategy"
+            className="mt-4 inline-flex items-center gap-2 rounded-full bg-violet-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-violet-400"
+          >
+            去策略工坊 <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </div>
+
       {/* Detail Modal */}
       {selected && <DetailModal indicator={selected} onClose={() => setSelected(null)} t={t} />}
     </div>

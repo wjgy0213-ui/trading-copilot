@@ -6,14 +6,16 @@ import { ArrowLeft, TrendingUp, TrendingDown, Star, Clock } from 'lucide-react';
 import { getAccount, getAIScores } from '@/lib/storage';
 import { Trade, AIScore } from '@/lib/types';
 import EquityCurve from '@/components/EquityCurve';
+import { useI18n } from '@/lib/i18n';
 
 export default function HistoryPage() {
+  const { t } = useI18n();
   const [closedTrades, setClosedTrades] = useState<Trade[]>([]);
   const [aiScores, setAIScores] = useState<Record<string, AIScore>>({});
 
   useEffect(() => {
     const account = getAccount();
-    setClosedTrades(account.closedTrades.reverse()); // 最新的在前
+    setClosedTrades(account.closedTrades.reverse());
     setAIScores(getAIScores());
   }, []);
 
@@ -24,7 +26,7 @@ export default function HistoryPage() {
           <div className="container mx-auto px-4 py-4">
             <Link href="/trade" className="flex items-center gap-2 text-gray-400 hover:text-white transition">
               <ArrowLeft className="w-5 h-5" />
-              <span>返回交易</span>
+              <span>{t('history.back_to_trade')}</span>
             </Link>
           </div>
         </header>
@@ -32,13 +34,13 @@ export default function HistoryPage() {
         <div className="container mx-auto px-4 py-20 text-center">
           <div className="max-w-md mx-auto">
             <div className="text-gray-500 text-6xl mb-4">📊</div>
-            <h2 className="text-2xl font-bold mb-4">还没有交易记录</h2>
-            <p className="text-gray-400 mb-8">开始你的第一笔交易，建立交易历史</p>
+            <h2 className="text-2xl font-bold mb-4">{t('history.no_trades')}</h2>
+            <p className="text-gray-400 mb-8">{t('history.no_trades_desc')}</p>
             <Link
               href="/trade"
               className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition"
             >
-              去交易
+              {t('history.go_trade')}
             </Link>
           </div>
         </div>
@@ -52,13 +54,13 @@ export default function HistoryPage() {
         <div className="container mx-auto px-4 py-4">
           <Link href="/trade" className="flex items-center gap-2 text-gray-400 hover:text-white transition">
             <ArrowLeft className="w-5 h-5" />
-            <span>返回交易</span>
+            <span>{t('history.back_to_trade')}</span>
           </Link>
         </div>
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">交易历史</h1>
+        <h1 className="text-3xl font-bold mb-6">{t('history.heading')}</h1>
 
         {/* Equity Curve */}
         <div className="mb-8">
@@ -81,33 +83,33 @@ export default function HistoryPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-8">
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
                 <div className="text-2xl font-bold">{closedTrades.length}</div>
-                <div className="text-xs text-gray-400">总交易</div>
+                <div className="text-xs text-gray-400">{t('history.total_trades')}</div>
               </div>
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
                 <div className={`text-2xl font-bold ${winRate >= 50 ? 'text-green-400' : 'text-red-400'}`}>
                   {winRate.toFixed(0)}%
                 </div>
-                <div className="text-xs text-gray-400">胜率 ({wins}胜{losses}负)</div>
+                <div className="text-xs text-gray-400">{t('history.win_rate')} ({wins}{t('review.wins_suffix')}{losses}{t('review.losses_suffix')})</div>
               </div>
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
                 <div className={`text-2xl font-bold ${totalPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                   {totalPnl >= 0 ? '+' : ''}${totalPnl.toFixed(2)}
                 </div>
-                <div className="text-xs text-gray-400">总盈亏</div>
+                <div className="text-xs text-gray-400">{t('history.total_pnl')}</div>
               </div>
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
                 <div className="text-2xl font-bold text-green-400">${avgWin.toFixed(2)}</div>
-                <div className="text-xs text-gray-400">平均盈利</div>
+                <div className="text-xs text-gray-400">{t('history.avg_win')}</div>
               </div>
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
                 <div className="text-2xl font-bold text-red-400">${avgLoss.toFixed(2)}</div>
-                <div className="text-xs text-gray-400">平均亏损</div>
+                <div className="text-xs text-gray-400">{t('history.avg_loss')}</div>
               </div>
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
                 <div className={`text-2xl font-bold ${avgScore >= 70 ? 'text-yellow-400' : 'text-gray-400'}`}>
                   {avgScore > 0 ? avgScore.toFixed(0) : '-'}
                 </div>
-                <div className="text-xs text-gray-400">平均AI评分</div>
+                <div className="text-xs text-gray-400">{t('history.avg_ai_score')}</div>
               </div>
             </div>
           );
@@ -137,16 +139,16 @@ export default function HistoryPage() {
                       ) : (
                         <TrendingDown className="w-4 h-4" />
                       )}
-                      {trade.side === 'long' ? '做多' : '做空'}
+                      {trade.side === 'long' ? t('history.long') : t('history.short')}
                     </div>
-                    <span className="text-gray-400 text-sm">{trade.leverage}x 杠杆</span>
+                    <span className="text-gray-400 text-sm">{trade.leverage}x {t('history.leverage')}</span>
                   </div>
 
                   {score && (
                     <div className="flex items-center gap-2 bg-gray-700 px-3 py-1 rounded-full">
                       <Star className="w-4 h-4 text-yellow-400" />
                       <span className="text-sm font-semibold">
-                        AI评分: {score.entryScore}/100
+                        {t('history.ai_score')}: {score.entryScore}/100
                       </span>
                     </div>
                   )}
@@ -154,19 +156,19 @@ export default function HistoryPage() {
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                   <div>
-                    <div className="text-xs text-gray-400 mb-1">入场价格</div>
+                    <div className="text-xs text-gray-400 mb-1">{t('history.entry_price')}</div>
                     <div className="font-semibold">${trade.entryPrice.toFixed(2)}</div>
                   </div>
                   <div>
-                    <div className="text-xs text-gray-400 mb-1">出场价格</div>
+                    <div className="text-xs text-gray-400 mb-1">{t('history.exit_price')}</div>
                     <div className="font-semibold">${trade.exitPrice?.toFixed(2) || '-'}</div>
                   </div>
                   <div>
-                    <div className="text-xs text-gray-400 mb-1">投入金额</div>
+                    <div className="text-xs text-gray-400 mb-1">{t('history.invested')}</div>
                     <div className="font-semibold">${trade.size.toFixed(2)}</div>
                   </div>
                   <div>
-                    <div className="text-xs text-gray-400 mb-1">盈亏</div>
+                    <div className="text-xs text-gray-400 mb-1">{t('history.pnl')}</div>
                     <div
                       className={`font-semibold ${
                         isProfitable ? 'text-green-400' : 'text-red-400'
@@ -184,7 +186,7 @@ export default function HistoryPage() {
                   <div className="flex gap-4 text-sm mb-4">
                     {trade.stopLoss && (
                       <div>
-                        <span className="text-gray-400">止损: </span>
+                        <span className="text-gray-400">{t('history.stop_loss')}: </span>
                         <span className="text-red-400 font-semibold">
                           ${trade.stopLoss.toFixed(2)}
                         </span>
@@ -192,7 +194,7 @@ export default function HistoryPage() {
                     )}
                     {trade.takeProfit && (
                       <div>
-                        <span className="text-gray-400">止盈: </span>
+                        <span className="text-gray-400">{t('history.take_profit')}: </span>
                         <span className="text-green-400 font-semibold">
                           ${trade.takeProfit.toFixed(2)}
                         </span>
@@ -205,7 +207,7 @@ export default function HistoryPage() {
                   <Clock className="w-3 h-3" />
                   <span>
                     {new Date(trade.openedAt).toLocaleString('zh-CN')} -{' '}
-                    {trade.closedAt ? new Date(trade.closedAt).toLocaleString('zh-CN') : '进行中'}
+                    {trade.closedAt ? new Date(trade.closedAt).toLocaleString('zh-CN') : t('history.ongoing')}
                   </span>
                 </div>
 
@@ -213,7 +215,7 @@ export default function HistoryPage() {
                   <div className="pt-4 border-t border-gray-700">
                     <h3 className="font-semibold mb-3 flex items-center gap-2">
                       <Star className="w-4 h-4 text-yellow-400" />
-                      AI教练反馈
+                      {t('history.ai_feedback')}
                     </h3>
                     <div className="space-y-2">
                       {score.feedback.entry.map((feedback, i) => (

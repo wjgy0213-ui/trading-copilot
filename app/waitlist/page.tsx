@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from 'react'
 import { analytics } from '@/lib/analytics'
+import { useI18n } from '@/lib/i18n'
 
 export default function WaitlistPage() {
+  const { t } = useI18n()
   const [email, setEmail] = useState('')
   const [wechat, setWechat] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
-  const [count] = useState(47) // TODO: replace with real count from leads table
+  const [count] = useState(47)
 
   useEffect(() => {
     analytics.ctaClick({
@@ -23,7 +25,7 @@ export default function WaitlistPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!email && !wechat) {
-      setErrorMsg('请至少填写一种联系方式')
+      setErrorMsg(t('waitlist.error_contact'))
       return
     }
     setStatus('loading')
@@ -56,14 +58,21 @@ export default function WaitlistPage() {
         setStatus('success')
         analytics.waitlistSubmit({ method, source: ((utm.utm_source as string) || 'waitlist-page'), page: '/waitlist' })
       } else {
-        setErrorMsg(data.error || '提交失败')
+        setErrorMsg(data.error || t('waitlist.submit_failed'))
         setStatus('error')
       }
     } catch {
-      setErrorMsg('网络错误，请重试')
+      setErrorMsg(t('waitlist.network_error'))
       setStatus('error')
     }
   }
+
+  const features = [
+    { icon: '🔬', title: t('waitlist.feat_verify'), desc: t('waitlist.feat_verify_desc') },
+    { icon: '🤖', title: t('waitlist.feat_ai'), desc: t('waitlist.feat_ai_desc') },
+    { icon: '👁️', title: t('waitlist.feat_monitor'), desc: t('waitlist.feat_monitor_desc') },
+    { icon: '📚', title: t('waitlist.feat_course'), desc: t('waitlist.feat_course_desc') },
+  ]
 
   return (
     <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center px-4 py-12">
@@ -77,25 +86,20 @@ export default function WaitlistPage() {
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium px-3 py-1.5 rounded-full mb-6">
             <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-            内测即将开放
+            {t('waitlist.badge')}
           </div>
 
           <h1 className="text-3xl font-black text-white mb-3 leading-tight">
-            Trading Copilot
+            {t('waitlist.heading')}
           </h1>
-          <p className="text-gray-400 text-base leading-relaxed">
-            AI 交易陪练系统 — 从靠感觉交易<br />变成有系统的交易者
+          <p className="text-gray-400 text-base leading-relaxed whitespace-pre-line">
+            {t('waitlist.desc')}
           </p>
         </div>
 
         {/* Features */}
         <div className="grid grid-cols-2 gap-3 mb-8">
-          {[
-            { icon: '🔬', title: '策略验证', desc: '历史回测 + 参数优化' },
-            { icon: '🤖', title: 'AI策略师', desc: '描述想法生成策略' },
-            { icon: '👁️', title: '执行监督', desc: 'AI盯仓防止乱操作' },
-            { icon: '📚', title: '系统课程', desc: '从零建立交易框架' },
-          ].map((f) => (
+          {features.map((f) => (
             <div key={f.title} className="bg-gray-900 border border-gray-800 rounded-xl p-3.5">
               <div className="text-xl mb-1">{f.icon}</div>
               <div className="text-white text-sm font-semibold">{f.title}</div>
@@ -114,7 +118,7 @@ export default function WaitlistPage() {
             ))}
           </div>
           <span className="text-gray-400 text-sm">
-            已有 <span className="text-white font-semibold">{count}+</span> 人加入候补
+            {t('waitlist.social_proof').replace('{count}', String(count))}
           </span>
         </div>
 
@@ -122,17 +126,16 @@ export default function WaitlistPage() {
         {status === 'success' ? (
           <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-8 text-center">
             <div className="text-4xl mb-3">🎉</div>
-            <h3 className="text-white font-bold text-lg mb-2">已加入候补名单！</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              内测开放时会第一时间联系你<br />
-              感谢支持，一起慢交易 🙏
+            <h3 className="text-white font-bold text-lg mb-2">{t('waitlist.success_title')}</h3>
+            <p className="text-gray-400 text-sm leading-relaxed whitespace-pre-line">
+              {t('waitlist.success_desc')}
             </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-3">
             <div>
               <label className="block text-gray-400 text-xs font-medium mb-1.5 ml-1">
-                邮箱地址
+                {t('waitlist.email_label')}
               </label>
               <input
                 type="email"
@@ -145,19 +148,19 @@ export default function WaitlistPage() {
 
             <div className="flex items-center gap-3">
               <div className="flex-1 h-px bg-gray-800" />
-              <span className="text-gray-600 text-xs">或</span>
+              <span className="text-gray-600 text-xs">{t('waitlist.or')}</span>
               <div className="flex-1 h-px bg-gray-800" />
             </div>
 
             <div>
               <label className="block text-gray-400 text-xs font-medium mb-1.5 ml-1">
-                微信 ID
+                {t('waitlist.wechat_label')}
               </label>
               <input
                 type="text"
                 value={wechat}
                 onChange={(e) => setWechat(e.target.value)}
-                placeholder="微信号（方便内测邀请）"
+                placeholder={t('waitlist.wechat_placeholder')}
                 className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-emerald-500 transition text-sm"
               />
             </div>
@@ -171,11 +174,11 @@ export default function WaitlistPage() {
               disabled={status === 'loading'}
               className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:bg-gray-700 text-white font-bold py-3.5 rounded-xl transition text-base mt-1"
             >
-              {status === 'loading' ? '提交中...' : '加入候补名单 →'}
+              {status === 'loading' ? t('waitlist.submitting') : t('waitlist.submit_btn')}
             </button>
 
             <p className="text-center text-gray-600 text-xs">
-              不发垃圾信息 · 随时可退出
+              {t('waitlist.no_spam')}
             </p>
           </form>
         )}
@@ -183,9 +186,9 @@ export default function WaitlistPage() {
         {/* Bottom CTA */}
         <div className="mt-8 text-center">
           <p className="text-gray-600 text-xs">
-            已有账号？{' '}
+            {t('waitlist.has_account')}{' '}
             <a href="/strategy" className="text-emerald-500 hover:text-emerald-400">
-              立即体验 24h 免费试用 →
+              {t('waitlist.try_free')}
             </a>
           </p>
         </div>

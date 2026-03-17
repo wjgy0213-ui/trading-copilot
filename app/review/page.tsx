@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { BarChart3, TrendingUp, TrendingDown, Clock, AlertTriangle, Award, Zap, Brain, Target, Flame, Shield } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 
 interface ReviewData {
   summary: {
@@ -67,14 +68,14 @@ function StatCard({ label, value, sub, icon: Icon, color = 'gray' }: any) {
   );
 }
 
-function HeatMap({ data }: { data: Record<string, { wins: number; losses: number; pnl: number }> }) {
+function HeatMap({ data, t }: { data: Record<string, { wins: number; losses: number; pnl: number }>; t: (key: string) => string }) {
   const hours = Array.from({ length: 24 }, (_, i) => i);
   const maxPnl = Math.max(...Object.values(data).map(d => Math.abs(d.pnl)), 1);
 
   return (
     <div className="bg-gray-900/50 border border-gray-800/50 rounded-xl p-4">
       <h3 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
-        <Clock className="w-4 h-4" /> 交易时段热力图 (UTC)
+        <Clock className="w-4 h-4" /> {t('review.heatmap_title')}
       </h3>
       <div className="grid grid-cols-12 gap-1">
         {hours.map(h => {
@@ -96,9 +97,9 @@ function HeatMap({ data }: { data: Record<string, { wins: number; losses: number
         })}
       </div>
       <div className="flex items-center gap-4 mt-2 text-[10px] text-gray-500">
-        <span className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-emerald-500/60" /> 盈利时段</span>
-        <span className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-red-500/60" /> 亏损时段</span>
-        <span className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-gray-800/50" /> 无交易</span>
+        <span className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-emerald-500/60" /> {t('review.heatmap_profit')}</span>
+        <span className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-red-500/60" /> {t('review.heatmap_loss')}</span>
+        <span className="flex items-center gap-1"><div className="w-3 h-3 rounded bg-gray-800/50" /> {t('review.heatmap_none')}</span>
       </div>
     </div>
   );
@@ -119,11 +120,11 @@ function InsightsList({ insights }: { insights: ReviewData['insights'] }) {
   );
 }
 
-function TradeList({ trades }: { trades: any[] }) {
+function TradeList({ trades, t }: { trades: any[]; t: (key: string) => string }) {
   return (
     <div className="bg-gray-900/50 border border-gray-800/50 rounded-xl overflow-hidden">
       <div className="px-4 py-3 border-b border-gray-800/50">
-        <h3 className="text-sm font-semibold text-gray-300">最近交易</h3>
+        <h3 className="text-sm font-semibold text-gray-300">{t('review.recent_trades')}</h3>
       </div>
       <div className="divide-y divide-gray-800/30 max-h-80 overflow-y-auto">
         {trades.map((t, i) => (
@@ -146,6 +147,7 @@ function TradeList({ trades }: { trades: any[] }) {
 }
 
 export default function ReviewPage() {
+  const { t } = useI18n();
   const [data, setData] = useState<ReviewData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -158,7 +160,7 @@ export default function ReviewPage() {
       .then(d => {
         if (d.noTrades) {
           setNoTrades(true);
-          setNoTradesMsg(d.message || '暂无交易数据');
+          setNoTradesMsg(d.message || t('review.no_trades'));
         } else {
           setData(d);
         }
@@ -170,7 +172,7 @@ export default function ReviewPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-950 pt-20 flex items-center justify-center">
-        <div className="animate-pulse text-gray-500">分析交易数据中...</div>
+        <div className="animate-pulse text-gray-500">{t('review.loading')}</div>
       </div>
     );
   }
@@ -180,10 +182,10 @@ export default function ReviewPage() {
       <div className="min-h-screen bg-gray-950 pt-20 flex items-center justify-center px-4">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-4">📊</div>
-          <h2 className="text-xl font-bold text-white mb-2">暂无交易数据</h2>
+          <h2 className="text-xl font-bold text-white mb-2">{t('review.no_trades')}</h2>
           <p className="text-gray-400 mb-6">{noTradesMsg}</p>
           <a href="/elite" className="inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-xl transition">
-            前往连接交易所 →
+            {t('review.go_connect')}
           </a>
         </div>
       </div>
@@ -193,7 +195,7 @@ export default function ReviewPage() {
   if (!data) {
     return (
       <div className="min-h-screen bg-gray-950 pt-20 flex items-center justify-center">
-        <div className="text-red-400">加载失败</div>
+        <div className="text-red-400">{t('review.load_failed')}</div>
       </div>
     );
   }
@@ -207,11 +209,11 @@ export default function ReviewPage() {
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-2">
             <Brain className="w-6 h-6 text-purple-400" />
-            <h1 className="text-2xl font-bold text-gray-100">AI 复盘日记</h1>
+            <h1 className="text-2xl font-bold text-gray-100">{t('review.heading')}</h1>
           </div>
-          <p className="text-sm text-gray-500">AI 分析你的每笔交易，找到盈利模式和亏损陷阱</p>
+          <p className="text-sm text-gray-500">{t('review.subtitle')}</p>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs">
-            <Shield className="w-3 h-3" /> Elite 专属
+            <Shield className="w-3 h-3" /> {t('review.elite_badge')}
           </div>
         </div>
 
@@ -219,38 +221,38 @@ export default function ReviewPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-gray-900/50 border border-gray-800/50 rounded-xl p-6 flex flex-col items-center justify-center">
             <ScoreRing score={s.score} grade={s.grade} />
-            <p className="text-xs text-gray-500 mt-2">综合交易评分</p>
+            <p className="text-xs text-gray-500 mt-2">{t('review.score_label')}</p>
           </div>
           <div className="md:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <StatCard label="总交易" value={s.totalTrades} sub={`${s.wins}胜 ${s.losses}负`} icon={BarChart3} />
-            <StatCard label="胜率" value={`${(s.winRate * 100).toFixed(0)}%`} icon={Target} color={s.winRate >= 0.5 ? 'green' : 'red'} />
-            <StatCard label="净盈亏" value={`$${s.totalPnl.toFixed(2)}`} icon={s.totalPnl >= 0 ? TrendingUp : TrendingDown} color={s.totalPnl >= 0 ? 'green' : 'red'} />
-            <StatCard label="盈亏比" value={s.profitFactor.toFixed(2)} icon={Zap} color={s.profitFactor >= 1.5 ? 'green' : s.profitFactor >= 1 ? 'yellow' : 'red'} />
-            <StatCard label="手续费" value={`$${s.totalFees.toFixed(2)}`} sub={`占PnL ${(s.totalFees / Math.max(Math.abs(s.totalPnl), 1) * 100).toFixed(0)}%`} icon={Flame} color="yellow" />
-            <StatCard label="最大连亏" value={`${s.maxConsecLosses}笔`} icon={AlertTriangle} color={s.maxConsecLosses >= 4 ? 'red' : 'gray'} />
+            <StatCard label={t('review.total_trades')} value={s.totalTrades} sub={`${s.wins}${t('review.wins_suffix')} ${s.losses}${t('review.losses_suffix')}`} icon={BarChart3} />
+            <StatCard label={t('review.win_rate')} value={`${(s.winRate * 100).toFixed(0)}%`} icon={Target} color={s.winRate >= 0.5 ? 'green' : 'red'} />
+            <StatCard label={t('review.net_pnl')} value={`$${s.totalPnl.toFixed(2)}`} icon={s.totalPnl >= 0 ? TrendingUp : TrendingDown} color={s.totalPnl >= 0 ? 'green' : 'red'} />
+            <StatCard label={t('review.profit_factor')} value={s.profitFactor.toFixed(2)} icon={Zap} color={s.profitFactor >= 1.5 ? 'green' : s.profitFactor >= 1 ? 'yellow' : 'red'} />
+            <StatCard label={t('review.fees')} value={`$${s.totalFees.toFixed(2)}`} sub={`${t('review.fees_pnl_pct')} ${(s.totalFees / Math.max(Math.abs(s.totalPnl), 1) * 100).toFixed(0)}%`} icon={Flame} color="yellow" />
+            <StatCard label={t('review.max_consec_losses')} value={`${s.maxConsecLosses}${t('review.trades_suffix')}`} icon={AlertTriangle} color={s.maxConsecLosses >= 4 ? 'red' : 'gray'} />
           </div>
         </div>
 
         {/* AI Insights */}
         <div className="bg-gray-900/50 border border-gray-800/50 rounded-xl p-5">
           <h2 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
-            <Award className="w-4 h-4 text-purple-400" /> AI 诊断报告
+            <Award className="w-4 h-4 text-purple-400" /> {t('review.ai_diagnosis')}
           </h2>
           <InsightsList insights={data.insights} />
         </div>
 
         {/* Heatmap + Trade List */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <HeatMap data={data.timeAnalysis} />
-          <TradeList trades={data.tradeGroups} />
+          <HeatMap data={data.timeAnalysis} t={t} />
+          <TradeList trades={data.tradeGroups} t={t} />
         </div>
 
         {/* CTA for non-Elite */}
         <div className="text-center py-6 bg-gradient-to-r from-purple-500/5 to-cyan-500/5 border border-purple-500/10 rounded-xl">
-          <p className="text-sm text-gray-400 mb-2">当前展示 Demo 数据</p>
-          <p className="text-xs text-gray-500 mb-4">连接交易所后，AI 将分析你的真实交易并生成个性化复盘报告</p>
+          <p className="text-sm text-gray-400 mb-2">{t('review.demo_notice')}</p>
+          <p className="text-xs text-gray-500 mb-4">{t('review.demo_desc')}</p>
           <a href="/elite" className="inline-flex items-center gap-2 px-5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold rounded-lg transition">
-            <Shield className="w-4 h-4" /> 连接交易所 →
+            <Shield className="w-4 h-4" /> {t('review.connect_exchange')}
           </a>
         </div>
       </div>

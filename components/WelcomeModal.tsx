@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { X, Zap, Shield, Brain, TrendingUp } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 
 export default function WelcomeModal() {
+  const { t } = useI18n();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -29,25 +31,25 @@ export default function WelcomeModal() {
           <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Zap className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-2xl font-bold">欢迎来到纸盘模拟器</h2>
-          <p className="text-gray-400 mt-2">$10,000 虚拟资金，真实行情，零风险练习</p>
+          <h2 className="text-2xl font-bold">{t('welcome.title')}</h2>
+          <p className="text-gray-400 mt-2">{t('welcome.subtitle')}</p>
         </div>
 
         <div className="space-y-4 mb-8">
-          <Feature icon={<TrendingUp className="w-5 h-5 text-green-400" />} title="实时行情" desc="BTC、ETH等10种加密货币 + Mag 7 美股" />
-          <Feature icon={<Brain className="w-5 h-5 text-blue-400" />} title="AI教练" desc="每笔交易自动评分，帮你识别坏习惯" />
-          <Feature icon={<Shield className="w-5 h-5 text-yellow-400" />} title="风险管理" desc="止损/止盈提醒，仓位控制建议" />
+          <Feature icon={<TrendingUp className="w-5 h-5 text-green-400" />} title={t('welcome.feat_realtime')} desc={t('welcome.feat_realtime_desc')} />
+          <Feature icon={<Brain className="w-5 h-5 text-blue-400" />} title={t('welcome.feat_ai')} desc={t('welcome.feat_ai_desc')} />
+          <Feature icon={<Shield className="w-5 h-5 text-yellow-400" />} title={t('welcome.feat_risk')} desc={t('welcome.feat_risk_desc')} />
         </div>
 
         <button
           onClick={dismiss}
           className="w-full py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold rounded-xl text-lg transition-all"
         >
-          开始交易 🚀
+          {t('welcome.start')}
         </button>
 
         <p className="text-center text-xs text-gray-600 mt-4">
-          所有交易使用虚拟资金，不涉及真实资产
+          {t('welcome.disclaimer')}
         </p>
       </div>
     </div>

@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Maximize2, Minimize2 } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 
 interface PriceChartProps {
   symbol?: string;
 }
 
 export default function PriceChart({ symbol = 'BINANCE:BTCUSDT' }: PriceChartProps) {
+  const { t } = useI18n();
   const containerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -92,7 +94,7 @@ export default function PriceChart({ symbol = 'BINANCE:BTCUSDT' }: PriceChartPro
             className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 hover:bg-red-600/80 rounded-lg text-sm text-gray-300 hover:text-white transition-all"
           >
             <Minimize2 className="w-4 h-4" />
-            退出全屏 (ESC)
+            {t('chart.exit_fullscreen')}
           </button>
         </div>
       )}
@@ -102,7 +104,7 @@ export default function PriceChart({ symbol = 'BINANCE:BTCUSDT' }: PriceChartPro
         <button
           onClick={() => setIsFullscreen(true)}
           className="absolute top-3 right-3 z-10 p-2 bg-gray-800/80 hover:bg-gray-700 rounded-lg transition-all border border-gray-700/50 backdrop-blur-sm group"
-          title="全屏查看"
+          title={t('chart.fullscreen')}
         >
           <Maximize2 className="w-5 h-5 text-gray-400 group-hover:text-white" />
         </button>
