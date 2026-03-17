@@ -9,7 +9,7 @@ import {
   Sparkles, CreditCard, UserCircle, LogIn, Shield, Activity, Crosshair,
   Fish, Gamepad2, Brain, ShieldAlert, Radio, ChevronDown, Menu, X
 } from 'lucide-react';
-import { TrialCountdown } from './Paywall';
+import { QuotaIndicator } from './Paywall';
 import { useI18n, LanguageSwitcher } from '@/lib/i18n';
 
 interface NavItem {
@@ -160,7 +160,7 @@ export default function Navbar() {
 
           {/* Auth + Language */}
           <div className="shrink-0 flex items-center gap-2">
-            <TrialCountdown />
+            <QuotaIndicator />
             <LanguageSwitcher />
             {status === 'authenticated' && authSession?.user ? (
               <Link href="/account" className="flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-gray-800/50 transition">

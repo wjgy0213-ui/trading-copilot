@@ -1,39 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSession } from '@/lib/useSession';
 import { useI18n } from '@/lib/i18n';
-import { Lock, Sparkles, Clock, Zap } from 'lucide-react';
-import { analytics } from '@/lib/analytics';
-
-function TrialCountdown() {
-  const { session } = useSession();
-  const { t } = useI18n();
-  const [remaining, setRemaining] = useState('');
-
-  useEffect(() => {
-    const update = () => {
-      const expiry = session?.trialExpiresAt;
-      if (!expiry || expiry <= Date.now()) { setRemaining(''); return; }
-      const diff = expiry - Date.now();
-      const h = Math.floor(diff / 3600000);
-      const m = Math.floor((diff % 3600000) / 60000);
-      setRemaining(`${h}h ${m}m`);
-    };
-    update();
-    const ti = setInterval(update, 60000);
-    return () => clearInterval(ti);
-  }, [session?.trialExpiresAt]);
-
-  if (!remaining) return null;
-  return (
-    <div className="flex items-center gap-1.5 text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-1.5">
-      <Clock className="w-3 h-3" />
-      {t('paywall.trialRemaining')} {remaining}
-    </div>
-  );
-}
+import { Lock, Sparkles, Crown } from 'lucide-react';
+import QuotaGate, { QuotaIndicator } from '@/components/QuotaGate';
 
 export function PaywallBanner() {
   const { t } = useI18n();
@@ -46,13 +18,16 @@ export function PaywallBanner() {
   );
 }
 
-export { TrialCountdown };
+// Re-export QuotaIndicator for backward compatibility
+export { QuotaIndicator };
 
+/**
+ * Paywall component — now delegates to QuotaGate (free daily quota system).
+ * The old 24h trial logic has been removed.
+ */
 export default function Paywall({ children, feature }: { children: React.ReactNode; feature?: string }) {
-  const { session, isPro, loading, refresh } = useSession();
+  const { isPro, loading } = useSession();
   const { t } = useI18n();
-  const [starting, setStarting] = useState(false);
-  const [error, setError] = useState('');
   const [showActivate, setShowActivate] = useState(false);
   const [code, setCode] = useState('');
   const [codeError, setCodeError] = useState('');
@@ -60,47 +35,7 @@ export default function Paywall({ children, feature }: { children: React.ReactNo
   if (loading) return <>{children}</>;
   if (isPro) return <>{children}</>;
 
-  const handleStartTrial = async () => {
-    if (!session?.email) {
-      window.location.href = '/api/auth/signin?callbackUrl=' + encodeURIComponent(window.location.pathname);
-      return;
-    }
-
-    setStarting(true);
-    setError('');
-    try {
-      analytics.ctaClick({
-        cta_id: 'start_trial',
-        cta_text: session?.email ? 'start_trial' : 'login_first',
-        target: '/api/auth/trial',
-        feature: feature || 'general',
-        page: window.location.pathname,
-        location: 'paywall',
-      });
-
-      const res = await fetch('/api/auth/trial', { method: 'POST' });
-      const data = await res.json();
-      if (res.ok && data.ok) {
-        analytics.trialStart({
-          feature: feature || 'general',
-          page: window.location.pathname,
-          user_state: session?.email ? 'logged_in' : 'anonymous',
-          trial_expires_at: data.expiresAt,
-        });
-        refresh();
-        setTimeout(() => window.location.reload(), 500);
-      } else if (data.error === 'trial_used') {
-        setError(t('paywall.trialExpired'));
-      } else {
-        setError(t('paywall.trialFailed'));
-      }
-    } catch {
-      setError(t('paywall.networkError'));
-    } finally {
-      setStarting(false);
-    }
-  };
-
+  // For activation code support, wrap QuotaGate with code input
   const handleActivateCode = async () => {
     const { activatePro } = await import('@/lib/paywall');
     if (activatePro(code)) {
@@ -111,61 +46,8 @@ export default function Paywall({ children, feature }: { children: React.ReactNo
   };
 
   return (
-    <div className="relative">
-      <div className="blur-sm pointer-events-none select-none opacity-40">
-        {children}
-      </div>
-      <div className="absolute inset-0 flex items-center justify-center p-4">
-        <div className="bg-gray-900/98 border border-gray-700 rounded-2xl p-7 text-center max-w-sm w-full shadow-2xl">
-          <div className="w-14 h-14 bg-gradient-to-br from-emerald-500/20 to-violet-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-gray-700">
-            <Lock className="w-6 h-6 text-emerald-400" />
-          </div>
-
-          <h3 className="font-bold text-lg mb-1">{t('paywall.title')}</h3>
-          <p className="text-sm text-gray-500 mb-5">{feature || t('paywall.subtitle')}</p>
-
-          <button
-            onClick={handleStartTrial}
-            disabled={starting}
-            className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white px-5 py-3 rounded-xl text-sm font-semibold transition-all mb-3 disabled:opacity-50"
-          >
-            <Zap className="w-4 h-4" />
-            {starting ? t('paywall.starting') : session?.email ? t('paywall.trialButton') : t('paywall.loginFirst')}
-          </button>
-
-          {error && <p className="text-xs text-red-400 mb-3">{error}</p>}
-
-          <Link href="/pricing"
-            className="w-full flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-200 px-5 py-2.5 rounded-xl text-sm font-medium transition-all mb-3 border border-gray-700">
-            <Sparkles className="w-4 h-4 text-violet-400" />
-            {t('paywall.upgrade')}
-          </Link>
-
-          {!showActivate ? (
-            <button onClick={() => setShowActivate(true)} className="text-xs text-gray-600 hover:text-gray-400 transition">
-              {t('paywall.hasCode')}
-            </button>
-          ) : (
-            <div className="flex gap-2">
-              <input
-                value={code}
-                onChange={e => { setCode(e.target.value); setCodeError(''); }}
-                placeholder={t('paywall.codePlaceholder')}
-                className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-emerald-600"
-              />
-              <button onClick={handleActivateCode}
-                className="bg-gray-700 hover:bg-gray-600 text-gray-200 px-3 py-2 rounded-lg text-xs transition">
-                {t('paywall.confirm')}
-              </button>
-            </div>
-          )}
-          {codeError && <p className="text-xs text-red-400 mt-1">{codeError}</p>}
-
-          <p className="text-[10px] text-gray-700 mt-4">
-            {session?.email ? t('paywall.trialNote') : t('paywall.loginNote')}
-          </p>
-        </div>
-      </div>
-    </div>
+    <QuotaGate feature={feature}>
+      {children}
+    </QuotaGate>
   );
 }
