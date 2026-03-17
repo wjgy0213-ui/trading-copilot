@@ -1,5 +1,7 @@
 'use client';
 
+import { useI18n } from '@/lib/i18n';
+
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -98,6 +100,7 @@ function timeAgo(isoStr: string): string {
 
 /* ========== Mode Selection Screen ========== */
 function ModeSelector({ onSelect }: { onSelect: (mode: SniperMode) => void }) {
+  const { t } = useI18n();
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex items-center justify-center px-4">
       <div className="max-w-2xl w-full">
@@ -108,8 +111,8 @@ function ModeSelector({ onSelect }: { onSelect: (mode: SniperMode) => void }) {
               Meme Sniper
             </span>
           </h1>
-          <p className="text-gray-400 mt-2">AI驱动的链上Meme自动狙击系统</p>
-          <p className="text-gray-500 text-sm mt-1">5维评分 · 自动买卖 · 风控止损</p>
+          <p className="text-gray-400 mt-2">{t('sniper.aiDesc')}</p>
+          <p className="text-gray-500 text-sm mt-1">{t('sniper.scoring')}</p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -119,15 +122,15 @@ function ModeSelector({ onSelect }: { onSelect: (mode: SniperMode) => void }) {
             className="group bg-gradient-to-br from-purple-900/40 to-purple-800/20 rounded-2xl p-6 border border-purple-500/30 hover:border-purple-400/60 transition-all text-left"
           >
             <div className="text-3xl mb-3">📊</div>
-            <h3 className="text-lg font-bold text-purple-300 group-hover:text-purple-200">模拟盘</h3>
-            <p className="text-gray-400 text-sm mt-2">10 SOL 虚拟资金起步，零风险体验AI狙击策略</p>
+            <h3 className="text-lg font-bold text-purple-300 group-hover:text-purple-200">{t('sniper.paper')}</h3>
+            <p className="text-gray-400 text-sm mt-2">{t('sniper.paperDesc')}</p>
             <div className="mt-4 flex flex-wrap gap-2">
-              <span className="px-2 py-1 bg-purple-500/20 rounded text-xs text-purple-300">免费</span>
-              <span className="px-2 py-1 bg-purple-500/20 rounded text-xs text-purple-300">实时数据</span>
-              <span className="px-2 py-1 bg-purple-500/20 rounded text-xs text-purple-300">零风险</span>
+              <span className="px-2 py-1 bg-purple-500/20 rounded text-xs text-purple-300">{t('sniper.free')}</span>
+              <span className="px-2 py-1 bg-purple-500/20 rounded text-xs text-purple-300">{t('sniper.realtime')}</span>
+              <span className="px-2 py-1 bg-purple-500/20 rounded text-xs text-purple-300">{t('sniper.zeroRisk')}</span>
             </div>
             <div className="mt-4 text-purple-400 text-sm font-medium group-hover:translate-x-1 transition-transform">
-              立即开始 →
+              {t('sniper.startNow')}
             </div>
           </button>
 
@@ -137,15 +140,15 @@ function ModeSelector({ onSelect }: { onSelect: (mode: SniperMode) => void }) {
             className="group bg-gradient-to-br from-orange-900/40 to-orange-800/20 rounded-2xl p-6 border border-orange-500/30 hover:border-orange-400/60 transition-all text-left"
           >
             <div className="text-3xl mb-3">⚡</div>
-            <h3 className="text-lg font-bold text-orange-300 group-hover:text-orange-200">实盘交易</h3>
-            <p className="text-gray-400 text-sm mt-2">连接交易所或钱包，真金白银自动执行</p>
+            <h3 className="text-lg font-bold text-orange-300 group-hover:text-orange-200">{t('sniper.live')}</h3>
+            <p className="text-gray-400 text-sm mt-2">{t('sniper.liveDesc')}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               <span className="px-2 py-1 bg-orange-500/20 rounded text-xs text-orange-300">Elite</span>
-              <span className="px-2 py-1 bg-orange-500/20 rounded text-xs text-orange-300">币安</span>
+              <span className="px-2 py-1 bg-orange-500/20 rounded text-xs text-orange-300">{t('sniper.binanceBadge')}</span>
               <span className="px-2 py-1 bg-orange-500/20 rounded text-xs text-orange-300">Phantom</span>
             </div>
             <div className="mt-4 text-orange-400 text-sm font-medium group-hover:translate-x-1 transition-transform">
-              连接钱包 →
+              {t('sniper.connectWallet')}
             </div>
           </button>
         </div>
@@ -154,7 +157,7 @@ function ModeSelector({ onSelect }: { onSelect: (mode: SniperMode) => void }) {
         <div className="mt-8 bg-gray-800/40 rounded-xl p-4 border border-gray-700/30">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-sm text-gray-300 font-medium">官方实验盘 · 实时运行中</span>
+            <span className="text-sm text-gray-300 font-medium">{t('sniper.officialLab')}</span>
           </div>
           <OfficialLabStats />
         </div>
@@ -165,6 +168,7 @@ function ModeSelector({ onSelect }: { onSelect: (mode: SniperMode) => void }) {
 
 /* Official lab stats - fetches our real data */
 function OfficialLabStats() {
+  const { t } = useI18n();
   const [stats, setStats] = useState<{ pnl: string; trades: number; winRate: string; running: string } | null>(null);
 
   useEffect(() => {
@@ -178,32 +182,32 @@ function OfficialLabStats() {
             pnl: `${d.portfolio.total_pnl_pct >= 0 ? '+' : ''}${d.portfolio.total_pnl_pct.toFixed(1)}%`,
             trades: d.state?.total_trades || 0,
             winRate: `${d.portfolio.win_rate.toFixed(0)}%`,
-            running: `${days}天`,
+            running: `${days}`,
           });
         }
       })
       .catch(() => {});
   }, []);
 
-  if (!stats) return <div className="text-gray-500 text-sm">加载中...</div>;
+  if (!stats) return <div className="text-gray-500 text-sm">{t('sniper.loading')}</div>;
 
   return (
     <div className="grid grid-cols-4 gap-3 text-center text-sm">
       <div>
         <div className={`font-bold ${stats.pnl.startsWith('+') ? 'text-green-400' : 'text-red-400'}`}>{stats.pnl}</div>
-        <div className="text-gray-500 text-xs">累计收益</div>
+        <div className="text-gray-500 text-xs">{t('sniper.cumReturn')}</div>
       </div>
       <div>
         <div className="font-bold text-white">{stats.trades}</div>
-        <div className="text-gray-500 text-xs">总交易</div>
+        <div className="text-gray-500 text-xs">{t('sniper.totalTrades')}</div>
       </div>
       <div>
         <div className="font-bold text-white">{stats.winRate}</div>
-        <div className="text-gray-500 text-xs">胜率</div>
+        <div className="text-gray-500 text-xs">{t('sniper.winRate')}</div>
       </div>
       <div>
         <div className="font-bold text-purple-400">{stats.running}</div>
-        <div className="text-gray-500 text-xs">运行天数</div>
+        <div className="text-gray-500 text-xs">{t('sniper.runDays')}</div>
       </div>
     </div>
   );
@@ -211,6 +215,7 @@ function OfficialLabStats() {
 
 /* ========== Live Mode Connect Screen ========== */
 function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (exchange: LiveExchange) => void }) {
+  const { t } = useI18n();
   const router = useRouter();
   const [showBinanceForm, setShowBinanceForm] = useState(false);
   const [apiKey, setApiKey] = useState('');
@@ -220,7 +225,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
   const [phantomStatus, setPhantomStatus] = useState<'idle' | 'connecting' | 'no-wallet'>('idle');
 
   const connectBinance = async () => {
-    if (!apiKey || !apiSecret) { setError('请填写 API Key 和 Secret'); return; }
+    if (!apiKey || !apiSecret) { setError(t('sniper.fillApiKey')); return; }
     setConnecting(true);
     setError('');
     try {
@@ -230,7 +235,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
         body: JSON.stringify({ exchange: 'binance', apiKey, apiSecret }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || '连接失败');
+      if (!res.ok) throw new Error(data.error || t('sniper.connectFail'));
       onConnect('binance');
     } catch (e: any) {
       setError(e.message);
@@ -252,7 +257,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
       localStorage.setItem('sniper_phantom_pubkey', pubkey);
       onConnect('phantom');
     } catch (e: any) {
-      setError(e.message || 'Phantom 连接失败');
+      setError(e.message || t('sniper.phantomFail'));
       setPhantomStatus('idle');
     }
   };
@@ -261,12 +266,12 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white flex items-center justify-center px-4">
       <div className="max-w-lg w-full">
         <button onClick={onBack} className="text-gray-400 hover:text-white text-sm mb-6 flex items-center gap-1">
-          ← 返回
+          {t('sniper.back')}
         </button>
 
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold">⚡ 连接交易账户</h2>
-          <p className="text-gray-400 mt-2">选择你的交易所或钱包</p>
+          <h2 className="text-2xl font-bold">{t('sniper.connectTitle')}</h2>
+          <p className="text-gray-400 mt-2">{t('sniper.connectDesc')}</p>
         </div>
 
         {error && (
@@ -284,8 +289,8 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
             >
               <div className="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center text-2xl">🟡</div>
               <div>
-                <div className="font-bold">币安 Binance</div>
-                <div className="text-gray-400 text-sm">API Key 连接 · 支持现货交易</div>
+                <div className="font-bold">Binance</div>
+                <div className="text-gray-400 text-sm">{t('sniper.binanceDesc')}</div>
               </div>
               <div className="ml-auto text-gray-500">{showBinanceForm ? '↑' : '→'}</div>
             </button>
@@ -295,7 +300,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
                   <label className="text-xs text-gray-400 block mb-1">API Key</label>
                   <input
                     type="text" value={apiKey} onChange={(e) => setApiKey(e.target.value)}
-                    placeholder="输入你的 Binance API Key"
+                    placeholder={t('sniper.apiKeyPlaceholder')}
                     className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:border-yellow-500 focus:outline-none"
                   />
                 </div>
@@ -303,19 +308,19 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
                   <label className="text-xs text-gray-400 block mb-1">API Secret</label>
                   <input
                     type="password" value={apiSecret} onChange={(e) => setApiSecret(e.target.value)}
-                    placeholder="输入你的 Binance API Secret"
+                    placeholder={t('sniper.apiSecretPlaceholder')}
                     className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm focus:border-yellow-500 focus:outline-none"
                   />
                 </div>
                 <div className="text-xs text-gray-500 bg-gray-900/60 rounded-lg p-2">
-                  💡 建议只开启「现货读取+交易」权限，关闭提币权限。<br/>
-                  API Key 使用 AES-256 加密存储，不以明文保存。
+                  {t('sniper.securityTip').split('\n')[0]}<br/>
+                  {t('sniper.securityTip').split('\n')[1]}
                 </div>
                 <button
                   onClick={connectBinance} disabled={connecting}
                   className="w-full bg-yellow-600 hover:bg-yellow-500 disabled:opacity-50 text-black font-bold py-2.5 rounded-lg transition-all text-sm"
                 >
-                  {connecting ? '连接中...' : '🔗 连接币安'}
+                  {connecting ? t('sniper.phantomConnecting') : '🔗 连接币安'}
                 </button>
               </div>
             )}
@@ -329,11 +334,11 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
           >
             <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center text-2xl">👻</div>
             <div>
-              <div className="font-bold">Phantom 钱包</div>
+              <div className="font-bold">Phantom Wallet</div>
               <div className="text-gray-400 text-sm">
-                {phantomStatus === 'connecting' ? '连接中...' :
-                 phantomStatus === 'no-wallet' ? '未检测到 Phantom，请先安装扩展' :
-                 '链上直连 · Solana DEX 交易'}
+                {phantomStatus === 'connecting' ? t('sniper.phantomConnecting') :
+                 phantomStatus === 'no-wallet' ? t('sniper.phantomNotFound') :
+                 t('sniper.phantomDesc')}
               </div>
             </div>
             <div className="ml-auto text-gray-500">
@@ -344,7 +349,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
           {phantomStatus === 'no-wallet' && (
             <a href="https://phantom.app/download" target="_blank" rel="noopener noreferrer"
               className="block text-center text-purple-400 hover:text-purple-300 text-xs underline">
-              下载 Phantom 钱包 →
+              {t('sniper.downloadPhantom')}
             </a>
           )}
 
@@ -356,7 +361,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
             <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center text-xl font-bold text-blue-400">OK</div>
             <div>
               <div className="font-bold">OKX</div>
-              <div className="text-gray-400 text-sm">API Key 连接 · 需要 Passphrase</div>
+              <div className="text-gray-400 text-sm">{t('sniper.okxDesc')}</div>
             </div>
             <div className="ml-auto text-gray-500">→</div>
           </button>
@@ -369,7 +374,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
             <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center text-xl font-bold text-orange-400">By</div>
             <div>
               <div className="font-bold">Bybit</div>
-              <div className="text-gray-400 text-sm">API Key 连接 · Unified 账户</div>
+              <div className="text-gray-400 text-sm">{t('sniper.bybitDesc')}</div>
             </div>
             <div className="ml-auto text-gray-500">→</div>
           </button>
@@ -382,7 +387,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
             <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center text-xl font-bold text-green-400">HL</div>
             <div>
               <div className="font-bold">Hyperliquid</div>
-              <div className="text-gray-400 text-sm">钱包地址直连 · 无需 API Key</div>
+              <div className="text-gray-400 text-sm">{t('sniper.hlDesc')}</div>
             </div>
             <div className="ml-auto text-gray-500">→</div>
           </button>
@@ -390,7 +395,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
 
         <div className="mt-6 bg-orange-500/10 rounded-lg p-3 border border-orange-500/20">
           <p className="text-orange-300 text-xs">
-            ⚠️ 实盘交易涉及真实资金风险。建议先在模拟盘验证策略，确认稳定后再接入实盘。
+            {t('sniper.liveWarning')}
           </p>
         </div>
       </div>
@@ -400,6 +405,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
 
 /* ========== Main Sniper Dashboard ========== */
 function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () => void }) {
+  const { t } = useI18n();
   const [data, setData] = useState<SniperData | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<'positions' | 'history'>('positions');
@@ -482,43 +488,43 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
       <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white">
         <div className="max-w-2xl mx-auto px-4 pt-6 pb-12">
           <button onClick={onBack} className="text-gray-400 hover:text-white text-sm mb-6 flex items-center gap-1">
-            ← 返回选择
+            {t('sniper.backSelect')}
           </button>
 
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold">📊 模拟盘</h1>
-            <p className="text-gray-400 mt-2">零风险体验AI Meme狙击策略</p>
+            <h1 className="text-3xl font-bold">{t('sniper.paperTitle')}</h1>
+            <p className="text-gray-400 mt-2">{t('sniper.paperSubtitle')}</p>
           </div>
 
           <div className="bg-gradient-to-r from-purple-900/30 to-pink-900/30 rounded-2xl p-8 border border-purple-500/20 text-center">
             <div className="text-6xl mb-4">🔫</div>
-            <h3 className="text-xl font-bold mb-2">准备就绪</h3>
-            <p className="text-gray-400 mb-6">系统将分配 10 SOL 虚拟资金，AI 自动扫描并执行交易</p>
+            <h3 className="text-xl font-bold mb-2">{t('sniper.ready')}</h3>
+            <p className="text-gray-400 mb-6">{t('sniper.readyDesc')}</p>
 
             <div className="grid grid-cols-3 gap-4 mb-8 text-sm">
               <div className="bg-gray-800/60 rounded-xl p-3">
                 <div className="text-purple-400 font-bold">10 SOL</div>
-                <div className="text-gray-500 text-xs">起始资金</div>
+                <div className="text-gray-500 text-xs">{t('sniper.startFund')}</div>
               </div>
               <div className="bg-gray-800/60 rounded-xl p-3">
-                <div className="text-purple-400 font-bold">5维评分</div>
-                <div className="text-gray-500 text-xs">选币算法</div>
+                <div className="text-purple-400 font-bold">{t('sniper.fiveDim')}</div>
+                <div className="text-gray-500 text-xs">{t('sniper.algorithm')}</div>
               </div>
               <div className="bg-gray-800/60 rounded-xl p-3">
-                <div className="text-purple-400 font-bold">自动</div>
-                <div className="text-gray-500 text-xs">买卖执行</div>
+                <div className="text-purple-400 font-bold">{t('sniper.autoExec')}</div>
+                <div className="text-gray-500 text-xs">{t('sniper.execution')}</div>
               </div>
             </div>
 
             <div className="bg-gray-800/40 rounded-lg p-4 mb-6 text-left text-sm">
-              <h4 className="font-medium text-gray-300 mb-2">策略参数</h4>
+              <h4 className="font-medium text-gray-300 mb-2">{t('sniper.strategyParams')}</h4>
               <div className="grid grid-cols-2 gap-2 text-gray-400">
-                <div>• 扫描频率: 每5分钟</div>
-                <div>• 买入门槛: ≥65分</div>
-                <div>• 单笔仓位: 5%</div>
-                <div>• 最大持仓: 10个</div>
-                <div>• 止损: -30%</div>
-                <div>• 止盈: +100%半仓 / +200%全平</div>
+                <div>{t('sniper.scanFreq')}</div>
+                <div>{t('sniper.buyThreshold')}</div>
+                <div>{t('sniper.posSize')}</div>
+                <div>{t('sniper.maxPos')}</div>
+                <div>{t('sniper.stopLoss')}</div>
+                <div>{t('sniper.takeProfit')}</div>
               </div>
             </div>
 
@@ -533,15 +539,15 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
               }}
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-3 px-8 rounded-xl text-lg transition-all transform hover:scale-105"
             >
-              🚀 启动模拟盘
+              {t('sniper.launchPaper')}
             </button>
           </div>
 
           {/* Rules */}
           <div className="mt-6 text-xs text-gray-500 space-y-1">
-            <p>• 模拟盘使用实时市场数据，不涉及真实资金</p>
-            <p>• 验证策略后可升级至实盘（需 Elite 订阅）</p>
-            <p>• 交易记录自动保存，支持导出复盘</p>
+            <p>{t('sniper.paperNote1')}</p>
+            <p>{t('sniper.paperNote2')}</p>
+            <p>{t('sniper.paperNote3')}</p>
           </div>
         </div>
       </div>
@@ -564,9 +570,9 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
       <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 flex items-center justify-center">
         <div className="text-center text-gray-400">
           <p className="text-4xl mb-4">🔫</p>
-          <p className="text-lg">Meme Sniper 准备中</p>
-          <p className="text-sm mt-2">AI正在扫描市场，请稍候...</p>
-          <button onClick={onBack} className="mt-4 text-purple-400 hover:text-purple-300 text-sm">← 返回</button>
+          <p className="text-lg">{t('sniper.preparing')}</p>
+          <p className="text-sm mt-2">{t('sniper.scanning')}</p>
+          <button onClick={onBack} className="mt-4 text-purple-400 hover:text-purple-300 text-sm">{t('sniper.back')}</button>
         </div>
       </div>
     );
@@ -583,7 +589,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
         <div className="flex items-center justify-between mb-6">
           <div>
             <button onClick={onBack} className="text-gray-500 hover:text-white text-xs mb-1 flex items-center gap-1">
-              ← 返回
+              {t('sniper.back')}
             </button>
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <span>🔫</span>
@@ -592,7 +598,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
               </span>
             </h1>
             <p className="text-gray-500 text-sm">
-              {mode === 'paper' ? '模拟盘 · 虚拟资金' : '实盘 · 真实交易'}
+              {mode === 'paper' ? t('sniper.paperMode') : t('sniper.liveMode')}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -601,7 +607,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                 ? 'bg-purple-500/20 text-purple-300 border-purple-500/30' 
                 : 'bg-orange-500/20 text-orange-300 border-orange-500/30'
             }`}>
-              {mode === 'paper' ? '📊 模拟盘' : '⚡ 实盘'}
+              {mode === 'paper' ? t('sniper.paperBadge') : t('sniper.liveBadge')}
             </span>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
@@ -624,16 +630,16 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <StatCard label="余额" value={`${state.balance_sol.toFixed(2)} SOL`} />
-            <StatCard label="持仓数" value={`${positions.length} / 10`} sub={`${state.total_trades} 总交易`} />
+            <StatCard label={t('sniper.balance')} value={`${state.balance_sol.toFixed(2)} SOL`} />
+            <StatCard label={t('sniper.posCount')} value={`${positions.length} / 10`} sub={`${state.total_trades} 总交易`} />
             <StatCard 
-              label="胜率" 
+              label={t('sniper.winRate')} 
               value={`${portfolio.win_rate.toFixed(0)}%`}
               sub={`${state.wins}W ${state.losses}L`}
               color={portfolio.win_rate >= 50 ? 'text-green-400' : portfolio.win_rate > 0 ? 'text-red-400' : 'text-gray-400'}
             />
             <StatCard 
-              label="最大回撤" 
+              label={t('sniper.maxDrawdown')} 
               value={`${state.max_drawdown.toFixed(1)}%`}
               color={state.max_drawdown < -10 ? 'text-red-400' : 'text-yellow-400'}
             />
@@ -646,12 +652,12 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
             <div className="flex items-center gap-3">
               <span className="text-2xl">⚡</span>
               <div>
-                <div className="text-sm font-medium text-orange-300">准备好了？升级到实盘</div>
-                <div className="text-xs text-gray-400">连接币安或Phantom钱包，用真实资金自动执行</div>
+                <div className="text-sm font-medium text-orange-300">{t('sniper.upgradeTitle')}</div>
+                <div className="text-xs text-gray-400">{t('sniper.upgradeDesc')}</div>
               </div>
             </div>
             <button className="px-4 py-2 bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 rounded-lg text-sm font-medium border border-orange-500/30 transition-colors">
-              连接钱包
+              {t('sniper.connectWallet')}
             </button>
           </div>
         )}
@@ -664,7 +670,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
               tab === 'positions' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'
             }`}
           >
-            📊 持仓 ({positions.length})
+            {t('sniper.positions')} ({positions.length})
           </button>
           <button
             onClick={() => setTab('history')}
@@ -672,7 +678,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
               tab === 'history' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'
             }`}
           >
-            📜 交易记录 ({trades.length})
+            {t('sniper.tradeHistory')} ({trades.length})
           </button>
         </div>
 
@@ -682,7 +688,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
             {positions.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
                 <p className="text-3xl mb-2">🎯</p>
-                <p>暂无持仓 — 等待狙击机会</p>
+                <p>{t('sniper.noPositions')}</p>
               </div>
             ) : (
               positions
@@ -704,19 +710,19 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                       <div>
-                        <div className="text-gray-500 text-xs">入场价</div>
+                        <div className="text-gray-500 text-xs">{t('sniper.entryPrice')}</div>
                         <div className="text-gray-300 font-mono">${pos.entry_price.toFixed(8)}</div>
                       </div>
                       <div>
-                        <div className="text-gray-500 text-xs">现价</div>
+                        <div className="text-gray-500 text-xs">{t('sniper.currentPrice')}</div>
                         <div className="text-gray-300 font-mono">${pos.current_price.toFixed(8)}</div>
                       </div>
                       <div>
-                        <div className="text-gray-500 text-xs">仓位</div>
+                        <div className="text-gray-500 text-xs">{t('sniper.positionSize')}</div>
                         <div className="text-gray-300">{pos.size_sol.toFixed(3)} SOL</div>
                       </div>
                       <div>
-                        <div className="text-gray-500 text-xs">持仓时间</div>
+                        <div className="text-gray-500 text-xs">{t('sniper.holdTime')}</div>
                         <div className="text-gray-300">{timeAgo(pos.entry_time)}</div>
                       </div>
                     </div>
@@ -724,9 +730,9 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                     {/* PnL bar */}
                     <div className="mt-3">
                       <div className="flex justify-between text-xs text-gray-500 mb-1">
-                        <span>止损 -30%</span>
-                        <span>入场</span>
-                        <span>止盈 +200%</span>
+                        <span>{t('sniper.slLabel')}</span>
+                        <span>{t('sniper.entryLabel')}</span>
+                        <span>{t('sniper.tpLabel')}</span>
                       </div>
                       <div className="relative w-full h-2 bg-gray-700 rounded-full overflow-hidden">
                         <div className="absolute left-0 h-full bg-red-500/30 rounded-l-full" style={{ width: '13%' }} />
@@ -762,7 +768,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
           <div className="space-y-2">
             {trades.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
-                <p>暂无交易记录</p>
+                <p>{t('sniper.noTrades')}</p>
               </div>
             ) : (
               trades.map((t, i) => (
@@ -802,9 +808,9 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
 
         {/* Footer */}
         <div className="mt-8 text-center text-xs text-gray-600">
-          <p>🔫 每5分钟自动扫描 · 5维评分≥65自动买入 · 止损-30% / 止盈+200%</p>
+          <p>{t('sniper.footerScan')}</p>
           <p className="mt-1">
-            {mode === 'paper' ? '模拟盘 · 不涉及真实资金' : '实盘 · 真实资金交易'} · SOL ${portfolio.sol_price.toFixed(2)}
+            {mode === 'paper' ? t('sniper.paperFooter') : t('sniper.liveFooter')} · SOL ${portfolio.sol_price.toFixed(2)}
           </p>
         </div>
       </div>

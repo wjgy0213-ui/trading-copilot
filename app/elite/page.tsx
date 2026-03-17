@@ -1,5 +1,7 @@
 'use client';
 
+import { useI18n } from '@/lib/i18n';
+
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { Shield, TrendingUp, AlertTriangle, Bell, Check, X, Loader2 } from 'lucide-react';
@@ -27,6 +29,7 @@ interface RiskData {
 }
 
 export default function ElitePage() {
+  const { t } = useI18n();
   const { data: session } = useSession();
   const [exchange, setExchange] = useState('binance');
   const [apiKey, setApiKey] = useState('');
@@ -104,7 +107,7 @@ export default function ElitePage() {
   };
 
   const closePosition = async (position: Position) => {
-    if (!confirm(`确认平仓 ${position.symbol} ${position.side}？`)) return;
+    if (!confirm(`${t('elite.confirmClose')} ${position.symbol} ${position.side}?`)) return;
     
     setLoading(true);
     setError('');
@@ -121,7 +124,7 @@ export default function ElitePage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to close position');
       
-      setSuccess(`✅ ${position.symbol} 已平仓`);
+      setSuccess(`✅ ${position.symbol} ${t('elite.closed')}`);
       fetchPositions();
       fetchRiskData();
       setTimeout(() => setSuccess(''), 3000);
@@ -159,8 +162,8 @@ export default function ElitePage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Shield className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold mb-2">请先登录</h1>
-          <p className="text-gray-400">Elite功能需要登录账户</p>
+          <h1 className="text-2xl font-bold mb-2">{t('elite.loginRequired')}</h1>
+          <p className="text-gray-400">{t('elite.loginDesc')}</p>
         </div>
       </div>
     );
@@ -173,8 +176,8 @@ export default function ElitePage() {
         <div className="flex items-center gap-3 mb-8">
           <Shield className="w-10 h-10 text-emerald-400" />
           <div>
-            <h1 className="text-3xl font-bold">Elite 控制台</h1>
-            <p className="text-gray-400">实盘交易 · 风控监控 · 自动化</p>
+            <h1 className="text-3xl font-bold">{t('elite.title')}</h1>
+            <p className="text-gray-400">{t('elite.subtitle')}</p>
           </div>
         </div>
 
@@ -197,13 +200,13 @@ export default function ElitePage() {
           <div className="bg-gray-900 rounded-lg border border-gray-800 p-6">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-emerald-400" />
-              交易所连接
+              {t('elite.exchangeConnect')}
             </h2>
             
             {!connected ? (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-2">交易所</label>
+                  <label className="block text-sm text-gray-400 mb-2">{t('elite.exchangeLabel')}</label>
                   <select 
                     value={exchange}
                     onChange={(e) => setExchange(e.target.value)}
@@ -218,14 +221,14 @@ export default function ElitePage() {
 
                 <div>
                   <label className="block text-sm text-gray-400 mb-2">
-                    {exchange === 'hyperliquid' ? '钱包地址 (0x...)' : 'API Key'}
+                    {exchange === 'hyperliquid' ? t('elite.walletAddress') : t('elite.apiKeyLabel')}
                   </label>
                   <input
                     type="text"
                     value={apiKey}
                     onChange={(e) => setApiKey(e.target.value)}
                     className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    placeholder={exchange === 'hyperliquid' ? '0x...' : '输入你的API Key'}
+                    placeholder={exchange === 'hyperliquid' ? '0x...' : t('elite.apiKeyPlaceholder')}
                   />
                 </div>
 
@@ -237,7 +240,7 @@ export default function ElitePage() {
                       value={apiSecret}
                       onChange={(e) => setApiSecret(e.target.value)}
                       className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                      placeholder="输入你的API Secret"
+                      placeholder={t('elite.apiSecretPlaceholder')}
                     />
                   </div>
                 )}
@@ -250,7 +253,7 @@ export default function ElitePage() {
                       value={passphrase}
                       onChange={(e) => setPassphrase(e.target.value)}
                       className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                      placeholder="输入你的OKX Passphrase"
+                      placeholder={t('elite.passphrasePlaceholder')}
                     />
                   </div>
                 )}
@@ -263,26 +266,26 @@ export default function ElitePage() {
                   {connecting ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      连接中...
+                      {t('elite.connecting')}
                     </>
                   ) : (
-                    '连接交易所'
+                    t('elite.connectExchange')
                   )}
                 </button>
 
                 <p className="text-xs text-gray-500 mt-2">
-                  ⚠️ 请确保API权限包含：读取持仓、交易（平仓）。不需要提币权限。
+                  {t('elite.apiPermNotice')}
                 </p>
               </div>
             ) : (
               <div className="space-y-4">
                 <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-400">已连接</span>
+                    <span className="text-sm text-gray-400">{t('elite.connected')}</span>
                     <span className="text-emerald-400 font-semibold">{exchange.toUpperCase()}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-400">账户余额</span>
+                    <span className="text-sm text-gray-400">{t('elite.balance')}</span>
                     <span className="text-2xl font-bold">${balance?.toFixed(2) || '0.00'}</span>
                   </div>
                 </div>
@@ -295,7 +298,7 @@ export default function ElitePage() {
                   }}
                   className="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium py-2 rounded-lg transition"
                 >
-                  断开连接
+                  {t('elite.disconnect')}
                 </button>
               </div>
             )}
@@ -305,7 +308,7 @@ export default function ElitePage() {
           <div className="bg-gray-900 rounded-lg border border-gray-800 p-6">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <Bell className="w-5 h-5 text-blue-400" />
-              Telegram 通知
+              {t('elite.telegramNotif')}
             </h2>
 
             {!telegramConnected ? (
@@ -317,7 +320,7 @@ export default function ElitePage() {
                     value={chatId}
                     onChange={(e) => setChatId(e.target.value)}
                     className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="输入你的Telegram Chat ID"
+                    placeholder={t('elite.chatIdPlaceholder')}
                   />
                 </div>
 
@@ -329,17 +332,17 @@ export default function ElitePage() {
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      连接中...
+                      {t('elite.telegramConnecting')}
                     </>
                   ) : (
-                    '连接 Telegram'
+                    t('elite.connectTelegram')
                   )}
                 </button>
 
                 <div className="text-xs text-gray-500 space-y-1">
-                  <p>💡 如何获取Chat ID：</p>
-                  <p>1. 打开 Telegram，搜索 @userinfobot</p>
-                  <p>2. 点击 Start，机器人会回复你的 Chat ID</p>
+                  <p>{t('elite.telegramGuide')}</p>
+                  <p>{t('elite.telegramStep1')}</p>
+                  <p>{t('elite.telegramStep2')}</p>
                 </div>
               </div>
             ) : (
@@ -347,7 +350,7 @@ export default function ElitePage() {
                 <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <Check className="w-5 h-5 text-blue-400" />
-                    <span className="text-blue-400 font-semibold">已连接</span>
+                    <span className="text-blue-400 font-semibold">{t('elite.telegramConnected')}</span>
                   </div>
                   <p className="text-sm text-gray-400">Chat ID: {chatId}</p>
                 </div>
@@ -355,15 +358,15 @@ export default function ElitePage() {
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm">
                     <input type="checkbox" className="rounded" defaultChecked />
-                    <span>持仓变化通知</span>
+                    <span>{t('elite.posChangeNotif')}</span>
                   </label>
                   <label className="flex items-center gap-2 text-sm">
                     <input type="checkbox" className="rounded" defaultChecked />
-                    <span>风控警报</span>
+                    <span>{t('elite.riskAlerts')}</span>
                   </label>
                   <label className="flex items-center gap-2 text-sm">
                     <input type="checkbox" className="rounded" defaultChecked />
-                    <span>平仓确认</span>
+                    <span>{t('elite.closeConfirm')}</span>
                   </label>
                 </div>
 
@@ -371,7 +374,7 @@ export default function ElitePage() {
                   onClick={() => setTelegramConnected(false)}
                   className="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium py-2 rounded-lg transition"
                 >
-                  断开连接
+                  {t('elite.disconnect')}
                 </button>
               </div>
             )}
@@ -383,7 +386,7 @@ export default function ElitePage() {
           <div className="mt-6 bg-gray-900 rounded-lg border border-gray-800 p-6">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-yellow-400" />
-              风控仪表盘
+              {t('elite.riskDashboard')}
             </h2>
 
             <div className="grid md:grid-cols-2 gap-6">
@@ -399,7 +402,7 @@ export default function ElitePage() {
                   {riskData.status === 'green' ? '🟢' : riskData.status === 'yellow' ? '🟡' : '🔴'}
                 </div>
                 <p className="mt-4 text-lg font-semibold">
-                  {riskData.status === 'green' ? '安全' : riskData.status === 'yellow' ? '警告' : '危险'}
+                  {riskData.status === 'green' ? t('elite.safe') : riskData.status === 'yellow' ? t('elite.warning') : t('elite.danger')}
                 </p>
               </div>
 
@@ -407,7 +410,7 @@ export default function ElitePage() {
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-400">单笔风险</span>
+                    <span className="text-gray-400">{t('elite.singleRisk')}</span>
                     <span className="font-semibold">{riskData.details.maxPositionRisk.toFixed(2)}%</span>
                   </div>
                   <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
@@ -423,7 +426,7 @@ export default function ElitePage() {
 
                 <div>
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-400">当日亏损</span>
+                    <span className="text-gray-400">{t('elite.dailyLoss')}</span>
                     <span className="font-semibold">{riskData.details.dailyLoss.toFixed(2)}%</span>
                   </div>
                   <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
@@ -439,7 +442,7 @@ export default function ElitePage() {
 
                 <div>
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-400">最高杠杆</span>
+                    <span className="text-gray-400">{t('elite.maxLeverage')}</span>
                     <span className="font-semibold">{riskData.details.maxLeverage}x</span>
                   </div>
                   <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
@@ -463,28 +466,28 @@ export default function ElitePage() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-emerald-400" />
-                持仓监控
+                {t('elite.posMonitor')}
               </h2>
-              <span className="text-xs text-gray-500">每10秒自动刷新</span>
+              <span className="text-xs text-gray-500">{t('elite.autoRefresh')}</span>
             </div>
 
             {positions.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
-                <p>当前无持仓</p>
+                <p>{t('elite.noPositions')}</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-gray-800">
-                      <th className="text-left py-3 px-2 text-gray-400 font-medium">币种</th>
-                      <th className="text-left py-3 px-2 text-gray-400 font-medium">方向</th>
-                      <th className="text-right py-3 px-2 text-gray-400 font-medium">大小</th>
-                      <th className="text-right py-3 px-2 text-gray-400 font-medium">入场价</th>
-                      <th className="text-right py-3 px-2 text-gray-400 font-medium">当前价</th>
-                      <th className="text-right py-3 px-2 text-gray-400 font-medium">盈亏</th>
-                      <th className="text-right py-3 px-2 text-gray-400 font-medium">杠杆</th>
-                      <th className="text-right py-3 px-2 text-gray-400 font-medium">操作</th>
+                      <th className="text-left py-3 px-2 text-gray-400 font-medium">{t('elite.symbol')}</th>
+                      <th className="text-left py-3 px-2 text-gray-400 font-medium">{t('elite.directionLabel')}</th>
+                      <th className="text-right py-3 px-2 text-gray-400 font-medium">{t('elite.size')}</th>
+                      <th className="text-right py-3 px-2 text-gray-400 font-medium">{t('elite.entryPrice')}</th>
+                      <th className="text-right py-3 px-2 text-gray-400 font-medium">{t('elite.markPrice')}</th>
+                      <th className="text-right py-3 px-2 text-gray-400 font-medium">{t('elite.pnlLabel')}</th>
+                      <th className="text-right py-3 px-2 text-gray-400 font-medium">{t('elite.leverage')}</th>
+                      <th className="text-right py-3 px-2 text-gray-400 font-medium">{t('elite.action')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -515,7 +518,7 @@ export default function ElitePage() {
                             disabled={loading}
                             className="px-3 py-1 bg-red-600/20 hover:bg-red-600/30 text-red-400 text-xs font-medium rounded border border-red-600/30 transition disabled:opacity-50"
                           >
-                            平仓
+                            {t('elite.closePos')}
                           </button>
                         </td>
                       </tr>

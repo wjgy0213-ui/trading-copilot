@@ -1,11 +1,14 @@
 'use client';
 
+import { useI18n } from '@/lib/i18n';
+
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { CheckCircle, ArrowRight, BookOpen, Shield, Loader2 } from 'lucide-react';
 
 function SuccessContent() {
+  const { t } = useI18n();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const [activated, setActivated] = useState(false);
@@ -25,33 +28,33 @@ function SuccessContent() {
           <CheckCircle className="w-14 h-14 text-emerald-400" />
         </div>
         
-        <h1 className="text-3xl font-bold text-white mb-3">购买成功！🎉</h1>
-        <p className="text-gray-400 mb-8">课程已终身解锁，Elite体验已激活。</p>
+        <h1 className="text-3xl font-bold text-white mb-3">{t('courseSuccess.title')}</h1>
+        <p className="text-gray-400 mb-8">{t('courseSuccess.desc')}</p>
 
         <div className="space-y-3 mb-8">
           <div className="flex items-center gap-3 bg-gray-900/50 border border-gray-800 rounded-xl p-4">
             <BookOpen className="w-5 h-5 text-violet-400" />
             <div className="text-left">
-              <div className="text-sm font-medium text-white">全部课程</div>
-              <div className="text-xs text-gray-500">终身访问，随时学习</div>
+              <div className="text-sm font-medium text-white">{t('courseSuccess.allCourses')}</div>
+              <div className="text-xs text-gray-500">{t('courseSuccess.allCoursesDesc')}</div>
             </div>
             <CheckCircle className="w-4 h-4 text-emerald-400 ml-auto" />
           </div>
           <div className="flex items-center gap-3 bg-gray-900/50 border border-gray-800 rounded-xl p-4">
             <Shield className="w-5 h-5 text-amber-400" />
             <div className="text-left">
-              <div className="text-sm font-medium text-white">Elite体验</div>
-              <div className="text-xs text-gray-500">交易所对接 · 风控系统 · Telegram通知</div>
+              <div className="text-sm font-medium text-white">{t('courseSuccess.eliteTrial')}</div>
+              <div className="text-xs text-gray-500">{t('courseSuccess.eliteTrialDesc')}</div>
             </div>
             <CheckCircle className="w-4 h-4 text-emerald-400 ml-auto" />
           </div>
         </div>
 
         <a href="/learn" className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:opacity-90 transition shadow-lg shadow-violet-900/30">
-          开始第一课 <ArrowRight className="w-4 h-4" />
+          {t('courseSuccess.startLesson')} <ArrowRight className="w-4 h-4" />
         </a>
         
-        <p className="text-xs text-gray-600 mt-4">购买确认邮件已发送到你的邮箱</p>
+        <p className="text-xs text-gray-600 mt-4">{t('courseSuccess.emailSent')}</p>
       </div>
     </div>
   );

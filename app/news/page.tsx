@@ -1,17 +1,19 @@
 'use client';
 
+import { useI18n } from '@/lib/i18n';
+
 import { useState } from 'react';
 import { NEWS_CATEGORIES, type NewsCategory, getSentimentBgColor, getSentimentLabel, getImpactColor, getImpactLabel } from '@/lib/mockNews';
 import { useNewsData } from '@/lib/useNewsData';
 import { Clock, Flame, Filter, TrendingUp, TrendingDown, Minus, Wifi, WifiOff } from 'lucide-react';
 
-function formatTimeAgo(timestamp: number): string {
+function formatTimeAgo(timestamp: number, t: (key: string) => string): string {
   const diff = Date.now() - timestamp;
   const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins}分钟前`;
+  if (mins < 60) return `${mins} ${t('news.minutesAgo')}`;
   const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}小时前`;
-  return `${Math.floor(hours / 24)}天前`;
+  if (hours < 24) return `${hours} ${t('news.hoursAgo')}`;
+  return `${Math.floor(hours / 24)} ${t('news.daysAgo')}`;
 }
 
 const SentimentIcon = ({ sentiment }: { sentiment: string }) => {
@@ -21,6 +23,7 @@ const SentimentIcon = ({ sentiment }: { sentiment: string }) => {
 };
 
 export default function NewsPage() {
+  const { t } = useI18n();
   const [category, setCategory] = useState<NewsCategory | undefined>(undefined);
   const [sentimentFilter, setSentimentFilter] = useState<string>('all');
   const { news: MOCK_NEWS, loading: newsLoading, isLive } = useNewsData();
@@ -36,8 +39,8 @@ export default function NewsPage() {
     <div className="max-w-[1400px] mx-auto px-4 py-6">
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h1 className="text-lg font-semibold text-gray-100">市场资讯</h1>
-          <p className="text-xs text-gray-500 mt-0.5">{MOCK_NEWS.length} 条资讯 · 实时更新</p>
+          <h1 className="text-lg font-semibold text-gray-100">{t('news.title')}</h1>
+          <p className="text-xs text-gray-500 mt-0.5">{MOCK_NEWS.length} {t('news.count')}</p>
         </div>
       </div>
 
@@ -46,21 +49,21 @@ export default function NewsPage() {
         <div className="border border-emerald-500/20 bg-emerald-500/5 rounded-lg p-3">
           <div className="flex items-center gap-1.5 mb-1">
             <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-xs text-gray-400">利好信号</span>
+            <span className="text-xs text-gray-400">{t('news.bullish')}</span>
           </div>
           <div className="text-2xl font-mono font-bold text-emerald-400">{bullishCount}</div>
         </div>
         <div className="border border-red-500/20 bg-red-500/5 rounded-lg p-3">
           <div className="flex items-center gap-1.5 mb-1">
             <TrendingDown className="w-3.5 h-3.5 text-red-400" />
-            <span className="text-xs text-gray-400">利空信号</span>
+            <span className="text-xs text-gray-400">{t('news.bearish')}</span>
           </div>
           <div className="text-2xl font-mono font-bold text-red-400">{bearishCount}</div>
         </div>
         <div className="border border-amber-500/20 bg-amber-500/5 rounded-lg p-3">
           <div className="flex items-center gap-1.5 mb-1">
             <Flame className="w-3.5 h-3.5 text-amber-400" />
-            <span className="text-xs text-gray-400">高影响事件</span>
+            <span className="text-xs text-gray-400">{t('news.highImpact')}</span>
           </div>
           <div className="text-2xl font-mono font-bold text-amber-400">{highImpact.length}</div>
         </div>
@@ -81,9 +84,9 @@ export default function NewsPage() {
         <div className="w-px h-5 bg-gray-800" />
         <div className="flex gap-1">
           {[
-            { id: 'all', label: '全部' },
-            { id: 'bullish', label: '利好' },
-            { id: 'bearish', label: '利空' },
+            { id: 'all', label: t('news.all') },
+            { id: 'bullish', label: t('news.bullish') },
+            { id: 'bearish', label: t('news.bearish') },
           ].map(f => (
             <button key={f.id} onClick={() => setSentimentFilter(f.id)}
               className={`px-2 py-1 rounded text-[10px] font-medium transition-all ${
@@ -133,7 +136,7 @@ export default function NewsPage() {
                   </span>
                   <span className={`${getImpactColor(item.impact)}`}>{getImpactLabel(item.impact)}</span>
                   <span className="text-gray-600">{item.source}</span>
-                  <span className="text-gray-600 flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" />{formatTimeAgo(item.timestamp)}</span>
+                  <span className="text-gray-600 flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" />{formatTimeAgo(item.timestamp, t)}</span>
                 </div>
               </div>
             </div>
@@ -142,7 +145,7 @@ export default function NewsPage() {
       </div>
 
       {filtered.length === 0 && (
-        <div className="text-center py-16 text-gray-600 text-sm">暂无匹配的资讯</div>
+        <div className="text-center py-16 text-gray-600 text-sm">{t('news.noResults')}</div>
       )}
     </div>
   );

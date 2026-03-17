@@ -1,5 +1,7 @@
 'use client';
 
+import { useI18n } from '@/lib/i18n';
+
 import { useState, useCallback, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { STRATEGY_TEMPLATES, TIMEFRAMES, SYMBOLS, BACKTEST_PERIODS, DEFAULT_RISK } from '@/lib/strategies';
@@ -14,6 +16,7 @@ function EquityCurve({ data, color = '#10b981', height = 200, compareData }: {
   data: { time: number; equity: number }[]; color?: string; height?: number;
   compareData?: { data: { time: number; equity: number }[]; color: string; name: string }[];
 }) {
+  const { t: tr } = useI18n();
   if (data.length < 2) return null;
   const allEquities = [data, ...(compareData?.map(c => c.data) || [])].flat().map(d => d.equity);
   const minE = Math.min(...allEquities) * 0.99, maxE = Math.max(...allEquities) * 1.01;
@@ -38,7 +41,7 @@ function EquityCurve({ data, color = '#10b981', height = 200, compareData }: {
       </svg>
       {compareData && compareData.length > 0 && (
         <div className="flex gap-4 mt-2 text-xs">
-          <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded" style={{background: color}} />当前</span>
+          <span className="flex items-center gap-1"><span className="w-3 h-0.5 rounded" style={{background: color}} />{tr('strategy.current')}</span>
           {compareData.map((cd, i) => <span key={i} className="flex items-center gap-1"><span className="w-3 h-0.5 rounded" style={{background: cd.color}} />{cd.name}</span>)}
         </div>
       )}
@@ -71,22 +74,23 @@ function StatCard({ label, value, sub, color }: { label: string; value: string; 
 }
 
 function TradeTable({ trades }: { trades: BacktestResult['trades'] }) {
+  const { t: tr } = useI18n();
   const [show, setShow] = useState(false);
   if (trades.length === 0) return null;
   return (
     <div>
       <button onClick={() => setShow(!show)} className="flex items-center gap-2 text-sm text-gray-400 hover:text-gray-200 transition mb-2">
         {show ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        交易明细（{trades.length}笔）
+        {tr('strategy.tradeDetails')} ({trades.length}{tr('strategy.tradeCount')})
       </button>
       {show && (
         <div className="overflow-x-auto max-h-80 overflow-y-auto">
           <table className="w-full text-xs">
             <thead className="sticky top-0 bg-gray-950"><tr className="text-gray-500 border-b border-gray-800">
-              <th className="text-left py-2 px-2">时间</th><th className="text-left py-2 px-2">方向</th>
-              <th className="text-right py-2 px-2">入场</th><th className="text-right py-2 px-2">出场</th>
-              <th className="text-right py-2 px-2">盈亏</th><th className="text-right py-2 px-2">盈亏%</th>
-              <th className="text-left py-2 px-2">原因</th>
+              <th className="text-left py-2 px-2">{tr('strategy.time')}</th><th className="text-left py-2 px-2">{tr('strategy.direction')}</th>
+              <th className="text-right py-2 px-2">{tr('strategy.entry')}</th><th className="text-right py-2 px-2">{tr('strategy.exit')}</th>
+              <th className="text-right py-2 px-2">{tr('strategy.pnl')}</th><th className="text-right py-2 px-2">{tr('strategy.pnlPct')}</th>
+              <th className="text-left py-2 px-2">{tr('strategy.reason')}</th>
             </tr></thead>
             <tbody>{trades.map((t, i) => (
               <tr key={i} className="border-b border-gray-800/50 hover:bg-gray-800/30">
@@ -96,7 +100,7 @@ function TradeTable({ trades }: { trades: BacktestResult['trades'] }) {
                 <td className="py-1.5 px-2 text-right font-mono text-gray-300">${t.exitPrice.toFixed(2)}</td>
                 <td className={`py-1.5 px-2 text-right font-mono ${t.pnl > 0 ? 'text-green-400' : 'text-red-400'}`}>{t.pnl > 0 ? '+' : ''}${t.pnl.toFixed(2)}</td>
                 <td className={`py-1.5 px-2 text-right font-mono ${t.pnl > 0 ? 'text-green-400' : 'text-red-400'}`}>{t.pnlPercent > 0 ? '+' : ''}{t.pnlPercent.toFixed(2)}%</td>
-                <td className="py-1.5 px-2 text-gray-500">{t.exitReason === 'stopLoss' ? '止损' : t.exitReason === 'takeProfit' ? '止盈' : '信号'}</td>
+                <td className="py-1.5 px-2 text-gray-500">{t.exitReason === 'stopLoss' ? tr('strategy.exitStopLoss') : t.exitReason === 'takeProfit' ? tr('strategy.exitTakeProfit') : tr('strategy.exitSignal')}</td>
               </tr>
             ))}</tbody>
           </table>
@@ -179,19 +183,20 @@ function calcScore(r: BacktestResult): number {
 }
 
 function CompareTable({ results }: { results: BacktestResult[] }) {
+  const { t: tr } = useI18n();
   if (results.length < 2) return null;
   const colors = ['#10b981', '#3b82f6', '#f59e0b'];
   const metrics = [
-    { label: '总收益', fn: (r: BacktestResult) => `${r.totalReturnPercent > 0 ? '+' : ''}${r.totalReturnPercent.toFixed(2)}%` },
-    { label: '胜率', fn: (r: BacktestResult) => `${r.winRate.toFixed(1)}%` },
-    { label: '盈亏比', fn: (r: BacktestResult) => r.profitFactor === Infinity ? '∞' : r.profitFactor.toFixed(2) },
-    { label: '最大回撤', fn: (r: BacktestResult) => `${r.maxDrawdownPercent.toFixed(2)}%` },
-    { label: '夏普比率', fn: (r: BacktestResult) => r.sharpeRatio.toFixed(2) },
-    { label: '总交易', fn: (r: BacktestResult) => `${r.totalTrades}笔` },
+    { label: tr('strategy.totalReturn'), fn: (r: BacktestResult) => `${r.totalReturnPercent > 0 ? '+' : ''}${r.totalReturnPercent.toFixed(2)}%` },
+    { label: tr('strategy.winRateLabel'), fn: (r: BacktestResult) => `${r.winRate.toFixed(1)}%` },
+    { label: tr('strategy.profitFactor'), fn: (r: BacktestResult) => r.profitFactor === Infinity ? '∞' : r.profitFactor.toFixed(2) },
+    { label: tr('strategy.maxDrawdown'), fn: (r: BacktestResult) => `${r.maxDrawdownPercent.toFixed(2)}%` },
+    { label: tr('strategy.sharpeRatio'), fn: (r: BacktestResult) => r.sharpeRatio.toFixed(2) },
+    { label: tr('strategy.totalTrades'), fn: (r: BacktestResult) => `${r.totalTrades}笔` },
   ];
   return (
     <div className="overflow-x-auto"><table className="w-full text-sm">
-      <thead><tr className="border-b border-gray-800"><th className="text-left py-2 px-3 text-gray-500">指标</th>
+      <thead><tr className="border-b border-gray-800"><th className="text-left py-2 px-3 text-gray-500">{tr('strategy.metric')}</th>
         {results.map((r, i) => <th key={i} className="text-right py-2 px-3"><span className="flex items-center justify-end gap-1.5"><span className="w-2 h-2 rounded-full" style={{background: colors[i]}} /><span className="text-gray-300">{STRATEGY_TEMPLATES.find(t => t.id === r.strategyName)?.name || r.strategyName}</span></span></th>)}
       </tr></thead>
       <tbody>{metrics.map(m => <tr key={m.label} className="border-b border-gray-800/50"><td className="py-2 px-3 text-gray-400">{m.label}</td>
@@ -204,6 +209,7 @@ function CompareTable({ results }: { results: BacktestResult[] }) {
 function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
   result: BacktestResult; strategyName: string; symbol: string; timeframe: string; onClose: () => void;
 }) {
+  const { t: tr, locale } = useI18n();
   const [copied, setCopied] = useState(false);
   const score = (() => {
     let s = 0;
@@ -217,7 +223,7 @@ function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
   const gradeColor = score >= 80 ? '#a78bfa' : score >= 61 ? '#34d399' : score >= 31 ? '#fbbf24' : '#f87171';
   const returnColor = result.totalReturnPercent >= 0 ? '#34d399' : '#f87171';
   const symbolLabel = symbol.replace('USDT', '/USDT');
-  const tfLabel: Record<string,string> = { '1h': '1小时', '4h': '4小时', '1d': '日线' };
+  const tfLabel: Record<string,string> = { '1h': tr('strategy.1h'), '4h': tr('strategy.4h'), '1d': tr('strategy.daily') };
 
   // Mini equity SVG
   const eqData = result.equityCurve;
@@ -233,7 +239,7 @@ function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
     miniSVG = pts;
   }
 
-  const shareText = `我用 AI 跑了一个交易策略回测\n📊 ${strategyName} (${symbolLabel} ${tfLabel[timeframe]})\n⭐ 综合评分 ${score}分 (${grade}级)\n💰 总收益 ${result.totalReturnPercent > 0 ? '+' : ''}${result.totalReturnPercent.toFixed(1)}%\n✅ 胜率 ${result.winRate.toFixed(1)}%  📉 最大回撤 ${result.maxDrawdownPercent.toFixed(1)}%\n\n免费试用 👉 trading-copilot-delta.vercel.app`;
+  const shareText = `${tr('strategy.shareText')}\n📊 ${strategyName} (${symbolLabel} ${tfLabel[timeframe]})\n⭐ 综合评分 ${score}分 (${grade}级)\n💰 总收益 ${result.totalReturnPercent > 0 ? '+' : ''}${result.totalReturnPercent.toFixed(1)}%\n✅ 胜率 ${result.winRate.toFixed(1)}%  📉 最大回撤 ${result.maxDrawdownPercent.toFixed(1)}%\n\n免费试用 👉 trading-copilot-delta.vercel.app`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareText).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
@@ -243,7 +249,7 @@ function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
       <div className="flex flex-col items-center gap-4 max-w-sm w-full" onClick={e => e.stopPropagation()}>
         {/* Instructions */}
-        <div className="text-xs text-gray-400 text-center">截图下方卡片，分享到小红书 / X</div>
+        <div className="text-xs text-gray-400 text-center">{tr('strategy.shareHint')}</div>
 
         {/* The shareable card */}
         <div id="share-card" className="w-full rounded-2xl overflow-hidden border border-gray-700"
@@ -253,14 +259,14 @@ function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
           <div className="px-5 pt-5 pb-3">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <div className="text-[10px] text-gray-500 uppercase tracking-widest mb-1">策略回测成绩单</div>
+                <div className="text-[10px] text-gray-500 uppercase tracking-widest mb-1">{tr('strategy.reportCard')}</div>
                 <div className="text-base font-bold text-white">{strategyName}</div>
-                <div className="text-xs text-gray-400 mt-0.5">{symbolLabel} · {tfLabel[timeframe]} · {result.totalTrades}笔交易</div>
+                <div className="text-xs text-gray-400 mt-0.5">{symbolLabel} · {tfLabel[timeframe]} · {result.totalTrades}{tr('strategy.tradeUnit2')}</div>
               </div>
               <div className="flex flex-col items-center justify-center w-16 h-16 rounded-xl border-2 shrink-0"
                 style={{ borderColor: gradeColor, background: `${gradeColor}15` }}>
                 <div className="text-2xl font-black" style={{ color: gradeColor }}>{grade}</div>
-                <div className="text-[10px] font-bold" style={{ color: gradeColor }}>{score}分</div>
+                <div className="text-[10px] font-bold" style={{ color: gradeColor }}>{score}{tr('strategy.scoreUnit')}</div>
               </div>
             </div>
 
@@ -272,12 +278,12 @@ function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
             {/* Metrics grid */}
             <div className="grid grid-cols-3 gap-3 mb-4">
               {[
-                { label: '总收益', value: `${result.totalReturnPercent > 0 ? '+' : ''}${result.totalReturnPercent.toFixed(1)}%`, color: returnColor },
-                { label: '胜率', value: `${result.winRate.toFixed(1)}%`, color: result.winRate >= 50 ? '#34d399' : '#fbbf24' },
-                { label: '盈亏比', value: result.profitFactor === Infinity ? '∞' : result.profitFactor.toFixed(2), color: result.profitFactor >= 1.5 ? '#34d399' : '#fbbf24' },
-                { label: '最大回撤', value: `-${result.maxDrawdownPercent.toFixed(1)}%`, color: result.maxDrawdownPercent < 10 ? '#34d399' : '#fbbf24' },
-                { label: '夏普比率', value: result.sharpeRatio.toFixed(2), color: result.sharpeRatio > 1 ? '#34d399' : '#fbbf24' },
-                { label: '年化收益', value: `${(result.totalReturnPercent * 365 / (result.totalTrades > 0 ? 90 : 90)).toFixed(0)}%`, color: '#a78bfa' },
+                { label: tr('strategy.totalReturn'), value: `${result.totalReturnPercent > 0 ? '+' : ''}${result.totalReturnPercent.toFixed(1)}%`, color: returnColor },
+                { label: tr('strategy.winRateLabel'), value: `${result.winRate.toFixed(1)}%`, color: result.winRate >= 50 ? '#34d399' : '#fbbf24' },
+                { label: tr('strategy.profitFactor'), value: result.profitFactor === Infinity ? '∞' : result.profitFactor.toFixed(2), color: result.profitFactor >= 1.5 ? '#34d399' : '#fbbf24' },
+                { label: tr('strategy.maxDrawdown'), value: `-${result.maxDrawdownPercent.toFixed(1)}%`, color: result.maxDrawdownPercent < 10 ? '#34d399' : '#fbbf24' },
+                { label: tr('strategy.sharpeRatio'), value: result.sharpeRatio.toFixed(2), color: result.sharpeRatio > 1 ? '#34d399' : '#fbbf24' },
+                { label: tr('strategy.annualized'), value: `${(result.totalReturnPercent * 365 / (result.totalTrades > 0 ? 90 : 90)).toFixed(0)}%`, color: '#a78bfa' },
               ].map((m, i) => (
                 <div key={i} className="bg-gray-800/60 rounded-lg px-3 py-2">
                   <div className="text-[9px] text-gray-500 mb-0.5">{m.label}</div>
@@ -289,7 +295,7 @@ function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
             {/* Mini equity chart */}
             {miniSVG && (
               <div className="bg-gray-800/40 rounded-lg p-3 mb-4">
-                <div className="text-[9px] text-gray-500 mb-2">资金曲线</div>
+                <div className="text-[9px] text-gray-500 mb-2">{tr('strategy.equityChart')}</div>
                 <svg viewBox="0 0 280 65" className="w-full" preserveAspectRatio="none">
                   <defs>
                     <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
@@ -318,20 +324,21 @@ function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
         <div className="flex gap-3 w-full">
           <button onClick={handleCopy}
             className="flex-1 flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-200 py-2.5 rounded-xl text-sm font-medium transition-all border border-gray-700">
-            {copied ? <><Check className="w-4 h-4 text-emerald-400" />已复制文案</> : <><Copy className="w-4 h-4" />复制分享文案</>}
+            {copied ? <><Check className="w-4 h-4 text-emerald-400" />{tr('strategy.copied')}</> : <><Copy className="w-4 h-4" />{tr('strategy.copyShare')}</>}
           </button>
           <button onClick={onClose}
             className="px-4 flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-gray-400 rounded-xl border border-gray-700 transition-all">
             <XIcon className="w-4 h-4" />
           </button>
         </div>
-        <div className="text-[10px] text-gray-600 text-center">对卡片长按/右键另存，或截图分享</div>
+        <div className="text-[10px] text-gray-600 text-center">{tr('strategy.saveHint')}</div>
       </div>
     </div>
   );
 }
 
 export default function StrategyPageWrapper() {
+  const { t: tr, locale } = useI18n();
   return <Suspense fallback={<div className="min-h-screen bg-gray-950" />}><StrategyPage /></Suspense>;
 }
 
@@ -396,7 +403,7 @@ function StrategyPage() {
         initialCapital: capital, feeRate: feeRate / 100, slippage: slippage / 100, stopLoss, takeProfit, maxPosition };
       const result = await runBacktest(config);
       setResults(prev => [...prev, result].slice(-3));
-    } catch (e: any) { setError(e.message || '回测失败'); }
+    } catch (e: any) { setError(e.message || tr('strategy.backtestFail')); }
     setLoading(false);
   }, [selectedId, params, symbol, timeframe, periodDays, capital, feeRate, slippage, stopLoss, takeProfit, maxPosition]);
 
@@ -419,8 +426,8 @@ function StrategyPage() {
       <div className="max-w-[1400px] mx-auto px-4 py-6">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2"><Layers className="w-6 h-6 text-emerald-400" />策略工坊</h1>
-            <p className="text-sm text-gray-500 mt-1">选择策略 → 调整参数 → 回测验证</p>
+            <h1 className="text-2xl font-bold flex items-center gap-2"><Layers className="w-6 h-6 text-emerald-400" />{tr('strategy.workshopTitle')}</h1>
+            <p className="text-sm text-gray-500 mt-1">{tr('strategy.workshopFlow')}</p>
           </div>
           {results.length > 0 && <button onClick={() => setResults([])} className="text-xs text-gray-500 hover:text-gray-300 flex items-center gap-1"><Trash2 className="w-3 h-3" /> 清空</button>}
         </div>
@@ -428,7 +435,7 @@ function StrategyPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* Left: Strategy Templates */}
           <div className="lg:col-span-3 space-y-3">
-            <div className="text-xs text-gray-500 font-medium mb-2">策略模板</div>
+            <div className="text-xs text-gray-500 font-medium mb-2">{tr('strategy.templates')}</div>
             {STRATEGY_TEMPLATES.map(t => (
               <button key={t.id} onClick={() => handleSelect(t.id)}
                 className={`w-full text-left p-3 rounded-xl border transition ${selectedId === t.id ? 'border-emerald-500/50 bg-emerald-500/10' : 'border-gray-800 bg-gray-900/30 hover:border-gray-700'}`}>
@@ -441,11 +448,11 @@ function StrategyPage() {
           {/* Middle: Parameters */}
           <div className="lg:col-span-4 space-y-4">
             <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">
-              <div className="text-xs text-gray-500 font-medium mb-3">策略参数</div>
+              <div className="text-xs text-gray-500 font-medium mb-3">{tr('strategy.params')}</div>
               <div className="space-y-4">
                 {selected.params.map(p => (
                   <div key={p.key}>
-                    <div className="flex justify-between text-xs mb-1"><span className="text-gray-400">{p.label}</span><span className="font-mono text-emerald-400">{params[p.key]}{p.unit||''}</span></div>
+                    <div className="flex justify-between text-xs mb-1"><span className="text-gray-400">{locale === 'en' ? p.labelEn || p.label : p.label}</span><span className="font-mono text-emerald-400">{params[p.key]}{p.unit||''}</span></div>
                     <input type="range" min={p.min} max={p.max} step={p.step} value={params[p.key] ?? p.default}
                       onChange={e => setParams(prev => ({...prev, [p.key]: parseFloat(e.target.value)}))}
                       className="w-full h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-emerald-500" />
@@ -456,29 +463,29 @@ function StrategyPage() {
             </div>
 
             <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">
-              <div className="text-xs text-gray-500 font-medium mb-3">市场设置</div>
+              <div className="text-xs text-gray-500 font-medium mb-3">{tr('strategy.marketSettings')}</div>
               <div className="grid grid-cols-2 gap-3">
-                <div><label className="text-[10px] text-gray-500 block mb-1">币种</label>
+                <div><label className="text-[10px] text-gray-500 block mb-1">{tr('strategy.symbolLabel')}</label>
                   <select value={symbol} onChange={e => setSymbol(e.target.value as any)} className="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 py-1.5 text-sm">
                     {SYMBOLS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}</select></div>
-                <div><label className="text-[10px] text-gray-500 block mb-1">时间框架</label>
+                <div><label className="text-[10px] text-gray-500 block mb-1">{tr('strategy.timeframeLabel')}</label>
                   <select value={timeframe} onChange={e => setTimeframe(e.target.value as any)} className="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 py-1.5 text-sm">
                     {TIMEFRAMES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}</select></div>
-                <div><label className="text-[10px] text-gray-500 block mb-1">回测周期</label>
+                <div><label className="text-[10px] text-gray-500 block mb-1">{tr('strategy.periodLabel')}</label>
                   <select value={periodDays} onChange={e => setPeriodDays(parseInt(e.target.value))} className="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 py-1.5 text-sm">
-                    {BACKTEST_PERIODS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}</select></div>
-                <div><label className="text-[10px] text-gray-500 block mb-1">初始资金</label>
+                    {BACKTEST_PERIODS.map(p => <option key={p.value} value={p.value}>{locale === 'en' ? p.labelEn || p.label : p.label}</option>)}</select></div>
+                <div><label className="text-[10px] text-gray-500 block mb-1">{tr('strategy.capitalLabel')}</label>
                   <input type="number" value={capital} onChange={e => setCapital(parseInt(e.target.value)||10000)}
                     className="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 py-1.5 text-sm font-mono" /></div>
               </div>
             </div>
 
             <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">
-              <div className="text-xs text-gray-500 font-medium mb-3">风控参数</div>
+              <div className="text-xs text-gray-500 font-medium mb-3">{tr('strategy.riskParamsLabel')}</div>
               <div className="space-y-3">
-                {[{l:'止损',v:stopLoss,s:setStopLoss,mn:1,mx:20,u:'%'},{l:'止盈',v:takeProfit,s:setTakeProfit,mn:1,mx:50,u:'%'},
-                  {l:'最大仓位',v:maxPosition,s:setMaxPosition,mn:10,mx:100,u:'%'},{l:'手续费',v:feeRate,s:setFeeRate,mn:0,mx:0.2,u:'%',st:0.01},
-                  {l:'滑点',v:slippage,s:setSlippage,mn:0,mx:0.1,u:'%',st:0.01}].map(r => (
+                {[{l:tr('strategy.exitStopLoss'),v:stopLoss,s:setStopLoss,mn:1,mx:20,u:'%'},{l:tr('strategy.exitTakeProfit'),v:takeProfit,s:setTakeProfit,mn:1,mx:50,u:'%'},
+                  {l:tr('strategy.maxPositionLabel'),v:maxPosition,s:setMaxPosition,mn:10,mx:100,u:'%'},{l:tr('strategy.feeLabel'),v:feeRate,s:setFeeRate,mn:0,mx:0.2,u:'%',st:0.01},
+                  {l:tr('strategy.slippageLabel'),v:slippage,s:setSlippage,mn:0,mx:0.1,u:'%',st:0.01}].map(r => (
                   <div key={r.l} className="flex items-center justify-between">
                     <span className="text-xs text-gray-400">{r.l}</span>
                     <div className="flex items-center gap-2">
@@ -498,15 +505,15 @@ function StrategyPage() {
 
             <button onClick={handleRun} disabled={loading}
               className={`w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition ${loading ? 'bg-gray-800 text-gray-500 cursor-wait' : 'bg-emerald-600 hover:bg-emerald-500 text-white'}`}>
-              {loading ? <><div className="w-4 h-4 border-2 border-gray-600 border-t-white rounded-full animate-spin" /> 计算中...</> : <><Play className="w-4 h-4" /> 运行回测</>}
+              {loading ? <><div className="w-4 h-4 border-2 border-gray-600 border-t-white rounded-full animate-spin" /> {tr('strategy.calculating')}</> : <><Play className="w-4 h-4" /> 运行回测</>}
             </button>
-            {results.length > 0 && results.length < 3 && <p className="text-[10px] text-gray-600 text-center">切换策略再运行可对比（最多3个）</p>}
+            {results.length > 0 && results.length < 3 && <p className="text-[10px] text-gray-600 text-center">{tr('strategy.compareHint')}</p>}
             {error && <p className="text-xs text-red-400 text-center">{error}</p>}
 
-            <Paywall feature="参数优化器 — 自动寻找最优策略参数">
+            <Paywall feature={tr('strategy.paywallOptimizer')}>
             <button onClick={handleOptimize} disabled={optimizing || loading}
               className={`w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition ${optimizing ? 'bg-gray-800 text-gray-500 cursor-wait' : 'bg-violet-600 hover:bg-violet-500 text-white'}`}>
-              {optimizing ? <><div className="w-4 h-4 border-2 border-gray-600 border-t-white rounded-full animate-spin" /> 寻参中 {optProgress.current}/{optProgress.total}</> : <><Search className="w-4 h-4" /> 🔍 自动寻参</>}
+              {optimizing ? <><div className="w-4 h-4 border-2 border-gray-600 border-t-white rounded-full animate-spin" /> {tr('strategy.searching')} {optProgress.current}/{optProgress.total}</> : <><Search className="w-4 h-4" /> {tr('strategy.autoSearch')}</>}
             </button>
             {optimizing && optProgress.total > 0 && (
               <div className="w-full bg-gray-800 rounded-full h-1.5">
@@ -515,16 +522,16 @@ function StrategyPage() {
             )}
             {optResults.length > 0 && (
               <div className="bg-gray-900/30 border border-violet-800/50 rounded-xl p-4">
-                <div className="text-xs text-violet-400 font-medium mb-3">🏆 Top 5 参数组合（按夏普排序）</div>
+                <div className="text-xs text-violet-400 font-medium mb-3">{tr('strategy.top5')}</div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead><tr className="text-gray-500 border-b border-gray-800">
                       <th className="text-left py-1.5 px-2">#</th>
-                      <th className="text-left py-1.5 px-2">参数</th>
-                      <th className="text-right py-1.5 px-2">收益%</th>
-                      <th className="text-right py-1.5 px-2">胜率</th>
-                      <th className="text-right py-1.5 px-2">夏普</th>
-                      <th className="text-right py-1.5 px-2">回撤</th>
+                      <th className="text-left py-1.5 px-2">{tr('strategy.paramsCol')}</th>
+                      <th className="text-right py-1.5 px-2">{tr('strategy.returnCol')}</th>
+                      <th className="text-right py-1.5 px-2">{tr('strategy.winRateCol')}</th>
+                      <th className="text-right py-1.5 px-2">{tr('strategy.sharpeCol')}</th>
+                      <th className="text-right py-1.5 px-2">{tr('strategy.drawdownCol')}</th>
                       <th className="text-right py-1.5 px-2"></th>
                     </tr></thead>
                     <tbody>{optResults.map((o, i) => (
@@ -537,7 +544,7 @@ function StrategyPage() {
                         <td className="py-1.5 px-2 text-right font-mono text-red-400">{o.maxDD.toFixed(1)}%</td>
                         <td className="py-1.5 px-2 text-right">
                           <button onClick={() => { setParams(o.params); setOptResults([]); }}
-                            className="text-[10px] text-violet-400 hover:text-violet-300">应用</button>
+                            className="text-[10px] text-violet-400 hover:text-violet-300">{tr('strategy.apply')}</button>
                         </td>
                       </tr>
                     ))}</tbody>
@@ -550,26 +557,26 @@ function StrategyPage() {
             <button onClick={handleOptimize} disabled={optimizing || loading}
               className={`w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition ${optimizing ? 'bg-gray-800 text-gray-500 cursor-wait' : 'bg-violet-700 hover:bg-violet-600 text-white'}`}>
               {optimizing
-                ? <><div className="w-4 h-4 border-2 border-gray-600 border-t-violet-400 rounded-full animate-spin" /> 寻参中…</>
+                ? <><div className="w-4 h-4 border-2 border-gray-600 border-t-violet-400 rounded-full animate-spin" /> {tr('strategy.searching')}…</>
                 : <><Search className="w-4 h-4" /> 🔍 自动寻参</>}
             </button>
             {optimizing && optProgress.total > 0 && (
               <div className="space-y-1">
-                <div className="flex justify-between text-[10px] text-gray-500"><span>测试参数组合</span><span>{optProgress.current}/{optProgress.total}</span></div>
+                <div className="flex justify-between text-[10px] text-gray-500"><span>{tr('strategy.testParams')}</span><span>{optProgress.current}/{optProgress.total}</span></div>
                 <div className="w-full bg-gray-800 rounded-full h-1.5"><div className="bg-violet-500 h-1.5 rounded-full transition-all" style={{width: `${(optProgress.current / optProgress.total) * 100}%`}} /></div>
               </div>
             )}
             {optResults.length > 0 && (
               <div className="bg-gray-900/30 border border-violet-800/40 rounded-xl p-3">
-                <div className="text-xs text-gray-400 font-medium mb-2">🏆 Top 5 最优参数</div>
+                <div className="text-xs text-gray-400 font-medium mb-2">{tr('strategy.top5Best')}</div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead><tr className="text-gray-600 border-b border-gray-800">
                       <th className="text-left py-1 pr-2">#</th>
-                      <th className="text-right py-1 pr-2">夏普</th>
+                      <th className="text-right py-1 pr-2">{tr('strategy.sharpeCol')}</th>
                       <th className="text-right py-1 pr-2">收益%</th>
-                      <th className="text-right py-1 pr-2">胜率</th>
-                      <th className="text-right py-1">回撤</th>
+                      <th className="text-right py-1 pr-2">{tr('strategy.winRateCol')}</th>
+                      <th className="text-right py-1">{tr('strategy.drawdownCol')}</th>
                       <th className="py-1"></th>
                     </tr></thead>
                     <tbody>{optResults.map((r, i) => (
@@ -580,7 +587,7 @@ function StrategyPage() {
                         <td className="py-1 pr-2 text-right font-mono text-gray-300">{r.winRate.toFixed(0)}%</td>
                         <td className="py-1 text-right font-mono text-red-400">{r.maxDD.toFixed(1)}%</td>
                         <td className="py-1 pl-2">
-                          <button onClick={() => setParams(r.params)} className="text-[10px] text-violet-400 hover:text-violet-300 border border-violet-700/50 rounded px-1.5 py-0.5">应用</button>
+                          <button onClick={() => setParams(r.params)} className="text-[10px] text-violet-400 hover:text-violet-300 border border-violet-700/50 rounded px-1.5 py-0.5">{tr('strategy.apply')}</button>
                         </td>
                       </tr>
                     ))}</tbody>
@@ -595,7 +602,7 @@ function StrategyPage() {
           <div className="lg:col-span-5 space-y-4">
             {!latest && !loading && (
               <div className="flex items-center justify-center h-96 border border-gray-800 rounded-xl bg-gray-900/20">
-                <div className="text-center text-gray-600"><BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-30" /><p className="text-sm">选择策略并运行回测</p><p className="text-xs mt-1">结果将显示在这里</p></div>
+                <div className="text-center text-gray-600"><BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-30" /><p className="text-sm">{tr('strategy.selectAndRun')}</p><p className="text-xs mt-1">结果将显示在这里</p></div>
               </div>
             )}
             {latest && (<>
@@ -610,7 +617,7 @@ function StrategyPage() {
               )}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-gray-500 font-medium">回测结果</span>
+                  <span className="text-xs text-gray-500 font-medium">{tr('strategy.backtestResult')}</span>
                   <div className="flex gap-2">
                     <button
                       onClick={() => {
@@ -625,27 +632,27 @@ function StrategyPage() {
                         router.push('/trade');
                       }}
                       className="flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 px-3 py-1.5 rounded-lg transition-all border border-emerald-500/20">
-                      <Rocket className="w-3.5 h-3.5" /> 部署到纸盘
+                      <Rocket className="w-3.5 h-3.5" /> {tr('strategy.deployPaper')}
                     </button>
                     <button onClick={() => setShowShareCard(true)}
                       className="flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 px-3 py-1.5 rounded-lg transition-all border border-violet-500/20">
-                      <Share2 className="w-3.5 h-3.5" /> 分享成绩单
+                      <Share2 className="w-3.5 h-3.5" /> {tr('strategy.shareReport')}
                     </button>
                   </div>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
                   {(() => { const s = calcScore(latest); const color = s >= 61 ? 'text-green-400' : s >= 31 ? 'text-yellow-400' : 'text-red-400'; const grade = s >= 80 ? 'S级' : s >= 61 ? 'A级' : s >= 31 ? 'B级' : 'C级'; return <StatCard label="综合评分" value={`${s}`} sub={grade} color={color} />; })()}
-                  <StatCard label="总收益" value={`${latest.totalReturnPercent > 0 ? '+' : ''}${latest.totalReturnPercent.toFixed(2)}%`} sub={`$${latest.totalReturn.toFixed(0)}`} color={latest.totalReturnPercent > 0 ? 'text-green-400' : 'text-red-400'} />
-                  <StatCard label="胜率" value={`${latest.winRate.toFixed(1)}%`} sub={`${latest.winTrades}胜 ${latest.lossTrades}负`} color={latest.winRate >= 50 ? 'text-green-400' : 'text-yellow-400'} />
-                  <StatCard label="盈亏比" value={latest.profitFactor === Infinity ? '∞' : latest.profitFactor.toFixed(2)} color={latest.profitFactor >= 1.5 ? 'text-green-400' : latest.profitFactor >= 1 ? 'text-yellow-400' : 'text-red-400'} />
-                  <StatCard label="最大回撤" value={`${latest.maxDrawdownPercent.toFixed(2)}%`} sub={`$${latest.maxDrawdown.toFixed(0)}`} color={latest.maxDrawdownPercent < 10 ? 'text-green-400' : latest.maxDrawdownPercent < 20 ? 'text-yellow-400' : 'text-red-400'} />
-                  <StatCard label="夏普比率" value={latest.sharpeRatio.toFixed(2)} color={latest.sharpeRatio > 1 ? 'text-green-400' : latest.sharpeRatio > 0 ? 'text-yellow-400' : 'text-red-400'} />
-                  <StatCard label="总交易" value={`${latest.totalTrades}笔`} sub={`平均${latest.avgHoldBars.toFixed(1)}根K线`} />
+                  <StatCard label={tr('strategy.totalReturn')} value={`${latest.totalReturnPercent > 0 ? '+' : ''}${latest.totalReturnPercent.toFixed(2)}%`} sub={`$${latest.totalReturn.toFixed(0)}`} color={latest.totalReturnPercent > 0 ? 'text-green-400' : 'text-red-400'} />
+                  <StatCard label={tr('strategy.winRateLabel')} value={`${latest.winRate.toFixed(1)}%`} sub={`${latest.winTrades}胜 ${latest.lossTrades}负`} color={latest.winRate >= 50 ? 'text-green-400' : 'text-yellow-400'} />
+                  <StatCard label={tr('strategy.profitFactor')} value={latest.profitFactor === Infinity ? '∞' : latest.profitFactor.toFixed(2)} color={latest.profitFactor >= 1.5 ? 'text-green-400' : latest.profitFactor >= 1 ? 'text-yellow-400' : 'text-red-400'} />
+                  <StatCard label={tr('strategy.maxDrawdown')} value={`${latest.maxDrawdownPercent.toFixed(2)}%`} sub={`$${latest.maxDrawdown.toFixed(0)}`} color={latest.maxDrawdownPercent < 10 ? 'text-green-400' : latest.maxDrawdownPercent < 20 ? 'text-yellow-400' : 'text-red-400'} />
+                  <StatCard label={tr('strategy.sharpeRatio')} value={latest.sharpeRatio.toFixed(2)} color={latest.sharpeRatio > 1 ? 'text-green-400' : latest.sharpeRatio > 0 ? 'text-yellow-400' : 'text-red-400'} />
+                  <StatCard label={tr('strategy.totalTrades')} value={`${latest.totalTrades}笔`} sub={`平均${latest.avgHoldBars.toFixed(1)}根K线`} />
                 </div>
               </div>
 
               <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">
-                <div className="text-xs text-gray-500 font-medium mb-3">资金曲线</div>
+                <div className="text-xs text-gray-500 font-medium mb-3">{tr('strategy.equityChart')}</div>
                 <EquityCurve data={latest.equityCurve} color={colors[results.length-1]}
                   compareData={results.slice(0,-1).map((r,i) => ({ data: r.equityCurve, color: colors[i], name: STRATEGY_TEMPLATES.find(t => t.id === r.strategyName)?.name || r.strategyName }))} />
               </div>
@@ -657,7 +664,7 @@ function StrategyPage() {
 
               {results.length >= 2 && <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4"><div className="text-xs text-gray-500 font-medium mb-3">策略对比</div><CompareTable results={results} /></div>}
 
-              {latest.monthlyReturns.length > 0 && <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4"><div className="text-xs text-gray-500 font-medium mb-3">月度收益</div><MonthlyHeatmap data={latest.monthlyReturns} /></div>}
+              {latest.monthlyReturns.length > 0 && <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4"><div className="text-xs text-gray-500 font-medium mb-3">{tr('strategy.monthlyReturn')}</div><MonthlyHeatmap data={latest.monthlyReturns} /></div>}
 
               <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">
                 <div className="text-xs text-gray-500 font-medium mb-3">盈亏散点图</div>
@@ -690,7 +697,7 @@ function StrategyPage() {
                   {/* Probability Cards */}
                   <div className="grid grid-cols-4 gap-2">
                     <div className="bg-gray-900/50 rounded-lg p-2.5 text-center">
-                      <div className="text-[10px] text-gray-500 mb-1">盈利概率</div>
+                      <div className="text-[10px] text-gray-500 mb-1">{tr('strategy.winProb')}</div>
                       <div className={`text-lg font-bold font-mono ${mcResult.probProfit >= 0.7 ? 'text-green-400' : mcResult.probProfit >= 0.5 ? 'text-yellow-400' : 'text-red-400'}`}>
                         {(mcResult.probProfit * 100).toFixed(0)}%
                       </div>
@@ -718,7 +725,7 @@ function StrategyPage() {
                       <div className="space-y-1.5 text-xs">
                         <div className="flex justify-between"><span className="text-gray-500">最佳</span><span className="text-green-400 font-mono">+{mcResult.bestCase.toFixed(1)}%</span></div>
                         <div className="flex justify-between"><span className="text-gray-500">75分位</span><span className="text-green-400 font-mono">+{mcResult.percentiles.find(p => p.level === 0.75)?.returnPercent.toFixed(1)}%</span></div>
-                        <div className="flex justify-between font-medium"><span className="text-gray-400">中位数</span><span className={`font-mono ${mcResult.medianReturn > 0 ? 'text-emerald-400' : 'text-red-400'}`}>{mcResult.medianReturn > 0 ? '+' : ''}{mcResult.medianReturn.toFixed(1)}%</span></div>
+                        <div className="flex justify-between font-medium"><span className="text-gray-400">{tr('strategy.median')}</span><span className={`font-mono ${mcResult.medianReturn > 0 ? 'text-emerald-400' : 'text-red-400'}`}>{mcResult.medianReturn > 0 ? '+' : ''}{mcResult.medianReturn.toFixed(1)}%</span></div>
                         <div className="flex justify-between"><span className="text-gray-500">25分位</span><span className={`font-mono ${(mcResult.percentiles.find(p => p.level === 0.25)?.returnPercent || 0) > 0 ? 'text-green-400' : 'text-red-400'}`}>{mcResult.percentiles.find(p => p.level === 0.25)?.returnPercent.toFixed(1)}%</span></div>
                         <div className="flex justify-between"><span className="text-gray-500">最差</span><span className="text-red-400 font-mono">{mcResult.worstCase.toFixed(1)}%</span></div>
                       </div>

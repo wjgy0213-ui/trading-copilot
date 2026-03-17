@@ -37,23 +37,23 @@ function DetailModal({ indicator, onClose, t }: { indicator: ITCIndicator; onClo
         {/* Stats Row */}
         <div className="grid grid-cols-4 gap-3 p-5">
           <div className="bg-gray-800/50 rounded-lg p-3">
-            <div className="text-[10px] text-gray-500 mb-1">当前值</div>
+            {/* Current Value */}<div className="text-[10px] text-gray-500 mb-1">{t('dashboard.currentValue')}</div>
             <div className={`text-2xl font-mono font-bold ${getRiskColor(indicator.value)}`}>{pct}</div>
           </div>
           <div className="bg-gray-800/50 rounded-lg p-3">
-            <div className="text-[10px] text-gray-500 mb-1">7日变化</div>
+            <div className="text-[10px] text-gray-500 mb-1">{t('dashboard.change7d')}</div>
             <div className={`text-lg font-mono font-semibold ${Number(change7d) >= 0 ? 'text-red-400' : 'text-emerald-400'}`}>
               {Number(change7d) >= 0 ? '+' : ''}{change7d}%
             </div>
           </div>
           <div className="bg-gray-800/50 rounded-lg p-3">
-            <div className="text-[10px] text-gray-500 mb-1">30日变化</div>
+            <div className="text-[10px] text-gray-500 mb-1">{t('dashboard.change30d')}</div>
             <div className={`text-lg font-mono font-semibold ${Number(change30d) >= 0 ? 'text-red-400' : 'text-emerald-400'}`}>
               {Number(change30d) >= 0 ? '+' : ''}{change30d}%
             </div>
           </div>
           <div className="bg-gray-800/50 rounded-lg p-3">
-            <div className="text-[10px] text-gray-500 mb-1">区间</div>
+            <div className="text-[10px] text-gray-500 mb-1">{t('dashboard.range')}</div>
             <div className="text-sm font-mono text-gray-300">{Math.round(min*100)} — {Math.round(max*100)}</div>
           </div>
         </div>
@@ -63,7 +63,7 @@ function DetailModal({ indicator, onClose, t }: { indicator: ITCIndicator; onClo
           {([30, 90, 180] as const).map(r => (
             <button key={r} onClick={() => setRange(r)}
               className={`px-3 py-1 rounded text-xs font-medium transition-all ${range === r ? 'bg-gray-700 text-white' : 'text-gray-500 hover:bg-gray-800'}`}>
-              {r}天
+              {r}{t('dashboard.days')}
             </button>
           ))}
         </div>
@@ -127,31 +127,31 @@ const CATEGORY_TABS = [
 
 const START_HERE_PATHS = [
   {
-    title: '新手起步',
-    subtitle: '先看结构，再练手，再做策略。',
+    titleKey: 'dashboard.path.beginner.title',
+    subtitleKey: 'dashboard.path.beginner.subtitle',
     badge: 'Beginner',
     accent: 'emerald',
-    fit: '适合刚注册、还不知道先点哪里的人',
+    fitKey: 'dashboard.path.beginner.fit',
     ctaHref: '/health',
-    ctaLabel: '从市场体检开始',
+    ctaLabelKey: 'dashboard.path.beginner.cta',
   },
   {
-    title: '进阶交易者',
-    subtitle: '先确认风险环境，再去 Practice 校准执行。',
+    titleKey: 'dashboard.path.intermediate.title',
+    subtitleKey: 'dashboard.path.intermediate.subtitle',
     badge: 'Intermediate',
     accent: 'cyan',
-    fit: '适合已有交易经验，但想提升一致性的人',
+    fitKey: 'dashboard.path.intermediate.fit',
     ctaHref: '/practice',
-    ctaLabel: '直接进入 Practice',
+    ctaLabelKey: 'dashboard.path.intermediate.cta',
   },
   {
-    title: '高频研究者',
-    subtitle: '先筛掉坏环境，再把想法送进策略工坊。',
+    titleKey: 'dashboard.path.advanced.title',
+    subtitleKey: 'dashboard.path.advanced.subtitle',
     badge: 'Researcher',
     accent: 'violet',
-    fit: '适合每天都在看信号、做验证、调参数的人',
+    fitKey: 'dashboard.path.researcher.fit',
     ctaHref: '/strategy',
-    ctaLabel: '打开策略工坊',
+    ctaLabelKey: 'dashboard.path.researcher.cta',
   },
 ] as const;
 
@@ -195,19 +195,19 @@ export default function DashboardPage() {
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300">
               <CircleDot className="w-3 h-3" /> Start Here
             </div>
-            <h2 className="mt-3 text-2xl font-semibold text-white">先按路径开始，不要在 20 个功能里乱跳</h2>
+            <h2 className="mt-3 text-2xl font-semibold text-white">{t('dashboard.pathHeader')}</h2>
             <p className="mt-2 max-w-3xl text-sm text-gray-400">
-              推荐顺序统一成一条线：先做市场体检，确认当前环境；再去 Practice 校准执行；最后把想法送进策略工坊做结构化验证。
+              {t('dashboard.pathIntro')}
             </p>
           </div>
           <div className="rounded-xl border border-gray-800 bg-black/20 px-4 py-3 text-sm text-gray-300">
             <div className="text-[11px] uppercase tracking-[0.16em] text-gray-500">Recommended path</div>
             <div className="mt-2 flex flex-wrap items-center gap-2 text-sm font-medium">
-              <Link href="/health" className="rounded-full bg-gray-800 px-3 py-1.5 hover:bg-gray-700 transition-colors">1. 市场体检</Link>
+              <Link href="/health" className="rounded-full bg-gray-800 px-3 py-1.5 hover:bg-gray-700 transition-colors">{t('dashboard.step1')}</Link>
               <ArrowRight className="w-4 h-4 text-gray-600" />
-              <Link href="/practice" className="rounded-full bg-gray-800 px-3 py-1.5 hover:bg-gray-700 transition-colors">2. Practice</Link>
+              <Link href="/practice" className="rounded-full bg-gray-800 px-3 py-1.5 hover:bg-gray-700 transition-colors">{t('dashboard.step2')}</Link>
               <ArrowRight className="w-4 h-4 text-gray-600" />
-              <Link href="/strategy" className="rounded-full bg-gray-800 px-3 py-1.5 hover:bg-gray-700 transition-colors">3. 策略工坊</Link>
+              <Link href="/strategy" className="rounded-full bg-gray-800 px-3 py-1.5 hover:bg-gray-700 transition-colors">{t('dashboard.step3')}</Link>
             </div>
           </div>
         </div>
@@ -221,30 +221,30 @@ export default function DashboardPage() {
             }[path.accent];
 
             return (
-              <div key={path.title} className="rounded-xl border border-gray-800 bg-gray-950/60 p-4">
+              <div key={path.titleKey} className="rounded-xl border border-gray-800 bg-gray-950/60 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ${badgeStyles}`}>
                       {path.badge}
                     </div>
-                    <h3 className="mt-3 text-lg font-semibold text-white">{path.title}</h3>
-                    <p className="mt-1 text-sm text-gray-400">{path.subtitle}</p>
+                    <h3 className="mt-3 text-lg font-semibold text-white">{t(path.titleKey)}</h3>
+                    <p className="mt-1 text-sm text-gray-400">{t(path.subtitleKey)}</p>
                   </div>
                 </div>
 
-                <p className="mt-4 text-xs text-gray-500">{path.fit}</p>
+                <p className="mt-4 text-xs text-gray-500">{t(path.fitKey)}</p>
 
                 <div className="mt-4 space-y-2 rounded-xl border border-gray-800 bg-gray-900/50 p-3 text-sm text-gray-300">
-                  <div className="flex items-center gap-2"><Activity className="w-4 h-4 text-emerald-400" /> 先看市场体检，避免在坏环境里硬做。</div>
-                  <div className="flex items-center gap-2"><Gamepad2 className="w-4 h-4 text-cyan-400" /> 再去 Practice，把执行问题先暴露出来。</div>
-                  <div className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-violet-400" /> 最后开策略工坊，把想法变成可验证方案。</div>
+                  <div className="flex items-center gap-2"><Activity className="w-4 h-4 text-emerald-400" /> {t('dashboard.tip1')}</div>
+                  <div className="flex items-center gap-2"><Gamepad2 className="w-4 h-4 text-cyan-400" /> {t('dashboard.tip2')}</div>
+                  <div className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-violet-400" /> {t('dashboard.tip3')}</div>
                 </div>
 
                 <Link
                   href={path.ctaHref}
                   className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-white hover:text-emerald-300 transition-colors"
                 >
-                  {path.ctaLabel} <ArrowRight className="w-4 h-4" />
+                  {t(path.ctaLabelKey)} <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             );
@@ -322,26 +322,26 @@ export default function DashboardPage() {
       {/* Next Step Recommendations */}
       <div className="mt-5 grid gap-4 lg:grid-cols-2">
         <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-gray-900 p-5">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300">下一步推荐</div>
-          <h3 className="mt-2 text-lg font-semibold text-white">做完市场体检后，去 Practice 校准执行</h3>
-          <p className="mt-2 text-sm text-gray-400">先看懂当前环境，再用模拟训练检查你的入场、止损和仓位控制，避免在实盘里交学费。</p>
+          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300">{t('dashboard.nextStep')}</div>
+          <h3 className="mt-2 text-lg font-semibold text-white">{t('dashboard.nextStepTitle')}</h3>
+          <p className="mt-2 text-sm text-gray-400">{t('dashboard.nextStepDesc2')}</p>
           <Link
             href="/practice"
             className="mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-sm font-medium text-black transition hover:bg-emerald-400"
           >
-            去 Practice <ArrowRight className="w-4 h-4" />
+            {t('dashboard.goToPractice2')} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
         <div className="rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-500/10 to-gray-900 p-5">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-violet-300">下一步推荐</div>
-          <h3 className="mt-2 text-lg font-semibold text-white">Practice 跑顺后，把想法送进策略工坊</h3>
-          <p className="mt-2 text-sm text-gray-400">当执行动作更稳定，就把你的交易思路带去回测，验证它到底是可重复策略，还是只是几次运气好。</p>
+          <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-violet-300">{t('dashboard.nextStep2')}</div>
+          <h3 className="mt-2 text-lg font-semibold text-white">{t('dashboard.nextStepTitle2')}</h3>
+          <p className="mt-2 text-sm text-gray-400">{t('dashboard.nextStepDesc3')}</p>
           <Link
             href="/strategy"
             className="mt-4 inline-flex items-center gap-2 rounded-full bg-violet-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-violet-400"
           >
-            去策略工坊 <ArrowRight className="w-4 h-4" />
+            {t('dashboard.goToStrategy')} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </div>

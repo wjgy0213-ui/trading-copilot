@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: '交易陪练 — 虚拟$10K+AI教练评分',
-  description: '虚拟$10K账户，真实价格，AI教练每笔评分，Bronze→Platinum分级解锁。',
+  title: 'Practice Mode — Virtual $10K + AI Coach Scoring',
+  description: 'Virtual $10K account, real prices, AI coach scores every trade. Bronze→Platinum tier progression.',
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

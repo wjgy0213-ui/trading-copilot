@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'AI复盘日记 — 交易评分+情绪检测',
-  description: 'AI分析交易模式：胜率、盈亏比、情绪化交易检测、最佳时段热力图。Elite专属。',
+  title: 'AI Trade Review — Score + Emotion Detection',
+  description: 'AI analyzes trading patterns: win rate, profit factor, emotional trading detection, optimal period heatmap. Elite exclusive.',
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

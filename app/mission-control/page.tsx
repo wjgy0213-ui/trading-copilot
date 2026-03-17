@@ -1,5 +1,7 @@
 'use client';
 
+import { useI18n } from '@/lib/i18n';
+
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Activity,
@@ -246,6 +248,7 @@ function Column({
 }
 
 export default function MissionControlPage() {
+  const { t } = useI18n();
   const [sniperData, setSniperData] = useState<SniperData | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
@@ -382,9 +385,9 @@ export default function MissionControlPage() {
                   <Gauge className="h-3.5 w-3.5" />
                   Factory view
                 </div>
-                <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">任务控制中心</h1>
+                <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t('missionControl.title')}</h1>
                 <p className="mt-1 text-sm text-gray-500">
-                  按左侧 tab 组织任务流，当前先聚焦 Mission Control / Factory 的执行界面。
+                  {t('missionControl.desc')}
                 </p>
               </div>
 
@@ -612,30 +615,30 @@ export default function MissionControlPage() {
 
                 <div className="space-y-3 text-sm text-gray-300">
                   <div className="rounded-2xl border border-white/6 bg-black/20 p-4">
-                    <div className="mb-1 font-medium text-white">1. 左侧 tab 固定导航</div>
+                    <div className="mb-1 font-medium text-white">{t('missionControl.note1Title')}</div>
                     <div className="text-xs leading-5 text-gray-500">
-                      先把页面结构做成更像操作系统 / 控制中心，而不是普通 dashboard。
+                      {t('missionControl.note1Desc')}
                     </div>
                   </div>
 
                   <div className="rounded-2xl border border-white/6 bg-black/20 p-4">
-                    <div className="mb-1 font-medium text-white">2. 中间多列任务流</div>
+                    <div className="mb-1 font-medium text-white">{t('missionControl.note2Title')}</div>
                     <div className="text-xs leading-5 text-gray-500">
-                      用 Backlog / Building / QA 三列承接任务推进感，更接近你给的参考图。
+                      {t('missionControl.note2Desc')}
                     </div>
                   </div>
 
                   <div className="rounded-2xl border border-white/6 bg-black/20 p-4">
-                    <div className="mb-1 font-medium text-white">3. 为后续模块预留壳</div>
+                    <div className="mb-1 font-medium text-white">{t('missionControl.note3Title')}</div>
                     <div className="text-xs leading-5 text-gray-500">
-                      现在先把 shell 和观感拉齐，后面再把 approvals、content、agents 等真实数据逐步接进来。
+                      {t('missionControl.note3Desc')}
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-4 inline-flex items-center gap-2 text-xs text-cyan-200">
                   <ChevronRight className="h-3.5 w-3.5" />
-                  当前这版适合作为任务控制中心 V2 外观底板
+                  {t('missionControl.currentNote')}
                 </div>
               </div>
             </div>

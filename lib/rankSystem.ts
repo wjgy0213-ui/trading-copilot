@@ -1,5 +1,6 @@
 export interface Rank {
   name: string;
+  nameEn: string;
   icon: string;
   color: string;
   bgColor: string;
@@ -8,11 +9,11 @@ export interface Rank {
 }
 
 export const RANKS: Rank[] = [
-  { name: '青铜', icon: '🥉', color: 'text-orange-400', bgColor: 'bg-orange-400/10 border-orange-400/20', minTrades: 0, minWinRate: 0 },
-  { name: '白银', icon: '🥈', color: 'text-gray-300', bgColor: 'bg-gray-300/10 border-gray-300/20', minTrades: 10, minWinRate: 0.3 },
-  { name: '黄金', icon: '🏅', color: 'text-yellow-400', bgColor: 'bg-yellow-400/10 border-yellow-400/20', minTrades: 30, minWinRate: 0.45 },
-  { name: '铂金', icon: '💎', color: 'text-cyan-400', bgColor: 'bg-cyan-400/10 border-cyan-400/20', minTrades: 60, minWinRate: 0.55 },
-  { name: '钻石', icon: '👑', color: 'text-purple-400', bgColor: 'bg-purple-400/10 border-purple-400/20', minTrades: 100, minWinRate: 0.6 },
+  { name: '青铜', nameEn: 'Bronze', icon: '🥉', color: 'text-orange-400', bgColor: 'bg-orange-400/10 border-orange-400/20', minTrades: 0, minWinRate: 0 },
+  { name: '白银', nameEn: 'Silver', icon: '🥈', color: 'text-gray-300', bgColor: 'bg-gray-300/10 border-gray-300/20', minTrades: 10, minWinRate: 0.3 },
+  { name: '黄金', nameEn: 'Gold', icon: '🏅', color: 'text-yellow-400', bgColor: 'bg-yellow-400/10 border-yellow-400/20', minTrades: 30, minWinRate: 0.45 },
+  { name: '铂金', nameEn: 'Platinum', icon: '💎', color: 'text-cyan-400', bgColor: 'bg-cyan-400/10 border-cyan-400/20', minTrades: 60, minWinRate: 0.55 },
+  { name: '钻石', nameEn: 'Diamond', icon: '👑', color: 'text-purple-400', bgColor: 'bg-purple-400/10 border-purple-400/20', minTrades: 100, minWinRate: 0.6 },
 ];
 
 export function getRank(totalTrades: number, winRate: number): Rank {

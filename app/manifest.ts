@@ -2,9 +2,9 @@ import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: '交易陪练 AI',
-    short_name: '交易陪练',
-    description: 'AI驱动的交易策略回测与模拟平台',
+    name: 'Trading Copilot AI',
+    short_name: 'Trading Copilot',
+    description: 'AI-powered trading strategy backtest & simulation platform',
     start_url: '/',
     display: 'standalone',
     background_color: '#030712',

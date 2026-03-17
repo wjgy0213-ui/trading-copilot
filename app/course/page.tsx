@@ -1,5 +1,7 @@
 'use client';
 
+import { useI18n } from '@/lib/i18n';
+
 import { useState } from 'react';
 import { useSession } from '@/lib/useSession';
 import { BookOpen, Check, Crown, Shield, Star, Zap, Users, Clock, ArrowRight, Loader2 } from 'lucide-react';
@@ -7,37 +9,40 @@ import { BookOpen, Check, Crown, Shield, Star, Zap, Users, Clock, ArrowRight, Lo
 const PLANS = [
   {
     id: 'basic',
-    name: '课程基础版',
+    name: '课程基础版', nameEn: 'Course Basic',
     price: 49,
     originalPrice: 69,
     eliteMonths: 1,
-    eliteLabel: '1个月Pro',
+    eliteLabel: '1个月Pro', eliteLabelEn: '1 month Pro',
     features: ['全部课程终身访问', '8大策略模板库', '课程进度追踪', '社区讨论权限', '1个月Pro体验'],
+    featuresEn: ['Lifetime access to all courses', '8 strategy template library', 'Course progress tracking', 'Community access', '1 month Pro trial'],
     icon: BookOpen,
     color: 'emerald',
     gradient: 'from-emerald-600 to-cyan-600',
   },
   {
     id: 'bundle',
-    name: '课程+工具包',
+    name: '课程+工具包', nameEn: 'Course + Toolkit',
     price: 99,
     originalPrice: 149,
     eliteMonths: 3,
-    eliteLabel: '3个月Elite',
+    eliteLabel: '3个月Elite', eliteLabelEn: '3 months Elite',
     popular: true,
     features: ['全部课程终身访问', '8大策略模板库', '实战案例集（20+真实交易）', '蒙特卡洛回测模板', '课程进度追踪', '3个月Elite体验'],
+    featuresEn: ['Lifetime access to all courses', '8 strategy template library', 'Case studies (20+ real trades)', 'Monte Carlo backtest templates', 'Course progress tracking', '3 months Elite trial'],
     icon: Crown,
     color: 'violet',
     gradient: 'from-violet-600 to-purple-600',
   },
   {
     id: 'vip',
-    name: '全家桶VIP',
+    name: '全家桶VIP', nameEn: 'All-in-One VIP',
     price: 149,
     originalPrice: 249,
     eliteMonths: 6,
-    eliteLabel: '6个月Elite',
+    eliteLabel: '6个月Elite', eliteLabelEn: '6 months Elite',
     features: ['全部课程终身访问', '8大策略模板库', '实战案例集（20+真实交易）', '蒙特卡洛回测模板', '1v1策略复盘（月度）', '专属VIP交流群', '6个月Elite体验', '新课程优先体验'],
+    featuresEn: ['Lifetime access to all courses', '8 strategy template library', 'Case studies (20+ real trades)', 'Monte Carlo backtest templates', '1v1 strategy review (monthly)', 'Exclusive VIP group', '6 months Elite trial', 'Early access to new courses'],
     icon: Shield,
     color: 'amber',
     gradient: 'from-amber-500 to-orange-600',
@@ -47,6 +52,7 @@ const PLANS = [
 const STATS = { students: 127, rating: 4.8, chapters: 24, hours: 12 };
 
 export default function CoursePage() {
+  const { t, locale } = useI18n();
   const { session, hasCourse } = useSession();
   const [loading, setLoading] = useState<string | null>(null);
   const [email, setEmail] = useState('');
@@ -79,10 +85,10 @@ export default function CoursePage() {
           <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
             <Check className="w-10 h-10 text-emerald-400" />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">你已拥有课程</h1>
-          <p className="text-gray-500 mb-6">所有课程内容已解锁，开始学习吧！</p>
+          <h1 className="text-2xl font-bold text-white mb-2">{t('course.owned')}</h1>
+          <p className="text-gray-500 mb-6">{t('course.ownedDesc')}</p>
           <a href="/learn" className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-500">
-            继续学习 <ArrowRight className="w-4 h-4" />
+            {t('course.continueLearning')} <ArrowRight className="w-4 h-4" />
           </a>
         </div>
       </div>
@@ -94,22 +100,22 @@ export default function CoursePage() {
       {/* Hero */}
       <div className="pt-24 pb-12 px-6 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-violet-500/10 border border-violet-500/20 rounded-full text-violet-400 text-sm mb-6">
-          <Star className="w-4 h-4" /> 早鸟优惠 · 限前100名
+          <Star className="w-4 h-4" /> {t('course.earlyBird')}
         </div>
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-          从韭菜到<span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">系统化交易者</span>
+          {t('course.heroTitle1')}<span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">{t('course.heroTitle2')}</span>
         </h1>
         <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
-          完整的交易学习路径。不是教你发财，是教你不再亏钱。
+          {t('course.heroDesc')}
         </p>
 
         {/* Stats */}
         <div className="flex justify-center gap-8 mb-12">
           {[
-            { icon: Users, label: '学员', value: `${STATS.students}+` },
-            { icon: Star, label: '评分', value: `${STATS.rating}/5` },
-            { icon: BookOpen, label: '章节', value: `${STATS.chapters}章` },
-            { icon: Clock, label: '时长', value: `${STATS.hours}h+` },
+            { icon: Users, label: t('course.students'), value: `${STATS.students}+` },
+            { icon: Star, label: t('course.rating'), value: `${STATS.rating}/5` },
+            { icon: BookOpen, label: t('course.chapters'), value: `${STATS.chapters}章` },
+            { icon: Clock, label: t('course.duration'), value: `${STATS.hours}h+` },
           ].map(s => (
             <div key={s.label} className="text-center">
               <s.icon className="w-5 h-5 text-gray-500 mx-auto mb-1" />
@@ -125,7 +131,7 @@ export default function CoursePage() {
         {!session && (
           <div className="max-w-md mx-auto mb-8">
             <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-              placeholder="输入邮箱开始购买"
+              placeholder={t('course.emailPlaceholder')}
               className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-white placeholder-gray-600 text-center" />
           </div>
         )}
@@ -137,7 +143,7 @@ export default function CoursePage() {
             }`}>
               {plan.popular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-violet-600 text-white text-xs font-bold rounded-full">
-                  最受欢迎
+                  {t('course.mostPopular')}
                 </div>
               )}
               
@@ -146,9 +152,9 @@ export default function CoursePage() {
                   <plan.icon className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">{plan.name}</h3>
+                  <h3 className="font-semibold text-white">{locale === 'en' && plan.nameEn ? plan.nameEn : plan.name}</h3>
                   <span className={`text-xs px-2 py-0.5 rounded-full bg-${plan.color}-500/10 text-${plan.color}-400`}>
-                    送{plan.eliteLabel}
+                    送{locale === 'en' && plan.eliteLabelEn ? plan.eliteLabelEn : plan.eliteLabel}
                   </span>
                 </div>
               </div>
@@ -158,14 +164,14 @@ export default function CoursePage() {
                   <span className="text-4xl font-bold text-white">${plan.price}</span>
                   <span className="text-lg text-gray-600 line-through">${plan.originalPrice}</span>
                   <span className="text-xs text-emerald-400 font-medium">
-                    省${plan.originalPrice - plan.price}
+                    {t('course.save')}${plan.originalPrice - plan.price}
                   </span>
                 </div>
-                <div className="text-sm text-gray-500 mt-1">一次付清 · 终身访问</div>
+                <div className="text-sm text-gray-500 mt-1">{t('course.oneTime')}</div>
               </div>
 
               <div className="flex-1 space-y-3 mb-6">
-                {plan.features.map(f => (
+                {((locale === 'en' && plan.featuresEn) ? plan.featuresEn : plan.features).map(f => (
                   <div key={f} className="flex items-start gap-2 text-sm">
                     <Check className={`w-4 h-4 mt-0.5 text-${plan.color}-400 shrink-0`} />
                     <span className="text-gray-300">{f}</span>
@@ -183,9 +189,9 @@ export default function CoursePage() {
                 } disabled:opacity-50`}
               >
                 {loading === plan.id ? (
-                  <><Loader2 className="w-4 h-4 animate-spin" />处理中...</>
+                  <><Loader2 className="w-4 h-4 animate-spin" />{t('course.processing')}</>
                 ) : (
-                  <>立即购买 <ArrowRight className="w-4 h-4" /></>
+                  <>{t('course.buyNow')} <ArrowRight className="w-4 h-4" /></>
                 )}
               </button>
             </div>
@@ -195,13 +201,13 @@ export default function CoursePage() {
 
       {/* Course Content Preview */}
       <div className="max-w-4xl mx-auto px-6 pb-12">
-        <h2 className="text-2xl font-bold text-white text-center mb-8">课程大纲</h2>
+        <h2 className="text-2xl font-bold text-white text-center mb-8">{t('course.outlineTitle')}</h2>
         <div className="grid md:grid-cols-2 gap-4">
           {[
-            { module: '模块一', title: '交易基础', chapters: '6章', desc: '市场结构、K线、趋势识别' },
-            { module: '模块二', title: '技术分析', chapters: '6章', desc: '支撑阻力、指标体系、形态分析' },
-            { module: '模块三', title: '策略构建', chapters: '6章', desc: '回测方法、参数优化、风险管理' },
-            { module: '模块四', title: '心态与纪律', chapters: '6章', desc: '情绪管理、交易日志、持续进化' },
+            { module: t('course.module1'), title: t('course.module1Title'), chapters: '6 ' + t('course.chapUnit'), desc: t('course.module1Desc') },
+            { module: t('course.module2'), title: t('course.module2Title'), chapters: '6 ' + t('course.chapUnit'), desc: t('course.module2Desc') },
+            { module: t('course.module3'), title: t('course.module3Title'), chapters: '6 ' + t('course.chapUnit'), desc: t('course.module3Desc') },
+            { module: t('course.module4'), title: t('course.module4Title'), chapters: '6 ' + t('course.chapUnit'), desc: t('course.module4Desc') },
           ].map(m => (
             <div key={m.module} className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">
@@ -219,9 +225,9 @@ export default function CoursePage() {
       <div className="max-w-3xl mx-auto px-6 pb-20">
         <div className="bg-gray-900/30 border border-gray-800 rounded-2xl p-6 text-center">
           <Zap className="w-8 h-8 text-amber-400 mx-auto mb-3" />
-          <h3 className="text-lg font-semibold text-white mb-2">一次付清 · 终身受益</h3>
+          <h3 className="text-lg font-semibold text-white mb-2">{t('course.guarantee')}</h3>
           <p className="text-gray-500 text-sm max-w-lg mx-auto">
-            没有订阅费，没有隐藏收费。买一次，永久访问所有课程内容和未来更新。
+            {t('course.guaranteeDesc')}
           </p>
         </div>
       </div>

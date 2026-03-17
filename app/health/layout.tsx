@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: '市场体检 — 一键5维度评分',
+  title: 'Market Health Check — One-click 5D Score',
   description: '5维度市场体检：Fear\&Greed、ITC Risk、动量、费率、波动率。红绿灯一目了然。',
 };
 
