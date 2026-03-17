@@ -17,17 +17,24 @@ export const PLANS = {
     name: 'Pro',
     price: 39.99,
     priceId: process.env.STRIPE_PRO_PRICE_ID || '',
+    yearlyPrice: 239.88,
+    yearlyMonthly: 19.99,
+    yearlyPriceId: process.env.STRIPE_YEARLY_PRO_PRICE_ID || 'price_YEARLY_PRO_PLACEHOLDER',
     features: ['AI策略定制', '高级回测', '参数优化器', '12+策略模板', '回测报告导出'],
   },
   elite: {
     name: 'Elite',
     price: 79.99,
     priceId: process.env.STRIPE_ELITE_PRICE_ID || '',
+    yearlyPrice: 479.88,
+    yearlyMonthly: 39.99,
+    yearlyPriceId: process.env.STRIPE_YEARLY_ELITE_PRICE_ID || 'price_YEARLY_ELITE_PLACEHOLDER',
     features: ['Pro全部功能', '实盘自动化', '风控系统', 'Telegram通知', '优先支持'],
   },
 } as const;
 
 export type PlanId = keyof typeof PLANS;
+export type BillingInterval = 'monthly' | 'yearly';
 
 // Course products (one-time payment)
 export const COURSE_PLANS = {
