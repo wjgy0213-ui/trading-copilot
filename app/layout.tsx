@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: "%s | Trading Copilot AI",
   },
   description: "11 AI trading tools: practice mode, market health check, signal aggregator, Meme Sniper, whale tracker, AI review, risk guardian, strategy workshop, parameter optimizer. From practice to live trading.",
-  keywords: ["trading strategy", "backtest", "AI trading", "quant trading", "trading copilot", "paper trading", "meme coins", "whale tracking", "risk control", "crypto trading", "backtest", "trading bot", "paper trading"],
+  keywords: ["trading strategy", "backtest", "AI trading", "quant trading", "trading copilot", "paper trading", "meme coins", "whale tracking", "risk control", "crypto trading", "trading bot", "practice trading", "crypto trading simulator", "trading practice app", "AI trading coach", "learn crypto trading", "trading journal AI", "Monte Carlo trading", "fear and greed index", "crypto risk management"],
   metadataBase: new URL('https://www.tradingcopilot.app'),
   alternates: {
     canonical: 'https://www.tradingcopilot.app',

@@ -47,10 +47,63 @@ export default function JsonLd() {
     }
   };
 
+  const faqData = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is this real money trading?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Trading Copilot uses virtual funds for practice. You can trade with $10,000 virtual money using real market data, with AI coaching that reviews every trade. No real money is at risk."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does the AI trading coach work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The AI coach analyzes every trade you make — entry timing, position sizing, risk management, and exit decisions. It identifies patterns like overtrading, revenge trading, and emotional entries, then provides personalized feedback to help you improve."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need to register?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No registration required for basic features. You get 3 free strategy backtests per day, access to the Market Health Dashboard, and the Practice Trading mode. Pro and Elite tiers require a subscription for advanced features."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What makes Trading Copilot different from TradingView or other platforms?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Trading Copilot is purpose-built for learning and practice. While TradingView excels at charting, Trading Copilot focuses on the practice-to-profit journey with AI coaching, progressive skill levels (Bronze to Platinum), risk management tools, and 11 integrated trading tools in one platform."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long should I practice before trading with real money?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We recommend 2-3 months of consistent virtual trading with profitability before transitioning to real money. With AI coaching, this timeline can be shortened to 1-2 months. The key is proving consistency, not just having a few good trades."
+        }
+      }
+    ]
+  };
+
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqData) }}
+      />
+    </>
   );
 }
