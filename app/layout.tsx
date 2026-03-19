@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     title: "Trading Copilot AI — Your AI Trading Strategy Platform",
     description: "11 AI trading tools · Practice mode · Signal aggregator · Whale tracker · Risk guardian. Start free.",
     type: "website",
-    locale: "zh_CN",
+    locale: "en_US",
     siteName: "Trading Copilot AI",
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Trading Copilot AI' }],
   },
@@ -52,7 +52,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh">
+    <html lang="en">
       <head>
         <JsonLd />
       </head>

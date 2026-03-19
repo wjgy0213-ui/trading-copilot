@@ -29,6 +29,11 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem('locale') as Locale | null;
     if (saved && (saved === 'zh' || saved === 'en')) {
       setLocaleState(saved);
+    } else {
+      // Auto-detect: default to English unless browser is Chinese
+      const browserLang = navigator.language || '';
+      const isZh = browserLang.startsWith('zh');
+      setLocaleState(isZh ? 'zh' : 'en');
     }
   }, []);
 
