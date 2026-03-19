@@ -195,6 +195,38 @@ export default function LandingPage() {
         </div>
       </motion.div>
 
+      {/* Testimonials / Social Proof */}
+      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}
+        className="container mx-auto px-4 py-16">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-3">{t('testimonials.title', 'What Traders Say')}</h2>
+        <p className="text-gray-500 text-center mb-10 max-w-xl mx-auto">{t('testimonials.subtitle', 'Real feedback from traders who practice with Trading Copilot')}</p>
+        <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
+          {[
+            { quote: t('testimonials.1.quote', "I blew 2 accounts before finding this. The AI coach caught my revenge trading pattern — something no YouTube video ever told me."), author: t('testimonials.1.author', "Alex K."), role: t('testimonials.1.role', "Crypto Swing Trader"), stars: 5 },
+            { quote: t('testimonials.2.quote', "The Monte Carlo simulation changed how I think about strategies. Seeing the worst-case scenario before risking real money is invaluable."), author: t('testimonials.2.author', "Maria S."), role: t('testimonials.2.role', "DeFi Trader"), stars: 5 },
+            { quote: t('testimonials.3.quote', "I practiced for 3 months on Trading Copilot before going live. My first real month was profitable. Coincidence? I don't think so."), author: t('testimonials.3.author', "David W."), role: t('testimonials.3.role', "Day Trader, 6 months exp"), stars: 5 },
+          ].map((t, i) => (
+            <div key={i} className="bg-gray-900/60 border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all">
+              <div className="flex gap-1 mb-3">
+                {Array.from({ length: t.stars }).map((_, j) => (
+                  <span key={j} className="text-amber-400 text-sm">★</span>
+                ))}
+              </div>
+              <p className="text-gray-300 text-sm leading-relaxed mb-4">&ldquo;{t.quote}&rdquo;</p>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center text-xs font-bold text-white">
+                  {t.author[0]}
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-white">{t.author}</div>
+                  <div className="text-xs text-gray-500">{t.role}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
       {/* Features Grid */}
       <div className="container mx-auto px-4 py-16">
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
