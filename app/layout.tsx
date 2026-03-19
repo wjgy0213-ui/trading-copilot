@@ -55,6 +55,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <JsonLd />
+        <link rel="alternate" type="application/rss+xml" title="Trading Copilot Blog" href="/feed" />
       </head>
       <body className="bg-gray-950 text-gray-100 antialiased font-sans">
         <Analytics />
