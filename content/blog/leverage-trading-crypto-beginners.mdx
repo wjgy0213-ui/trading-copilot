@@ -1,0 +1,153 @@
+---
+title: "Leverage Trading Crypto: The Complete Beginner's Guide (Don't Blow Up)"
+slug: "leverage-trading-crypto-beginners"
+description: "Everything beginners need to know about leverage trading crypto. How margin works, liquidation math, position sizing with leverage, and why most leveraged traders lose money."
+date: "2026-03-22"
+author: "Trading Copilot"
+tags: ["leverage", "margin-trading", "crypto-trading", "liquidation", "risk-management", "beginner"]
+---
+
+# Leverage Trading Crypto: Don't Blow Up
+
+Leverage is the most powerful tool in crypto trading — and the most dangerous. It can 10x your profits. It can also delete your entire account in minutes.
+
+This guide tells you what nobody else will: **the math behind why most leveraged traders lose everything.**
+
+## What Is Leverage?
+
+Leverage lets you control a larger position than your capital allows.
+
+| Your Capital | Leverage | Position Size | You Control |
+|-------------|---------|--------------|------------|
+| $1,000 | 1x (no leverage) | $1,000 | $1,000 worth of BTC |
+| $1,000 | 5x | $5,000 | $5,000 worth of BTC |
+| $1,000 | 10x | $10,000 | $10,000 worth of BTC |
+| $1,000 | 50x | $50,000 | $50,000 worth of BTC |
+
+**The catch:** Leverage amplifies losses equally.
+
+At 10x leverage:
+- BTC goes up 5% → You profit 50% ✅
+- BTC goes down 5% → You lose 50% ❌
+- BTC goes down 10% → **You're liquidated (100% loss)** 💀
+
+## The Liquidation Math Nobody Shows You
+
+**Liquidation price formula (simplified):**
+
+```
+Long liquidation = Entry × (1 - 1/Leverage)
+Short liquidation = Entry × (1 + 1/Leverage)
+```
+
+| Leverage | Price Move to Liquidation |
+|---------|--------------------------|
+| 2x | 50% against you |
+| 3x | 33% against you |
+| 5x | 20% against you |
+| 10x | 10% against you |
+| 20x | 5% against you |
+| 50x | 2% against you |
+| 100x | 1% against you |
+
+**BTC regularly moves 5% in a day.** At 20x leverage, a normal day can liquidate you.
+
+At 100x leverage, a 1% wick (which happens every few hours) can wipe your position. This is why 100x leverage is effectively gambling.
+
+## The Real Reason Most Leveraged Traders Lose
+
+It's not bad analysis. It's **asymmetric math.**
+
+With 10x leverage and a $1,000 account:
+- Win 5 trades at +5% each: +$500 profit → Account: $1,500
+- Lose 1 trade at -10%: **-$1,000 loss** → Account: $500
+
+**Five wins erased by one loss.** This is why high leverage traders can have 80% win rates and still lose money.
+
+## Safe Leverage Rules
+
+### Rule 1: Risk Per Trade, Not Leverage
+
+Don't think about leverage. Think about **how much you can afford to lose on this trade.**
+
+```
+Account: $5,000
+Max risk per trade: 2% = $100
+Entry: $65,000 BTC
+Stop-loss: $63,500 (2.3% away)
+
+Position size = $100 / 0.023 = $4,348
+Leverage needed = $4,348 / $5,000 = 0.87x (no leverage needed!)
+```
+
+Most properly-sized trades don't even need leverage above 2-3x.
+
+### Rule 2: The Maximum Safe Leverage Table
+
+| Account Size | Max Leverage | Why |
+|-------------|-------------|-----|
+| < $500 | 2-3x max | Can't afford slippage at high leverage |
+| $500-5,000 | 3-5x max | Standard for learning |
+| $5,000-50,000 | 2-5x max | Professionals rarely exceed this |
+| > $50,000 | 1-3x max | Larger accounts need less leverage |
+
+**Professional traders average 2-5x leverage.** The 50-100x options exist for exchanges to collect liquidation fees.
+
+### Rule 3: Never Add to a Losing Position with Leverage
+
+"Averaging down" with leverage is how accounts go to zero. If your leveraged position is losing, the correct action is to either hold (if within your stop) or close (if your stop is hit). Never add more margin to avoid liquidation.
+
+### Rule 4: Calculate Your Liquidation Price Before Entry
+
+Always know your exact liquidation price before entering. If it's within the normal daily range, your leverage is too high.
+
+[Trading Copilot's Practice Mode](https://tradingcopilot.app/practice) shows your liquidation price on every leveraged paper trade, so you develop this habit before using real money.
+
+## When Leverage Makes Sense
+
+Despite the risks, there are legitimate uses:
+
+### Hedging
+You hold 1 BTC in cold storage ($65,000). You're worried about a short-term dip. Open a 1x short on perpetuals ($65,000 position). Cost: only the margin requirement ($6,500 at 10x). Your spot position is protected.
+
+### Capital Efficiency
+You want a $10,000 BTC position but don't want all $10,000 on the exchange (security risk). Use 2x leverage with $5,000 on exchange, keep $5,000 in cold storage.
+
+### Small Account Growth (Careful)
+With $200, a 1x BTC trade barely makes sense after fees. 3-5x leverage gives you meaningful position sizes. **But** your stop-loss must be extremely disciplined.
+
+## Leverage on Different Exchanges
+
+| Exchange | Max Leverage | Liquidation Fee | Funding |
+|---------|------------|-----------------|---------|
+| Binance | 125x | 0.1% | 8h intervals |
+| Bybit | 100x | 0.06% | 8h intervals |
+| OKX | 125x | 0.08% | 8h intervals |
+| Hyperliquid | 50x | Variable | 1h intervals |
+
+**Remember:** The max leverage offered is not the max leverage you should use. A restaurant offering 200oz steaks doesn't mean you should eat one.
+
+## FAQ
+
+### What leverage should a beginner use?
+
+1x (no leverage). Seriously. Learn to be profitable without leverage first. Then try 2x. Then 3x. If you can't make money at 1x, leverage will only make you lose money faster.
+
+### Can I make money with high leverage?
+
+Statistically, the higher the leverage, the lower the long-term survival rate. Some traders use 10-20x for scalping, but they have years of experience and trade tiny position sizes relative to their accounts.
+
+### What's the difference between isolated and cross margin?
+
+**Isolated margin:** Only the margin allocated to this position can be lost. Other positions and account balance are safe.
+**Cross margin:** Your entire account balance serves as margin. Higher liquidation threshold but your whole account is at risk.
+
+**Recommendation:** Always use isolated margin as a beginner.
+
+### Is leverage trading the same as gambling?
+
+At high leverage (20x+) with poor risk management, yes. At low leverage (2-5x) with proper position sizing, stop-losses, and a tested strategy, no — it's a capital efficiency tool.
+
+---
+
+*Practice leverage trading risk-free: [Trading Copilot](https://tradingcopilot.app/practice) — paper trade with 1-10x leverage, AI coach scores every decision. $0 at risk.*
