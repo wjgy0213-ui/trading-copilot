@@ -1,0 +1,150 @@
+---
+title: "How to Spot a Rug Pull: 10 Red Flags Every Meme Coin Trader Must Know"
+slug: "how-to-spot-rug-pull-meme-coins"
+description: "Learn the 10 red flags that identify rug pulls before they happen. On-chain checks, contract analysis, and tools to protect yourself from meme coin scams."
+date: "2026-03-20"
+author: "Trading Copilot"
+tags: ["rug-pull", "meme-coins", "security", "scam-detection", "crypto-trading", "defi", "solana"]
+---
+
+# How to Spot a Rug Pull: 10 Red Flags for Meme Coins
+
+Meme coins can generate life-changing returns — but they're also the #1 source of crypto scams. In 2024-2025 alone, rug pulls drained over $2 billion from retail traders.
+
+Here are the 10 red flags that separate legitimate meme coins from scams.
+
+## What Is a Rug Pull?
+
+A rug pull occurs when token creators:
+1. Create a token and build hype
+2. Attract buyers who push the price up
+3. Drain the liquidity pool or dump their holdings
+4. Leave buyers with worthless tokens
+
+**Types:**
+- **Hard rug:** Dev removes all liquidity in one transaction. Price → $0 instantly.
+- **Soft rug:** Dev slowly dumps tokens over days/weeks. Price bleeds to near zero.
+- **Honeypot:** Token can be bought but not sold due to smart contract restrictions.
+
+## Red Flag #1: Unverified or Hidden Contract
+
+If the smart contract code isn't verified on a block explorer (Etherscan, Solscan), that's an immediate red flag. Verified contracts let anyone read the code and check for malicious functions.
+
+**Check:** Go to the contract address on the block explorer. Look for "Verified" status.
+
+## Red Flag #2: Mint Function Enabled
+
+If the token contract has an active `mint` function, the creator can print unlimited tokens at any time — diluting everyone else's holdings to zero.
+
+**Check:** Use GoPlusLabs or TokenSniffer to check if minting is enabled.
+
+## Red Flag #3: No Liquidity Lock
+
+Legitimate projects lock their liquidity pool (LP) tokens for months or years using services like Unicrypt or PinkLock. If LP isn't locked, the dev can remove all liquidity at any time.
+
+**Check:** Verify LP lock on the DEX or through DexScreener's pool info.
+
+## Red Flag #4: High Token Concentration
+
+If the top 10 wallets hold more than 30% of supply (excluding exchange wallets and dead wallets), there's too much concentration risk.
+
+**Check:** DexScreener shows holder distribution. Trading Copilot's [Meme Sniper](https://tradingcopilot.app/sniper) includes holder concentration in its 5-dimension scoring.
+
+## Red Flag #5: Fresh Dev Wallet
+
+If the deployer wallet was created right before the token launch and has no transaction history, the dev is likely anonymous and disposable.
+
+**Check:** Look at the deployer wallet's age and history on the block explorer.
+
+## Red Flag #6: Disabled Selling
+
+Some contracts include hidden functions that prevent selling (honeypots). You can buy but never sell. The price chart looks like it only goes up — because nobody can sell.
+
+**Check:** GoPlusLabs honeypot detector. Or try selling a tiny amount before buying more.
+
+## Red Flag #7: Excessive Tax
+
+Some tokens have a hidden sell tax of 50-99%. You can technically sell, but you receive almost nothing.
+
+**Check:** GoPlusLabs or simulate a sell transaction on the DEX.
+
+## Red Flag #8: No Social Media / Anonymous Team
+
+Legitimate meme coins usually have:
+- Active Telegram group
+- Twitter with real engagement (not bot followers)
+- Some level of community development
+
+If the only social is a Twitter with 10 posts and bought followers — be cautious.
+
+## Red Flag #9: Copy-Paste Website
+
+Rug pull operators often clone legitimate project websites with minimal changes. Look for:
+- Generic template design
+- Broken links
+- Copied whitepaper from another project
+- No real roadmap or utility
+
+## Red Flag #10: Too-Good-to-Be-True Marketing
+
+"100x guaranteed" / "Next PEPE" / "Elon is backing this" — these are marketing tactics, not analysis. If the promotion feels like a pump scheme, it probably is.
+
+## The 60-Second Safety Check
+
+Before buying any meme coin, run through this checklist:
+
+| Check | Tool | Time |
+|-------|------|------|
+| Contract verified? | Block explorer | 10s |
+| Mint disabled? | GoPlusLabs | 10s |
+| LP locked? | DexScreener | 10s |
+| Holder concentration <30%? | DexScreener | 10s |
+| Not a honeypot? | GoPlusLabs | 10s |
+| Reasonable tax? | GoPlusLabs | 10s |
+
+**Or use [Trading Copilot's Meme Sniper](https://tradingcopilot.app/sniper)** — it runs all these checks automatically and gives a 5-dimension safety score (Security/Liquidity/Momentum/Community/Timing).
+
+## Tools for Rug Pull Detection
+
+| Tool | What It Does | Cost |
+|------|-------------|------|
+| [Trading Copilot Meme Sniper](https://tradingcopilot.app/sniper) | 5-dimension token scoring with safety checks | Free/Pro |
+| [GoPlusLabs](https://gopluslabs.io) | Token security API (honeypot, mint, tax) | Free API |
+| [TokenSniffer](https://tokensniffer.com) | Smart contract audit scores | Free |
+| [DexScreener](https://dexscreener.com) | Pool data, holder distribution, charts | Free |
+| [RugCheck](https://rugcheck.xyz) | Solana token safety checker | Free |
+| [BubbleMaps](https://bubblemaps.io) | Visual holder concentration analysis | Free |
+
+## What to Do If You Got Rugged
+
+1. **Accept the loss** — Don't throw more money trying to "recover"
+2. **Document everything** — Save transaction hashes, contract addresses, social media screenshots
+3. **Report it** — Report to the chain's scam database and relevant authorities
+4. **Learn from it** — What red flag did you miss? Update your checklist.
+5. **Move on** — Every trader gets burned at least once. The lesson is in not getting burned twice.
+
+## FAQ
+
+### Are all meme coins scams?
+
+No. Some meme coins (DOGE, PEPE, WIF) have legitimate communities and longevity. But the vast majority of new meme coins (95%+) either rug or slowly die. The key is using safety checks before buying.
+
+### Can a token be safe initially and rug later?
+
+Yes. Token concentration can change — developers or early buyers can accumulate more tokens and dump later. Regular re-checking is important. Trading Copilot's scanner rechecks holder concentration periodically.
+
+### Is a high GoPlusLabs score enough?
+
+No. GoPlusLabs checks contract code, but it can't detect social engineering or slow rugs where the dev gradually sells. Combine contract analysis with community research and holder concentration monitoring.
+
+### What's the safest way to trade meme coins?
+
+1. Only risk money you can afford to lose (1-5% of portfolio max)
+2. Run the 60-second safety check before every buy
+3. Set stop-losses (meme coins can drop 90%+ in minutes)
+4. Take profits early and often
+5. Never go all-in on a single meme coin
+
+---
+
+*Scan meme coins for safety: [Trading Copilot Meme Sniper](https://tradingcopilot.app/sniper) — automated 5-dimension scoring, free to use.*

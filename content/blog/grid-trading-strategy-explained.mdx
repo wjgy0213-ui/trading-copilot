@@ -1,0 +1,162 @@
+---
+title: "Grid Trading Strategy Explained: How It Works, When to Use It, and Calculator"
+slug: "grid-trading-strategy-explained"
+description: "Complete guide to grid trading in crypto. How grid bots work, arithmetic vs geometric grids, profit calculation, ideal market conditions, and common mistakes."
+date: "2026-03-20"
+author: "Trading Copilot"
+tags: ["grid-trading", "trading-strategy", "crypto-trading", "automation", "passive-income", "trading-bots"]
+---
+
+# Grid Trading Strategy Explained
+
+Grid trading is one of the few systematic strategies that works in sideways markets — the market condition that frustrates most traders. Here's how it works, when to use it, and how to calculate your parameters.
+
+## What Is Grid Trading?
+
+Grid trading places a series of **buy and sell orders at preset price intervals** within a defined range. Each buy order has a corresponding sell order above it. As price oscillates, the grid automatically captures profit from each swing.
+
+**Visual example (BTC at $70,000, range $65,000-$75,000, 10 grids):**
+
+```
+$75,000 ─── SELL ──────────────── Top
+$74,000 ─── SELL
+$73,000 ─── SELL
+$72,000 ─── SELL
+$71,000 ─── SELL
+$70,000 ─── Current Price ─────── Middle
+$69,000 ─── BUY
+$68,000 ─── BUY
+$67,000 ─── BUY
+$66,000 ─── BUY
+$65,000 ─── BUY ───────────────── Bottom
+```
+
+When price drops to $69,000 → buys. When it bounces to $70,000 → sells for $1,000 profit. This happens at every grid level.
+
+## How Grid Trading Makes Money
+
+Each grid level captures a small profit:
+
+```
+Per-Grid Profit = (Grid Spacing / Entry Price) - Trading Fee
+```
+
+**Example:** 
+- Grid spacing: $1,000
+- Entry: $69,000
+- Fee: 0.1% per trade (0.2% round trip)
+- Per-grid profit: ($1,000 / $69,000) - 0.2% = 1.45% - 0.2% = **1.25%**
+
+Over a month in a ranging market, each grid might trigger 5-15 times. With 10 grids, that's 50-150 profit-taking events.
+
+## Arithmetic vs Geometric Grids
+
+| Type | Grid Spacing | Best For |
+|------|-------------|----------|
+| Arithmetic | Equal dollar distance ($1,000 each) | Tight ranges, lower volatility |
+| Geometric | Equal percentage distance (1.5% each) | Wide ranges, volatile assets |
+
+**Arithmetic example:** $65K, $66K, $67K, $68K... (constant $1K gaps)
+**Geometric example:** $65K, $65,975, $66,964, $67,968... (constant 1.5% gaps)
+
+**For crypto:** Geometric grids are usually better because crypto prices move in percentages, not dollars.
+
+## When Grid Trading Works
+
+### ✅ Ideal Conditions
+- **Sideways/ranging markets** — Price bouncing between support and resistance
+- **Known range** — Clear boundaries where price has historically stayed
+- **Moderate volatility** — Enough movement to trigger grids, not enough to break range
+- **High-liquidity pairs** — BTC, ETH, SOL — tight spreads, reliable execution
+
+### ❌ When to Avoid
+- **Strong trends** — Price breaks your range and keeps going
+- **Low volatility** — Grids never trigger, capital sits idle
+- **Black swan events** — Sudden crashes can leave you holding at the bottom
+- **Low-cap tokens** — Illiquid markets = slippage > grid profit
+
+## Grid Trading Parameters
+
+### 1. Price Range
+The upper and lower bounds of your grid. Too narrow = frequent triggers but small total profit. Too wide = infrequent triggers.
+
+**Rule of thumb:** Set range to cover 80% of price action over the last 30 days.
+
+### 2. Number of Grids
+More grids = more frequent trades = more fees. Fewer grids = bigger profit per trade = fewer opportunities.
+
+| Grids | Best For | Trade Size |
+|-------|----------|-----------|
+| 5-10 | Large ranges, lower fees | Larger per trade |
+| 10-20 | Standard approach | Balanced |
+| 20-50 | Tight ranges, scalping | Smaller per trade |
+
+### 3. Investment Amount
+Divided equally across all grid levels. More capital = larger position per grid.
+
+## Calculating Grid Profits
+
+Use this formula for quick estimation:
+
+```
+Monthly Profit = Grids × Triggers/Month × Per-Grid Profit% × Investment/Grids
+```
+
+**Example:**
+- Investment: $10,000
+- Grids: 10
+- Triggers/month per grid: 8 (moderate ranging)
+- Per-grid profit: 1.2% (after fees)
+- Monthly profit: 10 × 8 × 1.2% × $1,000 = **$960 (9.6%)**
+
+**Reality check:** This is an ideal scenario. Actual returns vary significantly based on market conditions. In trending markets, returns can be negative.
+
+## Common Grid Trading Mistakes
+
+### ❌ Setting Range Too Tight
+Price breaks out of your range, and you're either fully long (if price went up, missing further gains) or fully short (if price dropped, holding bags).
+
+### ❌ Ignoring Fees
+With tight grids on a high-fee exchange, fees can eat your entire profit. Always calculate net profit after fees.
+
+### ❌ Running Grids in Trending Markets
+Grid trading is for sideways markets. In a strong trend, you're constantly buying as price drops (or selling as it rises), fighting the trend.
+
+### ❌ Over-Allocating to One Grid Bot
+Never put more than 20-30% of your portfolio into grid trading. If the range breaks, you want capital preserved.
+
+### ❌ Not Monitoring
+"Set and forget" is a myth. Check your grid daily. If market conditions change (range breaks, volatility spikes), adjust or close.
+
+## Grid Trading Tools
+
+| Tool | Type | Cost |
+|------|------|------|
+| [Trading Copilot Grid Calculator](https://tradingcopilot.app/strategy) | Calculate optimal parameters | Free |
+| Pionex | Exchange with built-in bots | Free (exchange fees) |
+| 3Commas | Third-party grid bot | $49+/mo |
+| Freqtrade | Open-source, self-hosted | Free |
+
+Trading Copilot's [Strategy Workshop](https://tradingcopilot.app/strategy) can backtest grid strategies with different parameters so you can find the optimal range, grid count, and spacing before deploying real capital.
+
+## FAQ
+
+### Is grid trading passive income?
+
+No. It requires monitoring and adjustment. The grid range needs to match current market conditions. In the right market, it can generate consistent returns. In the wrong market, it loses money.
+
+### How much money do I need for grid trading?
+
+Minimum: $500 (for 5-10 grids on a major pair). Recommended: $2,000+ for meaningful returns. Below $500, fees eat too much of the profit.
+
+### Can I grid trade Bitcoin?
+
+Yes, BTC is one of the best assets for grid trading due to high liquidity and frequent ranging periods. BTC/USDT is the most popular grid trading pair.
+
+### What happens when price goes outside my grid range?
+
+If price goes above your range: you've sold all positions at a profit, but miss further upside. If price goes below: you're holding all positions at a loss (unrealized). This is the main risk of grid trading.
+
+---
+
+*Calculate your grid parameters: [Trading Copilot Strategy Workshop](https://tradingcopilot.app/strategy) — free backtesting with grid strategy templates.*
