@@ -183,7 +183,7 @@ function calcScore(r: BacktestResult): number {
 }
 
 function CompareTable({ results }: { results: BacktestResult[] }) {
-  const { t: tr } = useI18n();
+  const { t: tr, locale } = useI18n();
   if (results.length < 2) return null;
   const colors = ['#10b981', '#3b82f6', '#f59e0b'];
   const metrics = [

@@ -21,7 +21,7 @@ function DetailModal({ indicator, onClose, t, locale }: { indicator: ITCIndicato
   const max = Math.max(...data.map(d => d.value));
   
   const displayName = locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name;
-  const displayDesc = locale === 'en' ? (displayDescEn || displayDesc) : displayDesc;
+  const displayDesc: string = indicator.description || '';
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
