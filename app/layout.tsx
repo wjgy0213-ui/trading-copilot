@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     google: '7BwDIMV3DNn8jAtcwY4ZfWBTeCRDiUsOQ4hO7HpUkqc',
   },
   title: {
-    default: "Trading Copilot AI — Strategy Backtest · AI Generation · Monte Carlo Simulation",
+    default: "Trading Copilot — Your AI Trading Coach · Practice · Backtest · AI Generation · Monte Carlo Simulation",
     template: "%s | Trading Copilot AI",
   },
   description: "11 AI trading tools: practice mode, market health check, signal aggregator, Meme Sniper, whale tracker, AI review, risk guardian, strategy workshop, parameter optimizer. From practice to live trading.",
