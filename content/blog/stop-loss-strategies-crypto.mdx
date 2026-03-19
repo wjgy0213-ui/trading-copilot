@@ -1,0 +1,157 @@
+---
+title: "Stop-Loss Strategies for Crypto: 7 Methods to Protect Your Capital"
+slug: "stop-loss-strategies-crypto"
+description: "Master 7 stop-loss strategies for crypto trading: fixed percentage, ATR-based, structure-based, time stops, trailing stops, and more. Learn which works for your style."
+date: "2026-03-21"
+author: "Trading Copilot"
+tags: ["stop-loss", "risk-management", "crypto-trading", "position-management", "trading-strategy"]
+---
+
+# Stop-Loss Strategies: 7 Ways to Protect Your Crypto Capital
+
+The difference between traders who survive and traders who blow up comes down to one thing: **how they handle losses.**
+
+A stop-loss is your pre-defined exit point when a trade goes against you. No stop-loss = no risk management = eventual account destruction.
+
+## Why Most Traders Get Stop-Losses Wrong
+
+| Mistake | What Happens |
+|---------|-------------|
+| No stop-loss | "I'll hold until it recovers" → -80% |
+| Stop too tight | Gets stopped out on normal volatility, then price goes your way |
+| Stop too wide | When hit, the loss is 5-10% instead of 1-2% |
+| Moving the stop | "Just a little more room" → turns a 2% loss into a 15% loss |
+| Same stop for all trades | Crypto with 5% daily range vs 1% daily range need different stops |
+
+## Method 1: Fixed Percentage Stop
+
+**How:** Set stop at a fixed % below entry (longs) or above entry (shorts).
+
+```
+Entry: $65,000
+Stop: 3% below = $63,050
+```
+
+**Pros:** Simple, consistent, easy to calculate position size.
+**Cons:** Ignores market structure and volatility. A 3% stop on BTC is normal noise; on a stablecoin it's huge.
+
+**Best for:** Beginners who need a starting framework.
+
+## Method 2: ATR-Based Stop (Volatility-Adjusted)
+
+**How:** Use Average True Range to set stops based on current volatility.
+
+```
+ATR(14) = $1,500
+Stop = Entry - (2 × ATR) = $65,000 - $3,000 = $62,000
+```
+
+**Pros:** Automatically adjusts to market conditions. Tight in calm markets, wide in volatile ones.
+**Cons:** Requires understanding ATR. During sudden volatility spikes, can be too wide.
+
+**Best for:** Swing traders and anyone who wants adaptive stops.
+
+## Method 3: Structure-Based Stop
+
+**How:** Place stop below the last significant swing low (longs) or above swing high (shorts).
+
+```
+Entry at $65,000
+Last swing low: $63,200
+Stop: $62,900 (slightly below swing low for buffer)
+```
+
+**Pros:** Respects market structure. If the swing low breaks, the trend thesis is actually invalidated.
+**Cons:** Distance varies widely. Sometimes the nearest structure is 8% away.
+
+**Best for:** Technical traders who read chart structure.
+
+## Method 4: Time Stop
+
+**How:** Exit if the trade hasn't reached a certain profit target within X bars/hours.
+
+```
+If trade isn't up +1% within 4 hours → close at market
+```
+
+**Pros:** Prevents capital from being tied up in dead trades. Forces you to re-evaluate.
+**Cons:** Can close trades that would have eventually worked.
+
+**Best for:** Day traders and scalpers who need capital efficiency.
+
+## Method 5: Trailing Stop
+
+**How:** Stop moves with the price, locking in gains as the trade moves in your favor.
+
+```
+Entry: $65,000, Trail: 2% below highest price
+Price hits $67,000 → Stop moves to $65,660
+Price hits $69,000 → Stop moves to $67,620
+Price drops to $67,620 → Exit (profit: +$2,620)
+```
+
+**Pros:** Lets winners run. Captures most of a big move without predicting the top.
+**Cons:** In choppy markets, can get stopped out on pullbacks within a trend.
+
+**Best for:** Trend followers who want to ride momentum.
+
+## Method 6: Chandelier Exit (ATR Trailing)
+
+**How:** Trailing stop based on ATR from the highest high.
+
+```
+Stop = Highest High (22 bars) - 3 × ATR(22)
+```
+
+**Pros:** Combines trailing stop benefits with volatility adjustment.
+**Cons:** Complex to calculate manually. Best implemented with tools.
+
+**Best for:** Advanced traders. Available in [Trading Copilot's Strategy Lab](https://tradingcopilot.app/strategy).
+
+## Method 7: Mental Stop + Hard Backstop
+
+**How:** Two levels — a mental stop where you plan to review and a hard stop where you definitely exit.
+
+```
+Mental stop: -2% (review the trade, decide if thesis still holds)
+Hard stop: -3.5% (exit no matter what)
+```
+
+**Pros:** Gives flexibility for volatile markets while maintaining a maximum loss limit.
+**Cons:** Requires discipline. Many traders move the hard stop too (defeating the purpose).
+
+**Best for:** Experienced traders with strong discipline.
+
+## Choosing the Right Stop-Loss Method
+
+| Your Style | Recommended Method |
+|-----------|-------------------|
+| Beginner | Fixed % (start at 2-3%) |
+| Day Trader | ATR-based + Time stop |
+| Swing Trader | Structure-based + Trailing |
+| Scalper | Tight ATR (1× ATR) + Time stop |
+| Position Trader | Wide ATR (3× ATR) + Chandelier |
+
+## The Golden Rule
+
+**Set your stop BEFORE you enter the trade.** Not after. Not "when you get a chance." Before.
+
+If you can't define where you're wrong, you don't have a trade — you have a hope.
+
+## FAQ
+
+### Should I always use a stop-loss?
+
+Yes. Even "diamond hands" HODLers should have a mental framework for when their thesis is invalidated. The question isn't whether to have a stop — it's what type and where.
+
+### How do I avoid getting stopped out by wicks?
+
+Use ATR-based stops instead of fixed percentages. Set stops outside the normal noise range (2× ATR minimum). Consider using candle close stops instead of wick stops on higher timeframes.
+
+### What about stop-loss hunting?
+
+Market makers do push price to clusters of stop-losses. Counter this by placing stops at non-obvious levels (not round numbers, not exactly at the swing low), and using slightly wider stops than the obvious technical level.
+
+---
+
+*Automate your risk management: [Trading Copilot Risk Guardian](https://tradingcopilot.app/guardian) — set your rules once, AI enforces them 24/7.*
