@@ -1,0 +1,108 @@
+---
+title: "7 Backtesting Mistakes That Destroy Trading Strategies"
+date: "2026-03-20"
+description: "Common backtesting mistakes in crypto trading — overfitting, survivorship bias, look-ahead bias, and how to build reliable backtests that work in live markets."
+tags: ["backtesting", "strategy development", "mistakes", "overfitting", "bias"]
+author: "Trading Copilot Team"
+---
+
+# Backtesting Mistakes That Destroy Strategies
+
+A strategy that returns 500% in backtesting can lose money live. The culprit? Backtesting mistakes that create false confidence. Here are the 7 deadliest errors and how to avoid them.
+
+## Mistake 1: Overfitting
+
+Tweaking parameters until your backtest looks perfect creates a strategy optimized for past data that fails on new data.
+
+**Example:**
+```
+Original strategy: Buy when RSI < 30
+Backtest: 15% return
+After tweaking: Buy when RSI < 28.3 AND price above 17-day MA
+Backtest: 87% return (but fails live)
+```
+
+The second strategy is curve-fitted to historical noise.
+
+**Fix:** Use walk-forward testing. Optimize on 70% of data, test on the remaining 30% (out-of-sample). If performance degrades >20%, you overfit.
+
+## Mistake 2: Look-Ahead Bias
+
+Using information that wasn't available at the time of the trade.
+
+**Example:**
+```python
+# WRONG: Uses tomorrow's close to make today's decision
+if df['close'].shift(-1) > df['close']:
+    buy()
+```
+
+**Fix:** Only use data available at the moment of decision. Use strict `shift()` rules and double-check your data alignment.
+
+## Mistake 3: Survivorship Bias
+
+Backtesting only on coins that still exist excludes all the failed projects that would have wrecked your strategy.
+
+**Impact:** Your "buy all altcoins" strategy looks great when you exclude the 80% that went to zero.
+
+**Fix:** Include delisted/dead coins in your backtest universe. Use historical exchange listings.
+
+## Mistake 4: Ignoring Fees and Slippage
+
+Strategies with high trade frequency look profitable until you add 0.1% fees per trade and 0.2% slippage.
+
+```
+Backtest: 100 trades × 2% avg gain = 200% profit
+Reality: 100 trades × (2% - 0.3% fees - 0.2% slip) = 150% profit
+If average gain was 1%: 100% → 50% (half gone!)
+```
+
+**Fix:** Include realistic fees (0.05-0.1% maker, 0.1-0.2% taker) and slippage (0.1-0.5% depending on liquidity). See [liquidity guide](/blog/crypto-liquidity-trading-guide).
+
+## Mistake 5: Testing on Insufficient Data
+
+Backtesting a strategy on 6 months of bull market data proves nothing about bear market performance.
+
+**Fix:** Test across minimum one full cycle (2-3 years). Include:
+- Bull market
+- Bear market  
+- Sideways/choppy periods
+- High volatility events (crashes)
+
+## Mistake 6: Unrealistic Position Sizing
+
+Backtesting with "buy $10,000 of illiquid altcoin" when real market depth is $5,000 creates impossible results.
+
+**Fix:** Check historical volume. Never backtest positions larger than 1% of daily volume. Include slippage that scales with position size.
+
+## Mistake 7: Not Accounting for Downtime
+
+Backtests assume you're always watching the market. Real life has:
+- Sleep (8 hours)
+- Work (if not full-time trading)
+- Sick days
+- Exchange downtime
+
+**Fix:** Build in realistic trading hours. If you can only trade 6pm-10pm, only test trades in that window.
+
+## Backtest Checklist
+- [ ] Tested on out-of-sample data (walk-forward)
+- [ ] Includes all delisted/failed coins (survivorship)
+- [ ] No look-ahead bias in code
+- [ ] Realistic fees (0.1-0.2% round-trip)
+- [ ] Slippage modeled (0.2-0.5%)
+- [ ] Minimum 2-year test period (full cycle)
+- [ ] Position sizes match available liquidity
+- [ ] Trading hours match reality
+
+## FAQ
+
+### How do I know if my backtest results are realistic?
+If your strategy beats buy-and-hold by more than 2-3x, be skeptical. Most professional quant funds target 15-30% annual returns. If your backtest shows 200%+ per year, you likely have overfitting or data leakage. Check the [strategy development guide](/blog/backtest-crypto-strategy-guide).
+
+### Should I trust a strategy that works in backtest but fails in paper trading?
+No. Paper trading is closer to reality than backtesting. If a strategy fails in paper trading, it will fail in live trading. Go back to your backtest and find the hidden bias (usually fees, slippage, or look-ahead).
+
+---
+
+*Build reliable backtests with [Trading Copilot's strategy workshop](/strategies) — built-in bias detection and walk-forward validation.*
