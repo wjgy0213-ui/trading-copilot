@@ -1,0 +1,166 @@
+---
+title: "Position Sizing for Crypto Trading: The Complete Calculator Guide"
+date: "2026-03-19"
+description: "Master crypto position sizing — fixed percentage, Kelly Criterion, volatility-based, and pyramiding methods. Free calculator formulas and examples for every trading style."
+tags: ["position sizing", "risk management", "Kelly Criterion", "money management"]
+author: "Trading Copilot Team"
+---
+
+# Position Sizing for Crypto Trading: The Calculator Guide
+
+Position sizing is the most underrated skill in trading. **Two traders with identical entry/exit signals can have completely different results based solely on position sizing.** One compounds wealth; the other blows up.
+
+## Why Position Sizing Matters More Than You Think
+
+Consider two traders:
+- **Trader A**: Great entries, terrible sizing (10% risk per trade)
+- **Trader B**: Average entries, perfect sizing (1% risk per trade)
+
+After 3 consecutive losses:
+- **Trader A**: Down 30% → needs 43% gain to recover → likely to revenge trade → blows up
+- **Trader B**: Down 3% → needs 3.1% gain to recover → continues calmly → compounds
+
+**Sizing determines whether you survive long enough for your edge to play out.**
+
+## Method 1: Fixed Percentage (Recommended for Beginners)
+
+Risk the same percentage of your account on every trade.
+
+### Formula
+```
+Position Size = (Account × Risk%) / (Entry - Stop Loss)
+```
+
+### Example
+```
+Account: $10,000
+Risk per trade: 2% = $200
+Entry: $70,000 (BTC)
+Stop Loss: $68,000
+Risk per unit: $2,000
+
+Position: $200 / $2,000 = 0.1 BTC ($7,000)
+Leverage needed: $7,000 / $10,000 = 0.7x (no leverage needed!)
+```
+
+### Recommended Risk Percentages
+| Account Size | Risk % | Why |
+|-------------|--------|-----|
+| < $5,000 | 1-2% | Preservation is priority |
+| $5K-$25K | 1-3% | Room for growth |
+| $25K-$100K | 0.5-2% | Capital preservation matters more |
+| $100K+ | 0.25-1% | Smaller % = larger absolute amounts |
+
+## Method 2: Kelly Criterion (For Advanced Traders)
+
+Mathematically optimal sizing based on your edge:
+
+### Formula
+```
+Kelly % = Win Rate - (Loss Rate / Win-Loss Ratio)
+```
+
+### Example
+```
+Win rate: 55% (0.55)
+Average win: $300
+Average loss: $200
+Win/Loss ratio: 300/200 = 1.5
+
+Kelly = 0.55 - (0.45 / 1.5) = 0.55 - 0.30 = 0.25 = 25%
+```
+
+### Important: Use Half Kelly
+Full Kelly is mathematically optimal but psychologically impossible. Use **half Kelly** (12.5% in the example above) for real trading. Still aggressive — most traders should use quarter Kelly (6.25%).
+
+## Method 3: Volatility-Based (ATR Sizing)
+
+Adjust size based on asset volatility:
+
+### Formula
+```
+Position Size = (Account × Risk%) / (ATR × Multiplier)
+```
+
+### Example
+```
+Account: $10,000
+Risk: 2% = $200
+BTC 14-day ATR: $3,500
+ATR multiplier: 2.0
+
+Risk per unit: $3,500 × 2.0 = $7,000
+Position: $200 / $7,000 ≈ 0.029 BTC ($2,029)
+```
+
+**Why this works**: When volatility is high, positions are automatically smaller. When volatility is low, you can take larger positions. This keeps your effective risk constant.
+
+## Method 4: Pyramiding (Scaling Into Winners)
+
+Add to winning positions while keeping risk constant:
+
+### Rules
+```
+Initial position: 50% of planned size
+Add #1: At 1R profit, add 25% (move stop to breakeven)
+Add #2: At 2R profit, add 25% (move stop to 1R)
+Total position: 100% of planned size, all at reduced risk
+```
+
+### Why It Works
+- If the trade fails early, you lose on a smaller position
+- If the trade succeeds, you build a full position with reduced average risk
+- Each add has its own protective stop
+
+## Position Sizing Mistakes
+
+### 1. Sizing Based on Conviction
+"This trade looks really good, I'll risk 10%." One bad "sure thing" can wipe out months of gains. Keep sizing mechanical.
+
+### 2. Ignoring Correlation
+Holding 5 positions at 2% risk each seems safe (10% total). But if all 5 are crypto longs, a 10% BTC drop hits all of them simultaneously. **Effective risk: much higher than 10%.**
+
+### 3. Adding to Losers (Averaging Down)
+"Price went down, so I'll buy more to average my entry." This increases position size on a losing trade — the exact opposite of what you should do. See [common trading mistakes](/blog/crypto-trading-mistakes-beginners).
+
+### 4. Not Accounting for Leverage
+With 10x leverage, a 2% account risk can result in a position where a 2% adverse move causes 20% loss. [Understand leverage](/blog/leverage-trading-crypto-beginners) before sizing.
+
+### 5. Same Size for All Setups
+A-grade setups deserve larger positions than C-grade setups. Use a tiered system:
+- A-grade: Full 2% risk
+- B-grade: 1.5% risk
+- C-grade: 1% risk (or skip)
+
+## Quick Reference Calculator
+
+For every trade, calculate:
+
+```
+1. Account size: $_____
+2. Risk percentage: _____%
+3. Dollar risk: $ (1 × 2)
+4. Entry price: $_____
+5. Stop loss price: $_____
+6. Risk per unit: $ (4 - 5)
+7. Position size: (3 ÷ 6) units
+8. Position value: $ (7 × 4)
+9. Leverage needed: (8 ÷ 1)
+```
+
+Use our [position sizing calculator](/tools/position-calculator) to automate this.
+
+## FAQ
+
+### What is the best position sizing method for beginners?
+Fixed percentage at 1-2% risk per trade. It's simple, consistent, and prevents catastrophic losses. Use this method until you have 200+ trades logged and can calculate your win rate and average R:R accurately. Then consider Kelly or volatility-based sizing.
+
+### How many positions should I have at once?
+3-5 for most traders. Each position should be independently sized at 1-2% risk, but total portfolio exposure should not exceed 6-10% in risk. If you have 5 positions at 2% each (10% total), they should not all be correlated.
+
+### Should I use the same position size for every trade?
+Same risk percentage (e.g., 2%), but the actual position size varies based on stop loss distance. Wide stops = smaller positions. Tight stops = larger positions. This keeps your dollar risk constant regardless of the trade setup.
+
+---
+
+*Calculate position sizes instantly with [Trading Copilot's position sizing calculator](/tools/position-calculator) — and use our [risk dashboard](/guardian) to monitor total portfolio exposure.*
