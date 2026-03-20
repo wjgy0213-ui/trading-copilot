@@ -1,0 +1,155 @@
+---
+title: "Crypto Market Sentiment Analysis: Read the Crowd Before They Move"
+date: "2026-03-19"
+description: "Master crypto market sentiment analysis — Fear & Greed Index, social media metrics, funding rates, options data, and on-chain signals that reveal what traders are actually thinking."
+tags: ["sentiment analysis", "fear and greed", "market psychology", "trading signals"]
+author: "Trading Copilot Team"
+---
+
+# Crypto Market Sentiment Analysis: Read the Crowd Before They Move
+
+Price tells you what happened. Sentiment tells you what's about to happen.
+
+The best traders don't just watch charts — they **read the crowd**. When everyone is euphoric, they sell. When everyone is terrified, they buy. This guide shows you exactly how to measure and trade market sentiment.
+
+## Why Sentiment Matters in Crypto
+
+Crypto markets are driven by emotion more than any other asset class:
+- No earnings reports to anchor valuation
+- 24/7 trading means constant emotional pressure
+- Social media amplifies narratives rapidly
+- Retail participation is higher than traditional markets
+
+**The contrarian edge**: When sentiment reaches extremes, the crowd is usually wrong.
+
+## The Sentiment Toolkit
+
+### 1. Fear & Greed Index
+
+The most-watched single metric for crypto sentiment.
+
+**Scale**: 0 (Extreme Fear) → 100 (Extreme Greed)
+
+**Components**:
+| Factor | Weight | Source |
+|--------|--------|--------|
+| Volatility | 25% | BTC 30/90-day vol |
+| Market Momentum | 25% | BTC vs 125-day MA |
+| Social Media | 15% | Twitter/Reddit volume |
+| Surveys | 15% | Weekly poll data |
+| BTC Dominance | 10% | Market cap ratio |
+| Trends | 10% | Google Trends |
+
+**Trading signals**:
+- **0-20 (Extreme Fear)**: Historically best buying zone. Most people are too scared to buy.
+- **20-40 (Fear)**: Good accumulation zone
+- **60-80 (Greed)**: Start taking profits, tighten stops
+- **80-100 (Extreme Greed)**: Danger zone. Reduce exposure.
+
+**Historical edge**: Buying at Extreme Fear and selling at Extreme Greed has outperformed buy-and-hold by 40%+ over any 2-year window.
+
+Check today's reading at [Trading Copilot's market health check](/health).
+
+### 2. Funding Rates
+
+The most reliable short-term sentiment indicator for leveraged markets.
+
+**How it works**: In perpetual futures, longs pay shorts (positive funding) or shorts pay longs (negative funding) every 8 hours. This keeps perp price aligned with spot.
+
+**Reading funding rates**:
+- **Funding > 0.05%**: Overleveraged longs, short squeeze less likely, long squeeze more likely
+- **Funding 0.01-0.05%**: Normal bullish sentiment
+- **Funding around 0%**: Neutral or uncertain
+- **Funding < -0.01%**: Bearish pressure, shorts paying premium
+- **Funding < -0.05%**: Overleveraged shorts, short squeeze likely
+
+See our [funding rate strategy guide](/blog/funding-rate-trading-strategy) for detailed trading approaches.
+
+### 3. Social Media Sentiment
+
+**What to track**:
+- Twitter/X crypto mentions volume
+- Reddit r/cryptocurrency daily active posts
+- YouTube "Bitcoin" video count
+- Telegram group activity levels
+
+**Contrarian signals**:
+- Massive spike in "BUY BTC" posts → likely local top
+- Everyone posting loss porn → likely local bottom
+- KOLs unanimously bullish → be careful
+- KOLs calling for $10K BTC → accumulate quietly
+
+### 4. Options Data
+
+Options market reveals what sophisticated traders expect:
+
+**Put/Call Ratio**:
+- Ratio > 1.0: More puts than calls (bearish sentiment)
+- Ratio < 0.7: More calls than puts (bullish sentiment)
+- Extreme readings in either direction = potential reversal
+
+**Max Pain**:
+The price where the most options expire worthless. Price tends to gravitate toward max pain as expiry approaches, especially on large expiry dates (monthly/quarterly).
+
+**Implied Volatility (IV)**:
+- IV rising → traders expect bigger moves (fear)
+- IV falling → traders expect smaller moves (complacency)
+- IV at extremes → fade the move
+
+### 5. On-Chain Sentiment
+
+**Exchange Inflows/Outflows**:
+- Net inflows to exchanges → selling pressure (bearish)
+- Net outflows from exchanges → accumulation (bullish)
+- Large outflows to cold storage → strong conviction holding
+
+**Long-Term Holder (LTH) Behavior**:
+- LTHs selling → distribution phase (late cycle)
+- LTHs accumulating → accumulation phase (early cycle)
+
+**Stablecoin Supply**:
+- Growing stablecoin supply = dry powder waiting to buy
+- Declining stablecoin supply = less buying power available
+
+See our [on-chain analysis guide](/blog/on-chain-analysis-beginners-guide) for comprehensive metrics.
+
+## Building a Sentiment Dashboard
+
+Combine multiple indicators for a composite read:
+
+| Indicator | Extreme Bear | Bear | Neutral | Bull | Extreme Bull |
+|-----------|-------------|------|---------|------|-------------|
+| F&G Index | 0-15 | 15-35 | 35-65 | 65-85 | 85-100 |
+| Funding | < -0.03% | -0.03-0% | 0-0.02% | 0.02-0.06% | > 0.06% |
+| Put/Call | > 1.3 | 1.0-1.3 | 0.7-1.0 | 0.5-0.7 | < 0.5 |
+| Exchange Flow | Large inflow | Mild inflow | Neutral | Mild outflow | Large outflow |
+
+**Score**: Count bearish vs bullish signals. If 3+ indicators agree, the signal is strong.
+
+Access all these metrics in one place with [Trading Copilot's signal aggregator](/signals).
+
+## Common Sentiment Traps
+
+### 1. The Echo Chamber
+If everyone you follow is bullish, you might just be in a bullish bubble. Deliberately seek opposing views. Follow both bulls and bears.
+
+### 2. Sentiment ≠ Timing
+Extreme fear can last weeks or months. Extreme greed can persist through a final parabolic move. Sentiment tells you the direction, not the exact timing.
+
+### 3. Narrative vs Reality
+"Institutions are buying" can mean a $10M purchase (meaningless for a $1T market) or a $10B allocation (meaningful). Check the actual data, not the headline. See our [whale tracking guide](/blog/whale-tracking-crypto-trading-guide).
+
+## FAQ
+
+### What is the best sentiment indicator for crypto?
+The Fear & Greed Index is the most accessible single indicator, but funding rates are more actionable for short-term trading. The best approach is combining 3-4 indicators — F&G for overall sentiment, funding rates for leverage positioning, put/call for options market, and exchange flows for on-chain.
+
+### Can you trade based on sentiment alone?
+Sentiment works best as a filter, not a standalone strategy. Use sentiment to decide whether to be aggressive or defensive, then use [technical analysis](/blog/best-crypto-trading-indicators-2026) for specific entries and exits. Extreme sentiment is contrarian; moderate sentiment is confirmatory.
+
+### How often should I check sentiment data?
+For swing traders: daily. For day traders: multiple times daily. For position traders: weekly. Don't obsess over intraday sentiment changes — focus on the trend of sentiment over days to weeks.
+
+---
+
+*Get sentiment data alongside on-chain and technical signals. [Trading Copilot's market health check](/health) combines Fear & Greed, ITC Risk, funding rates, and more into a single actionable score.*
