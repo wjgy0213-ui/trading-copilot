@@ -1,0 +1,114 @@
+---
+title: "How to Read a Crypto Order Book: The Beginner's Guide to Market Depth"
+date: "2026-03-19"
+description: "Learn to read crypto order books like a pro — bid/ask spreads, market depth, buy/sell walls, spoofing detection, and how to use order flow for better trade entries."
+tags: ["order book", "market depth", "order flow", "trading basics"]
+author: "Trading Copilot Team"
+---
+
+# How to Read a Crypto Order Book: The Beginner's Guide to Market Depth
+
+While most traders focus on charts and indicators, professional traders watch something else entirely: **the order book**. It shows you what's ABOUT to happen, not what already happened.
+
+## What Is an Order Book?
+
+An order book is a real-time list of all pending buy and sell orders for a trading pair. It has two sides:
+
+- **Bids (Buy orders)**: People willing to buy at specific prices — shown in green
+- **Asks (Sell orders)**: People willing to sell at specific prices — shown in red
+- **Spread**: The gap between the highest bid and lowest ask
+
+### Example: BTC/USDT Order Book
+
+| Bid Price | Bid Size | | Ask Price | Ask Size |
+|-----------|----------|---|-----------|----------|
+| $69,990 | 2.5 BTC | | $70,010 | 1.8 BTC |
+| $69,980 | 4.1 BTC | | $70,020 | 3.2 BTC |
+| $69,970 | 1.2 BTC | | $70,030 | 5.7 BTC |
+| $69,960 | 8.3 BTC | | $70,040 | 2.1 BTC |
+| $69,950 | 12.0 BTC | | $70,050 | 15.3 BTC |
+
+**Reading this**: Best bid is $69,990 (someone will buy 2.5 BTC at that price). Best ask is $70,010 (someone will sell 1.8 BTC). Spread is $20.
+
+## Key Concepts
+
+### Market Depth
+
+Market depth shows the cumulative volume of orders at each price level. Deep markets (lots of orders) = low slippage. Thin markets = your big order moves the price.
+
+### Buy and Sell Walls
+
+A "wall" is a large order that acts as temporary support or resistance:
+
+- **Buy wall at $69,950** (12.0 BTC): Takes a lot of selling pressure to break through
+- **Sell wall at $70,050** (15.3 BTC): Takes a lot of buying pressure to break through
+
+### Spoofing (Fake Walls)
+
+Large orders placed and quickly cancelled to manipulate perception:
+- Place 50 BTC buy wall → other traders think "strong support" → price stays up
+- Cancel the wall → price drops → spoofer buys cheaper
+
+**How to detect**: Watch if large orders appear and disappear repeatedly. Real walls get partially filled; spoof walls vanish instantly.
+
+### Iceberg Orders
+
+Large orders hidden from the order book, only showing small portions:
+- Shows 1 BTC on book, but actually 50 BTC total
+- When the visible 1 BTC fills, another 1 BTC appears
+- Designed to hide whale accumulation/distribution
+
+## Order Book Trading Strategies
+
+### 1. Support/Resistance Confirmation
+
+Use order book to confirm chart-based support/resistance:
+- Large bid cluster at chart support = stronger level
+- Large ask cluster at chart resistance = harder to break
+- No significant orders at a level = may break easily
+
+### 2. Absorption Analysis
+
+When a buy/sell wall is being absorbed (filled) rather than moving:
+- Buy wall slowly decreasing = real selling pressure
+- If wall holds → strong support → potential bounce
+- If wall breaks → accelerated selling → momentum trade
+
+### 3. Imbalance Trading
+
+When one side of the book is significantly larger:
+- Bids >> Asks = buy pressure building → potential up move
+- Asks >> Bids = sell pressure building → potential down move
+
+**Warning**: Order book imbalances can shift in milliseconds. This is supplementary data, not a standalone strategy.
+
+## Practical Tips
+
+1. **Watch the tape** (time & sales) alongside the order book — it shows actual executed trades
+2. **Large market orders** hitting the book reveal institutional activity
+3. **Spread widening** often precedes volatility
+4. **Order book data varies by exchange** — Binance book ≠ Coinbase book
+5. **Combine with technical analysis** for highest probability setups. See our [indicators guide](/blog/best-crypto-trading-indicators-2026)
+
+## Limitations
+
+- Order book can be manipulated (spoofing, layering)
+- Only shows limit orders, not future market orders
+- Changes rapidly — snapshot data is already stale
+- Different exchanges have different order books
+- In crypto, much volume happens off-exchange (OTC, DEX)
+
+## FAQ
+
+### What does a thick order book mean?
+A thick order book (many orders at many price levels) indicates high liquidity. This means large orders can be executed with minimal price impact (low slippage). Major pairs like BTC/USDT on Binance have thick books; small altcoins have thin ones.
+
+### How do whales hide their orders?
+Whales use iceberg orders (showing small portions of large orders), time-weighted average price (TWAP) algorithms that split large orders into small pieces over time, and OTC desks for direct trades that never touch the public order book.
+
+### Can the order book predict price direction?
+The order book provides clues but doesn't predict with certainty. Large bid walls suggest support, large ask walls suggest resistance, but walls can be fake (spoofing) or can be broken by aggressive market orders. Use order book data as one input among many.
+
+---
+
+*Develop your market reading skills risk-free with [Trading Copilot's practice mode](/practice) — learn to interpret market data before trading with real capital.*
