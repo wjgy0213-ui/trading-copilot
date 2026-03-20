@@ -1,0 +1,185 @@
+---
+title: "DeFi Yield Farming Risks: What They Don't Tell You (And How to Protect Yourself)"
+date: "2026-03-19"
+description: "The complete guide to DeFi yield farming risks — impermanent loss, smart contract exploits, rug pulls, token inflation, and regulatory threats. Protect your capital."
+tags: ["DeFi", "yield farming", "risks", "smart contracts", "impermanent loss"]
+author: "Trading Copilot Team"
+---
+
+# DeFi Yield Farming Risks: What They Don't Tell You
+
+DeFi yield farming promises APYs that make traditional finance look like a savings account. **500% APY! 1,000% APY!** But behind those numbers lie risks that have cost investors billions.
+
+This guide doesn't tell you yield farming is bad. It tells you exactly what can go wrong so you can make informed decisions.
+
+## The Seven Deadly Risks
+
+### 1. Smart Contract Risk
+
+**What it is**: Code bugs that allow hackers to drain funds.
+
+**The numbers**: Over $3 billion was stolen from DeFi protocols in 2022 alone. Even audited protocols get exploited.
+
+**Notable exploits**:
+| Protocol | Amount Lost | Audited? |
+|----------|-----------|----------|
+| Ronin Bridge | $625M | Yes |
+| Wormhole | $320M | Yes |
+| Nomad Bridge | $190M | Yes |
+| Euler Finance | $197M | Yes (5 audits!) |
+
+**How to protect yourself**:
+- Use established protocols (1+ year track record)
+- Check audit reports (multiple independent auditors)
+- Never put more than 10% of portfolio in any single protocol
+- Watch for "battle-tested" contracts (high TVL over time without exploits)
+- Diversify across protocols AND chains
+
+### 2. Impermanent Loss (IL)
+
+**What it is**: When the price ratio of tokens in your LP changes, you end up with less value than if you'd simply held.
+
+**Example**:
+- Provide 1 ETH ($3,000) + 3,000 USDC to ETH/USDC pool
+- Total deposited: $6,000
+- ETH price doubles to $6,000
+- Your LP position: 0.707 ETH + 4,243 USDC = $8,485
+- If you'd just held: 1 ETH + 3,000 USDC = $9,000
+- **Impermanent loss: $515 (5.7%)**
+
+**The worse the price divergence, the larger the IL**:
+| Price Change | Impermanent Loss |
+|-------------|-----------------|
+| 1.25x | 0.6% |
+| 1.50x | 2.0% |
+| 2x | 5.7% |
+| 3x | 13.4% |
+| 5x | 25.5% |
+
+**How to mitigate**:
+- Use stablecoin pairs (minimal price divergence)
+- Choose correlated pairs (ETH/stETH, BTC/wBTC)
+- Ensure trading fees + rewards exceed IL
+- Use concentrated liquidity carefully (amplifies IL)
+
+### 3. Rug Pulls
+
+**What it is**: Developers drain liquidity and disappear with funds.
+
+**Red flags** 🚩:
+- Anonymous team with no track record
+- No audit or self-audited
+- Admin keys can mint infinite tokens or drain pools
+- Liquidity not locked (or locked for very short period)
+- Unrealistic APY (10,000%+)
+- Copied/forked code with minimal changes
+- Heavy marketing, light substance
+
+See our [rug pull detection guide](/blog/rug-pull-red-flags-meme-coin-safety) for detailed red flags.
+
+### 4. Token Inflation / Emission Dilution
+
+**What it is**: The yield comes from newly minted tokens that constantly lose value.
+
+**How it works**:
+1. Farm offers 500% APY paid in FARM token
+2. Everyone farms → massive selling pressure on FARM
+3. FARM token drops 90% in value
+4. Your 500% APY in token terms = -50% in dollar terms
+
+**The test**: Is the yield sustainable? Ask:
+- Where does the yield come from? (Trading fees = sustainable. Token emissions = not sustainable.)
+- What happens when emissions end?
+- Is protocol revenue growing or shrinking?
+
+### 5. Oracle Manipulation
+
+**What it is**: Attackers manipulate price feeds to exploit lending/borrowing protocols.
+
+**Example**:
+1. Attacker inflates price of obscure token via flash loan
+2. Borrows millions against the inflated collateral
+3. Price returns to normal
+4. Protocol left with bad debt, depositors lose funds
+
+**How to protect**:
+- Use protocols with Chainlink or other reputable oracles
+- Avoid protocols that accept obscure tokens as collateral
+- Check if protocol has oracle delay mechanisms
+
+### 6. Regulatory Risk
+
+**What it is**: Government action that freezes, restricts, or penalizes DeFi participation.
+
+**Current landscape**:
+- US SEC increasingly targeting DeFi protocols
+- Some countries banning DeFi access entirely
+- Stablecoin regulations could affect DeFi yields
+- Tax reporting requirements becoming stricter
+
+**How to prepare**:
+- Keep records of all DeFi transactions. See our [crypto tax guide](/blog/crypto-tax-guide-traders).
+- Diversify across jurisdictions
+- Have exit plan if your country restricts DeFi
+
+### 7. Composability Risk (DeFi Legos)
+
+**What it is**: DeFi protocols build on top of each other. If one layer fails, everything above it collapses.
+
+**Example chain**:
+```
+Your deposit → Yield aggregator → Lending protocol → Stablecoin → Bridge
+```
+
+If the bridge gets hacked, the stablecoin depegs, the lending protocol becomes insolvent, the yield aggregator can't withdraw, and you lose everything.
+
+**Rule**: Count how many protocols your money passes through. Each one is an additional point of failure.
+
+## Risk Assessment Framework
+
+Before entering any yield farming position, score these factors:
+
+| Factor | Low Risk (1) | Medium Risk (2) | High Risk (3) |
+|--------|-------------|-----------------|---------------|
+| Protocol age | 2+ years | 6-24 months | < 6 months |
+| Audit status | Multiple audits | Single audit | No audit |
+| TVL | $1B+ | $100M-1B | < $100M |
+| Yield source | Trading fees | Mixed | Pure emissions |
+| Token design | No governance token | Deflationary | Inflationary |
+| Team | Doxxed + funded | Pseudonymous + funded | Anonymous |
+| Chain | Ethereum | Established L1/L2 | New chain |
+
+**Score 7-10**: Relatively safe
+**Score 11-15**: Moderate risk, limit exposure
+**Score 16-21**: High risk, tiny positions only or avoid
+
+## The Yield Farming Decision Tree
+
+```
+Is the yield > 20%?
+├─ Yes → Where does yield come from?
+│   ├─ Trading fees → How sustainable? Check volume trends
+│   ├─ Token emissions → Token likely to dump, proceed with extreme caution
+│   └─ Unknown → DO NOT ENTER
+├─ No → Is protocol audited and 1+ year old?
+│   ├─ Yes → Reasonable, proceed with standard risk limits
+│   └─ No → Higher risk, small positions only
+```
+
+## FAQ
+
+### Is yield farming still profitable in 2026?
+Yes, but realistic returns are 4-12% on stablecoins and 10-25% on volatile pairs from established protocols. Returns above 50% typically involve significant risk (token emissions, new protocols, or complex strategies). The days of easy 1,000% APY are gone.
+
+### What is the safest yield farming strategy?
+Stablecoin lending on established protocols (Aave, Compound) at 3-8% APY. Low risk, low reward, but genuinely sustainable. For slightly higher yields, stablecoin LP pairs on Curve or similar established DEXs.
+
+### How do I calculate my real yield farming returns?
+Track: (1) APY earned in tokens, (2) token price change during farming period, (3) impermanent loss, (4) gas fees for deposits/withdrawals/claims, (5) opportunity cost. The real return is often 30-50% lower than the displayed APY.
+
+### Should beginners try yield farming?
+Start with the simplest, safest options — stablecoin lending on Aave or Compound. Understand the mechanics fully before touching LP positions, leverage farming, or multi-protocol strategies. See our [stablecoin yield guide](/blog/crypto-stablecoin-yield-strategies) for safe starting points.
+
+---
+
+*Understand the risks before chasing yields. [Trading Copilot's market health check](/health) helps you assess overall market conditions — including DeFi risk indicators — before committing capital.*
