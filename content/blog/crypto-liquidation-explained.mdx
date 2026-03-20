@@ -1,0 +1,153 @@
+---
+title: "Crypto Liquidation Explained: How It Works and How to Avoid It"
+date: "2026-03-19"
+description: "Understand crypto liquidation mechanics — margin requirements, liquidation prices, maintenance margin, and 7 strategies to avoid getting liquidated on leveraged positions."
+tags: ["liquidation", "leverage", "margin trading", "risk management"]
+author: "Trading Copilot Team"
+---
+
+# Crypto Liquidation Explained: How It Works and How to Avoid It
+
+Liquidation is the #1 account killer in crypto. **More money has been lost to liquidations than to bad trade ideas.** Understanding exactly how it works is essential for anyone trading with leverage.
+
+## What Is Liquidation?
+
+Liquidation occurs when your losses approach your margin (collateral). The exchange forcibly closes your position to prevent your account from going negative.
+
+### Simple Example
+- Account: $1,000
+- Open 10x long BTC at $70,000
+- Position size: $10,000 (10× your $1,000)
+- If BTC drops 10%: Loss = $1,000 (100% of your margin)
+- **Exchange liquidates** before loss exceeds your collateral
+
+## How Liquidation Price Is Calculated
+
+### Cross Margin
+Your entire account balance serves as collateral:
+```
+Liquidation Price = Entry Price × (1 - 1/Leverage + Maintenance Margin Rate)
+```
+
+### Isolated Margin
+Only the margin allocated to this position is at risk:
+```
+Liquidation Price = Entry Price × (1 - Initial Margin + Maintenance Margin)
+```
+
+### Quick Reference Table (Long Positions)
+
+| Leverage | Approx. Liquidation Distance | BTC Entry $70K → Liq. Price |
+|----------|-----------------------------|-----------------------------|
+| 2x | ~50% | $35,000 |
+| 3x | ~33% | $46,700 |
+| 5x | ~20% | $56,000 |
+| 10x | ~10% | $63,000 |
+| 20x | ~5% | $66,500 |
+| 50x | ~2% | $68,600 |
+| 100x | ~1% | $69,300 |
+
+**With 20x leverage, a normal 5% daily move liquidates you.** BTC moves 5% in a day regularly.
+
+## Types of Liquidation
+
+### Partial Liquidation
+Some exchanges reduce your position in steps:
+1. Position gets close to liquidation
+2. Exchange closes 25-50% of position
+3. This reduces leverage and pushes liquidation price further away
+4. If price keeps going against you, another partial liquidation occurs
+
+**Benefit**: You might keep some of your position rather than losing everything.
+
+### Full Liquidation
+Your entire position is closed at once. All margin is lost.
+
+### Insurance Fund Liquidation
+When the liquidation price can't be achieved (market gaps through it):
+- Exchange insurance fund covers the deficit
+- Your loss is capped at your margin (no negative balance on most exchanges)
+
+## The Liquidation Cascade
+
+Liquidations can trigger more liquidations in a self-reinforcing cycle:
+
+```
+Price drops 5% → Overleveraged longs liquidated →
+Forced selling pushes price down another 3% →
+More liquidations trigger → Price drops further →
+Cascading liquidation waterfall
+```
+
+These cascades cause the extreme moves you see in crypto — 15-30% drops in hours. They're visible on [liquidation heatmaps](https://www.coinglass.com/pro/futures/LiquidationHeatMap).
+
+## 7 Strategies to Avoid Liquidation
+
+### 1. Use Low Leverage (2-5x Maximum)
+The simplest and most effective strategy. Higher liquidation distance = more room to be wrong.
+
+See our [leverage trading guide](/blog/leverage-trading-crypto-beginners) for detailed recommendations.
+
+### 2. Always Set Stop Losses
+Set your stop loss well above your liquidation price:
+```
+Stop Loss should be at 50% of the distance to liquidation
+```
+With 10x leverage (liquidation at -10%): Stop at -5%.
+
+Never rely on "I'll watch the chart" — [set automatic stops](/blog/stop-loss-strategies-crypto).
+
+### 3. Use Isolated Margin (Not Cross)
+Isolated margin limits your loss to the margin allocated to that trade. Cross margin puts your entire account at risk.
+
+**Example**:
+- Account: $10,000
+- **Cross margin 10x**: Loss up to $10,000 (entire account)
+- **Isolated margin 10x with $1,000**: Maximum loss = $1,000
+
+### 4. Monitor Funding Rates
+High positive funding = many overleveraged longs. This increases the probability of a long squeeze (liquidation cascade).
+
+Check our [funding rate strategy guide](/blog/funding-rate-trading-strategy).
+
+### 5. Avoid Trading During High Volatility Events
+- CPI/FOMC announcements
+- Major hack/exploit news
+- Weekend low-liquidity periods
+- Token unlock events
+
+### 6. Reduce Position Size During Drawdowns
+If you're down 3% on the day, reduce leverage. Don't add to losing positions hoping for a reversal.
+
+### 7. Watch Liquidation Heatmaps
+Large clusters of liquidations at certain price levels act as magnets. If there's a massive long liquidation cluster just below your entry, that level WILL be tested.
+
+## Cross Margin vs. Isolated Margin
+
+| Feature | Cross Margin | Isolated Margin |
+|---------|-------------|-----------------|
+| Collateral | Entire account | Position-specific |
+| Max loss | Entire account | Allocated margin only |
+| Auto-deleverage | Less likely | More likely |
+| Good for | Experienced, hedging | Individual trade risk management |
+| Recommended for | Never (for most traders) | Always |
+
+**Always use isolated margin unless you have a specific reason not to.**
+
+## FAQ
+
+### Can I lose more than my deposit in crypto?
+On most major exchanges (Binance, Bybit, OKX), you cannot lose more than your margin thanks to insurance funds and auto-deleveraging. However, on some DeFi platforms, you can lose your entire collateral including any additional margin you've posted.
+
+### What happens to my money when I get liquidated?
+Your margin is used to cover the loss. The exchange's liquidation engine closes your position at the liquidation price. Any remaining margin (after covering the loss and liquidation fee) is returned to you — but in practice, this is usually close to zero.
+
+### Why do I get liquidated even with a stop loss?
+Stop losses are market orders triggered at a price, but execution happens at the next available price. In extreme volatility, the market can "gap" through your stop loss and hit your liquidation price. This is called "slippage" and is more common in illiquid markets and during cascading liquidations.
+
+### How can I check my liquidation price?
+Every exchange shows your liquidation price in the position panel. You can also calculate it manually or use tools like our [position sizing calculator](/tools/position-calculator) to know your liquidation price before entering a trade.
+
+---
+
+*Practice leveraged trading without real liquidation risk. [Trading Copilot's practice mode](/practice) lets you experience leverage mechanics with virtual capital — learn the lessons without the financial pain.*
