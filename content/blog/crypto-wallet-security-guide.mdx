@@ -1,0 +1,170 @@
+---
+title: "Crypto Wallet Security Guide: Protect Your Assets from Hacks and Scams"
+date: "2026-03-19"
+description: "Complete crypto wallet security guide — hardware wallets, seed phrase storage, phishing protection, multi-sig, and security best practices to keep your crypto safe."
+tags: ["security", "wallet security", "hardware wallet", "seed phrase", "phishing"]
+author: "Trading Copilot Team"
+---
+
+# Crypto Wallet Security: Don't Lose Your Fortune
+
+"Not your keys, not your crypto." If you don't control your private keys, you don't control your funds. Here's how to secure them properly.
+
+## The Wallet Security Hierarchy
+
+### Tier 1: Hardware Wallets (Safest for Holdings)
+**Best for:** Long-term storage, large amounts
+
+| Wallet | Price | Best For |
+|--------|-------|----------|
+| **Ledger Nano X** | $149 | Bluetooth, mobile-friendly |
+| **Trezor Model T** | $219 | Open-source, touchscreen |
+| **Coldcard** | $157 | Bitcoin-only, air-gapped |
+
+**Pro:** Private keys never touch the internet
+**Con:** Less convenient for active trading
+
+### Tier 2: Software Wallets (Convenient for Trading)
+**Best for:** Active trading, DeFi interactions
+
+| Wallet | Type | Chains |
+|--------|------|--------|
+| **MetaMask** | Browser/Mobile | EVM chains |
+| **Phantom** | Browser/Mobile | Solana |
+| **Rabby** | Browser | Multi-chain |
+
+**Pro:** Easy for daily use
+**Con:** More vulnerable to phishing, malware
+
+### Tier 3: Exchange Wallets (Least Safe)
+**Best for:** Trading capital only
+
+**Pro:** Instant trading access
+**Con:** Not your keys, not your crypto
+
+**Rule**: Never keep more on an exchange than you're willing to lose.
+
+## Seed Phrase Security (The Most Important Thing)
+
+Your seed phrase (12-24 words) = complete access to your funds.
+
+### ✅ DO
+- Write on metal (Cryptosteel, Billfodl) — survives fire/water
+- Store in multiple secure locations (home safe + bank deposit box)
+- Split across locations using Shamir's Secret Sharing (advanced)
+- Keep offline — never digital, never cloud
+
+### ❌ DON'T
+- Screenshot or photo
+- Store in password manager
+- Store in email, cloud, or phone notes
+- Tell anyone (including "support")
+- Enter into any website claiming to "validate" or "sync"
+
+**If someone has your seed phrase, they own your crypto. Period.**
+
+## Common Attack Vectors
+
+### 1. Phishing Sites
+Fake version of real site steals your seed phrase.
+
+**Protection:**
+- Bookmark real sites, never click links
+- Check URL carefully (metamask.io ≠ metam**a**sk.io)
+- Use hardware wallet for signing (can't steal keys)
+
+### 2. Malware/Clipboard Hijack
+Malware replaces your wallet address with attacker's when you paste.
+
+**Protection:**
+- Double-check address after pasting
+- Send small test transaction first
+- Use hardware wallet (confirms address on device)
+
+### 3. Fake Wallet Apps
+Malicious app impersonates real wallet.
+
+**Protection:**
+- Download only from official sites
+- Verify app publisher
+- Check reviews for "stolen funds" complaints
+
+### 4. Social Engineering
+"Support" messages asking for seed phrase.
+
+**Protection:**
+- NO legitimate service EVER asks for seed phrase
+- No "wallet synchronization"
+- No "airdrop validation"
+- Ignore all DMs claiming to be support
+
+### 5. Dusting Attacks
+Small amounts sent to your wallet with malicious contract interactions.
+
+**Protection:**
+- Don't interact with unknown tokens
+- Use separate wallets for DeFi (burner wallet for risky protocols)
+
+## Multi-Wallet Strategy
+
+### Setup
+```
+Hardware Wallet (Ledger):
+└─ 80% of holdings (cold storage, long-term)
+
+Software Wallet (MetaMask):
+└─ 15% of holdings (DeFi, active positions)
+
+Exchange (Binance):
+└─ 5% of holdings (active trading only)
+```
+
+**Rationale**: Even if your hot wallet gets compromised, 80% is safe.
+
+## Transaction Safety Checklist
+
+Before every significant transaction:
+- [ ] Verified recipient address character-by-character?
+- [ ] Sent small test transaction first?
+- [ ] Checked contract permissions (don't blindly approve)?
+- [ ] Using hardware wallet for signing?
+- [ ] Double-checked network (Ethereum vs BSC vs Polygon)?
+
+## Advanced: Multi-Signature Wallets
+
+Require 2-of-3 or 3-of-5 signatures to move funds.
+
+**Use Cases:**
+- Business treasury
+- Large personal holdings ($100K+)
+- Shared funds (DAOs, partnerships)
+
+**Platforms:**
+- Gnosis Safe (most popular)
+- Argent
+- BitGo (institutional)
+
+## Recovery Plan
+
+If you lose your hardware wallet:
+1. Buy new hardware wallet
+2. Restore using seed phrase
+3. Transfer funds to new wallet (optional, for paranoia)
+
+If you lose your seed phrase:
+**You've lost your crypto. Permanently. No recovery.**
+
+## FAQ
+
+### Should I use a password manager for my seed phrase?
+No. Password managers are cloud-synced (hackable) and digital (vulnerable to malware). Seed phrases should be analog-only — metal/paper in a physical safe. However, you CAN use a password manager for exchange passwords (less critical).
+
+### How do I know if a wallet app is legitimate?
+Download only from official sites (ledger.com, metamask.io) or verified app stores. Check developer name, reviews, and download count. Cross-reference with the project's official Twitter/Discord for the correct link.
+
+### What's the safest way to store $100K+ in crypto?
+**Hardware wallet + multi-sig + geographic distribution**: Use a Ledger/Trezor, enable multi-sig (requires 2+ signatures to move funds), and store seed phrase backups in multiple secure locations (home safe + bank deposit box). Consider an air-gapped setup (Coldcard) for maximum security.
+
+---
+
+*Protect your trading capital with [Trading Copilot's risk guardian](/guardian) — monitor exposure, detect unusual activity, and get alerts before small mistakes become catastrophic losses.*
