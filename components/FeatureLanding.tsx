@@ -1,5 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import { Check, ArrowRight } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 
 interface FeatureLandingProps {
   icon: React.ReactNode;
@@ -36,6 +39,7 @@ export default function FeatureLanding({
     orange: { bg: 'bg-orange-500/10', text: 'text-orange-400', border: 'border-orange-500/20', ring: 'ring-orange-500/20' },
   };
   const c = colorMap[color] || colorMap.emerald;
+  const { t } = useI18n();
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -55,14 +59,14 @@ export default function FeatureLanding({
             </Link>
             <Link href="/pricing"
               className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white font-medium px-6 py-3.5 rounded-xl transition">
-              View Pricing
+              {t('featureLanding.viewPricing')}
             </Link>
           </div>
         </div>
 
         {/* Benefits */}
         <div className="mb-16">
-          <h2 className="text-2xl font-bold text-center mb-8">Key Benefits</h2>
+          <h2 className="text-2xl font-bold text-center mb-8">{t('featureLanding.keyBenefits')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {benefits.map((b, i) => (
               <div key={i} className="flex items-start gap-3 bg-gray-900/50 border border-gray-800 rounded-xl p-4">
@@ -75,7 +79,7 @@ export default function FeatureLanding({
 
         {/* How It Works */}
         <div className="mb-16">
-          <h2 className="text-2xl font-bold text-center mb-8">How It Works</h2>
+          <h2 className="text-2xl font-bold text-center mb-8">{t('featureLanding.howItWorks')}</h2>
           <div className="space-y-6">
             {howItWorks.map((step, i) => (
               <div key={i} className="flex gap-4 items-start">
@@ -93,17 +97,17 @@ export default function FeatureLanding({
 
         {/* CTA */}
         <div className={`border ${c.border} rounded-xl p-8 ${c.bg} text-center mb-16`}>
-          <h3 className="text-xl font-bold mb-2">Ready to try it?</h3>
-          <p className="text-gray-400 mb-4">Free users get 3 analyses per day. Upgrade Pro for unlimited access.</p>
+          <h3 className="text-xl font-bold mb-2">{t('featureLanding.readyToTry')}</h3>
+          <p className="text-gray-400 mb-4">{t('featureLanding.freeUpgrade')}</p>
           <Link href={ctaHref}
             className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-xl transition">
-            Get Started Free <ArrowRight className="w-4 h-4" />
+            {t('featureLanding.getStartedFree')} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
         {/* Related Features */}
         <div>
-          <h2 className="text-2xl font-bold text-center mb-8">Explore More Features</h2>
+          <h2 className="text-2xl font-bold text-center mb-8">{t('featureLanding.exploreMore')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {relatedFeatures.map((f, i) => (
               <Link key={i} href={f.href}
