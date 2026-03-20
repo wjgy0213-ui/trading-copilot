@@ -1,0 +1,137 @@
+---
+title: "Crypto Options Trading for Beginners: Complete Guide to Calls, Puts, and Strategies"
+date: "2026-03-19"
+description: "Learn crypto options trading from zero — calls, puts, strike prices, premium, expiration, and beginner strategies like covered calls and protective puts for Bitcoin and Ethereum."
+tags: ["options trading", "crypto options", "calls puts", "derivatives", "hedging"]
+author: "Trading Copilot Team"
+---
+
+# Crypto Options Trading for Beginners
+
+Options give you the right (but not the obligation) to buy or sell crypto at a specific price before a specific date. They're the most versatile instrument in trading — and the most misunderstood.
+
+## Options Basics
+
+### Call Option
+- **Right to BUY** at the strike price
+- You buy calls when you're **bullish**
+- Profit: unlimited upside, loss limited to premium paid
+
+### Put Option
+- **Right to SELL** at the strike price
+- You buy puts when you're **bearish** (or for protection)
+- Profit: increases as price falls, loss limited to premium paid
+
+### Key Terms
+
+| Term | Definition | Example |
+|------|-----------|---------|
+| **Strike Price** | Price you can buy/sell at | BTC $75,000 call |
+| **Premium** | Cost of the option | $1,500 |
+| **Expiration** | When the option expires | March 28, 2026 |
+| **In the Money (ITM)** | Option has intrinsic value | BTC at $78K, $75K call is ITM |
+| **Out of the Money (OTM)** | Option has no intrinsic value | BTC at $72K, $75K call is OTM |
+| **At the Money (ATM)** | Strike ≈ current price | BTC at $75K, $75K call |
+
+### Why Options vs. Futures?
+
+| Factor | Options | Futures |
+|--------|---------|---------|
+| Max loss (buyer) | Premium paid only | Entire margin |
+| Liquidation risk | None (for buyers) | Yes |
+| Leverage | Built-in | Adjustable |
+| Complexity | Higher | Lower |
+| Best for | Hedging, defined risk | Directional bets |
+
+## Where to Trade Crypto Options
+
+| Platform | Type | Assets | Min Size |
+|----------|------|--------|----------|
+| Deribit | CeFi | BTC, ETH | 0.1 BTC |
+| IBIT Options | TradFi | BTC ETF | 100 shares |
+| Lyra | DeFi | ETH, various | Varies |
+| Aevo | DeFi | Multi-asset | Varies |
+
+## Beginner Strategies
+
+### 1. Long Call (Bullish Bet)
+**When**: You believe price will rise significantly
+```
+Buy BTC $80,000 call expiring in 30 days
+Cost: $2,000 (premium)
+Breakeven: $82,000 ($80K strike + $2K premium)
+Max loss: $2,000 (the premium)
+Profit at $90,000: $8,000 (400% return on premium)
+```
+**Advantage**: No liquidation risk. You can't lose more than $2,000 even if BTC goes to zero.
+
+### 2. Long Put (Bearish Bet / Portfolio Insurance)
+**When**: You want downside protection
+```
+Hold 1 BTC at $75,000
+Buy $70,000 put for $1,500
+If BTC drops to $60,000:
+  - BTC loss: -$15,000
+  - Put profit: +$8,500
+  - Net loss: -$6,500 (vs -$15,000 without put)
+```
+**Advantage**: Limits your maximum downside while keeping unlimited upside.
+
+### 3. Covered Call (Income Generation)
+**When**: You hold BTC and want to earn income in sideways markets
+```
+Hold 1 BTC at $75,000
+Sell $85,000 call for $1,000 premium
+Scenarios:
+  - BTC stays below $85K: Keep $1,000 premium (1.3% monthly return)
+  - BTC rises above $85K: Sell BTC at $85K + keep $1,000 ($11K total profit)
+  - BTC drops: Keep premium, offset some losses
+```
+**Trade-off**: You cap your upside at $85,000 in exchange for guaranteed income.
+
+### 4. Cash-Secured Put (Buy the Dip)
+**When**: You want to buy BTC at a lower price
+```
+BTC at $75,000. You want to buy at $65,000.
+Sell $65,000 put for $800 premium
+If BTC drops to $65K: You buy BTC at $65K (and keep the $800)
+  → Effective buy price: $64,200
+If BTC stays above $65K: Keep $800 free money
+```
+
+## Options Greeks (Simplified)
+
+| Greek | What It Measures | Simplified |
+|-------|-----------------|------------|
+| **Delta** | Price sensitivity | "How much does option move per $1 of BTC?" |
+| **Theta** | Time decay | "How much value do I lose per day?" |
+| **Vega** | Volatility sensitivity | "How much does option move per 1% IV change?" |
+| **Gamma** | Rate of delta change | "How fast does delta change?" |
+
+**For beginners**: Focus on Delta (direction) and Theta (time decay). Theta works against option buyers and for option sellers.
+
+## Common Beginner Mistakes
+
+1. **Buying OTM options**: Cheap premium but very low probability of profit. Stick to ATM or slightly OTM.
+2. **Ignoring time decay**: Options lose value every day. Don't buy options expiring in 2 days unless you're scalping.
+3. **Oversizing**: Just because max loss is the premium doesn't mean you should bet big. Treat premium as risk.
+4. **Selling naked options**: Unlimited risk. Never sell calls without owning the underlying (or sell puts without cash to cover).
+5. **Holding to expiration**: Most profitable options trades are closed at 50-75% of max profit, not held to expiry.
+
+## FAQ
+
+### Are crypto options risky?
+Buying options is defined-risk: you can only lose the premium. Selling options can be very risky (especially naked calls with unlimited loss potential). For beginners, stick to buying calls/puts and covered calls — these have clearly defined maximum losses.
+
+### How much money do I need to trade crypto options?
+On Deribit, minimum BTC option contract is 0.1 BTC (~$7,000). IBIT options require buying 100-share lots. DeFi platforms may have lower minimums. Start with 1-2% of your portfolio in options until you understand the mechanics.
+
+### What's the best strategy for beginners?
+Covered calls on BTC/ETH you already hold. Zero additional risk (you already own the asset), generates monthly income (1-3%), and teaches you how options work. Graduate to long calls/puts and spreads as you gain experience.
+
+### Can I use options to hedge my crypto portfolio?
+Yes, this is one of the best uses. Buy puts on BTC to protect against crashes. The cost is the premium (like insurance). Example: spending 2% of your portfolio on 3-month puts limits your maximum loss to ~5-10% regardless of how far prices fall.
+
+---
+
+*Understand options in the context of overall market risk. [Trading Copilot's risk dashboard](/guardian) helps you assess when hedging makes sense — combining on-chain, technical, and sentiment signals.*

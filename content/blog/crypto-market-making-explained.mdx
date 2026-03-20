@@ -1,0 +1,117 @@
+---
+title: "Market Making in Crypto: How It Works and How to Profit"
+date: "2026-03-19"
+description: "Understand crypto market making — bid-ask spreads, liquidity provision, AMM vs order book market making, risks, and how retail traders can participate through DeFi LP positions."
+tags: ["market making", "liquidity", "AMM", "bid-ask spread", "DeFi"]
+author: "Trading Copilot Team"
+---
+
+# Market Making in Crypto: How It Works
+
+Market makers are the invisible infrastructure of every exchange. They provide the liquidity that lets you buy and sell instantly. Understanding market making helps you trade smarter — and potentially earn from it.
+
+## What Market Makers Do
+
+Market makers simultaneously place buy orders (bids) and sell orders (asks) on both sides of the order book:
+
+```
+Ask: $70,050 (sell 1 BTC) ← Market maker offers to sell
+Ask: $70,020 (sell 1 BTC) ← Market maker offers to sell
+--- Current Price ---
+Bid: $69,980 (buy 1 BTC) ← Market maker offers to buy
+Bid: $69,950 (buy 1 BTC) ← Market maker offers to buy
+```
+
+**The spread** ($69,980 → $70,020 = $40) is the market maker's profit per round trip.
+
+## Two Types of Crypto Market Making
+
+### 1. Order Book Market Making (Traditional)
+Professional firms place limit orders on centralized exchanges:
+- **Who**: Wintermute, Jump Crypto, Alameda (pre-collapse), GSR
+- **Capital needed**: $1M+ per pair
+- **Profit**: Bid-ask spread × volume
+- **Risk**: Inventory risk (holding assets during price crashes)
+
+### 2. AMM Liquidity Provision (DeFi)
+Anyone can be a market maker by depositing tokens into AMM pools:
+- **Who**: Anyone with capital
+- **Capital needed**: $100+ (on L2s)
+- **Profit**: Trading fees (0.01-1% per swap)
+- **Risk**: [Impermanent loss](/blog/defi-yield-farming-risks-guide)
+
+## How AMM Market Making Works
+
+### Constant Product Formula
+Most AMMs (Uniswap V2 style) use: `x × y = k`
+
+```
+Pool: 10 ETH × 30,000 USDC = 300,000 (k)
+Someone buys 1 ETH:
+Pool becomes: 9 ETH × 33,333 USDC = 300,000 (k preserved)
+Effective price: $3,333 per ETH (vs $3,000 market = slippage)
+```
+
+### Concentrated Liquidity (Uniswap V3 / Orca)
+Provide liquidity in a specific price range:
+- **Tighter range** = more fees earned but more impermanent loss
+- **Wider range** = fewer fees but less IL risk
+- **Out of range** = earning nothing, 100% in one asset
+
+Example:
+```
+ETH price: $3,000
+Provide liquidity in $2,800-$3,200 range
+Earn 3-5x more fees than full-range
+But if ETH moves to $3,500, position becomes 100% USDC
+```
+
+## Retail Market Making Strategies
+
+### Strategy 1: Stablecoin Pair LP
+Provide liquidity in USDC/USDT or similar stable pairs:
+- **IL risk**: Nearly zero (both assets maintain ~$1)
+- **Yield**: 3-10% APY from trading fees
+- **Best for**: Conservative yield seekers
+- **Where**: Curve, Uniswap V3 (tight range)
+
+### Strategy 2: Correlated Asset LP
+ETH/stETH, BTC/wBTC, or similar correlated pairs:
+- **IL risk**: Low (assets move together)
+- **Yield**: 5-15% APY
+- **Best for**: ETH/BTC holders wanting yield
+- **Where**: Curve, Balancer
+
+### Strategy 3: Blue-Chip Volatile LP
+ETH/USDC, SOL/USDC on concentrated liquidity:
+- **IL risk**: Moderate to high
+- **Yield**: 20-60% APY (if managed well)
+- **Best for**: Active managers who rebalance ranges
+- **Where**: Uniswap V3, Orca CLMM
+
+See our [Solana guide](/blog/solana-trading-guide-2026) for SOL-specific LP strategies.
+
+## Risks of Market Making
+
+| Risk | Description | Mitigation |
+|------|-------------|------------|
+| Impermanent loss | Asset ratio changes vs holding | Correlated pairs, active management |
+| Smart contract risk | Protocol exploit drains funds | Audited protocols, diversify |
+| Inventory risk | Holding assets during crash | Hedging, concentrated ranges |
+| Competition | Professional MMs have better tools | Focus on niche pairs, DeFi |
+| Gas costs | Frequent rebalancing costs fees | Use L2s, larger positions |
+
+## FAQ
+
+### Can retail traders be profitable market makers?
+In DeFi, yes — especially on niche pairs or L2s where professional competition is lower. On centralized exchanges, retail cannot compete with professional firms on speed or capital. Focus on DeFi LP positions where your edge is patience and willingness to provide liquidity in less popular pairs.
+
+### What is the difference between market making and trading?
+Market makers profit from the spread (buying low, selling high simultaneously). Traders profit from directional moves (buying now, selling later at higher price). Market making is theoretically direction-neutral but carries inventory risk.
+
+### How much can you earn from DeFi liquidity provision?
+Stablecoin pairs: 3-10% APY. Correlated pairs: 5-15%. Volatile pairs with active management: 20-60%. These yields come from trading fees and sometimes token incentives. Always account for [impermanent loss](/blog/defi-yield-farming-risks-guide) — your actual return may be lower.
+
+---
+
+*Monitor DeFi yields and market health with [Trading Copilot's signal aggregator](/signals) — compare LP opportunities across protocols and chains.*
