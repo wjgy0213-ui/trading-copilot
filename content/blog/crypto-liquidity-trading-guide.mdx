@@ -1,0 +1,73 @@
+---
+title: "Understanding Crypto Liquidity: Why It Matters for Every Trade"
+date: "2026-03-19"
+description: "Complete guide to crypto liquidity — order books, bid-ask spreads, slippage, liquidity pools, and how to use liquidity analysis to make better trading decisions."
+tags: ["liquidity", "order book", "slippage", "DEX", "trading"]
+author: "Trading Copilot Team"
+---
+
+# Understanding Crypto Liquidity
+
+Liquidity is the single most underrated factor in crypto trading. It determines whether you can enter and exit positions at the prices you expect — or get wrecked by slippage.
+
+## What Is Liquidity?
+
+Liquidity measures how easily you can buy or sell an asset without significantly moving its price. High liquidity = tight spreads, fast fills, minimal slippage. Low liquidity = wide spreads, partial fills, massive slippage.
+
+## Why Liquidity Matters
+
+### For Traders
+- **Entry/Exit**: Low liquidity means your market order fills at worse prices
+- **Slippage**: A $10,000 market buy on an illiquid token can move the price 5-10%
+- **Stop losses**: In thin markets, stops can fill far from your trigger price
+- **Position sizing**: Can't trade large positions in illiquid markets. See [position sizing guide](/blog/crypto-position-sizing-guide)
+
+### Liquidity Metrics
+| Metric | What It Tells You |
+|--------|-------------------|
+| Bid-Ask Spread | How expensive it is to trade (tighter = more liquid) |
+| Order Book Depth | How much volume sits at each price level |
+| 24h Volume | General trading activity |
+| Market Cap / Volume Ratio | Higher ratio = less liquid relative to size |
+
+## CEX vs DEX Liquidity
+
+**Centralized Exchanges (CEX)**:
+- Order book model
+- Market makers provide liquidity
+- Tighter spreads on major pairs (BTC/USDT: 0.01%)
+- Deep order books on Binance, Coinbase
+
+**Decentralized Exchanges (DEX)**:
+- Automated Market Maker (AMM) liquidity pools
+- Anyone can provide liquidity
+- Slippage depends on pool size vs trade size
+- See [DeFi guide](/blog/defi-yield-farming-risks-guide) for LP risks
+
+## Slippage Calculator
+```
+Expected slippage ≈ Trade Size / (2 × Pool Liquidity) × 100%
+
+Example: $10,000 trade in a $500,000 pool
+Slippage ≈ 10,000 / (2 × 500,000) × 100% = 1%
+```
+
+## Trading Rules for Liquidity
+
+1. **Never trade more than 1% of daily volume** in a single order
+2. **Use limit orders** in low-liquidity markets
+3. **Check the order book** before placing large orders
+4. **Avoid illiquid hours** (weekends, Asian night for Western pairs)
+5. **Split large orders** into smaller chunks over time
+
+## FAQ
+
+### How do I check if a crypto is liquid enough to trade?
+Check 24-hour volume on CoinGecko or CoinMarketCap. As a rule: if daily volume is less than $1 million, expect significant slippage on orders above $5,000. For altcoins, check the specific exchange where you plan to trade.
+
+### Why does liquidity drop during market crashes?
+Market makers widen spreads or pull orders entirely during high volatility to avoid adverse selection. Liquidity providers on DEXes may withdraw to avoid impermanent loss. This creates a feedback loop: less liquidity → more slippage → more panic → even less liquidity.
+
+---
+
+*Monitor liquidity conditions with [Trading Copilot's market health check](/health) — track volume, spreads, and market depth across exchanges.*
