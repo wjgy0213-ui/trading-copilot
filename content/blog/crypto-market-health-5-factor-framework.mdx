@@ -1,0 +1,394 @@
+---
+title: "How to Analyze Crypto Market Health: 5-Factor Framework (2026 Guide)"
+description: "Learn the 5-factor framework professional traders use to assess crypto market health. Fear & Greed, ITC Risk, momentum, funding rates, and volatility explained."
+date: "2026-03-21"
+author: "Trading Copilot Team"
+tags: ["market analysis", "risk management", "trading tools", "crypto indicators"]
+category: "Analysis"
+readTime: "8 min"
+featured: true
+---
+
+# How to Analyze Crypto Market Health: 5-Factor Framework
+
+**TL;DR**: Professional traders don't guess market conditions—they measure them. This 5-factor framework combines Fear & Greed Index, ITC Risk metrics, price momentum, funding rates, and volatility into a single health score that tells you when to trade aggressively vs. defensively.
+
+## Why Market Health Matters More Than Price
+
+Most traders focus obsessively on price: "Is Bitcoin going up or down?"
+
+But **professional traders ask a different question**: "What's the overall health of the market right now?"
+
+Here's why this matters:
+
+- In a **healthy market** (low risk, positive momentum), even mediocre trades can succeed
+- In a **sick market** (high risk, extreme fear), even great setups often fail
+- **Market regime dictates your win rate** more than your technical skills
+
+The difference between profitable and blown-up accounts often comes down to knowing when to push hard vs. when to pull back.
+
+## The 5-Factor Health Framework
+
+### Factor 1: Fear & Greed Index (25%)
+
+**What it measures**: Market sentiment from extreme fear (0) to extreme greed (100)
+
+**Why it matters**: 
+- <20 = Extreme Fear → Often bottom signals (contrarian buy opportunity)
+- >80 = Extreme Greed → Often top signals (take profits, reduce risk)
+- Extremes don't last—mean reversion is powerful
+
+**How to use**:
+```
+Score calculation:
+- F&G 0-10: +5 points (extreme fear = opportunity)
+- F&G 11-25: +3 points (fear = cautious buy)
+- F&G 26-50: 0 points (neutral)
+- F&G 51-75: -2 points (greed = reduce leverage)
+- F&G 76-100: -5 points (extreme greed = take profits)
+```
+
+**Real example** (March 2026):
+- March 19: F&G = 11 (Extreme Fear)
+- BTC = $70,400 (holding support)
+- Interpretation: Retail panic + price resilience = accumulation zone
+- Action: Consider building positions in 3-5 tranches
+
+### Factor 2: ITC Risk Indicator (25%)
+
+**What it measures**: Into The Cryptoverse's proprietary risk metric (0.0-1.0 scale)
+
+**Components**:
+- BTC price vs. 2-year moving average trendline
+- Market cap deviation from historical trend
+- Long-term holder profitability
+- Macro recession indicators
+
+**Why it matters**: 
+- Combines price, fundamentals, and macro into single number
+- 0.0-0.3 = Low risk (buy zone)
+- 0.3-0.7 = Medium risk (hold/accumulate)
+- 0.7-1.0 = High risk (distribution zone)
+
+**How to score**:
+```
+- ITC Risk 0.0-0.2: +5 points (extreme opportunity)
+- ITC Risk 0.21-0.35: +3 points (buy zone)
+- ITC Risk 0.36-0.65: 0 points (neutral)
+- ITC Risk 0.66-0.85: -3 points (reduce exposure)
+- ITC Risk 0.86-1.0: -5 points (high risk, take profits)
+```
+
+**Current reading** (March 21, 2026):
+- BTC Risk: 0.321 (Medium)
+- ETH Risk: 0.455 (Medium-High)
+- Market Risk: 0.386 (Medium)
+
+Interpretation: Not cheap, but not bubble territory. Selective opportunities exist.
+
+### Factor 3: Price Momentum (20%)
+
+**What it measures**: Short-term (7-day) vs medium-term (30-day) price change
+
+**Why it matters**: 
+- Momentum precedes fundamentals
+- Uptrends have higher win rates for longs
+- Fighting momentum is expensive
+
+**How to calculate**:
+```python
+btc_7d_change = (current_price - price_7d_ago) / price_7d_ago * 100
+btc_30d_change = (current_price - price_30d_ago) / price_30d_ago * 100
+
+if btc_7d_change > 5% and btc_30d_change > 10%:
+    score = +4  # Strong uptrend
+elif btc_7d_change > 0 and btc_30d_change > 0:
+    score = +2  # Positive momentum
+elif btc_7d_change < 0 and btc_30d_change < 0:
+    score = -2  # Downtrend
+else:
+    score = 0   # Mixed/choppy
+```
+
+**Practical use**:
+- Strong uptrend: Use wider stops, let winners run
+- Downtrend: Tighter stops, smaller positions
+- Choppy: Reduce overall exposure, focus on mean reversion
+
+### Factor 4: Funding Rates (15%)
+
+**What it measures**: Perpetual futures funding rate (annualized)
+
+**Why it matters**: 
+- Positive funding = Longs pay shorts (bullish sentiment)
+- Negative funding = Shorts pay longs (bearish sentiment)
+- Extreme funding often precedes liquidation cascades
+
+**How to interpret**:
+```
+Annualized funding rate:
+- > +30%: Extremely bullish, overleveraged longs (risk!)
+- +10% to +30%: Bullish but manageable
+- -10% to +10%: Neutral
+- -30% to -10%: Bearish sentiment
+- < -30%: Extremely bearish, overleveraged shorts
+```
+
+**Scoring**:
+```
+- Funding < -20%: +3 points (shorts overleveraged, squeeze risk)
+- Funding -20% to -5%: +1 point
+- Funding -5% to +15%: 0 points (healthy)
+- Funding +15% to +30%: -2 points (longs crowded)
+- Funding > +30%: -4 points (danger zone)
+```
+
+**March 2026 example**:
+- BTC funding: +8.2% annualized
+- Interpretation: Mildly bullish, not overleveraged
+- Action: Safe to hold longs, not at liquidation cascade risk
+
+### Factor 5: Volatility (15%)
+
+**What it measures**: 30-day historical volatility (annualized)
+
+**Why it matters**: 
+- High volatility = More risk, bigger stops needed
+- Low volatility = Tighter stops, accumulation phase
+- Volatility clusters (high vol → high vol, low vol → low vol)
+
+**How to score**:
+```
+30-day annualized volatility:
+- < 30%: +3 points (low risk, good for accumulation)
+- 30%-50%: +1 point (normal)
+- 50%-80%: 0 points (elevated)
+- 80%-120%: -2 points (high risk)
+- > 120%: -4 points (extreme risk, reduce size)
+```
+
+**Position sizing adjustment**:
+```python
+if volatility < 40%:
+    max_position_size = 100%  # Full size
+elif volatility < 70%:
+    max_position_size = 75%   # Reduce 25%
+else:
+    max_position_size = 50%   # Cut in half
+```
+
+## Combining Into a Single Health Score
+
+**Formula**:
+```
+Health Score = (F&G_score × 0.25) + 
+               (ITC_score × 0.25) + 
+               (Momentum_score × 0.20) + 
+               (Funding_score × 0.15) + 
+               (Volatility_score × 0.15)
+
+Normalized to 0-100 scale:
+Final Score = ((Raw Score + 20) / 40) × 100
+```
+
+**Interpretation**:
+- **80-100**: 🟢 Excellent health (aggressive positioning, full size)
+- **60-79**: 🟡 Good health (normal trading, standard risk)
+- **40-59**: 🟠 Fair health (selective trades, reduce leverage)
+- **20-39**: 🔴 Poor health (defensive mode, cash gang)
+- **0-19**: 🔴🔴 Critical (stop trading, preserve capital)
+
+## Real-World Example: March 20, 2026
+
+Let's calculate the health score for March 20, 2026:
+
+**Factor 1: Fear & Greed**
+- Value: 11 (Extreme Fear)
+- Score: +5 (contrarian opportunity)
+
+**Factor 2: ITC Risk**
+- BTC: 0.321, ETH: 0.455, Market: 0.386
+- Average: 0.386
+- Score: 0 (neutral)
+
+**Factor 3: Momentum**
+- BTC 7d: +1.1%, 30d: -3.2%
+- Score: 0 (mixed signals)
+
+**Factor 4: Funding Rate**
+- BTC Funding: +8.2% annualized
+- Score: 0 (healthy bullish)
+
+**Factor 5: Volatility**
+- 30d volatility: 62% annualized
+- Score: 0 (elevated but not extreme)
+
+**Total Raw Score**: +5 + 0 + 0 + 0 + 0 = +5  
+**Final Health Score**: ((5 + 20) / 40) × 100 = **62.5/100**
+
+**Interpretation**: 🟡 **Good health**  
+- Not euphoric (F&G = 11), but price holding  
+- Normal risk (ITC medium), normal volatility  
+- **Strategy**: Selective longs, standard position sizing, watch for F&G reversal
+
+## How to Use This in Your Trading
+
+### Pre-Trade Checklist
+
+Before every trade, check the health score:
+
+**If Health > 60** (Green/Yellow zone):
+- ✅ Trade your normal setup rules
+- ✅ Use standard position sizes
+- ✅ Can take 2-3 concurrent positions
+
+**If Health 40-60** (Orange zone):
+- ⚠️ Only take A+ setups
+- ⚠️ Reduce position size by 30-50%
+- ⚠️ Maximum 1-2 concurrent positions
+
+**If Health < 40** (Red zone):
+- 🛑 No new longs (unless F&G <10 + price support)
+- 🛑 Reduce to 25% position size
+- 🛑 Cash is a position
+
+### Daily Routine
+
+1. **Check health score every morning** (5 min)
+2. **Adjust your risk dials** based on current reading
+3. **Document in your trading journal** (for pattern recognition)
+
+Example journal entry:
+```
+Date: 2026-03-20
+Health Score: 62.5/100 (Good)
+Bias: Cautiously bullish (F&G extreme fear + price resilience)
+Max Position Size: 100%
+Max Concurrent Positions: 3
+Notes: F&G at 11 = potential bottom, watch for reversal
+```
+
+### Weekly Review
+
+Every Sunday, plot your:
+- Health scores for the past week
+- Your win rate by health zone
+- Your largest losses (did they occur in low-health periods?)
+
+**Pattern to watch for**:
+- If you consistently lose money when Health < 50, you're fighting the market
+- Solution: Go to cash or reduce size aggressively when health deteriorates
+
+## Advanced: Customizing the Framework
+
+The 25/25/20/15/15 weighting is a starting point. Customize based on your style:
+
+**For swing traders** (holding 3-7 days):
+- Increase ITC Risk weight to 30%
+- Decrease Funding Rate to 10%
+- Reasoning: Long-term metrics matter more than short-term positioning
+
+**For scalpers** (holding minutes to hours):
+- Increase Funding Rate to 25%
+- Increase Volatility to 20%
+- Reasoning: Intraday dynamics dominate
+
+**For DeFi/altcoin traders**:
+- Add a 6th factor: ETH/BTC strength (15%)
+- Reasoning: Altcoins follow ETH more than BTC
+
+## Tools That Calculate This for You
+
+Manually tracking 5 factors daily is tedious. These tools automate it:
+
+### 1. Trading Copilot (/health page) ⭐
+- **Auto-calculates** all 5 factors
+- **Real-time updates** (refreshes every 15 min)
+- **Traffic light system**: Green/Yellow/Red at a glance
+- **Historical charts**: See how health correlated with your PnL
+- [Try it free →](https://tradingcopilot.app/features/health)
+
+### 2. DIY Spreadsheet
+- Pull data from CoinGecko API (price, F&G)
+- ITC via Into The Cryptoverse API
+- Funding via exchange APIs
+- Update manually 1-2x/day
+
+### 3. TradingView Custom Indicator
+- Code the 5-factor formula in Pine Script
+- Displays health score below price chart
+- Alerts when score crosses thresholds
+
+## Common Mistakes to Avoid
+
+### ❌ Mistake 1: Ignoring health when you have a "great setup"
+**Why it fails**: Even perfect setups fail in unhealthy markets  
+**Fix**: If Health < 40, reduce size by 50% minimum
+
+### ❌ Mistake 2: Trading small when health is excellent
+**Why it fails**: You miss the rare high-probability periods  
+**Fix**: When Health > 75, consider **increasing** normal size by 25%
+
+### ❌ Mistake 3: Using stale data
+**Why it fails**: Market health can shift in hours (not days)  
+**Fix**: Check at least 2x/day (morning + before major trades)
+
+### ❌ Mistake 4: Overriding the score with "gut feeling"
+**Why it fails**: Confirmation bias makes you see what you want  
+**Fix**: If you disagree with the score, **sit out** that trade
+
+## Case Study: February 2026 vs March 2026
+
+**February 15, 2026**:
+- F&G: 78 (Greed)
+- ITC Risk: 0.682 (High)
+- Momentum: +18% (7d), +35% (30d)
+- Funding: +42% (overleveraged)
+- Volatility: 95%
+
+**Health Score: 28/100** (🔴 Critical)
+
+**What happened next**: 
+- BTC dropped 12% in 48 hours
+- $450M in longs liquidated
+- Traders who ignored the low health score got wrecked
+
+**March 20, 2026**:
+- F&G: 11 (Extreme Fear)
+- ITC Risk: 0.386 (Medium)
+- Momentum: +1.1% (7d), -3.2% (30d)
+- Funding: +8.2%
+- Volatility: 62%
+
+**Health Score: 62.5/100** (🟡 Good)
+
+**Interpretation**: 
+- Fear extremes after a mild correction = potential bottom
+- Not euphoric, reasonable valuations
+- Safe to build positions cautiously
+
+## Conclusion: Health > Hype
+
+The crypto market rewards **regime awareness** more than prediction.
+
+You don't need to predict tops and bottoms. You just need to know:
+- **When the market is healthy** (trade aggressively)
+- **When it's sick** (step aside)
+
+The 5-factor framework gives you an objective, repeatable way to measure health daily.
+
+**Next steps**:
+1. Calculate today's health score (5 minutes)
+2. Compare to your recent trades (did you lose money in low-health periods?)
+3. Set alerts for health score crossovers (<40 = defensive, >75 = aggressive)
+
+**Want this automated?**  
+[Trading Copilot's Market Health tool](https://tradingcopilot.app/features/health) calculates this for you in real-time, with traffic-light warnings and historical correlation to your PnL.
+
+---
+
+**Further reading**:
+- [What is Fear and Greed Index?](/blog/what-is-fear-and-greed-index-crypto)
+- [ITC Risk Indicator Explained](/blog/itc-risk-indicator-explained)  
+- [Funding Rate Trading Strategy](/blog/funding-rate-crypto-trading-strategy)
+- [How to Use Risk Management Tools](/blog/best-crypto-risk-management-tools-2026)
