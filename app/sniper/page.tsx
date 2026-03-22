@@ -320,7 +320,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
                   onClick={connectBinance} disabled={connecting}
                   className="w-full bg-yellow-600 hover:bg-yellow-500 disabled:opacity-50 text-black font-bold py-2.5 rounded-lg transition-all text-sm"
                 >
-                  {connecting ? t('sniper.phantomConnecting') : '🔗 连接币安'}
+                  {connecting ? t('sniper.phantomConnecting') : `🔗 ${t('sniper.connectBinance')}`}
                 </button>
               </div>
             )}
@@ -559,7 +559,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
       <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-gray-400 mt-3">Loading Sniper...</p>
+          <p className="text-gray-400 mt-3">{t('sniper.loadingSniper')}</p>
         </div>
       </div>
     );
@@ -611,7 +611,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
             </span>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-xs text-gray-400">Live</span>
+              <span className="text-xs text-gray-400">{t('sniper.liveBadge')}</span>
             </div>
           </div>
         </div>
@@ -619,7 +619,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
         {/* Portfolio Overview */}
         <div className="bg-gradient-to-r from-purple-900/30 to-pink-900/30 rounded-2xl p-6 border border-purple-500/20 mb-6">
           <div className="text-center mb-4">
-            <div className="text-gray-400 text-sm">Portfolio Value</div>
+            <div className="text-gray-400 text-sm">{t('sniper.portfolioValue')}</div>
             <div className="text-4xl font-bold mt-1">
               {portfolio.total_value_sol.toFixed(2)} <span className="text-lg text-gray-400">SOL</span>
             </div>
@@ -631,7 +631,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <StatCard label={t('sniper.balance')} value={`${state.balance_sol.toFixed(2)} SOL`} />
-            <StatCard label={t('sniper.posCount')} value={`${positions.length} / 10`} sub={`${state.total_trades} 总交易`} />
+            <StatCard label={t('sniper.posCount')} value={`${positions.length} / 10`} sub={`${state.total_trades} ${t('sniper.totalTradesLabel')}`} />
             <StatCard 
               label={t('sniper.winRate')} 
               value={`${portfolio.win_rate.toFixed(0)}%`}
@@ -771,35 +771,35 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                 <p>{t('sniper.noTrades')}</p>
               </div>
             ) : (
-              trades.map((t, i) => (
+              trades.map((trade, i) => (
                 <div key={i} className="bg-gray-800/40 rounded-lg p-3 border border-gray-700/30 flex items-center gap-3">
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg ${
-                    t.action === 'BUY' ? 'bg-green-500/20' : 'bg-red-500/20'
+                    trade.action === 'BUY' ? 'bg-green-500/20' : 'bg-red-500/20'
                   }`}>
-                    {t.action === 'BUY' ? '🟢' : '🔴'}
+                    {trade.action === 'BUY' ? '🟢' : '🔴'}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium">{t.symbol}</span>
-                      <span className={`text-xs ${t.action === 'BUY' ? 'text-green-400' : 'text-red-400'}`}>
-                        {t.action}
+                      <span className="font-medium">{trade.symbol}</span>
+                      <span className={`text-xs ${trade.action === 'BUY' ? 'text-green-400' : 'text-red-400'}`}>
+                        {trade.action}
                       </span>
-                      {t.score && <ScoreBadge score={t.score} />}
-                      {t.reason && (
-                        <span className="text-xs text-gray-500 truncate">{t.reason}</span>
+                      {trade.score && <ScoreBadge score={trade.score} />}
+                      {trade.reason && (
+                        <span className="text-xs text-gray-500 truncate">{trade.reason}</span>
                       )}
                     </div>
                     <div className="text-xs text-gray-500 mt-0.5">
-                      {t.size_sol && <span>{t.size_sol.toFixed(3)} SOL</span>}
-                      {t.price && <span> @ ${t.price.toFixed(8)}</span>}
-                      {t.pnl_pct !== undefined && (
-                        <span className={t.pnl_pct >= 0 ? 'text-green-400' : 'text-red-400'}>
-                          {' '}({t.pnl_pct >= 0 ? '+' : ''}{t.pnl_pct.toFixed(1)}%)
+                      {trade.size_sol && <span>{trade.size_sol.toFixed(3)} SOL</span>}
+                      {trade.price && <span> @ ${trade.price.toFixed(8)}</span>}
+                      {trade.pnl_pct !== undefined && (
+                        <span className={trade.pnl_pct >= 0 ? 'text-green-400' : 'text-red-400'}>
+                          {' '}({trade.pnl_pct >= 0 ? '+' : ''}{trade.pnl_pct.toFixed(1)}%)
                         </span>
                       )}
                     </div>
                   </div>
-                  <div className="text-xs text-gray-600">{timeAgo(t.ts)}</div>
+                  <div className="text-xs text-gray-600">{timeAgo(trade.ts)}</div>
                 </div>
               ))
             )}

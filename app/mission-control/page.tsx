@@ -80,18 +80,12 @@ type SidebarTab = {
   hint: string;
 };
 
-const SIDEBAR_TABS: SidebarTab[] = [
-  { id: 'tasks', label: 'Tasks', icon: LayoutGrid, hint: 'mission queue' },
-  { id: 'agents', label: 'Agents', icon: Bot, hint: 'worker status' },
-  { id: 'content', label: 'Content', icon: Sparkles, hint: 'publish flow' },
-  { id: 'approvals', label: 'Approvals', icon: ClipboardCheck, hint: 'needs review' },
-  { id: 'projects', label: 'Projects', icon: Briefcase, hint: 'active bets' },
-  { id: 'memory', label: 'Memory', icon: FileText, hint: 'recent context' },
-  { id: 'system', label: 'System', icon: Shield, hint: 'runtime health' },
-  { id: 'radar', label: 'Radar', icon: Radar, hint: 'signals & news' },
-  { id: 'factory', label: 'Factory', icon: Factory, hint: 'build pipeline' },
-  { id: 'pipeline', label: 'Pipeline', icon: Layers3, hint: 'execution lanes' },
-];
+const SIDEBAR_TAB_IDS = ['tasks', 'agents', 'content', 'approvals', 'projects', 'memory', 'system', 'radar', 'factory', 'pipeline'] as const;
+const SIDEBAR_TAB_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  tasks: LayoutGrid, agents: Bot, content: Sparkles, approvals: ClipboardCheck,
+  projects: Briefcase, memory: FileText, system: Shield, radar: Radar,
+  factory: Factory, pipeline: Layers3,
+};
 
 function timeAgo(isoStr: string): string {
   const diff = Date.now() - new Date(isoStr).getTime();
@@ -304,8 +298,8 @@ export default function MissionControlPage() {
             <div className="mb-3 inline-flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-400/10 text-cyan-300">
               <Factory className="h-6 w-6" />
             </div>
-            <h1 className="text-xl font-semibold">Mission Control</h1>
-            <p className="mt-2 text-sm text-gray-500">Admin access required</p>
+            <h1 className="text-xl font-semibold">{t('missionControl.adminTitle')}</h1>
+            <p className="mt-2 text-sm text-gray-500">{t('missionControl.adminRequired')}</p>
           </div>
           <input
             type="password"
@@ -314,7 +308,7 @@ export default function MissionControlPage() {
             onKeyDown={(e) => {
               if (e.key === 'Enter' && password === ADMIN_PASS) setAuthenticated(true);
             }}
-            placeholder="Password"
+            placeholder={t('missionControl.password')}
             className="mb-4 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none transition focus:border-cyan-400/40"
           />
           <button
@@ -323,7 +317,7 @@ export default function MissionControlPage() {
             }}
             className="w-full rounded-2xl bg-cyan-500 px-4 py-3 font-medium text-slate-950 transition hover:bg-cyan-400"
           >
-            Enter Control Center
+            {t('missionControl.enterControl')}
           </button>
         </div>
       </div>
@@ -347,19 +341,19 @@ export default function MissionControlPage() {
               <Factory className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-sm font-semibold tracking-wide text-white">Mission Control</div>
-              <div className="text-xs text-gray-500">Task operating system</div>
+              <div className="text-sm font-semibold tracking-wide text-white">{t('missionControl.adminTitle')}</div>
+              <div className="text-xs text-gray-500">{t('missionControl.taskOS')}</div>
             </div>
           </div>
 
           <nav className="space-y-1">
-            {SIDEBAR_TABS.map((tab) => {
-              const Icon = tab.icon;
-              const active = tab.id === activeTab;
+            {SIDEBAR_TAB_IDS.map((tabId) => {
+              const Icon = SIDEBAR_TAB_ICONS[tabId];
+              const active = tabId === activeTab;
               return (
                 <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  key={tabId}
+                  onClick={() => setActiveTab(tabId)}
                   className={`flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left transition ${
                     active
                       ? 'bg-white/8 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.06)]'
@@ -368,8 +362,8 @@ export default function MissionControlPage() {
                 >
                   <Icon className={`h-4 w-4 ${active ? 'text-cyan-300' : 'text-gray-500'}`} />
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-medium">{tab.label}</div>
-                    <div className="truncate text-[11px] text-gray-500">{tab.hint}</div>
+                    <div className="text-sm font-medium">{t(`missionControl.tab.${tabId}`)}</div>
+                    <div className="truncate text-[11px] text-gray-500">{t(`missionControl.hint.${tabId}`)}</div>
                   </div>
                 </button>
               );
@@ -383,7 +377,7 @@ export default function MissionControlPage() {
               <div>
                 <div className="mb-2 flex items-center gap-2 text-[11px] uppercase tracking-[0.3em] text-cyan-300/80">
                   <Gauge className="h-3.5 w-3.5" />
-                  Factory view
+                  {t('missionControl.factoryView')}
                 </div>
                 <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{t('missionControl.title')}</h1>
                 <p className="mt-1 text-sm text-gray-500">
@@ -393,14 +387,14 @@ export default function MissionControlPage() {
 
               <div className="flex flex-wrap items-center gap-3 text-sm">
                 <div className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-2 text-gray-400">
-                  Last sync <span className="ml-2 text-gray-200">{lastRefresh.toLocaleTimeString()}</span>
+                  {t('missionControl.lastSync')} <span className="ml-2 text-gray-200">{lastRefresh.toLocaleTimeString()}</span>
                 </div>
                 <button
                   onClick={fetchData}
                   className="inline-flex items-center gap-2 rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-cyan-200 transition hover:bg-cyan-400/15"
                 >
                   <RefreshCw className="h-4 w-4" />
-                  Refresh
+                  {t('missionControl.refresh')}
                 </button>
               </div>
             </div>
@@ -411,18 +405,18 @@ export default function MissionControlPage() {
               <div className="rounded-[26px] border border-emerald-400/15 bg-emerald-400/[0.04] p-4 shadow-[0_0_40px_rgba(16,185,129,0.06)]">
                 <div className="mb-3 flex items-center gap-2 text-xs text-emerald-200">
                   <Activity className="h-4 w-4" />
-                  Runtime
+                  {t('missionControl.runtime')}
                 </div>
-                <div className="text-2xl font-semibold text-white">Running</div>
+                <div className="text-2xl font-semibold text-white">{t('missionControl.running')}</div>
                 <div className="mt-1 text-xs text-gray-400">
-                  {state?.start_time ? `Uptime ${formatUptime(state.start_time)}` : 'Waiting for data'}
+                  {state?.start_time ? `${t('missionControl.uptime')} ${formatUptime(state.start_time)}` : t('missionControl.waitingData')}
                 </div>
               </div>
 
               <div className="rounded-[26px] border border-cyan-400/15 bg-cyan-400/[0.04] p-4 shadow-[0_0_40px_rgba(34,211,238,0.06)]">
                 <div className="mb-3 flex items-center gap-2 text-xs text-cyan-200">
                   <Wallet className="h-4 w-4" />
-                  Portfolio
+                  {t('missionControl.portfolio')}
                 </div>
                 <div className="text-2xl font-semibold text-white">
                   {portfolio ? `${portfolio.total_value_sol.toFixed(2)} SOL` : 'N/A'}
@@ -430,37 +424,37 @@ export default function MissionControlPage() {
                 <div className={`mt-1 text-xs ${
                   (portfolio?.total_pnl_pct || 0) >= 0 ? 'text-emerald-300' : 'text-red-300'
                 }`}>
-                  {portfolio ? `${formatPct(portfolio.total_pnl_pct)} · ${formatUsd(portfolio.total_value_usd)}` : 'No portfolio snapshot'}
+                  {portfolio ? `${formatPct(portfolio.total_pnl_pct)} · ${formatUsd(portfolio.total_value_usd)}` : t('missionControl.noPortfolio')}
                 </div>
               </div>
 
               <div className="rounded-[26px] border border-violet-400/15 bg-violet-400/[0.04] p-4 shadow-[0_0_40px_rgba(168,85,247,0.06)]">
                 <div className="mb-3 flex items-center gap-2 text-xs text-violet-200">
                   <TrendingUp className="h-4 w-4" />
-                  Throughput
+                  {t('missionControl.throughput')}
                 </div>
-                <div className="text-2xl font-semibold text-white">{state?.total_trades || 0} trades</div>
+                <div className="text-2xl font-semibold text-white">{state?.total_trades || 0} {t('missionControl.trades')}</div>
                 <div className="mt-1 text-xs text-gray-400">
-                  {state ? `${state.wins}W / ${state.losses}L · ${portfolio?.win_rate.toFixed(0)}% win rate` : 'N/A'}
+                  {state ? `${state.wins}W / ${state.losses}L · ${portfolio?.win_rate.toFixed(0)}% ${t('missionControl.winRate')}` : 'N/A'}
                 </div>
               </div>
 
               <div className="rounded-[26px] border border-amber-400/15 bg-amber-400/[0.04] p-4 shadow-[0_0_40px_rgba(251,191,36,0.06)]">
                 <div className="mb-3 flex items-center gap-2 text-xs text-amber-200">
                   <Shield className="h-4 w-4" />
-                  Risk guard
+                  {t('missionControl.riskGuard')}
                 </div>
                 <div className="text-2xl font-semibold text-white">
                   {state ? `${state.max_drawdown.toFixed(1)}%` : 'N/A'}
                 </div>
                 <div className="mt-1 text-xs text-gray-400">
-                  Peak {state ? `${state.peak_balance.toFixed(2)} SOL` : 'N/A'}
+                  {t('missionControl.peak')} {state ? `${state.peak_balance.toFixed(2)} SOL` : 'N/A'}
                 </div>
               </div>
             </div>
 
             <div className="grid gap-5 xl:grid-cols-[1.15fr_1.15fr_0.95fr]">
-              <Column title="Backlog" subtitle="Highest-conviction positions currently in play" count={topPositions.length} tone="violet">
+              <Column title={t('missionControl.backlog')} subtitle={t('missionControl.backlogDesc')} count={topPositions.length} tone="violet">
                 {topPositions.length ? (
                   topPositions.map(([addr, pos]) => (
                     <TaskCard
@@ -475,21 +469,21 @@ export default function MissionControlPage() {
                     />
                   ))
                 ) : (
-                  <TaskCard tone="violet" title="No live backlog" subtitle="Waiting for qualified entries" footer="No active positions in this lane." />
+                  <TaskCard tone="violet" title={t('missionControl.noBacklog')} subtitle={t('missionControl.waitingEntries')} footer={t('missionControl.noActivePos')} />
                 )}
               </Column>
 
-              <Column title="Building" subtitle="Fresh entries and watch items moving through execution" count={Math.max(watchlistPositions.length, recentEntries.length)} tone="blue">
+              <Column title={t('missionControl.building')} subtitle={t('missionControl.buildingDesc')} count={Math.max(watchlistPositions.length, recentEntries.length)} tone="blue">
                 {recentEntries.length ? (
                   recentEntries.map((trade, idx) => (
                     <TaskCard
                       key={`${trade.symbol}-${trade.ts}-${idx}`}
                       tone="blue"
                       title={`${trade.action} ${trade.symbol}`}
-                      subtitle={trade.reason || 'New execution logged'}
+                      subtitle={trade.reason || t('missionControl.newExecution')}
                       meta={timeAgo(trade.ts)}
                       score={trade.score !== undefined ? `Score ${trade.score.toFixed(0)}` : undefined}
-                      footer={trade.size_sol !== undefined ? `Size ${trade.size_sol.toFixed(3)} SOL` : 'Awaiting more detail'}
+                      footer={trade.size_sol !== undefined ? `Size ${trade.size_sol.toFixed(3)} SOL` : t('missionControl.awaitingDetail')}
                     />
                   ))
                 ) : null}
@@ -503,45 +497,45 @@ export default function MissionControlPage() {
                     meta={timeAgo(pos.entry_time)}
                     score={`Score ${pos.score.toFixed(1)}`}
                     pnl={formatPct(pos.pnl_pct)}
-                    footer={`Dexscreener ready · ${pos.partial_sold ? 'Partial sold' : 'Full position live'}`}
+                    footer={`${t('missionControl.dexReady')} · ${pos.partial_sold ? t('missionControl.partialSold') : t('missionControl.fullPosLive')}`}
                   />
                 ))}
 
                 {!recentEntries.length && !watchlistPositions.length ? (
-                  <TaskCard tone="blue" title="No active build lane" subtitle="No recent buys or watchlist items" footer="Factory is quiet right now." />
+                  <TaskCard tone="blue" title={t('missionControl.noBuildLane')} subtitle={t('missionControl.noBuildItems')} footer={t('missionControl.factoryQuiet')} />
                 ) : null}
               </Column>
 
-              <Column title="QA" subtitle="Closed-loop checks, exits, and system sanity" count={Math.max(recentExits.length, 3)} tone="amber">
+              <Column title={t('missionControl.qa')} subtitle={t('missionControl.qaDesc')} count={Math.max(recentExits.length, 3)} tone="amber">
                 {recentExits.length ? (
                   recentExits.map((trade, idx) => (
                     <TaskCard
                       key={`${trade.symbol}-${trade.ts}-${idx}`}
                       tone="amber"
                       title={`${trade.action} ${trade.symbol}`}
-                      subtitle={trade.reason || 'Exit recorded'}
+                      subtitle={trade.reason || t('missionControl.exitRecorded')}
                       meta={timeAgo(trade.ts)}
                       pnl={trade.pnl_pct !== undefined ? formatPct(trade.pnl_pct) : undefined}
-                      footer={trade.size_sol !== undefined ? `Closed ${trade.size_sol.toFixed(3)} SOL` : 'Exit snapshot'}
+                      footer={trade.size_sol !== undefined ? `Closed ${trade.size_sol.toFixed(3)} SOL` : t('missionControl.exitSnapshot')}
                     />
                   ))
                 ) : (
-                  <TaskCard tone="amber" title="No recent exits" subtitle="QA lane is clean" footer="No sell-side events in the recent buffer." />
+                  <TaskCard tone="amber" title={t('missionControl.noRecentExits')} subtitle={t('missionControl.qaClean')} footer={t('missionControl.noSellEvents')} />
                 )}
 
                 <TaskCard
                   tone="amber"
-                  title="System health"
-                  subtitle={`Data source: ${sniperData?.source || 'unknown source'}`}
-                  score={`Avg score ${avgScore ? avgScore.toFixed(1) : 'N/A'}`}
-                  footer={`Cash balance ${state ? `${state.balance_sol.toFixed(2)} SOL` : 'N/A'} · SOL ${portfolio ? formatUsd(portfolio.sol_price) : 'N/A'}`}
+                  title={t('missionControl.systemHealth')}
+                  subtitle={`${t('missionControl.dataSource')} ${sniperData?.source || 'unknown source'}`}
+                  score={`${t('missionControl.avgScore')} ${avgScore ? avgScore.toFixed(1) : 'N/A'}`}
+                  footer={`${t('missionControl.cashBalance')} ${state ? `${state.balance_sol.toFixed(2)} SOL` : 'N/A'} · SOL ${portfolio ? formatUsd(portfolio.sol_price) : 'N/A'}`}
                 />
 
                 <TaskCard
                   tone="amber"
-                  title="Execution note"
-                  subtitle="This page is now laid out as a left-tab operating system"
-                  footer={`Active tab: ${activeTab} · Mission Control shell ready for more modules`}
+                  title={t('missionControl.executionNote')}
+                  subtitle={t('missionControl.executionNoteDesc')}
+                  footer={`${t('missionControl.activeTab')} ${activeTab} · ${t('missionControl.shellReady')}`}
                 />
               </Column>
             </div>
@@ -550,11 +544,11 @@ export default function MissionControlPage() {
               <div className="rounded-[28px] border border-white/8 bg-white/[0.03] p-5">
                 <div className="mb-4 flex items-center justify-between gap-4">
                   <div>
-                    <div className="text-sm font-semibold text-white">Recent execution tape</div>
-                    <div className="mt-1 text-xs text-gray-500">Latest activity flowing through the control center</div>
+                    <div className="text-sm font-semibold text-white">{t('missionControl.recentTape')}</div>
+                    <div className="mt-1 text-xs text-gray-500">{t('missionControl.tapeDesc')}</div>
                   </div>
                   <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-gray-400">
-                    {trades.length} events
+                    {trades.length} {t('missionControl.events')}
                   </span>
                 </div>
 
@@ -583,7 +577,7 @@ export default function MissionControlPage() {
                             </span>
                           ) : null}
                         </div>
-                        <div className="mt-1 truncate text-xs text-gray-500">{trade.reason || 'No reason logged'}</div>
+                        <div className="mt-1 truncate text-xs text-gray-500">{trade.reason || t('missionControl.noReasonLogged')}</div>
                       </div>
                       <div className="text-right text-xs">
                         {trade.pnl_pct !== undefined ? (
@@ -598,7 +592,7 @@ export default function MissionControlPage() {
 
                   {!trades.length ? (
                     <div className="rounded-2xl border border-dashed border-white/10 px-4 py-8 text-center text-sm text-gray-500">
-                      No trade activity yet.
+                      {t('missionControl.noTradeActivity')}
                     </div>
                   ) : null}
                 </div>
@@ -608,8 +602,8 @@ export default function MissionControlPage() {
                 <div className="mb-4 flex items-center gap-2">
                   <Bot className="h-4 w-4 text-cyan-300" />
                   <div>
-                    <div className="text-sm font-semibold text-white">Operator notes</div>
-                    <div className="text-xs text-gray-500">What this redesign is optimizing for</div>
+                    <div className="text-sm font-semibold text-white">{t('missionControl.operatorNotes')}</div>
+                    <div className="text-xs text-gray-500">{t('missionControl.notesDesc')}</div>
                   </div>
                 </div>
 

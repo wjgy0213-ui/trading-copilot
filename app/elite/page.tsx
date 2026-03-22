@@ -234,7 +234,7 @@ export default function ElitePage() {
 
                 {exchange !== 'hyperliquid' && (
                   <div>
-                    <label className="block text-sm text-gray-400 mb-2">API Secret</label>
+                    <label className="block text-sm text-gray-400 mb-2">{t('elite.apiSecretLabel')}</label>
                     <input
                       type="password"
                       value={apiSecret}
@@ -247,7 +247,7 @@ export default function ElitePage() {
 
                 {exchange === 'okx' && (
                   <div>
-                    <label className="block text-sm text-gray-400 mb-2">Passphrase</label>
+                    <label className="block text-sm text-gray-400 mb-2">{t('elite.passphraseLabel')}</label>
                     <input
                       type="password"
                       value={passphrase}
@@ -314,7 +314,7 @@ export default function ElitePage() {
             {!telegramConnected ? (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-2">Chat ID</label>
+                  <label className="block text-sm text-gray-400 mb-2">{t('elite.chatIdLabel')}</label>
                   <input
                     type="text"
                     value={chatId}

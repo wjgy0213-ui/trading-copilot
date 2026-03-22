@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { BarChart3, Users, Eye, CreditCard, TrendingUp, RefreshCw } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 
 interface LeadItem {
   id: string;
@@ -28,6 +29,7 @@ interface DayStat {
 }
 
 export default function AdminPage() {
+  const { t } = useI18n();
   const [stats, setStats] = useState<DayStat[]>([]);
   const [leads, setLeads] = useState<LeadItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,10 +69,10 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center pt-16">
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 max-w-sm w-full">
-          <h1 className="text-xl font-bold text-white mb-4">🔐 Admin Access</h1>
+          <h1 className="text-xl font-bold text-white mb-4">🔐 {t('elite.adminAccess')}</h1>
           <input
             type="password"
-            placeholder="Admin Secret"
+            placeholder={t('elite.adminSecret')}
             value={secret}
             onChange={e => setSecret(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && fetchStats(secret)}
@@ -80,7 +82,7 @@ export default function AdminPage() {
             onClick={() => fetchStats(secret)}
             className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-lg font-medium transition"
           >
-            Login
+            {t('elite.loginButton')}
           </button>
         </div>
       </div>
@@ -100,12 +102,12 @@ export default function AdminPage() {
     <div className="min-h-screen bg-gray-950 text-white pt-20 px-4">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">📊 Admin Dashboard</h1>
+          <h1 className="text-3xl font-bold">📊 {t('elite.adminDashboard')}</h1>
           <button
             onClick={() => fetchStats(secret)}
             className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg text-sm transition"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> {t('elite.refreshButton')}
           </button>
         </div>
 
@@ -130,7 +132,7 @@ export default function AdminPage() {
         {/* Daily Breakdown */}
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-8">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-emerald-400" /> Daily Breakdown
+            <BarChart3 className="w-5 h-5 text-emerald-400" /> {t('elite.dailyBreakdown')}
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -154,7 +156,7 @@ export default function AdminPage() {
                   </tr>
                 ))}
                 {stats.length === 0 && (
-                  <tr><td colSpan={5} className="py-8 text-center text-gray-600">No data yet</td></tr>
+                  <tr><td colSpan={5} className="py-8 text-center text-gray-600">{t('elite.noDataYet')}</td></tr>
                 )}
               </tbody>
             </table>
@@ -164,12 +166,12 @@ export default function AdminPage() {
         {/* Page Breakdown */}
         {pages.length > 0 && (
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-8">
-            <h2 className="text-lg font-semibold mb-4">📄 Today&apos;s Pages</h2>
+            <h2 className="text-lg font-semibold mb-4">📄 {t('elite.todaysPages')}</h2>
             <div className="space-y-2">
               {pages.map((p, i) => (
                 <div key={i} className="flex items-center justify-between py-1">
                   <span className="text-gray-300 text-sm font-mono">{p.page}</span>
-                  <span className="text-gray-400 text-sm">{p.views} views</span>
+                  <span className="text-gray-400 text-sm">{p.views} {t('elite.views')}</span>
                 </div>
               ))}
             </div>
@@ -178,7 +180,7 @@ export default function AdminPage() {
 
         {/* Leads Snapshot */}
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <h2 className="text-lg font-semibold mb-4">🧾 Latest Leads</h2>
+          <h2 className="text-lg font-semibold mb-4">🧾 {t('elite.latestLeads')}</h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -201,7 +203,7 @@ export default function AdminPage() {
                   </tr>
                 ))}
                 {leads.length === 0 && (
-                  <tr><td colSpan={5} className="py-8 text-center text-gray-600">No leads yet</td></tr>
+                  <tr><td colSpan={5} className="py-8 text-center text-gray-600">{t('elite.noLeadsYet')}</td></tr>
                 )}
               </tbody>
             </table>
