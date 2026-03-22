@@ -1414,5 +1414,23 @@
   "fl.practice.r2.name": "市场体检",
   "fl.practice.r2.desc": "交易前先看市场状况",
   "fl.practice.r3.name": "风控守门员",
-  "fl.practice.r3.desc": "自动化风险管理"
+  "fl.practice.r3.desc": "自动化风险管理",
+
+  "backtest.redirecting": "跳转到策略工坊...",
+
+  "featureLanding.ctaText": "免费开始 — 每天3次",
+
+  "blog.pageTitle": "博客",
+  "blog.pageSubtitle": "交易洞察、链上分析与加密市场策略。",
+  "blog.minRead": "分钟阅读",
+  "blog.comingSoon": "即将上线...",
+  "blog.ctaTitle": "准备更聪明地交易？",
+  "blog.ctaDesc": "试试 Trading Copilot — AI 驱动的市场分析、风险管理和交易复盘。每天3次免费使用。",
+  "blog.ctaGetStarted": "免费开始 →",
+  "blog.ctaExplore": "探索功能",
+  "blog.backToBlog": "返回博客",
+  "blog.postCtaTitle": "试试 Trading Copilot",
+  "blog.postCtaDesc": "AI 驱动的市场分析，15+ 实时指标。每天3次免费，无需信用卡。",
+  "blog.viewDashboard": "查看仪表盘",
+  "blog.moreArticles": "更多文章"
 }

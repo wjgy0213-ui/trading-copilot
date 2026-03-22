@@ -1414,5 +1414,23 @@
   "fl.practice.r2.name": "Market Health",
   "fl.practice.r2.desc": "Check conditions before you trade",
   "fl.practice.r3.name": "Risk Guardian",
-  "fl.practice.r3.desc": "Automated risk management"
+  "fl.practice.r3.desc": "Automated risk management",
+
+  "backtest.redirecting": "Redirecting to Strategy Lab...",
+
+  "featureLanding.ctaText": "Start Free — 3 Uses/Day",
+
+  "blog.pageTitle": "Blog",
+  "blog.pageSubtitle": "Trading insights, on-chain analysis, and crypto market strategies.",
+  "blog.minRead": "min read",
+  "blog.comingSoon": "Coming soon...",
+  "blog.ctaTitle": "Ready to trade smarter?",
+  "blog.ctaDesc": "Try Trading Copilot — AI-powered market analysis, risk management, and trade review. 3 free uses/day.",
+  "blog.ctaGetStarted": "Get Started Free →",
+  "blog.ctaExplore": "Explore Features",
+  "blog.backToBlog": "Back to Blog",
+  "blog.postCtaTitle": "Try Trading Copilot",
+  "blog.postCtaDesc": "AI-powered market analysis with 15+ real indicators. 3 free uses/day, no credit card required.",
+  "blog.viewDashboard": "View Dashboard",
+  "blog.moreArticles": "More Articles"
 }

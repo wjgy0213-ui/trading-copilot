@@ -25,7 +25,7 @@ export default function FeatureLanding({
   benefits,
   howItWorks,
   relatedFeatures,
-  ctaText = 'Start Free — 3 Uses/Day',
+  ctaText,
   ctaHref = '/pricing',
   color = 'emerald',
 }: FeatureLandingProps) {
@@ -40,6 +40,7 @@ export default function FeatureLanding({
   };
   const c = colorMap[color] || colorMap.emerald;
   const { t } = useI18n();
+  const resolvedCtaText = ctaText || t('featureLanding.ctaText');
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -55,7 +56,7 @@ export default function FeatureLanding({
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href={ctaHref}
               className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3.5 rounded-xl transition">
-              {ctaText} <ArrowRight className="w-4 h-4" />
+              {resolvedCtaText} <ArrowRight className="w-4 h-4" />
             </Link>
             <Link href="/pricing"
               className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white font-medium px-6 py-3.5 rounded-xl transition">
