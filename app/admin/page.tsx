@@ -114,10 +114,10 @@ export default function AdminPage() {
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { icon: Eye, label: 'Total Views (14d)', value: total('pageviews'), color: 'text-blue-400' },
-            { icon: Users, label: 'Waitlists', value: total('waitlists'), color: 'text-emerald-400' },
-            { icon: TrendingUp, label: 'Trial Starts', value: total('trials'), color: 'text-amber-400' },
-            { icon: CreditCard, label: 'Checkout Success', value: total('checkout_successes'), color: 'text-violet-400' },
+            { icon: Eye, label: t('admin.totalViews14d'), value: total('pageviews'), color: 'text-blue-400' },
+            { icon: Users, label: t('admin.waitlists'), value: total('waitlists'), color: 'text-emerald-400' },
+            { icon: TrendingUp, label: t('admin.trialStarts'), value: total('trials'), color: 'text-amber-400' },
+            { icon: CreditCard, label: t('admin.checkoutSuccess'), value: total('checkout_successes'), color: 'text-violet-400' },
           ].map((card, i) => (
             <div key={i} className="bg-gray-900 border border-gray-800 rounded-xl p-5">
               <div className="flex items-center gap-2 mb-2">
@@ -138,11 +138,11 @@ export default function AdminPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-gray-500 border-b border-gray-800">
-                  <th className="text-left py-2 px-3">Date</th>
-                  <th className="text-right py-2 px-3">Views</th>
-                  <th className="text-right py-2 px-3">Waitlists</th>
-                  <th className="text-right py-2 px-3">Trials</th>
-                  <th className="text-right py-2 px-3">Checkout OK</th>
+                  <th className="text-left py-2 px-3">{t('admin.thDate')}</th>
+                  <th className="text-right py-2 px-3">{t('admin.thViews')}</th>
+                  <th className="text-right py-2 px-3">{t('admin.thWaitlists')}</th>
+                  <th className="text-right py-2 px-3">{t('admin.thTrials')}</th>
+                  <th className="text-right py-2 px-3">{t('admin.thCheckoutOk')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -185,11 +185,11 @@ export default function AdminPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-gray-500 border-b border-gray-800">
-                  <th className="text-left py-2 px-3">Contact</th>
-                  <th className="text-left py-2 px-3">Source</th>
-                  <th className="text-left py-2 px-3">Status</th>
-                  <th className="text-left py-2 px-3">Plan</th>
-                  <th className="text-left py-2 px-3">Created</th>
+                  <th className="text-left py-2 px-3">{t('admin.thContact')}</th>
+                  <th className="text-left py-2 px-3">{t('admin.thSource')}</th>
+                  <th className="text-left py-2 px-3">{t('admin.thStatus')}</th>
+                  <th className="text-left py-2 px-3">{t('admin.thPlan')}</th>
+                  <th className="text-left py-2 px-3">{t('admin.thCreated')}</th>
                 </tr>
               </thead>
               <tbody>

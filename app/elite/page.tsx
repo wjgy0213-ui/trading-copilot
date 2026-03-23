@@ -212,10 +212,10 @@ export default function ElitePage() {
                     onChange={(e) => setExchange(e.target.value)}
                     className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   >
-                    <option value="binance">Binance USDT-M Futures</option>
-                    <option value="okx">OKX</option>
-                    <option value="bybit">Bybit</option>
-                    <option value="hyperliquid">Hyperliquid</option>
+                    <option value="binance">{t('elite.exchangeBinance')}</option>
+                    <option value="okx">{t('elite.exchangeOkx')}</option>
+                    <option value="bybit">{t('elite.exchangeBybit')}</option>
+                    <option value="hyperliquid">{t('elite.exchangeHyperliquid')}</option>
                   </select>
                 </div>
 
