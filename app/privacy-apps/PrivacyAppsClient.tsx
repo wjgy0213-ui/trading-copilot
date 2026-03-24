@@ -17,15 +17,15 @@ export default function PrivacyAppsClient() {
   ];
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', padding: '40px 20px', fontFamily: 'system-ui, sans-serif', color: '#e5e7eb', backgroundColor: '#0f172a', minHeight: '100vh' }}>
-      <h1 style={{ fontSize: 32, marginBottom: 8 }}>{t('privacy.title')}</h1>
-      <p style={{ color: '#94a3b8', marginBottom: 32 }}>{t('privacy.subtitle')}</p>
-      <p style={{ color: '#94a3b8', marginBottom: 24 }}>{t('privacy.lastUpdated')}</p>
+    <div className="max-w-3xl mx-auto px-5 py-10 text-gray-200 bg-gray-950 min-h-screen">
+      <h1 className="text-3xl font-bold mb-2">{t('privacy.title')}</h1>
+      <p className="text-gray-400 mb-8">{t('privacy.subtitle')}</p>
+      <p className="text-gray-400 mb-6">{t('privacy.lastUpdated')}</p>
 
       {sections.map((section, i) => (
         <div key={i}>
-          <h2 style={{ fontSize: 24, marginTop: 32, marginBottom: 12 }}>{section.title}</h2>
-          <p style={{ lineHeight: 1.7, marginBottom: 16 }}>{section.text}</p>
+          <h2 className="text-2xl font-semibold mt-8 mb-3">{section.title}</h2>
+          <p className="leading-7 mb-4 text-gray-300">{section.text}</p>
         </div>
       ))}
     </div>

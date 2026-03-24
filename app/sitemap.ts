@@ -5,13 +5,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const base = 'https://www.tradingcopilot.app';
   const now = new Date();
 
-  // Blog post URLs
-  const blogUrls: MetadataRoute.Sitemap = getAllPosts().map(post => ({
-    url: `${base}/blog/${post.slug}`,
-    lastModified: new Date(post.date),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }));
+  // Blog post URLs (guard against invalid dates)
+  const blogUrls: MetadataRoute.Sitemap = getAllPosts()
+    .filter(post => !isNaN(new Date(post.date).getTime()))
+    .map(post => ({
+      url: `${base}/blog/${post.slug}`,
+      lastModified: new Date(post.date),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    }));
 
   // Feature landing pages
   const featurePages = ['health', 'sniper', 'practice', 'signals', 'review', 'guardian', 'whales'];

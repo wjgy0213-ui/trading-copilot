@@ -26,7 +26,7 @@ export function getAllPosts(): BlogPost[] {
       slug: data.slug || file.replace(/\.mdx?$/, ''),
       title: data.title || 'Untitled',
       description: data.description || '',
-      date: data.date || '',
+      date: data.date || data.publishedAt || '',
       author: data.author || 'Trading Copilot',
       tags: data.tags || [],
       image: data.image,
