@@ -239,7 +239,7 @@ function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
     miniSVG = pts;
   }
 
-  const shareText = `${tr('strategy.shareText')}\n📊 ${strategyName} (${symbolLabel} ${tfLabel[timeframe]})\n⭐ 综合评分 ${score} ${tr('strategy.scoreLabel')} (${grade}级)\n💰 总收益 ${result.totalReturnPercent > 0 ? '+' : ''}${result.totalReturnPercent.toFixed(1)}%\n✅ 胜率 ${result.winRate.toFixed(1)}%  📉 最大回撤 ${result.maxDrawdownPercent.toFixed(1)}%\n\n免费试用 👉 trading-copilot-delta.vercel.app`;
+  const shareText = `${tr('strategy.shareText')}\n📊 ${strategyName} (${symbolLabel} ${tfLabel[timeframe]})\n⭐ ${tr('strategy.shareOverallScore')} ${score} ${tr('strategy.scoreLabel')} (${grade}${tr('strategy.shareGradeSuffix')})\n💰 ${tr('strategy.shareTotalReturn')} ${result.totalReturnPercent > 0 ? '+' : ''}${result.totalReturnPercent.toFixed(1)}%\n✅ ${tr('strategy.shareWinRate')} ${result.winRate.toFixed(1)}%  📉 ${tr('strategy.shareMaxDD')} ${result.maxDrawdownPercent.toFixed(1)}%\n\n${tr('strategy.shareFreeTrialCTA')} 👉 trading-copilot-delta.vercel.app`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareText).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
@@ -316,7 +316,7 @@ function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
               <div className="text-xs font-semibold text-emerald-400">TradingCopilot</div>
               <div className="text-[9px] text-gray-600">trading-copilot-delta.vercel.app</div>
             </div>
-            <div className="text-[9px] text-gray-600">{new Date().toLocaleDateString('zh-CN')}</div>
+            <div className="text-[9px] text-gray-600">{new Date().toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US')}</div>
           </div>
         </div>
 
@@ -430,7 +430,7 @@ function StrategyPage() {
             <h1 className="text-2xl font-bold flex items-center gap-2"><Layers className="w-6 h-6 text-emerald-400" />{tr('strategy.workshopTitle')}</h1>
             <p className="text-sm text-gray-500 mt-1">{tr('strategy.workshopFlow')}</p>
           </div>
-          {results.length > 0 && <button onClick={() => setResults([])} className="text-xs text-gray-500 hover:text-gray-300 flex items-center gap-1"><Trash2 className="w-3 h-3" /> 清空</button>}
+          {results.length > 0 && <button onClick={() => setResults([])} className="text-xs text-gray-500 hover:text-gray-300 flex items-center gap-1"><Trash2 className="w-3 h-3" /> {tr('strategy.clearButton')}</button>}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
@@ -506,7 +506,7 @@ function StrategyPage() {
 
             <button onClick={handleRun} disabled={loading}
               className={`w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition ${loading ? 'bg-gray-800 text-gray-500 cursor-wait' : 'bg-emerald-600 hover:bg-emerald-500 text-white'}`}>
-              {loading ? <><div className="w-4 h-4 border-2 border-gray-600 border-t-white rounded-full animate-spin" /> {tr('strategy.calculating')}</> : <><Play className="w-4 h-4" /> 运行回测</>}
+              {loading ? <><div className="w-4 h-4 border-2 border-gray-600 border-t-white rounded-full animate-spin" /> {tr('strategy.calculating')}</> : <><Play className="w-4 h-4" /> {tr('strategy.runBacktest')}</>}
             </button>
             {results.length > 0 && results.length < 3 && <p className="text-[10px] text-gray-600 text-center">{tr('strategy.compareHint')}</p>}
             {error && <p className="text-xs text-red-400 text-center">{error}</p>}
@@ -594,7 +594,7 @@ function StrategyPage() {
                     ))}</tbody>
                   </table>
                 </div>
-                <div className="mt-2 text-[10px] text-gray-600">点击"应用"将最优参数填入滑块</div>
+                <div className="mt-2 text-[10px] text-gray-600">{tr('strategy.applyHintText')}</div>
               </div>
             )}
           </div>
@@ -603,7 +603,7 @@ function StrategyPage() {
           <div className="lg:col-span-5 space-y-4">
             {!latest && !loading && (
               <div className="flex items-center justify-center h-96 border border-gray-800 rounded-xl bg-gray-900/20">
-                <div className="text-center text-gray-600"><BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-30" /><p className="text-sm">{tr('strategy.selectAndRun')}</p><p className="text-xs mt-1">结果将显示在这里</p></div>
+                <div className="text-center text-gray-600"><BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-30" /><p className="text-sm">{tr('strategy.selectAndRun')}</p><p className="text-xs mt-1">{tr('strategy.resultsPlaceholder')}</p></div>
               </div>
             )}
             {latest && (<>
@@ -642,13 +642,13 @@ function StrategyPage() {
                   </div>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
-                  {(() => { const s = calcScore(latest); const color = s >= 61 ? 'text-green-400' : s >= 31 ? 'text-yellow-400' : 'text-red-400'; const grade = s >= 80 ? 'S级' : s >= 61 ? 'A级' : s >= 31 ? 'B级' : 'C级'; return <StatCard label="综合评分" value={`${s}`} sub={grade} color={color} />; })()}
+                  {(() => { const s = calcScore(latest); const color = s >= 61 ? 'text-green-400' : s >= 31 ? 'text-yellow-400' : 'text-red-400'; const grade = s >= 80 ? tr('strategy.gradeS') : s >= 61 ? tr('strategy.gradeA') : s >= 31 ? tr('strategy.gradeB') : tr('strategy.gradeC'); return <StatCard label={tr('strategy.overallScore')} value={`${s}`} sub={grade} color={color} />; })()}
                   <StatCard label={tr('strategy.totalReturn')} value={`${latest.totalReturnPercent > 0 ? '+' : ''}${latest.totalReturnPercent.toFixed(2)}%`} sub={`$${latest.totalReturn.toFixed(0)}`} color={latest.totalReturnPercent > 0 ? 'text-green-400' : 'text-red-400'} />
                   <StatCard label={tr('strategy.winRateLabel')} value={`${latest.winRate.toFixed(1)}%`} sub={`${latest.winTrades} ${tr('strategy.winLabel')} ${latest.lossTrades} ${tr('strategy.loseLabel')}`} color={latest.winRate >= 50 ? 'text-green-400' : 'text-yellow-400'} />
                   <StatCard label={tr('strategy.profitFactor')} value={latest.profitFactor === Infinity ? '∞' : latest.profitFactor.toFixed(2)} color={latest.profitFactor >= 1.5 ? 'text-green-400' : latest.profitFactor >= 1 ? 'text-yellow-400' : 'text-red-400'} />
                   <StatCard label={tr('strategy.maxDrawdown')} value={`${latest.maxDrawdownPercent.toFixed(2)}%`} sub={`$${latest.maxDrawdown.toFixed(0)}`} color={latest.maxDrawdownPercent < 10 ? 'text-green-400' : latest.maxDrawdownPercent < 20 ? 'text-yellow-400' : 'text-red-400'} />
                   <StatCard label={tr('strategy.sharpeRatio')} value={latest.sharpeRatio.toFixed(2)} color={latest.sharpeRatio > 1 ? 'text-green-400' : latest.sharpeRatio > 0 ? 'text-yellow-400' : 'text-red-400'} />
-                  <StatCard label={tr('strategy.totalTrades')} value={`${latest.totalTrades} ${tr('strategy.tradeUnit2')}`} sub={`平均${latest.avgHoldBars.toFixed(1)}根K线`} />
+                  <StatCard label={tr('strategy.totalTrades')} value={`${latest.totalTrades} ${tr('strategy.tradeUnit2')}`} sub={tr('strategy.avgHoldBars').replace('{bars}', latest.avgHoldBars.toFixed(1))} />
                 </div>
               </div>
 
@@ -825,20 +825,20 @@ function StrategyPage() {
                 <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300 mb-3">{tr('strategy.whatMeans')}</div>
                 <div className="grid gap-3 sm:grid-cols-2 text-sm text-gray-400 leading-relaxed">
                   <div>
-                    <span className="text-gray-200 font-medium">胜率 {latest.winRate.toFixed(1)}%</span>
-                    <p className="mt-1">{latest.winRate >= 50 ? '超过半数交易盈利。但胜率高不等于赚钱——关键看盈亏比是否匹配。' : '不到一半交易盈利。这没问题——只要每次赢的比输的多，低胜率也能稳定赚钱。趋势策略通常 35-45% 胜率。'}</p>
+                    <span className="text-gray-200 font-medium">{tr('strategy.interpWinRateTitle').replace('{pct}', latest.winRate.toFixed(1))}</span>
+                    <p className="mt-1">{latest.winRate >= 50 ? tr('strategy.interpWinRateHigh') : tr('strategy.interpWinRateLow')}</p>
                   </div>
                   <div>
-                    <span className="text-gray-200 font-medium">最大回撤 {latest.maxDrawdown.toFixed(1)}%</span>
-                    <p className="mt-1">{latest.maxDrawdown <= 15 ? '回撤控制出色，15% 以下说明策略稳健。' : latest.maxDrawdown <= 30 ? '中等水平。实盘中你能承受账户缩水这么多吗？心理承受力是关键。' : '回撤偏大，实盘可能很难坚持。建议降低仓位或加紧止损来压缩回撤。'}</p>
+                    <span className="text-gray-200 font-medium">{tr('strategy.interpMaxDDTitle').replace('{pct}', latest.maxDrawdown.toFixed(1))}</span>
+                    <p className="mt-1">{latest.maxDrawdown <= 15 ? tr('strategy.interpMaxDDLow') : latest.maxDrawdown <= 30 ? tr('strategy.interpMaxDDMid') : tr('strategy.interpMaxDDHigh')}</p>
                   </div>
                   <div>
-                    <span className="text-gray-200 font-medium">总交易 {latest.totalTrades} 笔</span>
-                    <p className="mt-1">{latest.totalTrades >= 50 ? '样本量足够，结果有统计意义。' : '交易笔数偏少，结果可能受个别交易影响较大。建议拉长回测周期增加样本。'}</p>
+                    <span className="text-gray-200 font-medium">{tr('strategy.interpTotalTradesTitle').replace('{count}', String(latest.totalTrades))}</span>
+                    <p className="mt-1">{latest.totalTrades >= 50 ? tr('strategy.interpTotalTradesHigh') : tr('strategy.interpTotalTradesLow')}</p>
                   </div>
                   <div>
-                    <span className="text-gray-200 font-medium">总收益 {latest.totalReturnPercent > 0 ? '+' : ''}{latest.totalReturnPercent.toFixed(1)}%</span>
-                    <p className="mt-1">{latest.totalReturnPercent > 0 ? '策略整体盈利。但别忘了：过去盈利不保证未来——用蒙特卡洛看看在不同运气下表现如何。' : '策略整体亏损。先检查止损是否太紧、入场信号是否有效，再考虑参数优化。'}</p>
+                    <span className="text-gray-200 font-medium">{tr('strategy.interpTotalReturnTitle').replace('{pct}', `${latest.totalReturnPercent > 0 ? '+' : ''}${latest.totalReturnPercent.toFixed(1)}`)}</span>
+                    <p className="mt-1">{latest.totalReturnPercent > 0 ? tr('strategy.interpTotalReturnPositive') : tr('strategy.interpTotalReturnNegative')}</p>
                   </div>
                 </div>
               </div>
@@ -848,7 +848,7 @@ function StrategyPage() {
                 <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-300">{tr('strategy.nextStepLabel')}</div>
                 <h3 className="mt-2 text-lg font-semibold text-white">{tr('strategy.nextStepTitle')}</h3>
                 <p className="mt-2 text-sm text-gray-400">{tr('strategy.nextStepDesc')}</p>
-                <a href="/practice" className="mt-4 inline-flex items-center gap-2 rounded-full bg-cyan-500 px-4 py-2 text-sm font-medium text-black transition hover:bg-cyan-400">去 Practice 训练 →</a>
+                <a href="/practice" className="mt-4 inline-flex items-center gap-2 rounded-full bg-cyan-500 px-4 py-2 text-sm font-medium text-black transition hover:bg-cyan-400">{tr('strategy.practiceTrainCTA')}</a>
               </div>
             </>)}
           </div>

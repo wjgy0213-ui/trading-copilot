@@ -6,53 +6,54 @@ import { useState } from 'react';
 import { useSession } from '@/lib/useSession';
 import { BookOpen, Check, Crown, Shield, Star, Zap, Users, Clock, ArrowRight, Loader2 } from 'lucide-react';
 
-const PLANS = [
-  {
-    id: 'basic',
-    name: '课程基础版', nameEn: 'Course Basic',
-    price: 49,
-    originalPrice: 69,
-    eliteMonths: 1,
-    eliteLabel: '1个月Pro', eliteLabelEn: '1 month Pro',
-    features: ['全部课程终身访问', '8大策略模板库', '课程进度追踪', '社区讨论权限', '1个月Pro体验'],
-    featuresEn: ['Lifetime access to all courses', '8 strategy template library', 'Course progress tracking', 'Community access', '1 month Pro trial'],
-    icon: BookOpen,
-    color: 'emerald',
-    gradient: 'from-emerald-600 to-cyan-600',
-  },
-  {
-    id: 'bundle',
-    name: '课程+工具包', nameEn: 'Course + Toolkit',
-    price: 99,
-    originalPrice: 149,
-    eliteMonths: 3,
-    eliteLabel: '3个月Elite', eliteLabelEn: '3 months Elite',
-    popular: true,
-    features: ['全部课程终身访问', '8大策略模板库', '实战案例集（20+真实交易）', '蒙特卡洛回测模板', '课程进度追踪', '3个月Elite体验'],
-    featuresEn: ['Lifetime access to all courses', '8 strategy template library', 'Case studies (20+ real trades)', 'Monte Carlo backtest templates', 'Course progress tracking', '3 months Elite trial'],
-    icon: Crown,
-    color: 'violet',
-    gradient: 'from-violet-600 to-purple-600',
-  },
-  {
-    id: 'vip',
-    name: '全家桶VIP', nameEn: 'All-in-One VIP',
-    price: 149,
-    originalPrice: 249,
-    eliteMonths: 6,
-    eliteLabel: '6个月Elite', eliteLabelEn: '6 months Elite',
-    features: ['全部课程终身访问', '8大策略模板库', '实战案例集（20+真实交易）', '蒙特卡洛回测模板', '1v1策略复盘（月度）', '专属VIP交流群', '6个月Elite体验', '新课程优先体验'],
-    featuresEn: ['Lifetime access to all courses', '8 strategy template library', 'Case studies (20+ real trades)', 'Monte Carlo backtest templates', '1v1 strategy review (monthly)', 'Exclusive VIP group', '6 months Elite trial', 'Early access to new courses'],
-    icon: Shield,
-    color: 'amber',
-    gradient: 'from-amber-500 to-orange-600',
-  },
-];
+function usePlans() {
+  const { t } = useI18n();
+  return [
+    {
+      id: 'basic',
+      name: t('course.plan1.name'),
+      price: 49,
+      originalPrice: 69,
+      eliteMonths: 1,
+      eliteLabel: t('course.plan1.eliteLabel'),
+      features: [t('course.plan1.f1'), t('course.plan1.f2'), t('course.plan1.f3'), t('course.plan1.f4'), t('course.plan1.f5')],
+      icon: BookOpen,
+      color: 'emerald',
+      gradient: 'from-emerald-600 to-cyan-600',
+    },
+    {
+      id: 'bundle',
+      name: t('course.plan2.name'),
+      price: 99,
+      originalPrice: 149,
+      eliteMonths: 3,
+      eliteLabel: t('course.plan2.eliteLabel'),
+      popular: true,
+      features: [t('course.plan1.f1'), t('course.plan1.f2'), t('course.plan2.f1'), t('course.plan2.f2'), t('course.plan1.f3'), t('course.plan2.f3')],
+      icon: Crown,
+      color: 'violet',
+      gradient: 'from-violet-600 to-purple-600',
+    },
+    {
+      id: 'vip',
+      name: t('course.plan3.name'),
+      price: 149,
+      originalPrice: 249,
+      eliteMonths: 6,
+      eliteLabel: t('course.plan3.eliteLabel'),
+      features: [t('course.plan1.f1'), t('course.plan1.f2'), t('course.plan2.f1'), t('course.plan2.f2'), t('course.plan3.f1'), t('course.plan3.f2'), t('course.plan3.f3'), t('course.plan3.f4')],
+      icon: Shield,
+      color: 'amber',
+      gradient: 'from-amber-500 to-orange-600',
+    },
+  ];
+}
 
 const STATS = { students: 127, rating: 4.8, chapters: 24, hours: 12 };
 
 export default function CoursePage() {
   const { t, locale } = useI18n();
+  const PLANS = usePlans();
   const { session, hasCourse } = useSession();
   const [loading, setLoading] = useState<string | null>(null);
   const [email, setEmail] = useState('');
@@ -114,7 +115,7 @@ export default function CoursePage() {
           {[
             { icon: Users, label: t('course.students'), value: `${STATS.students}+` },
             { icon: Star, label: t('course.rating'), value: `${STATS.rating}/5` },
-            { icon: BookOpen, label: t('course.chapters'), value: `${STATS.chapters}章` },
+            { icon: BookOpen, label: t('course.chapters'), value: `${STATS.chapters}` },
             { icon: Clock, label: t('course.duration'), value: `${STATS.hours}h+` },
           ].map(s => (
             <div key={s.label} className="text-center">
@@ -152,9 +153,9 @@ export default function CoursePage() {
                   <plan.icon className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">{locale === 'en' && plan.nameEn ? plan.nameEn : plan.name}</h3>
+                  <h3 className="font-semibold text-white">{plan.name}</h3>
                   <span className={`text-xs px-2 py-0.5 rounded-full bg-${plan.color}-500/10 text-${plan.color}-400`}>
-                    送{locale === 'en' && plan.eliteLabelEn ? plan.eliteLabelEn : plan.eliteLabel}
+                    {t('course.giftPrefix')}{plan.eliteLabel}
                   </span>
                 </div>
               </div>
@@ -171,7 +172,7 @@ export default function CoursePage() {
               </div>
 
               <div className="flex-1 space-y-3 mb-6">
-                {((locale === 'en' && plan.featuresEn) ? plan.featuresEn : plan.features).map(f => (
+                {plan.features.map(f => (
                   <div key={f} className="flex items-start gap-2 text-sm">
                     <Check className={`w-4 h-4 mt-0.5 text-${plan.color}-400 shrink-0`} />
                     <span className="text-gray-300">{f}</span>

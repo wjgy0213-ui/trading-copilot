@@ -272,7 +272,7 @@ function PricingPage() {
                           : 'bg-gray-800 text-gray-400 cursor-default'
                   }`}>
                   {loading === plan.id ? <Loader2 className="w-4 h-4 animate-spin" /> :
-                   isCurrentPlan ? '✓ 当前方案' :
+                   isCurrentPlan ? t('pricing.currentPlan') :
                    <>{plan.cta} <ArrowRight className="w-4 h-4" /></>}
                 </button>
               </div>
@@ -287,7 +287,7 @@ function PricingPage() {
               onClick={() => setShowCancelModal(true)}
               className="text-sm text-gray-600 hover:text-gray-400 transition"
             >
-              取消订阅 →
+              {t('pricing.cancelSub')}
             </button>
           </div>
         )}
@@ -297,11 +297,11 @@ function PricingPage() {
           <h2 className="text-xl font-bold text-center mb-8">{t('pricing.faq.title')}</h2>
           <div className="space-y-4">
             {[
-              { q: '可以随时取消吗？', a: '是的，随时可以在设置中取消订阅，当前计费周期内仍可使用全部功能。' },
-              { q: '支持哪些支付方式？', a: '通过Stripe支持信用卡、借记卡、Apple Pay、Google Pay等主流支付方式。' },
-              { q: 'Elite的实盘自动化安全吗？', a: 'API Key加密存储，仅限交易权限（不可提币），内置风控系统防止异常交易。' },
-              { q: t('pricing.faq1.q'), a: t('pricing.faq1.a') },
-              { q: '年付和月付有什么区别？', a: '年付享受5折优惠，相当于买6个月送6个月。可以随时从月付切换到年付。' },
+              { q: t('pricing.faq.q1'), a: t('pricing.faq.a1') },
+              { q: t('pricing.faq.q2'), a: t('pricing.faq.a2') },
+              { q: t('pricing.faq.q3'), a: t('pricing.faq.a3') },
+              { q: t('pricing.faq.q4'), a: t('pricing.faq.a4') },
+              { q: t('pricing.faq.q5'), a: t('pricing.faq.a5') },
             ].map(({ q, a }) => (
               <div key={q} className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">
                 <h3 className="font-medium text-sm mb-1.5">{q}</h3>
