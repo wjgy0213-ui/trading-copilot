@@ -192,7 +192,7 @@ function OfficialLabStats() {
   if (!stats) return <div className="text-gray-500 text-sm">{t('sniper.loading')}</div>;
 
   return (
-    <div className="grid grid-cols-4 gap-3 text-center text-sm">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-sm">
       <div>
         <div className={`font-bold ${stats.pnl.startsWith('+') ? 'text-green-400' : 'text-red-400'}`}>{stats.pnl}</div>
         <div className="text-gray-500 text-xs">{t('sniper.cumReturn')}</div>
@@ -501,7 +501,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
             <h3 className="text-xl font-bold mb-2">{t('sniper.ready')}</h3>
             <p className="text-gray-400 mb-6">{t('sniper.readyDesc')}</p>
 
-            <div className="grid grid-cols-3 gap-4 mb-8 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-sm">
               <div className="bg-gray-800/60 rounded-xl p-3">
                 <div className="text-purple-400 font-bold">10 SOL</div>
                 <div className="text-gray-500 text-xs">{t('sniper.startFund')}</div>

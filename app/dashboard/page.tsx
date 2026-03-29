@@ -37,7 +37,7 @@ function DetailModal({ indicator, onClose, t, locale }: { indicator: ITCIndicato
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-4 gap-3 p-5">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-5">
           <div className="bg-gray-800/50 rounded-lg p-3">
             {/* Current Value */}<div className="text-[10px] text-gray-500 mb-1">{t('dashboard.currentValue')}</div>
             <div className={`text-2xl font-mono font-bold ${getRiskColor(indicator.value)}`}>{pct}</div>
@@ -203,7 +203,7 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="rounded-xl border border-gray-800 bg-black/20 px-4 py-3 text-sm text-gray-300">
-            <div className="text-[11px] uppercase tracking-[0.16em] text-gray-500">Recommended path</div>
+            <div className="text-[11px] uppercase tracking-[0.16em] text-gray-500">{t('dashboard.recommendedPath')}</div>
             <div className="mt-2 flex flex-wrap items-center gap-2 text-sm font-medium">
               <Link href="/health" className="rounded-full bg-gray-800 px-3 py-1.5 hover:bg-gray-700 transition-colors">{t('dashboard.step1')}</Link>
               <ArrowRight className="w-4 h-4 text-gray-600" />
@@ -255,7 +255,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Summary Bar */}
-      <div className="grid grid-cols-3 gap-3 mb-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
         {[
           { label: t('dashboard.low_risk'), count: ITCIndicators.filter(i => i.value < 0.3).length, color: 'text-emerald-400', bg: 'bg-emerald-500/5 border-emerald-500/20' },
           { label: t('dashboard.mid_risk'), count: ITCIndicators.filter(i => i.value >= 0.3 && i.value < 0.7).length, color: 'text-amber-400', bg: 'bg-amber-500/5 border-amber-500/20' },

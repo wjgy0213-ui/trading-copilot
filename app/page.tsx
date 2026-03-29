@@ -146,7 +146,7 @@ export default function LandingPage() {
       {/* Social Proof */}
       <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}
         className="container mx-auto px-4 pb-16">
-        <div className="max-w-4xl mx-auto grid grid-cols-4 gap-6 text-center">
+        <div className="max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
           {[
             { n: 1247, s: '+', labelKey: 'social.traders', color: 'text-blue-400' },
             { n: 15328, s: '+', labelKey: 'social.trades', color: 'text-green-400' },

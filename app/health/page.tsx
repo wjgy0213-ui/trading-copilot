@@ -160,7 +160,7 @@ export default function HealthCheckPage() {
             {/* Interpretation */}
             <div className="bg-gray-800/30 rounded-xl p-4 border border-gray-700/30 mb-6">
               <h3 className="text-sm font-medium text-gray-400 mb-2">{t('health.howToRead')}</h3>
-              <div className="grid grid-cols-3 gap-2 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
                 <div className="text-center p-2 rounded-lg bg-red-500/10 border border-red-500/20">
                   <div className="text-red-400 font-bold">0-39</div>
                   <div className="text-gray-400">{t('health.danger')}</div>

@@ -276,7 +276,7 @@ function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
             </div>
 
             {/* Metrics grid */}
-            <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
               {[
                 { label: tr('strategy.totalReturn'), value: `${result.totalReturnPercent > 0 ? '+' : ''}${result.totalReturnPercent.toFixed(1)}%`, color: returnColor },
                 { label: tr('strategy.winRateLabel'), value: `${result.winRate.toFixed(1)}%`, color: result.winRate >= 50 ? '#34d399' : '#fbbf24' },
@@ -641,7 +641,7 @@ function StrategyPage() {
                     </button>
                   </div>
                 </div>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {(() => { const s = calcScore(latest); const color = s >= 61 ? 'text-green-400' : s >= 31 ? 'text-yellow-400' : 'text-red-400'; const grade = s >= 80 ? tr('strategy.gradeS') : s >= 61 ? tr('strategy.gradeA') : s >= 31 ? tr('strategy.gradeB') : tr('strategy.gradeC'); return <StatCard label={tr('strategy.overallScore')} value={`${s}`} sub={grade} color={color} />; })()}
                   <StatCard label={tr('strategy.totalReturn')} value={`${latest.totalReturnPercent > 0 ? '+' : ''}${latest.totalReturnPercent.toFixed(2)}%`} sub={`$${latest.totalReturn.toFixed(0)}`} color={latest.totalReturnPercent > 0 ? 'text-green-400' : 'text-red-400'} />
                   <StatCard label={tr('strategy.winRateLabel')} value={`${latest.winRate.toFixed(1)}%`} sub={`${latest.winTrades} ${tr('strategy.winLabel')} ${latest.lossTrades} ${tr('strategy.loseLabel')}`} color={latest.winRate >= 50 ? 'text-green-400' : 'text-yellow-400'} />
@@ -696,7 +696,7 @@ function StrategyPage() {
 
                 {mcResult && (<>
                   {/* Probability Cards */}
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     <div className="bg-gray-900/50 rounded-lg p-2.5 text-center">
                       <div className="text-[10px] text-gray-500 mb-1">{tr('strategy.winProb')}</div>
                       <div className={`text-lg font-bold font-mono ${mcResult.probProfit >= 0.7 ? 'text-green-400' : mcResult.probProfit >= 0.5 ? 'text-yellow-400' : 'text-red-400'}`}>
