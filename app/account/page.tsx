@@ -6,12 +6,10 @@ import { User, CreditCard, LogOut, Shield, Clock, ChevronRight, AlertTriangle } 
 import Link from 'next/link';
 import { useI18n } from '@/lib/i18n';
 
-function formatDate(ts: number) {
-  return new Date(ts * 1000).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
-}
-
 export default function AccountPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const formatDate = (ts: number) =>
+    new Date(ts * 1000).toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   const { session, loading: sessionLoading, logout } = useSession();
   const [subData, setSubData] = useState<any>(null);
   const [loadingSub, setLoadingSub] = useState(false);

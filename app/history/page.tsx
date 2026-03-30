@@ -9,7 +9,7 @@ import EquityCurve from '@/components/EquityCurve';
 import { useI18n } from '@/lib/i18n';
 
 export default function HistoryPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [closedTrades, setClosedTrades] = useState<Trade[]>([]);
   const [aiScores, setAIScores] = useState<Record<string, AIScore>>({});
 
@@ -206,8 +206,8 @@ export default function HistoryPage() {
                 <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
                   <Clock className="w-3 h-3" />
                   <span>
-                    {new Date(trade.openedAt).toLocaleString('zh-CN')} -{' '}
-                    {trade.closedAt ? new Date(trade.closedAt).toLocaleString('zh-CN') : t('history.ongoing')}
+                    {new Date(trade.openedAt).toLocaleString(locale === 'zh' ? 'zh-CN' : 'en-US')} -{' '}
+                    {trade.closedAt ? new Date(trade.closedAt).toLocaleString(locale === 'zh' ? 'zh-CN' : 'en-US') : t('history.ongoing')}
                   </span>
                 </div>
 

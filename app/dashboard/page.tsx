@@ -75,10 +75,10 @@ function DetailModal({ indicator, onClose, t, locale }: { indicator: ITCIndicato
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
-              <XAxis dataKey="timestamp" tickFormatter={v => new Date(v).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })} tick={{ fill: '#6b7280', fontSize: 10 }} stroke="#374151" />
+              <XAxis dataKey="timestamp" tickFormatter={v => new Date(v).toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', { month: 'short', day: 'numeric' })} tick={{ fill: '#6b7280', fontSize: 10 }} stroke="#374151" />
               <YAxis domain={[0, 1]} tickFormatter={v => Math.round(v * 100).toString()} tick={{ fill: '#6b7280', fontSize: 10 }} stroke="#374151" />
               <Tooltip contentStyle={{ background: '#111827', border: '1px solid #374151', borderRadius: 8, fontSize: 12 }}
-                labelFormatter={v => new Date(v).toLocaleDateString('zh-CN')}
+                labelFormatter={v => new Date(v).toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US')}
                 formatter={(v: number | undefined) => [Math.round((v || 0) * 100), displayName]} />
               <ReferenceLine y={0.3} stroke="#34d399" strokeDasharray="5 5" strokeOpacity={0.4} />
               <ReferenceLine y={0.7} stroke="#f87171" strokeDasharray="5 5" strokeOpacity={0.4} />
@@ -131,7 +131,7 @@ const START_HERE_PATHS = [
   {
     titleKey: 'dashboard.path.beginner.title',
     subtitleKey: 'dashboard.path.beginner.subtitle',
-    badge: 'Beginner',
+    badgeKey: 'dashboard.path.beginner.badge',
     accent: 'emerald',
     fitKey: 'dashboard.path.beginner.fit',
     ctaHref: '/health',
@@ -140,7 +140,7 @@ const START_HERE_PATHS = [
   {
     titleKey: 'dashboard.path.intermediate.title',
     subtitleKey: 'dashboard.path.intermediate.subtitle',
-    badge: 'Intermediate',
+    badgeKey: 'dashboard.path.intermediate.badge',
     accent: 'cyan',
     fitKey: 'dashboard.path.intermediate.fit',
     ctaHref: '/practice',
@@ -149,7 +149,7 @@ const START_HERE_PATHS = [
   {
     titleKey: 'dashboard.path.advanced.title',
     subtitleKey: 'dashboard.path.advanced.subtitle',
-    badge: 'Researcher',
+    badgeKey: 'dashboard.path.researcher.badge',
     accent: 'violet',
     fitKey: 'dashboard.path.researcher.fit',
     ctaHref: '/strategy',
@@ -227,7 +227,7 @@ export default function DashboardPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <div className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ${badgeStyles}`}>
-                      {path.badge}
+                      {t(path.badgeKey)}
                     </div>
                     <h3 className="mt-3 text-lg font-semibold text-white">{t(path.titleKey)}</h3>
                     <p className="mt-1 text-sm text-gray-400">{t(path.subtitleKey)}</p>

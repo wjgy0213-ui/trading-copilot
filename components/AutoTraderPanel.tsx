@@ -18,7 +18,7 @@ interface AutoTraderPanelProps {
 }
 
 export default function AutoTraderPanel({ currentPrice, onTradeComplete }: AutoTraderPanelProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [strategy, setStrategy] = useState<AutoStrategy | null>(null);
   const [logs, setLogs] = useState<SignalLog[]>([]);
   const [lastEval, setLastEval] = useState<string>('');
@@ -141,7 +141,7 @@ export default function AutoTraderPanel({ currentPrice, onTradeComplete }: AutoT
               log.type === 'sell' ? 'bg-red-900/20 text-red-400' :
               'bg-gray-800/50 text-gray-500'
             }`}>
-              <span className="font-mono">{new Date(log.time).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}</span>
+              <span className="font-mono">{new Date(log.time).toLocaleTimeString(locale === 'zh' ? 'zh-CN' : 'en-US', { hour: '2-digit', minute: '2-digit' })}</span>
               {' '}{log.message}
               {log.price && <span className="text-gray-500"> @${log.price.toLocaleString()}</span>}
             </div>

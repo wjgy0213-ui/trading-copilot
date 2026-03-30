@@ -92,7 +92,7 @@ function DimensionBar({ dim }: { dim: Dimension }) {
 }
 
 export default function HealthCheckPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [data, setData] = useState<HealthData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -105,7 +105,7 @@ export default function HealthCheckPage() {
       if (!res.ok) throw new Error('Failed to fetch');
       const json = await res.json();
       setData(json);
-      setLastUpdate(new Date(json.timestamp).toLocaleTimeString('zh-CN'));
+      setLastUpdate(new Date(json.timestamp).toLocaleTimeString(locale === 'zh' ? 'zh-CN' : 'en-US'));
       setError('');
     } catch (e: any) {
       setError(e.message);

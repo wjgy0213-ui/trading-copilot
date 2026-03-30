@@ -14,7 +14,7 @@ interface ChatMessage {
 }
 
 export default function AICoach() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -112,7 +112,7 @@ export default function AICoach() {
             )}
             <p className="text-gray-300 leading-relaxed">{msg.text}</p>
             <div className="text-xs text-gray-600 mt-2 font-mono">
-              {new Date(msg.timestamp).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
+              {new Date(msg.timestamp).toLocaleTimeString(locale === 'zh' ? 'zh-CN' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
             </div>
           </div>
         ))}

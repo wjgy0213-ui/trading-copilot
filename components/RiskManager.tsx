@@ -26,7 +26,7 @@ const DEFAULT_SETTINGS: RiskSettings = {
 };
 
 export default function RiskManager() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [settings, setSettings] = useState<RiskSettings>(DEFAULT_SETTINGS);
   const [currentRisk, setCurrentRisk] = useState({
     riskLevel: 'safe' as 'safe' | 'warning' | 'danger',
@@ -267,7 +267,7 @@ export default function RiskManager() {
                   <div className="flex items-start justify-between gap-2">
                     <span className="flex-1">{event.message}</span>
                     <span className="text-gray-500 whitespace-nowrap">
-                      {new Date(event.timestamp).toLocaleTimeString('zh-CN', {
+                      {new Date(event.timestamp).toLocaleTimeString(locale === 'zh' ? 'zh-CN' : 'en-US', {
                         hour: '2-digit',
                         minute: '2-digit',
                       })}
