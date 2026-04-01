@@ -53,13 +53,13 @@ export default function FeatureLanding({
           <h1 className="text-4xl md:text-5xl font-bold mb-4">{title}</h1>
           <p className="text-xl text-gray-300 mb-3">{subtitle}</p>
           <p className="text-gray-500 max-w-2xl mx-auto mb-8">{description}</p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
             <Link href={ctaHref}
-              className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3.5 rounded-xl transition">
-              {resolvedCtaText} <ArrowRight className="w-4 h-4" />
+              className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3.5 rounded-xl transition text-center">
+              {resolvedCtaText} <ArrowRight className="w-4 h-4 shrink-0" />
             </Link>
             <Link href="/pricing"
-              className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white font-medium px-6 py-3.5 rounded-xl transition">
+              className="inline-flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-white font-medium px-6 py-3.5 rounded-xl transition text-center">
               {t('featureLanding.viewPricing')}
             </Link>
           </div>
@@ -101,8 +101,8 @@ export default function FeatureLanding({
           <h3 className="text-xl font-bold mb-2">{t('featureLanding.readyToTry')}</h3>
           <p className="text-gray-400 mb-4">{t('featureLanding.freeUpgrade')}</p>
           <Link href={ctaHref}
-            className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-xl transition">
-            {t('featureLanding.getStartedFree')} <ArrowRight className="w-4 h-4" />
+            className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-xl transition">
+            {t('featureLanding.getStartedFree')} <ArrowRight className="w-4 h-4 shrink-0" />
           </Link>
         </div>
 
