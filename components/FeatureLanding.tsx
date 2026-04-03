@@ -70,7 +70,7 @@ export default function FeatureLanding({
           <h2 className="text-2xl font-bold text-center mb-8">{t('featureLanding.keyBenefits')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {benefits.map((b, i) => (
-              <div key={i} className="flex items-start gap-3 bg-gray-900/50 border border-gray-800 rounded-xl p-4">
+              <div key={i} className="flex items-start gap-3 bg-gray-900/50 border border-gray-800 rounded-xl p-4 hover:border-gray-700 hover:bg-gray-900/80 transition-all duration-200">
                 <Check className={`w-5 h-5 mt-0.5 shrink-0 ${c.text}`} />
                 <span className="text-gray-300">{b}</span>
               </div>
@@ -81,10 +81,10 @@ export default function FeatureLanding({
         {/* How It Works */}
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-center mb-8">{t('featureLanding.howItWorks')}</h2>
-          <div className="space-y-6">
+          <div className="space-y-4">
             {howItWorks.map((step, i) => (
-              <div key={i} className="flex gap-4 items-start">
-                <div className={`w-10 h-10 shrink-0 rounded-xl ${c.bg} flex items-center justify-center font-bold ${c.text}`}>
+              <div key={i} className="flex gap-4 items-start p-4 rounded-xl hover:bg-gray-900/40 transition-all duration-200 group">
+                <div className={`w-10 h-10 shrink-0 rounded-xl ${c.bg} flex items-center justify-center font-bold ${c.text} group-hover:scale-110 transition-transform duration-200`}>
                   {step.step}
                 </div>
                 <div>
@@ -112,8 +112,11 @@ export default function FeatureLanding({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {relatedFeatures.map((f, i) => (
               <Link key={i} href={f.href}
-                className="border border-gray-800 rounded-xl p-5 hover:border-gray-600 hover:bg-gray-900/50 transition-all">
-                <h3 className="font-semibold text-white mb-1">{f.name}</h3>
+                className="group border border-gray-800 rounded-xl p-5 hover:border-gray-600 hover:bg-gray-900/50 transition-all">
+                <h3 className="font-semibold text-white mb-1 flex items-center gap-1.5">
+                  {f.name}
+                  <ArrowRight className="w-3.5 h-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
+                </h3>
                 <p className="text-sm text-gray-500">{f.desc}</p>
               </Link>
             ))}

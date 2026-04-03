@@ -19,16 +19,25 @@ function renderMarkdown(content: string): string {
   let html = content;
   
   // Headers
+  html = html.replace(/^#### (.+)$/gm, '<h4 class="text-base font-semibold text-gray-200 mt-6 mb-2">$1</h4>');
   html = html.replace(/^### (.+)$/gm, '<h3 class="text-lg font-semibold text-white mt-8 mb-3">$1</h3>');
   html = html.replace(/^## (.+)$/gm, '<h2 class="text-xl font-bold text-white mt-10 mb-4 pb-2 border-b border-gray-800">$1</h2>');
   html = html.replace(/^# (.+)$/gm, ''); // Remove h1 (we render title separately)
+  
+  // Images (before links to avoid conflict)
+  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<figure class="my-6"><img src="$2" alt="$1" class="rounded-xl border border-gray-800 w-full" loading="lazy" /><figcaption class="text-center text-xs text-gray-500 mt-2">$1</figcaption></figure>');
+  // Remove empty figcaptions
+  html = html.replace(/<figcaption[^>]*><\/figcaption>/g, '');
   
   // Bold and italic
   html = html.replace(/\*\*(.+?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>');
   html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
   
-  // Code blocks
-  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre class="bg-gray-900 border border-gray-800 rounded-lg p-4 my-4 overflow-x-auto text-sm"><code class="text-emerald-300">$2</code></pre>');
+  // Code blocks with language label
+  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
+    const langLabel = lang ? `<div class="text-[10px] text-gray-500 font-mono mb-2 uppercase">${lang}</div>` : '';
+    return `<pre class="bg-gray-900 border border-gray-800 rounded-lg p-4 my-4 overflow-x-auto text-sm">${langLabel}<code class="text-emerald-300">${code}</code></pre>`;
+  });
   html = html.replace(/`([^`]+)`/g, '<code class="bg-gray-800 px-1.5 py-0.5 rounded text-emerald-300 text-sm">$1</code>');
   
   // Tables
@@ -41,19 +50,34 @@ function renderMarkdown(content: string): string {
     return `<div class="overflow-x-auto my-6"><table class="w-full border-collapse"><thead><tr class="bg-gray-900">${ths}</tr></thead><tbody>${rows}</tbody></table></div>`;
   });
   
-  // Blockquotes
-  html = html.replace(/^> (.+)$/gm, '<blockquote class="border-l-4 border-emerald-500 pl-4 py-2 my-4 text-gray-300 italic">$1</blockquote>');
+  // Multi-line blockquotes (consecutive > lines become one blockquote)
+  html = html.replace(/(^> .+\n?)+/gm, (match) => {
+    const lines = match.trim().split('\n').map((l: string) => l.replace(/^>\s?/, '')).join('<br/>');
+    return `<blockquote class="border-l-4 border-emerald-500/60 pl-4 py-3 my-5 bg-emerald-500/5 rounded-r-lg text-gray-300 italic">${lines}</blockquote>`;
+  });
   
-  // Unordered lists
-  html = html.replace(/^- (.+)$/gm, '<li class="ml-4 text-gray-300 mb-1">• $1</li>');
+  // Unordered lists - wrap consecutive items in <ul>
+  html = html.replace(/(^- .+\n?)+/gm, (match) => {
+    const items = match.trim().split('\n').map((l: string) => {
+      const text = l.replace(/^- /, '');
+      return `<li class="text-gray-300 mb-1.5 pl-1">${text}</li>`;
+    }).join('');
+    return `<ul class="list-disc list-outside ml-5 my-4 space-y-0.5">${items}</ul>`;
+  });
   
-  // Numbered lists
-  html = html.replace(/^\d+\. (.+)$/gm, '<li class="ml-4 text-gray-300 mb-1 list-decimal">$1</li>');
+  // Numbered lists - wrap consecutive items in <ol>
+  html = html.replace(/(^\d+\. .+\n?)+/gm, (match) => {
+    const items = match.trim().split('\n').map((l: string) => {
+      const text = l.replace(/^\d+\.\s/, '');
+      return `<li class="text-gray-300 mb-1.5 pl-1">${text}</li>`;
+    }).join('');
+    return `<ol class="list-decimal list-outside ml-5 my-4 space-y-0.5">${items}</ol>`;
+  });
   
   // Links - internal
-  html = html.replace(/\[([^\]]+)\]\(\/([^)]+)\)/g, '<a href="/$2" class="text-emerald-400 hover:text-emerald-300 underline">$1</a>');
+  html = html.replace(/\[([^\]]+)\]\(\/([^)]+)\)/g, '<a href="/$2" class="text-emerald-400 hover:text-emerald-300 underline underline-offset-2 transition-colors">$1</a>');
   // Links - external
-  html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:text-emerald-300 underline">$1</a>');
+  html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:text-emerald-300 underline underline-offset-2 transition-colors">$1</a>');
   
   // Horizontal rules
   html = html.replace(/^---$/gm, '<hr class="border-gray-800 my-8" />');
