@@ -109,7 +109,7 @@ export default function LandingPage() {
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between mb-6">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300">
-                <CircleDot className="w-3 h-3" /> Start Here
+                <CircleDot className="w-3 h-3" /> {t('workflow.badge')}
               </div>
               <h2 className="mt-3 text-2xl md:text-3xl font-bold">{t('workflow.title')}</h2>
               <p className="mt-2 max-w-2xl text-sm md:text-base text-gray-400">
@@ -184,9 +184,9 @@ export default function LandingPage() {
               <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
                 <div className="text-xs text-gray-500 mb-2">{t('screenshot.aiRecommend')}</div>
                 <div className="space-y-2">
-                  <div className="flex justify-between text-xs"><span className="text-gray-400">🚀 Supertrend</span><span className="text-green-400">85</span></div>
-                  <div className="flex justify-between text-xs"><span className="text-gray-400">📊 Dual MA+Vol</span><span className="text-green-400">72</span></div>
-                  <div className="flex justify-between text-xs"><span className="text-gray-400">🔔 Channel Break</span><span className="text-yellow-400">58</span></div>
+                  <div className="flex justify-between text-xs"><span className="text-gray-400">{t('home.strategyPicks.supertrend')}</span><span className="text-green-400">85</span></div>
+                  <div className="flex justify-between text-xs"><span className="text-gray-400">{t('home.strategyPicks.dualMaVol')}</span><span className="text-green-400">72</span></div>
+                  <div className="flex justify-between text-xs"><span className="text-gray-400">{t('home.strategyPicks.channelBreak')}</span><span className="text-yellow-400">58</span></div>
                 </div>
               </div>
             </div>

@@ -133,9 +133,9 @@ export default function TradingPanel({ currentPrice, onTradeComplete }: TradingP
           className="w-full"
         />
         <div className="flex justify-between text-xs text-gray-500 mt-1">
-          <span>1x</span>
-          <span>5x</span>
-          <span>10x</span>
+          <span>{t('trading.leverage_mark_1')}</span>
+          <span>{t('trading.leverage_mark_5')}</span>
+          <span>{t('trading.leverage_mark_10')}</span>
         </div>
       </div>
 

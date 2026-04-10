@@ -1648,4 +1648,17 @@
   "workflow.step03.title": "Strategy Workshop",
   "workflow.stepCta": "Get Started",
   "workflow.title": "3 Steps to Get Started — Don't Get Overwhelmed by Features"
+,
+  "home.strategyPicks.supertrend": "🚀 Supertrend",
+  "home.strategyPicks.dualMaVol": "📊 Dual MA+Vol",
+  "home.strategyPicks.channelBreak": "🔔 Channel Break",
+  "login.email_placeholder": "your@email.com",
+  "login.code_placeholder": "000000",
+  "trading.leverage_mark_1": "1x",
+  "trading.leverage_mark_5": "5x",
+  "trading.leverage_mark_10": "10x",
+  "exchange.name.binance": "Binance",
+  "exchange.name.okx": "OKX",
+  "exchange.name.bybit": "Bybit",
+  "exchange.name.hyperliquid": "Hyperliquid"
 }

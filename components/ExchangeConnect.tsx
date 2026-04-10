@@ -16,10 +16,10 @@ interface ExchangeConfig {
 }
 
 const EXCHANGES = [
-  { id: 'binance' as Exchange, name: 'Binance', icon: '🟡' },
-  { id: 'okx' as Exchange, name: 'OKX', icon: '⚫' },
-  { id: 'bybit' as Exchange, name: 'Bybit', icon: '🟠' },
-  { id: 'hyperliquid' as Exchange, name: 'Hyperliquid', icon: '🔵' },
+  { id: 'binance' as Exchange, nameKey: 'exchange.name.binance', icon: '🟡' },
+  { id: 'okx' as Exchange, nameKey: 'exchange.name.okx', icon: '⚫' },
+  { id: 'bybit' as Exchange, nameKey: 'exchange.name.bybit', icon: '🟠' },
+  { id: 'hyperliquid' as Exchange, nameKey: 'exchange.name.hyperliquid', icon: '🔵' },
 ];
 
 export default function ExchangeConnect() {
@@ -119,7 +119,7 @@ export default function ExchangeConnect() {
                 }`}
               >
                 <span className="text-xl mr-2">{ex.icon}</span>
-                {ex.name}
+                {t(ex.nameKey)}
               </button>
             ))}
           </div>

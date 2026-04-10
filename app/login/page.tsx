@@ -97,7 +97,7 @@ export default function LoginPage() {
             <div>
               <label className="text-xs text-gray-500 mb-1.5 block">{t('login.email_label')}</label>
               <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                placeholder="your@email.com"
+                placeholder={t('login.email_placeholder')}
                 onKeyDown={e => e.key === 'Enter' && handleSendCode()}
                 className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-sm text-white placeholder-gray-600 focus:outline-none focus:border-emerald-500 transition" />
             </div>
@@ -120,7 +120,7 @@ export default function LoginPage() {
             <div>
               <label className="text-xs text-gray-500 mb-1.5 block">{t('login.code_label')}</label>
               <input type="text" value={code} onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                placeholder="000000" maxLength={6}
+                placeholder={t('login.code_placeholder')} maxLength={6}
                 onKeyDown={e => e.key === 'Enter' && handleVerifyCode()}
                 className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-2xl text-center font-mono text-white tracking-[0.5em] placeholder-gray-600 focus:outline-none focus:border-emerald-500 transition" />
             </div>

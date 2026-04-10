@@ -1648,4 +1648,17 @@
   "workflow.step03.title": "策略工坊",
   "workflow.stepCta": "立即开始",
   "workflow.title": "3 步进入状态，而不是先被功能淹没"
+,
+  "home.strategyPicks.supertrend": "🚀 超级趋势",
+  "home.strategyPicks.dualMaVol": "📊 双均线+成交量",
+  "home.strategyPicks.channelBreak": "🔔 通道突破",
+  "login.email_placeholder": "your@email.com",
+  "login.code_placeholder": "000000",
+  "trading.leverage_mark_1": "1x",
+  "trading.leverage_mark_5": "5x",
+  "trading.leverage_mark_10": "10x",
+  "exchange.name.binance": "币安",
+  "exchange.name.okx": "OKX",
+  "exchange.name.bybit": "Bybit",
+  "exchange.name.hyperliquid": "Hyperliquid"
 }
