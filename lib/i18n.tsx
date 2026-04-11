@@ -29,17 +29,22 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem('locale') as Locale | null;
     if (saved && (saved === 'zh' || saved === 'en')) {
       setLocaleState(saved);
+      document.cookie = `locale=${saved}; path=/; max-age=31536000; samesite=lax`;
     } else {
       // Auto-detect: default to English unless browser is Chinese
       const browserLang = navigator.language || '';
       const isZh = browserLang.startsWith('zh');
-      setLocaleState(isZh ? 'zh' : 'en');
+      const detected = isZh ? 'zh' : 'en';
+      setLocaleState(detected);
+      localStorage.setItem('locale', detected);
+      document.cookie = `locale=${detected}; path=/; max-age=31536000; samesite=lax`;
     }
   }, []);
 
   const setLocale = useCallback((l: Locale) => {
     setLocaleState(l);
     localStorage.setItem('locale', l);
+    document.cookie = `locale=${l}; path=/; max-age=31536000; samesite=lax`;
   }, []);
 
   const t = useCallback((key: string, fallback?: string): string => {

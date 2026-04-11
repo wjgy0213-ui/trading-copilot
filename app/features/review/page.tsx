@@ -1,15 +1,20 @@
 import { Metadata } from 'next';
 import ReviewFeatureClient from './ReviewFeatureClient';
+import { getServerT } from '@/lib/server-i18n';
 
-export const metadata: Metadata = {
-  title: 'AI Trade Review — Automated Trading Journal & Analysis',
-  description: 'AI-powered trade journaling that automatically imports your trades and finds behavioral patterns. Detect revenge trading, time bias, and fee blindness. Improve your win rate systematically.',
-  keywords: ['trading journal', 'trade review', 'AI trade analysis', 'trading psychology', 'revenge trading', 'trading performance'],
-  openGraph: {
-    title: 'AI Trade Review — Trading Copilot',
-    description: 'Automatic trade import + AI behavioral analysis. Find what\'s costing you money.',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerT();
+
+  return {
+    title: t('meta.features.review.title'),
+    description: t('meta.features.review.description'),
+    keywords: ['trading journal', 'trade review', 'AI trade analysis', 'trading psychology', 'revenge trading', 'trading performance'],
+    openGraph: {
+      title: t('meta.features.review.ogTitle'),
+      description: t('meta.features.review.ogDescription'),
+    },
+  };
+}
 
 export default function ReviewFeaturePage() {
   return <ReviewFeatureClient />;

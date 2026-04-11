@@ -1,15 +1,20 @@
 import { Metadata } from 'next';
 import SignalsFeatureClient from './SignalsFeatureClient';
+import { getServerT } from '@/lib/server-i18n';
 
-export const metadata: Metadata = {
-  title: 'Signal Aggregator — Multi-Source Crypto Trading Signals',
-  description: 'Aggregate trading signals from multiple sources into one unified feed. Technical indicators, on-chain alerts, whale movements, and sentiment analysis combined with AI scoring.',
-  keywords: ['crypto trading signals', 'signal aggregator', 'trading alerts', 'crypto signals', 'technical analysis signals', 'AI trading signals'],
-  openGraph: {
-    title: 'Signal Aggregator — Trading Copilot',
-    description: 'Multi-source crypto trading signals aggregated and scored by AI.',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerT();
+
+  return {
+    title: t('meta.features.signals.title'),
+    description: t('meta.features.signals.description'),
+    keywords: ['crypto trading signals', 'signal aggregator', 'trading alerts', 'crypto signals', 'technical analysis signals', 'AI trading signals'],
+    openGraph: {
+      title: t('meta.features.signals.ogTitle'),
+      description: t('meta.features.signals.ogDescription'),
+    },
+  };
+}
 
 export default function SignalsFeaturePage() {
   return <SignalsFeatureClient />;
