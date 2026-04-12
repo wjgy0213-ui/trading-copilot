@@ -1,15 +1,20 @@
 import { getAllPosts } from '@/lib/blog';
 import { Metadata } from 'next';
 import BlogPageClient from './BlogPageClient';
+import { getServerT } from '@/lib/server-i18n';
 
-export const metadata: Metadata = {
-  title: 'Blog | Trading Copilot',
-  description: 'Trading insights, on-chain analysis, and crypto market strategies. Learn to trade smarter with AI-powered tools.',
-  openGraph: {
-    title: 'Trading Copilot Blog',
-    description: 'Trading insights, on-chain analysis, and crypto market strategies.',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerT();
+
+  return {
+    title: `${t('blog.pageTitle')} | Trading Copilot`,
+    description: t('blog.pageSubtitle'),
+    openGraph: {
+      title: `Trading Copilot ${t('blog.pageTitle')}`,
+      description: t('blog.pageSubtitle'),
+    },
+  };
+}
 
 export default function BlogPage() {
   const posts = getAllPosts();

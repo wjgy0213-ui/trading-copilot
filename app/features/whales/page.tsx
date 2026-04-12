@@ -1,15 +1,20 @@
 import { Metadata } from 'next';
 import WhalesFeatureClient from './WhalesFeatureClient';
+import { getServerT } from '@/lib/server-i18n';
 
-export const metadata: Metadata = {
-  title: 'Whale Tracker — Follow Smart Money in Crypto',
-  description: 'Track whale wallet movements in real-time. See large transfers, exchange deposits/withdrawals, and smart money positioning. Follow the whales, not the crowd.',
-  keywords: ['whale tracker', 'crypto whale movements', 'smart money', 'whale alert', 'large transactions', 'on-chain tracking'],
-  openGraph: {
-    title: 'Whale Tracker — Trading Copilot',
-    description: 'Real-time whale movement tracking. Follow smart money, not the crowd.',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerT();
+
+  return {
+    title: t('meta.features.whales.title'),
+    description: t('meta.features.whales.description'),
+    keywords: ['whale tracker', 'crypto whale movements', 'smart money', 'whale alert', 'large transactions', 'on-chain tracking'],
+    openGraph: {
+      title: t('meta.features.whales.ogTitle'),
+      description: t('meta.features.whales.ogDescription'),
+    },
+  };
+}
 
 export default function WhalesFeaturePage() {
   return <WhalesFeatureClient />;

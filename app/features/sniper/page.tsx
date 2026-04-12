@@ -1,15 +1,20 @@
 import { Metadata } from 'next';
 import SniperFeatureClient from './SniperFeatureClient';
+import { getServerT } from '@/lib/server-i18n';
 
-export const metadata: Metadata = {
-  title: 'Meme Coin Sniper — Detect Trending Tokens Early',
-  description: 'AI-powered meme coin scanner that detects trending tokens before they pump. Real-time scoring based on liquidity, momentum, community hype, and security analysis.',
-  keywords: ['meme coin sniper', 'crypto token scanner', 'new token alert', 'dex screener', 'meme coin trading', 'solana meme coins'],
-  openGraph: {
-    title: 'Meme Coin Sniper — Trading Copilot',
-    description: 'Detect trending meme coins early with AI-powered scanning and 5-dimension scoring.',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerT();
+
+  return {
+    title: t('meta.features.sniper.title'),
+    description: t('meta.features.sniper.description'),
+    keywords: ['meme coin sniper', 'crypto token scanner', 'new token alert', 'dex screener', 'meme coin trading', 'solana meme coins'],
+    openGraph: {
+      title: t('meta.features.sniper.ogTitle'),
+      description: t('meta.features.sniper.ogDescription'),
+    },
+  };
+}
 
 export default function SniperFeaturePage() {
   return <SniperFeatureClient />;

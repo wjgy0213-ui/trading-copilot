@@ -1680,5 +1680,13 @@
   "meta.features.review.title": "AI Trade Review — Automated Trading Journal & Analysis",
   "meta.features.review.description": "AI-powered trade journaling that automatically imports your trades and finds behavioral patterns. Detect revenge trading, time bias, and fee blindness. Improve your win rate systematically.",
   "meta.features.review.ogTitle": "AI Trade Review — Trading Copilot",
-  "meta.features.review.ogDescription": "Automatic trade import + AI behavioral analysis. Find what's costing you money."
+  "meta.features.review.ogDescription": "Automatic trade import + AI behavioral analysis. Find what's costing you money.",
+  "meta.features.sniper.title": "Meme Coin Sniper — Detect Trending Tokens Early",
+  "meta.features.sniper.description": "AI-powered meme coin scanner that detects trending tokens before they pump. Real-time scoring based on liquidity, momentum, community hype, and security analysis.",
+  "meta.features.sniper.ogTitle": "Meme Coin Sniper — Trading Copilot",
+  "meta.features.sniper.ogDescription": "Detect trending meme coins early with AI-powered scanning and 5-dimension scoring.",
+  "meta.features.whales.title": "Whale Tracker — Follow Smart Money in Crypto",
+  "meta.features.whales.description": "Track whale wallet movements in real-time. See large transfers, exchange deposits/withdrawals, and smart money positioning. Follow the whales, not the crowd.",
+  "meta.features.whales.ogTitle": "Whale Tracker — Trading Copilot",
+  "meta.features.whales.ogDescription": "Real-time whale movement tracking. Follow smart money, not the crowd."
 }
