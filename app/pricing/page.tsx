@@ -194,7 +194,7 @@ function PricingPage() {
           <div className="max-w-md mx-auto mb-10">
             <label className="text-xs text-gray-500 block mb-1.5">{t('pricing.emailLabel')}</label>
             <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-              placeholder="your@email.com"
+              placeholder={t('pricing.emailPlaceholder')}
               className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none transition" />
           </div>
         )}

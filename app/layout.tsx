@@ -6,6 +6,7 @@ import Providers from "@/components/Providers";
 import Analytics from "@/components/Analytics";
 import JsonLd from "@/components/JsonLd";
 import PageViewTracker from "@/components/PageViewTracker";
+import { getServerT } from "@/lib/server-i18n";
 
 export const viewport = {
   themeColor: '#030712',
@@ -46,16 +47,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { t } = await getServerT();
+
   return (
     <html lang="en">
       <head>
         <JsonLd />
-        <link rel="alternate" type="application/rss+xml" title="Trading Copilot Blog" href="/feed" />
+        <link rel="alternate" type="application/rss+xml" title={t('layout.rssTitle')} href="/feed" />
       </head>
       <body className="bg-gray-950 text-gray-100 antialiased font-sans">
         <Analytics />

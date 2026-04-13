@@ -198,13 +198,13 @@ export default function LandingPage() {
       {/* Testimonials / Social Proof */}
       <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}
         className="container mx-auto px-4 py-16">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-3">{t('testimonials.title', 'What Traders Say')}</h2>
-        <p className="text-gray-500 text-center mb-10 max-w-xl mx-auto">{t('testimonials.subtitle', 'Real feedback from traders who practice with Trading Copilot')}</p>
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-3">{t('testimonials.title')}</h2>
+        <p className="text-gray-500 text-center mb-10 max-w-xl mx-auto">{t('testimonials.subtitle')}</p>
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
           {[
-            { quote: t('testimonials.1.quote', "I blew 2 accounts before finding this. The AI coach caught my revenge trading pattern — something no YouTube video ever told me."), author: t('testimonials.1.author', "Alex K."), role: t('testimonials.1.role', "Crypto Swing Trader"), stars: 5 },
-            { quote: t('testimonials.2.quote', "The Monte Carlo simulation changed how I think about strategies. Seeing the worst-case scenario before risking real money is invaluable."), author: t('testimonials.2.author', "Maria S."), role: t('testimonials.2.role', "DeFi Trader"), stars: 5 },
-            { quote: t('testimonials.3.quote', "I practiced for 3 months on Trading Copilot before going live. My first real month was profitable. Coincidence? I don't think so."), author: t('testimonials.3.author', "David W."), role: t('testimonials.3.role', "Day Trader, 6 months exp"), stars: 5 },
+            { quote: t('testimonials.1.quote'), author: t('testimonials.1.author'), role: t('testimonials.1.role'), stars: 5 },
+            { quote: t('testimonials.2.quote'), author: t('testimonials.2.author'), role: t('testimonials.2.role'), stars: 5 },
+            { quote: t('testimonials.3.quote'), author: t('testimonials.3.author'), role: t('testimonials.3.role'), stars: 5 },
           ].map((t, i) => (
             <div key={i} className="bg-gray-900/60 border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-all">
               <div className="flex gap-1 mb-3">
@@ -249,49 +249,49 @@ export default function LandingPage() {
       {/* Course & Toolkit */}
       <div className="container mx-auto px-4 py-16">
         <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          className="text-3xl md:text-4xl font-bold text-center mb-4">{t('course.sectionTitle', '学习 & 工具包')}</motion.h2>
-        <p className="text-gray-500 text-center mb-12 max-w-2xl mx-auto">{t('course.sectionDesc', '系统化学习交易，从入门到进阶')}</p>
+          className="text-3xl md:text-4xl font-bold text-center mb-4">{t('course.sectionTitle')}</motion.h2>
+        <p className="text-gray-500 text-center mb-12 max-w-2xl mx-auto">{t('course.sectionDesc')}</p>
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
             <Link href="/learn" className="block bg-gradient-to-br from-emerald-900/30 to-gray-900/50 rounded-2xl p-6 border border-emerald-500/30 hover:border-emerald-500/60 transition-all hover:scale-[1.02] group h-full">
               <div className="flex items-center gap-2 mb-3">
                 <Gift className="w-6 h-6 text-emerald-400" />
-                <span className="text-xs font-medium bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full">{t('course.free', '免费')}</span>
+                <span className="text-xs font-medium bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full">{t('course.free')}</span>
               </div>
-              <h3 className="text-xl font-bold mb-2">{t('course.freeTitle', '交易入门课程')}</h3>
-              <p className="text-sm text-gray-400 mb-4">{t('course.freeDesc', '6节核心课程，从零开始建立交易认知。技术分析、风险管理、交易心理一网打尽')}</p>
+              <h3 className="text-xl font-bold mb-2">{t('course.freeTitle')}</h3>
+              <p className="text-sm text-gray-400 mb-4">{t('course.freeDesc')}</p>
               <ul className="space-y-1.5 text-xs text-gray-500 mb-4">
-                <li>✓ {t('course.freeF1', '6节视频课程')}</li><li>✓ {t('course.freeF2', '永久免费观看')}</li><li>✓ {t('course.freeF3', '配套练习题')}</li>
+                <li>✓ {t('course.freeF1')}</li><li>✓ {t('course.freeF2')}</li><li>✓ {t('course.freeF3')}</li>
               </ul>
               <span className="inline-flex items-center gap-1 text-emerald-400 text-sm font-medium group-hover:gap-2 transition-all">
-                {t('course.freeCta', '免费开始学习')} <ArrowRight className="w-4 h-4" />
+                {t('course.freeCta')} <ArrowRight className="w-4 h-4" />
               </span>
             </Link>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.15 }}>
             <Link href="/course" className="block bg-gradient-to-br from-violet-900/30 to-gray-900/50 rounded-2xl p-6 border border-violet-500/30 hover:border-violet-500/60 transition-all hover:scale-[1.02] group h-full relative">
-              <div className="absolute -top-3 right-4 bg-violet-500 text-white text-[10px] font-bold px-3 py-1 rounded-full">{t('course.hot', '热门')}</div>
+              <div className="absolute -top-3 right-4 bg-violet-500 text-white text-[10px] font-bold px-3 py-1 rounded-full">{t('course.hot')}</div>
               <BookOpen className="w-6 h-6 text-violet-400 mb-3" />
-              <h3 className="text-xl font-bold mb-2">{t('course.paidTitle', '进阶课程包')}</h3>
-              <p className="text-sm text-gray-400 mb-4">{t('course.paidDesc', '深度策略拆解、实战案例分析、蒙特卡洛回测方法论。从入门到盈利的完整路径')}</p>
+              <h3 className="text-xl font-bold mb-2">{t('course.paidTitle')}</h3>
+              <p className="text-sm text-gray-400 mb-4">{t('course.paidDesc')}</p>
               <ul className="space-y-1.5 text-xs text-gray-500 mb-4">
-                <li>✓ {t('course.paidF1', '20+实战案例')}</li><li>✓ {t('course.paidF2', '终身访问')}</li><li>✓ {t('course.paidF3', '赠送Pro/Elite体验')}</li>
+                <li>✓ {t('course.paidF1')}</li><li>✓ {t('course.paidF2')}</li><li>✓ {t('course.paidF3')}</li>
               </ul>
               <span className="inline-flex items-center gap-1 text-violet-400 text-sm font-medium group-hover:gap-2 transition-all">
-                {t('course.paidCta', '从 $49 起')} <ArrowRight className="w-4 h-4" />
+                {t('course.paidCta')} <ArrowRight className="w-4 h-4" />
               </span>
             </Link>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.3 }}>
             <Link href="/pricing" className="block bg-gradient-to-br from-amber-900/30 to-gray-900/50 rounded-2xl p-6 border border-amber-500/30 hover:border-amber-500/60 transition-all hover:scale-[1.02] group h-full">
               <Package className="w-6 h-6 text-amber-400 mb-3" />
-              <h3 className="text-xl font-bold mb-2">{t('course.toolkitTitle', 'Pro 工具包')}</h3>
-              <p className="text-sm text-gray-400 mb-4">{t('course.toolkitDesc', 'AI策略生成器、参数优化器、Monte Carlo模拟、风控守门员...全套专业工具')}</p>
+              <h3 className="text-xl font-bold mb-2">{t('course.toolkitTitle')}</h3>
+              <p className="text-sm text-gray-400 mb-4">{t('course.toolkitDesc')}</p>
               <ul className="space-y-1.5 text-xs text-gray-500 mb-4">
-                <li>✓ {t('course.toolkitF1', '12+策略模板')}</li><li>✓ {t('course.toolkitF2', 'AI策略生成')}</li><li>✓ {t('course.toolkitF3', '24小时免费试用')}</li>
+                <li>✓ {t('course.toolkitF1')}</li><li>✓ {t('course.toolkitF2')}</li><li>✓ {t('course.toolkitF3')}</li>
               </ul>
               <span className="inline-flex items-center gap-1 text-amber-400 text-sm font-medium group-hover:gap-2 transition-all">
-                {t('course.toolkitCta', '$39.99/月 起')} <ArrowRight className="w-4 h-4" />
+                {t('course.toolkitCta')} <ArrowRight className="w-4 h-4" />
               </span>
             </Link>
           </motion.div>

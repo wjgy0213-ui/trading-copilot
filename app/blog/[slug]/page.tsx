@@ -1,4 +1,5 @@
 import { getAllPosts, getPostBySlug } from '@/lib/blog';
+import { getServerT } from '@/lib/server-i18n';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import BlogPostClient from './BlogPostClient';
@@ -11,11 +12,12 @@ export function generateStaticParams() {
 // Dynamic metadata for SEO
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
+  const { t } = await getServerT();
   const post = getPostBySlug(slug);
   if (!post) return {};
   
   return {
-    title: `${post.title} | Trading Copilot Blog`,
+    title: `${post.title} | ${t('blog.seoTitleSuffix')}`,
     description: post.description,
     openGraph: {
       title: post.title,
@@ -36,6 +38,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  const { t } = await getServerT();
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
@@ -56,7 +59,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             description: post.description,
             datePublished: post.date,
             author: { '@type': 'Organization', name: post.author },
-            publisher: { '@type': 'Organization', name: 'Trading Copilot' },
+            publisher: { '@type': 'Organization', name: t('app.name') },
           }),
         }}
       />
