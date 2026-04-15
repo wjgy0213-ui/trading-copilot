@@ -86,7 +86,7 @@ export default function QuotaGate({
 
           <h3 className="font-bold text-lg mb-1">{t('quota.exhausted')}</h3>
           <p className="text-sm text-gray-500 mb-2">
-            {feature ? `${feature} — ` : ''}{t('quota.daily_limit').replace('{limit}', String(getFreeQuotaLimit()))}
+            {feature ? `${feature} · ` : ''}{t('quota.daily_limit').replace('{limit}', String(getFreeQuotaLimit()))}
           </p>
           <p className="text-xs text-gray-600 mb-5">
             {t('quota.reset_tomorrow')}

@@ -9,7 +9,7 @@ interface PriceChartProps {
 }
 
 export default function PriceChart({ symbol = 'BINANCE:BTCUSDT' }: PriceChartProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const containerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -35,7 +35,7 @@ export default function PriceChart({ symbol = 'BINANCE:BTCUSDT' }: PriceChartPro
           timezone: 'America/Vancouver',
           theme: 'dark',
           style: '1',
-          locale: 'zh_CN',
+          locale: locale === 'zh' ? 'zh_CN' : 'en',
           toolbar_bg: '#0a0a1a',
           enable_publishing: false,
           hide_top_toolbar: false,
@@ -53,7 +53,7 @@ export default function PriceChart({ symbol = 'BINANCE:BTCUSDT' }: PriceChartPro
     };
     document.head.appendChild(script);
     return () => { try { document.head.removeChild(script); } catch {} };
-  }, [symbol]);
+  }, [symbol, locale]);
 
   // When toggling fullscreen, force iframe resize
   useEffect(() => {

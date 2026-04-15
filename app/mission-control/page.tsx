@@ -87,21 +87,21 @@ const SIDEBAR_TAB_ICONS: Record<string, React.ComponentType<{ className?: string
   factory: Factory, pipeline: Layers3,
 };
 
-function timeAgo(isoStr: string): string {
+function timeAgo(isoStr: string, t: (key: string, fallback?: string) => string): string {
   const diff = Date.now() - new Date(isoStr).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 1) return t('missionControl.time.justNow');
+  if (mins < 60) return t('missionControl.time.minutesAgo').replace('{mins}', String(mins));
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
+  if (hrs < 24) return t('missionControl.time.hoursAgo').replace('{hrs}', String(hrs));
+  return t('missionControl.time.daysAgo').replace('{days}', String(Math.floor(hrs / 24)));
 }
 
-function formatUptime(isoStr: string): string {
+function formatUptime(isoStr: string, t: (key: string, fallback?: string) => string): string {
   const diff = Date.now() - new Date(isoStr).getTime();
   const hrs = Math.floor(diff / 3600000);
   const mins = Math.floor((diff % 3600000) / 60000);
-  return `${hrs}h ${mins}m`;
+  return t('missionControl.time.uptime').replace('{hrs}', String(hrs)).replace('{mins}', String(mins));
 }
 
 function formatUsd(value?: number): string {
@@ -409,7 +409,7 @@ export default function MissionControlPage() {
                 </div>
                 <div className="text-2xl font-semibold text-white">{t('missionControl.running')}</div>
                 <div className="mt-1 text-xs text-gray-400">
-                  {state?.start_time ? `${t('missionControl.uptime')} ${formatUptime(state.start_time)}` : t('missionControl.waitingData')}
+                  {state?.start_time ? `${t('missionControl.uptime')} ${formatUptime(state.start_time, t)}` : t('missionControl.waitingData')}
                 </div>
               </div>
 
@@ -435,7 +435,12 @@ export default function MissionControlPage() {
                 </div>
                 <div className="text-2xl font-semibold text-white">{state?.total_trades || 0} {t('missionControl.trades')}</div>
                 <div className="mt-1 text-xs text-gray-400">
-                  {state ? `${state.wins}W / ${state.losses}L · ${portfolio?.win_rate.toFixed(0)}% ${t('missionControl.winRate')}` : 'N/A'}
+                  {state
+                    ? t('missionControl.winsLosses')
+                        .replace('{wins}', String(state.wins))
+                        .replace('{losses}', String(state.losses))
+                        .replace('{winRate}', String(portfolio?.win_rate.toFixed(0) ?? '0'))
+                    : 'N/A'}
                 </div>
               </div>
 
@@ -461,11 +466,15 @@ export default function MissionControlPage() {
                       key={addr}
                       tone="violet"
                       title={pos.symbol}
-                      subtitle={`Entry ${formatUsd(pos.entry_price)} · ${pos.tokens?.toLocaleString() || 0} tokens`}
-                      meta={timeAgo(pos.entry_time)}
-                      score={`Score ${pos.score.toFixed(1)}`}
+                      subtitle={t('missionControl.card.entryTokens')
+                        .replace('{entry}', formatUsd(pos.entry_price))
+                        .replace('{tokens}', String(pos.tokens?.toLocaleString() || 0))}
+                      meta={timeAgo(pos.entry_time, t)}
+                      score={t('missionControl.card.score').replace('{score}', pos.score.toFixed(1))}
                       pnl={formatPct(pos.pnl_pct)}
-                      footer={`Peak ${formatUsd(pos.peak_price)} · Size ${pos.size_sol.toFixed(3)} SOL`}
+                      footer={t('missionControl.card.peakSize')
+                        .replace('{peak}', formatUsd(pos.peak_price))
+                        .replace('{size}', pos.size_sol.toFixed(3))}
                     />
                   ))
                 ) : (
@@ -479,11 +488,11 @@ export default function MissionControlPage() {
                     <TaskCard
                       key={`${trade.symbol}-${trade.ts}-${idx}`}
                       tone="blue"
-                      title={`${trade.action} ${trade.symbol}`}
+                      title={`${t(`missionControl.action.${trade.action}`)} ${trade.symbol}`}
                       subtitle={trade.reason || t('missionControl.newExecution')}
-                      meta={timeAgo(trade.ts)}
-                      score={trade.score !== undefined ? `Score ${trade.score.toFixed(0)}` : undefined}
-                      footer={trade.size_sol !== undefined ? `Size ${trade.size_sol.toFixed(3)} SOL` : t('missionControl.awaitingDetail')}
+                      meta={timeAgo(trade.ts, t)}
+                      score={trade.score !== undefined ? t('missionControl.card.score').replace('{score}', trade.score.toFixed(0)) : undefined}
+                      footer={trade.size_sol !== undefined ? t('missionControl.card.size').replace('{size}', trade.size_sol.toFixed(3)) : t('missionControl.awaitingDetail')}
                     />
                   ))
                 ) : null}
@@ -492,10 +501,12 @@ export default function MissionControlPage() {
                   <TaskCard
                     key={addr}
                     tone="blue"
-                    title={`Watch ${pos.symbol}`}
-                    subtitle={`Current ${formatUsd(pos.current_price)} · Entry ${formatUsd(pos.entry_price)}`}
-                    meta={timeAgo(pos.entry_time)}
-                    score={`Score ${pos.score.toFixed(1)}`}
+                    title={t('missionControl.card.watch').replace('{symbol}', pos.symbol)}
+                    subtitle={t('missionControl.card.currentEntry')
+                      .replace('{current}', formatUsd(pos.current_price))
+                      .replace('{entry}', formatUsd(pos.entry_price))}
+                    meta={timeAgo(pos.entry_time, t)}
+                    score={t('missionControl.card.score').replace('{score}', pos.score.toFixed(1))}
                     pnl={formatPct(pos.pnl_pct)}
                     footer={`${t('missionControl.dexReady')} · ${pos.partial_sold ? t('missionControl.partialSold') : t('missionControl.fullPosLive')}`}
                   />
@@ -512,11 +523,11 @@ export default function MissionControlPage() {
                     <TaskCard
                       key={`${trade.symbol}-${trade.ts}-${idx}`}
                       tone="amber"
-                      title={`${trade.action} ${trade.symbol}`}
+                      title={`${t(`missionControl.action.${trade.action}`)} ${trade.symbol}`}
                       subtitle={trade.reason || t('missionControl.exitRecorded')}
-                      meta={timeAgo(trade.ts)}
+                      meta={timeAgo(trade.ts, t)}
                       pnl={trade.pnl_pct !== undefined ? formatPct(trade.pnl_pct) : undefined}
-                      footer={trade.size_sol !== undefined ? `Closed ${trade.size_sol.toFixed(3)} SOL` : t('missionControl.exitSnapshot')}
+                      footer={trade.size_sol !== undefined ? t('missionControl.card.closed').replace('{size}', trade.size_sol.toFixed(3)) : t('missionControl.exitSnapshot')}
                     />
                   ))
                 ) : (
@@ -526,16 +537,18 @@ export default function MissionControlPage() {
                 <TaskCard
                   tone="amber"
                   title={t('missionControl.systemHealth')}
-                  subtitle={`${t('missionControl.dataSource')} ${sniperData?.source || 'unknown source'}`}
-                  score={`${t('missionControl.avgScore')} ${avgScore ? avgScore.toFixed(1) : 'N/A'}`}
-                  footer={`${t('missionControl.cashBalance')} ${state ? `${state.balance_sol.toFixed(2)} SOL` : 'N/A'} · SOL ${portfolio ? formatUsd(portfolio.sol_price) : 'N/A'}`}
+                  subtitle={t('missionControl.card.dataSource').replace('{source}', sniperData?.source || t('missionControl.unknownSource'))}
+                  score={t('missionControl.card.avgScore').replace('{score}', avgScore ? avgScore.toFixed(1) : 'N/A')}
+                  footer={t('missionControl.card.cashSol')
+                    .replace('{cash}', state ? `${state.balance_sol.toFixed(2)} SOL` : 'N/A')
+                    .replace('{solPrice}', portfolio ? formatUsd(portfolio.sol_price) : 'N/A')}
                 />
 
                 <TaskCard
                   tone="amber"
                   title={t('missionControl.executionNote')}
                   subtitle={t('missionControl.executionNoteDesc')}
-                  footer={`${t('missionControl.activeTab')} ${activeTab} · ${t('missionControl.shellReady')}`}
+                  footer={t('missionControl.card.activeTabShell').replace('{tab}', t(`missionControl.tab.${activeTab}`))}
                 />
               </Column>
             </div>
@@ -570,7 +583,7 @@ export default function MissionControlPage() {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-white">{trade.symbol}</span>
-                          <span className="text-xs text-gray-500">{trade.action}</span>
+                          <span className="text-xs text-gray-500">{t(`missionControl.action.${trade.action}`)}</span>
                           {trade.score !== undefined ? (
                             <span className="rounded-full border border-white/8 px-2 py-0.5 text-[11px] text-gray-300">
                               {trade.score.toFixed(0)}
@@ -585,7 +598,7 @@ export default function MissionControlPage() {
                         ) : (
                           <div className="text-gray-400">—</div>
                         )}
-                        <div className="mt-1 text-gray-600">{timeAgo(trade.ts)}</div>
+                        <div className="mt-1 text-gray-600">{timeAgo(trade.ts, t)}</div>
                       </div>
                     </div>
                   ))}

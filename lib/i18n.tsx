@@ -64,12 +64,12 @@ export function useI18n() {
 
 // Language switcher component
 export function LanguageSwitcher({ className = '' }: { className?: string }) {
-  const { locale, setLocale } = useI18n();
+  const { locale, setLocale, t } = useI18n();
   return (
     <button
       onClick={() => setLocale(locale === 'zh' ? 'en' : 'zh')}
       className={`text-xs text-gray-400 hover:text-gray-200 transition px-2 py-1 rounded border border-gray-700 hover:border-gray-600 ${className}`}
-      title={locale === 'zh' ? 'Switch to English' : '切换到中文'}
+      title={locale === 'zh' ? t('i18n.switchToEnglish', 'Switch to English') : t('i18n.switchToChinese', '切换到中文')}
     >
       {locale === 'zh' ? 'EN' : '中文'}
     </button>
