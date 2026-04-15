@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t('meta.features.signals.title'),
     description: t('meta.features.signals.description'),
-    keywords: ['crypto trading signals', 'signal aggregator', 'trading alerts', 'crypto signals', 'technical analysis signals', 'AI trading signals'],
+    keywords: t('meta.features.signals.keywords').split('|'),
     openGraph: {
       title: t('meta.features.signals.ogTitle'),
       description: t('meta.features.signals.ogDescription'),

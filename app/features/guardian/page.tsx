@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t('meta.features.guardian.title'),
     description: t('meta.features.guardian.description'),
-    keywords: ['crypto risk management', 'trading risk control', 'stop loss automation', 'position sizing', 'risk guardian', 'leverage limit'],
+    keywords: t('meta.features.guardian.keywords').split('|'),
     openGraph: {
       title: t('meta.features.guardian.ogTitle'),
       description: t('meta.features.guardian.ogDescription'),
