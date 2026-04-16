@@ -1742,5 +1742,9 @@
   "missionControl.time.minutesAgo": "{mins}m ago",
   "missionControl.time.uptime": "{hrs}h {mins}m",
   "missionControl.unknownSource": "unknown source",
-  "missionControl.winsLosses": "{wins}W / {losses}L · {winRate}% win rate"
+  "missionControl.winsLosses": "{wins}W / {losses}L · {winRate}% win rate",
+  "privacy.appsSuffix": "SlowMan Studios Apps",
+  "blog.ogTitle": "Trading Copilot Blog",
+  "meta.features.sniper.keywords": "meme coin sniper|crypto token scanner|new token alert|dex screener|meme coin trading|solana meme coins",
+  "meta.features.whales.keywords": "whale tracker|crypto whale movements|smart money|whale alert|large transactions|on-chain tracking"
 }

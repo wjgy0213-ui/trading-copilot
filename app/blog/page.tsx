@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: `${t('blog.pageTitle')} | Trading Copilot`,
     description: t('blog.pageSubtitle'),
     openGraph: {
-      title: `Trading Copilot ${t('blog.pageTitle')}`,
+      title: t('blog.ogTitle'),
       description: t('blog.pageSubtitle'),
     },
   };

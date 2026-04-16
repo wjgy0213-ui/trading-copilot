@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t('meta.features.sniper.title'),
     description: t('meta.features.sniper.description'),
-    keywords: ['meme coin sniper', 'crypto token scanner', 'new token alert', 'dex screener', 'meme coin trading', 'solana meme coins'],
+    keywords: t('meta.features.sniper.keywords').split('|'),
     openGraph: {
       title: t('meta.features.sniper.ogTitle'),
       description: t('meta.features.sniper.ogDescription'),

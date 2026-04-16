@@ -6,7 +6,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getServerT();
 
   return {
-    title: `${t('privacy.title')} - SlowMan Studios Apps`,
+    title: `${t('privacy.title')} - ${t('privacy.appsSuffix')}`,
     description: t('privacy.subtitle'),
   };
 }

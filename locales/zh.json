@@ -1742,5 +1742,9 @@
   "missionControl.time.minutesAgo": "{mins}分钟前",
   "missionControl.time.uptime": "{hrs}小时 {mins}分钟",
   "missionControl.unknownSource": "未知来源",
-  "missionControl.winsLosses": "胜{wins} / 负{losses} · 胜率 {winRate}%"
+  "missionControl.winsLosses": "胜{wins} / 负{losses} · 胜率 {winRate}%",
+  "privacy.appsSuffix": "SlowMan Studios 应用",
+  "blog.ogTitle": "交易陪练博客",
+  "meta.features.sniper.keywords": "meme币狙击|加密代币扫描|新币提醒|DexScreener|meme币交易|Solana meme币",
+  "meta.features.whales.keywords": "鲸鱼追踪|加密鲸鱼动向|聪明钱|鲸鱼预警|大额转账|链上追踪"
 }
