@@ -19,8 +19,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${post.title} | ${t('blog.seoTitleSuffix')}`,
     description: post.description,
+    alternates: {
+      canonical: `https://www.tradingcopilot.app/blog/${slug}`,
+    },
     openGraph: {
-      title: post.title,
+      title: `${post.title} | ${t('blog.ogTitle')}`,
       description: post.description,
       type: 'article',
       publishedTime: post.date,
@@ -30,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.title,
+      title: `${post.title} | ${t('blog.ogTitle')}`,
       description: post.description,
     },
   };

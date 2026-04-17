@@ -1746,5 +1746,18 @@
   "privacy.appsSuffix": "SlowMan Studios 应用",
   "blog.ogTitle": "交易陪练博客",
   "meta.features.sniper.keywords": "meme币狙击|加密代币扫描|新币提醒|DexScreener|meme币交易|Solana meme币",
-  "meta.features.whales.keywords": "鲸鱼追踪|加密鲸鱼动向|聪明钱|鲸鱼预警|大额转账|链上追踪"
+  "meta.features.whales.keywords": "鲸鱼追踪|加密鲸鱼动向|聪明钱|鲸鱼预警|大额转账|链上追踪",
+  "layout.meta.defaultTitle": "Trading Copilot — AI交易陪练 · 模拟练习 · 策略回测 · AI生成 · 蒙特卡洛模拟",
+  "layout.meta.template": "%s | Trading Copilot AI",
+  "layout.meta.description": "11个AI交易工具：模拟练习、市场体检、信号聚合、Meme狙击、鲸鱼追踪、AI复盘、风险守护、策略工坊、参数优化。从练习到实盘，一站式完成。",
+  "layout.meta.keywords": "AI交易|交易策略|策略回测|模拟交易|加密交易|市场体检|交易复盘|风险控制|鲸鱼追踪|Meme币|量化交易|交易机器人|交易练习|蒙特卡洛模拟|加密模拟器|AI交易教练|加密风控|恐惧贪婪指数|链上分析|交易陪练",
+  "layout.meta.ogTitle": "Trading Copilot AI — 你的AI交易策略平台",
+  "layout.meta.ogDescription": "11个AI交易工具，覆盖模拟练习、信号聚合、鲸鱼追踪与风险守护，免费开始。",
+  "layout.meta.siteName": "Trading Copilot AI",
+  "layout.meta.twitterTitle": "Trading Copilot AI",
+  "layout.meta.twitterDescription": "AI驱动的策略回测、蒙特卡洛模拟与自动优化，现在即可免费体验。",
+  "news.meta.title": "市场资讯 — 实时加密动态",
+  "news.meta.description": "整合 Binance 快讯、恐惧贪婪指数、BTC/ETH 实时价格，一屏掌握影响市场的关键信息。",
+  "news.meta.ogTitle": "市场资讯 — Trading Copilot",
+  "news.meta.ogDescription": "实时加密头条、恐惧贪婪指数与市场异动更新，集中在一个页面。"
 }

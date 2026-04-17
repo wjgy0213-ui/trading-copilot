@@ -1746,5 +1746,18 @@
   "privacy.appsSuffix": "SlowMan Studios Apps",
   "blog.ogTitle": "Trading Copilot Blog",
   "meta.features.sniper.keywords": "meme coin sniper|crypto token scanner|new token alert|dex screener|meme coin trading|solana meme coins",
-  "meta.features.whales.keywords": "whale tracker|crypto whale movements|smart money|whale alert|large transactions|on-chain tracking"
+  "meta.features.whales.keywords": "whale tracker|crypto whale movements|smart money|whale alert|large transactions|on-chain tracking",
+  "layout.meta.defaultTitle": "Trading Copilot — Your AI Trading Coach · Practice · Backtest · AI Generation · Monte Carlo Simulation",
+  "layout.meta.template": "%s | Trading Copilot AI",
+  "layout.meta.description": "11 AI trading tools: practice mode, market health check, signal aggregator, Meme Sniper, whale tracker, AI review, risk guardian, strategy workshop, parameter optimizer. From practice to live trading.",
+  "layout.meta.keywords": "trading strategy|backtest|AI trading|quant trading|trading copilot|paper trading|meme coins|whale tracking|risk control|crypto trading|trading bot|practice trading|crypto trading simulator|trading practice app|AI trading coach|learn crypto trading|trading journal AI|Monte Carlo trading|fear and greed index|crypto risk management",
+  "layout.meta.ogTitle": "Trading Copilot AI — Your AI Trading Strategy Platform",
+  "layout.meta.ogDescription": "11 AI trading tools · Practice mode · Signal aggregator · Whale tracker · Risk guardian. Start free.",
+  "layout.meta.siteName": "Trading Copilot AI",
+  "layout.meta.twitterTitle": "Trading Copilot AI",
+  "layout.meta.twitterDescription": "AI-powered strategy backtest + Monte Carlo simulation + auto-optimization. Start free.",
+  "news.meta.title": "Market News — Real-time Crypto Updates",
+  "news.meta.description": "Binance flash news, Fear & Greed index, BTC/ETH live prices. The trader's information hub.",
+  "news.meta.ogTitle": "Market News — Trading Copilot",
+  "news.meta.ogDescription": "Real-time crypto headlines, Fear & Greed, and market-moving updates in one screen."
 }
