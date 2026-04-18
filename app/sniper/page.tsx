@@ -143,9 +143,9 @@ function ModeSelector({ onSelect }: { onSelect: (mode: SniperMode) => void }) {
             <h3 className="text-lg font-bold text-orange-300 group-hover:text-orange-200">{t('sniper.live')}</h3>
             <p className="text-gray-400 text-sm mt-2">{t('sniper.liveDesc')}</p>
             <div className="mt-4 flex flex-wrap gap-2">
-              <span className="px-2 py-1 bg-orange-500/20 rounded text-xs text-orange-300">Elite</span>
+              <span className="px-2 py-1 bg-orange-500/20 rounded text-xs text-orange-300">{t('sniper.eliteBadge')}</span>
               <span className="px-2 py-1 bg-orange-500/20 rounded text-xs text-orange-300">{t('sniper.binanceBadge')}</span>
-              <span className="px-2 py-1 bg-orange-500/20 rounded text-xs text-orange-300">Phantom</span>
+              <span className="px-2 py-1 bg-orange-500/20 rounded text-xs text-orange-300">{t('sniper.phantomBadge')}</span>
             </div>
             <div className="mt-4 text-orange-400 text-sm font-medium group-hover:translate-x-1 transition-transform">
               {t('sniper.connectWallet')}
@@ -289,7 +289,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
             >
               <div className="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center text-2xl">🟡</div>
               <div>
-                <div className="font-bold">Binance</div>
+                <div className="font-bold">{t('sniper.exchangeNames.binance')}</div>
                 <div className="text-gray-400 text-sm">{t('sniper.binanceDesc')}</div>
               </div>
               <div className="ml-auto text-gray-500">{showBinanceForm ? '↑' : '→'}</div>
@@ -297,7 +297,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
             {showBinanceForm && (
               <div className="px-5 pb-5 space-y-3">
                 <div>
-                  <label className="text-xs text-gray-400 block mb-1">API Key</label>
+                  <label className="text-xs text-gray-400 block mb-1">{t('sniper.apiKeyLabel')}</label>
                   <input
                     type="text" value={apiKey} onChange={(e) => setApiKey(e.target.value)}
                     placeholder={t('sniper.apiKeyPlaceholder')}
@@ -305,7 +305,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-gray-400 block mb-1">API Secret</label>
+                  <label className="text-xs text-gray-400 block mb-1">{t('sniper.apiSecretLabel')}</label>
                   <input
                     type="password" value={apiSecret} onChange={(e) => setApiSecret(e.target.value)}
                     placeholder={t('sniper.apiSecretPlaceholder')}
@@ -334,7 +334,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
           >
             <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center text-2xl">👻</div>
             <div>
-              <div className="font-bold">Phantom Wallet</div>
+              <div className="font-bold">{t('sniper.exchangeNames.phantomWallet')}</div>
               <div className="text-gray-400 text-sm">
                 {phantomStatus === 'connecting' ? t('sniper.phantomConnecting') :
                  phantomStatus === 'no-wallet' ? t('sniper.phantomNotFound') :
@@ -360,7 +360,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
           >
             <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center text-xl font-bold text-blue-400">OK</div>
             <div>
-              <div className="font-bold">OKX</div>
+              <div className="font-bold">{t('sniper.exchangeNames.okx')}</div>
               <div className="text-gray-400 text-sm">{t('sniper.okxDesc')}</div>
             </div>
             <div className="ml-auto text-gray-500">→</div>
@@ -373,7 +373,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
           >
             <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center text-xl font-bold text-orange-400">By</div>
             <div>
-              <div className="font-bold">Bybit</div>
+              <div className="font-bold">{t('sniper.exchangeNames.bybit')}</div>
               <div className="text-gray-400 text-sm">{t('sniper.bybitDesc')}</div>
             </div>
             <div className="ml-auto text-gray-500">→</div>
@@ -386,7 +386,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
           >
             <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center text-xl font-bold text-green-400">HL</div>
             <div>
-              <div className="font-bold">Hyperliquid</div>
+              <div className="font-bold">{t('sniper.exchangeNames.hyperliquid')}</div>
               <div className="text-gray-400 text-sm">{t('sniper.hlDesc')}</div>
             </div>
             <div className="ml-auto text-gray-500">→</div>

@@ -212,7 +212,7 @@ export default function SignalsPage() {
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <div className="text-[10px] text-gray-600">F&G</div>
+              <div className="text-[10px] text-gray-600">{t('signals.fearGreedShort')}</div>
               <div className={`text-sm font-bold ${data.fearGreed <= 25 ? 'text-red-400' : data.fearGreed >= 75 ? 'text-emerald-400' : 'text-yellow-400'}`}>
                 {data.fearGreed}
               </div>

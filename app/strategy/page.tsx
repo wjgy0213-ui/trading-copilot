@@ -313,8 +313,8 @@ function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
           {/* Footer */}
           <div className="px-5 pb-4 flex items-center justify-between">
             <div>
-              <div className="text-xs font-semibold text-emerald-400">TradingCopilot</div>
-              <div className="text-[9px] text-gray-600">trading-copilot-delta.vercel.app</div>
+              <div className="text-xs font-semibold text-emerald-400">{tr('strategy.shareBrand')}</div>
+              <div className="text-[9px] text-gray-600">{tr('strategy.shareDomain')}</div>
             </div>
             <div className="text-[9px] text-gray-600">{new Date().toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US')}</div>
           </div>
