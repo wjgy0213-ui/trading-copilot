@@ -1769,5 +1769,13 @@
   "news.meta.title": "市场资讯 — 实时加密动态",
   "news.meta.description": "整合 Binance 快讯、恐惧贪婪指数、BTC/ETH 实时价格，一屏掌握影响市场的关键信息。",
   "news.meta.ogTitle": "市场资讯 — Trading Copilot",
-  "news.meta.ogDescription": "实时加密头条、恐惧贪婪指数与市场异动更新，集中在一个页面。"
+  "news.meta.ogDescription": "实时加密头条、恐惧贪婪指数与市场异动更新，集中在一个页面。",
+  "health.fetchFailed": "获取健康度数据失败",
+  "health.scoreOutOf": "/100",
+  "guardian.long": "多",
+  "guardian.short": "空",
+  "elite.walletPlaceholder": "0x...",
+  "elite.chatIdValuePrefix": "Chat ID:",
+  "telegram.bot_token_placeholder": "1234567890:ABCdefGHIjklMNOpqrsTUVwxyz",
+  "telegram.chat_id_placeholder": "-1001234567890"
 }

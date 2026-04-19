@@ -228,7 +228,7 @@ export default function ElitePage() {
                     value={apiKey}
                     onChange={(e) => setApiKey(e.target.value)}
                     className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    placeholder={exchange === 'hyperliquid' ? '0x...' : t('elite.apiKeyPlaceholder')}
+                    placeholder={exchange === 'hyperliquid' ? t('elite.walletPlaceholder') : t('elite.apiKeyPlaceholder')}
                   />
                 </div>
 
@@ -352,7 +352,7 @@ export default function ElitePage() {
                     <Check className="w-5 h-5 text-blue-400" />
                     <span className="text-blue-400 font-semibold">{t('elite.telegramConnected')}</span>
                   </div>
-                  <p className="text-sm text-gray-400">Chat ID: {chatId}</p>
+                  <p className="text-sm text-gray-400">{t('elite.chatIdValuePrefix')} {chatId}</p>
                 </div>
 
                 <div className="space-y-2">

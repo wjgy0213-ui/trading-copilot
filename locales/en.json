@@ -1769,5 +1769,13 @@
   "news.meta.title": "Market News — Real-time Crypto Updates",
   "news.meta.description": "Binance flash news, Fear & Greed index, BTC/ETH live prices. The trader's information hub.",
   "news.meta.ogTitle": "Market News — Trading Copilot",
-  "news.meta.ogDescription": "Real-time crypto headlines, Fear & Greed, and market-moving updates in one screen."
+  "news.meta.ogDescription": "Real-time crypto headlines, Fear & Greed, and market-moving updates in one screen.",
+  "health.fetchFailed": "Failed to fetch health data",
+  "health.scoreOutOf": "/100",
+  "guardian.long": "Long",
+  "guardian.short": "Short",
+  "elite.walletPlaceholder": "0x...",
+  "elite.chatIdValuePrefix": "Chat ID:",
+  "telegram.bot_token_placeholder": "1234567890:ABCdefGHIjklMNOpqrsTUVwxyz",
+  "telegram.chat_id_placeholder": "-1001234567890"
 }

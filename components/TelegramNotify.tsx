@@ -113,7 +113,7 @@ export default function TelegramNotify() {
             type="text"
             value={config.botToken}
             onChange={(e) => setConfig({ ...config, botToken: e.target.value })}
-            placeholder="1234567890:ABCdefGHIjklMNOpqrsTUVwxyz"
+            placeholder={t('telegram.bot_token_placeholder')}
             className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-violet-500 font-mono text-sm"
           />
         </div>
@@ -127,7 +127,7 @@ export default function TelegramNotify() {
             type="text"
             value={config.chatId}
             onChange={(e) => setConfig({ ...config, chatId: e.target.value })}
-            placeholder="-1001234567890"
+            placeholder={t('telegram.chat_id_placeholder')}
             className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-violet-500 font-mono text-sm"
           />
         </div>

@@ -96,12 +96,13 @@ function PositionRow({ p }: { p: any }) {
   const pnlColor = p.unrealizedPnl >= 0 ? 'text-emerald-400' : 'text-red-400';
   const liqDist = p.liquidationPrice > 0 ? Math.abs(p.markPrice - p.liquidationPrice) / p.markPrice * 100 : 999;
   const liqColor = liqDist < 5 ? 'text-red-400' : liqDist < 10 ? 'text-yellow-400' : 'text-gray-400';
+  const sideLabel = p.side === 'LONG' ? t('guardian.long') : p.side === 'SHORT' ? t('guardian.short') : p.side;
 
   return (
     <div className="flex items-center justify-between py-2.5 px-3 hover:bg-gray-800/20 rounded">
       <div className="flex items-center gap-3">
         <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${p.side === 'LONG' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
-          {p.side}
+          {sideLabel}
         </span>
         <span className="text-sm font-mono font-semibold text-gray-200">{p.symbol}</span>
         <span className="text-xs text-gray-500">{p.leverage}x</span>

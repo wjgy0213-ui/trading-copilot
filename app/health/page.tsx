@@ -21,7 +21,7 @@ interface HealthData {
   timestamp: number;
 }
 
-function ScoreGauge({ score, light }: { score: number; light: string }) {
+function ScoreGauge({ score, light, scoreSuffix }: { score: number; light: string; scoreSuffix: string }) {
   const color = light === 'green' ? '#22c55e' : light === 'yellow' ? '#eab308' : '#ef4444';
   const rotation = (score / 100) * 180 - 90; // -90 to 90 degrees
   
@@ -47,7 +47,7 @@ function ScoreGauge({ score, light }: { score: number; light: string }) {
       </svg>
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center">
         <span className="text-4xl font-bold" style={{ color }}>{score}</span>
-        <span className="text-gray-400 text-sm">/100</span>
+        <span className="text-gray-400 text-sm">{scoreSuffix}</span>
       </div>
     </div>
   );
@@ -67,16 +67,18 @@ function TrafficLight({ light }: { light: string }) {
   );
 }
 
-function DimensionBar({ dim }: { dim: Dimension }) {
+function DimensionBar({ dim, locale }: { dim: Dimension; locale: string }) {
   const color = dim.signal === 'bullish' ? 'bg-green-500' : dim.signal === 'bearish' ? 'bg-red-500' : 'bg-yellow-500';
   const textColor = dim.signal === 'bullish' ? 'text-green-400' : dim.signal === 'bearish' ? 'text-red-400' : 'text-yellow-400';
+  const displayName = locale === 'zh' ? dim.nameZh : dim.name;
+  const secondaryName = locale === 'zh' ? dim.name : dim.nameZh;
   
   return (
     <div className="bg-gray-800/60 rounded-xl p-4 border border-gray-700/50">
       <div className="flex justify-between items-center mb-2">
         <div>
-          <span className="text-white font-medium">{dim.nameZh}</span>
-          <span className="text-gray-500 text-xs ml-2">{dim.name}</span>
+          <span className="text-white font-medium">{displayName}</span>
+          <span className="text-gray-500 text-xs ml-2">{secondaryName}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className={`text-lg font-bold ${textColor}`}>{dim.score}</span>
@@ -102,7 +104,7 @@ export default function HealthCheckPage() {
     try {
       setLoading(true);
       const res = await fetch('/api/health-check');
-      if (!res.ok) throw new Error('Failed to fetch');
+      if (!res.ok) throw new Error(t('health.fetchFailed'));
       const json = await res.json();
       setData(json);
       setLastUpdate(new Date(json.timestamp).toLocaleTimeString(locale === 'zh' ? 'zh-CN' : 'en-US'));
@@ -112,7 +114,7 @@ export default function HealthCheckPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [locale, t]);
 
   useEffect(() => {
     fetchHealth();
@@ -152,7 +154,7 @@ export default function HealthCheckPage() {
           <>
             {/* Main Score */}
             <div className="bg-gray-800/40 rounded-2xl p-6 border border-gray-700/50 mb-6">
-              <ScoreGauge score={data.score} light={data.light} />
+              <ScoreGauge score={data.score} light={data.light} scoreSuffix={t('health.scoreOutOf')} />
               <TrafficLight light={data.light} />
               <p className="text-center text-gray-300 text-sm px-4">{data.suggestion}</p>
             </div>
@@ -183,7 +185,7 @@ export default function HealthCheckPage() {
             <h2 className="text-lg font-semibold mb-3">{t('health.dimensions')}</h2>
             <div className="space-y-3 mb-8">
               {data.dimensions.map((dim) => (
-                <DimensionBar key={dim.name} dim={dim} />
+                <DimensionBar key={dim.name} dim={dim} locale={locale} />
               ))}
             </div>
 
