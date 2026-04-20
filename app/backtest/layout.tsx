@@ -1,9 +1,14 @@
 import type { Metadata } from 'next';
+import { getServerT } from '@/lib/server-i18n';
 
-export const metadata: Metadata = {
-  title: 'Backtest Details — Strategy Verification Results',
-  description: 'View detailed backtest results, equity curves, and key metrics.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerT();
+
+  return {
+    title: t('meta.backtest.title'),
+    description: t('meta.backtest.description'),
+  };
+}
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children;

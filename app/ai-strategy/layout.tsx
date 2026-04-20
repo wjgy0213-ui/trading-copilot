@@ -1,9 +1,14 @@
 import type { Metadata } from 'next';
+import { getServerT } from '@/lib/server-i18n';
 
-export const metadata: Metadata = {
-  title: 'AI Strategy Generator — Natural Language to Strategy',
-  description: 'Describe your strategy idea in natural language. AI converts it into full parameter config. No coding required.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerT();
+
+  return {
+    title: t('meta.aiStrategy.title'),
+    description: t('meta.aiStrategy.description'),
+  };
+}
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children;

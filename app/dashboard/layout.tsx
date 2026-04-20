@@ -1,9 +1,14 @@
 import type { Metadata } from 'next';
+import { getServerT } from '@/lib/server-i18n';
 
-export const metadata: Metadata = {
-  title: 'Live Dashboard — ITC Risk + Market Sentiment',
-  description: 'ITC Risk indicators, Fear & Greed index, market news — all on one page. Everything you need before making decisions.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerT();
+
+  return {
+    title: t('meta.dashboard.title'),
+    description: t('meta.dashboard.description'),
+  };
+}
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children;
