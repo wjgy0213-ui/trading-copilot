@@ -1,9 +1,14 @@
 import { Metadata } from 'next';
+import { getServerT } from '@/lib/server-i18n';
 
-export const metadata: Metadata = {
-  title: 'AI Trade Review — Score + Emotion Detection',
-  description: 'AI analyzes trading patterns: win rate, profit factor, emotional trading detection, optimal period heatmap. Elite exclusive.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerT();
+
+  return {
+    title: t('meta.review.title'),
+    description: t('meta.review.description'),
+  };
+}
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children;

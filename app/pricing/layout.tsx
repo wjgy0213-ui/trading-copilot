@@ -1,9 +1,14 @@
 import type { Metadata } from 'next';
+import { getServerT } from '@/lib/server-i18n';
 
-export const metadata: Metadata = {
-  title: 'Pricing — Start Free, Upgrade When Ready',
-  description: 'Free / Pro $39.99 / Elite $79.99. 24-hour free trial, no credit card required.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerT();
+
+  return {
+    title: t('meta.pricing.title'),
+    description: t('meta.pricing.description'),
+  };
+}
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children;
