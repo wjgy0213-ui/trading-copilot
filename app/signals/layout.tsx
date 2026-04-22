@@ -1,9 +1,14 @@
 import { Metadata } from 'next';
+import { getServerT } from '@/lib/server-i18n';
 
-export const metadata: Metadata = {
-  title: 'Signal Aggregator — On-chain × Technical × Macro Fusion',
-  description: 'On-chain 35% × Technical 35% × Macro 30% signal fusion with confidence scoring. 12 real-time data sources.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerT();
+
+  return {
+    title: t('meta.signals.title'),
+    description: t('meta.signals.description'),
+  };
+}
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children;

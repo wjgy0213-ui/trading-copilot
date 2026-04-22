@@ -1,9 +1,14 @@
 import { Metadata } from 'next';
+import { getServerT } from '@/lib/server-i18n';
 
-export const metadata: Metadata = {
-  title: 'Whale Tracker — Top Trader Live Positions',
-  description: 'Track top Hyperliquid traders live positions with long/short consensus analysis.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerT();
+
+  return {
+    title: t('meta.whales.title'),
+    description: t('meta.whales.description'),
+  };
+}
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children;

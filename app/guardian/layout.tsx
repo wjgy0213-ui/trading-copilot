@@ -1,9 +1,14 @@
 import { Metadata } from 'next';
+import { getServerT } from '@/lib/server-i18n';
 
-export const metadata: Metadata = {
-  title: 'Risk Guardian — 5D Real-time Risk Scan',
-  description: '5D risk control: concentration, leverage, drawdown, correlation, liquidation distance. Real-time alerts + action suggestions. Elite exclusive.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerT();
+
+  return {
+    title: t('meta.guardian.title'),
+    description: t('meta.guardian.description'),
+  };
+}
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children;

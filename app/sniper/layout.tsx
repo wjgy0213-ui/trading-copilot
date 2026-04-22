@@ -1,9 +1,14 @@
 import { Metadata } from 'next';
+import { getServerT } from '@/lib/server-i18n';
 
-export const metadata: Metadata = {
-  title: 'Meme Sniper — Auto Discovery + Scoring + Risk Control',
-  description: 'Auto-scan DEX new tokens with 5D scoring (security/liquidity/momentum/community/timing). Paper trading validation.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerT();
+
+  return {
+    title: t('meta.sniper.title'),
+    description: t('meta.sniper.description'),
+  };
+}
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children;

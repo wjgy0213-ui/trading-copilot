@@ -1,9 +1,14 @@
 import { Metadata } from 'next';
+import { getServerT } from '@/lib/server-i18n';
 
-export const metadata: Metadata = {
-  title: 'Market Health Check — One-click 5D Score',
-  description: '5-dimensional market health: Fear & Greed, ITC Risk, Momentum, Funding Rate, Volatility. Traffic-light view.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerT();
+
+  return {
+    title: t('meta.health.title'),
+    description: t('meta.health.description'),
+  };
+}
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children;
