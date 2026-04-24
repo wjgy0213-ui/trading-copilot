@@ -1807,5 +1807,11 @@
   "elite.walletPlaceholder": "0x...",
   "elite.chatIdValuePrefix": "Chat ID:",
   "telegram.bot_token_placeholder": "1234567890:ABCdefGHIjklMNOpqrsTUVwxyz",
-  "telegram.chat_id_placeholder": "-1001234567890"
+  "telegram.chat_id_placeholder": "-1001234567890",
+  "meta.learn.title": "Trading Course — From Beginner to Advanced",
+  "meta.learn.description": "Systematic trading course with 8 chapters and 25+ lessons covering mindset, technical analysis, and risk management.",
+  "meta.trade.title": "Paper Trading Practice — AI Real-time Scoring",
+  "meta.trade.description": "Practice trading with real BTC prices, AI scoring, and zero-risk discipline training for entries, stops, and emotions.",
+  "meta.waitlist.title": "Waitlist — Early Access to New Features",
+  "meta.waitlist.description": "Join the waitlist to get early access to new features, product updates, and exclusive launch offers."
 }

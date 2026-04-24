@@ -1807,5 +1807,11 @@
   "elite.walletPlaceholder": "0x...",
   "elite.chatIdValuePrefix": "Chat ID:",
   "telegram.bot_token_placeholder": "1234567890:ABCdefGHIjklMNOpqrsTUVwxyz",
-  "telegram.chat_id_placeholder": "-1001234567890"
+  "telegram.chat_id_placeholder": "-1001234567890",
+  "meta.learn.title": "交易课程 — 从新手到进阶",
+  "meta.learn.description": "系统化交易课程，覆盖 8 个章节与 25+ 节课，聚焦心态、技术分析和风险管理。",
+  "meta.trade.title": "模拟交易练习 — AI 实时评分",
+  "meta.trade.description": "用真实 BTC 行情做模拟交易，AI 实时评估进场、止损和情绪纪律，零风险打磨执行力。",
+  "meta.waitlist.title": "候补名单 — 抢先体验新功能",
+  "meta.waitlist.description": "加入候补名单，第一时间获取新功能体验、产品更新和专属上线优惠。"
 }

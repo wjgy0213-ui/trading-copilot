@@ -1,9 +1,14 @@
 import type { Metadata } from 'next';
+import { getServerT } from '@/lib/server-i18n';
 
-export const metadata: Metadata = {
-  title: 'Paper Trading Practice — AI Real-time Scoring',
-  description: 'Practice trading with real BTC prices. AI scores position management, stop-loss setup, and emotional discipline. Zero-risk trading discipline.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerT();
+
+  return {
+    title: t('meta.trade.title'),
+    description: t('meta.trade.description'),
+  };
+}
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children;

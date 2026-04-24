@@ -1,9 +1,14 @@
 import type { Metadata } from 'next';
+import { getServerT } from '@/lib/server-i18n';
 
-export const metadata: Metadata = {
-  title: 'Waitlist — Early Access to New Features',
-  description: 'Join the waitlist to be first in line for new features and exclusive offers.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerT();
+
+  return {
+    title: t('meta.waitlist.title'),
+    description: t('meta.waitlist.description'),
+  };
+}
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return children;
