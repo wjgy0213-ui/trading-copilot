@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { X, TrendingUp, TrendingDown } from 'lucide-react';
 import { getAccount } from '@/lib/storage';
 import { closePosition, calculatePnL } from '@/lib/tradingEngine';
@@ -13,23 +12,16 @@ interface PositionsPanelProps {
 }
 
 export default function PositionsPanel({ currentPrice, onPositionClosed }: PositionsPanelProps) {
-  const { t } = useI18n();
-  const [positions, setPositions] = useState<Trade[]>([]);
-
-  useEffect(() => {
-    const account = getAccount();
-    setPositions(account.positions);
-  }, [currentPrice]);
+  const { t, locale } = useI18n();
+  const positions: Trade[] = getAccount().positions;
 
   const handleClose = (tradeId: string) => {
     const confirmed = confirm(t('positions.confirm_close'));
     if (!confirmed) return;
 
-    const result = closePosition(tradeId, currentPrice);
+    const result = closePosition(tradeId, currentPrice, locale);
     alert(result.message);
     
-    const account = getAccount();
-    setPositions(account.positions);
     onPositionClosed();
   };
 

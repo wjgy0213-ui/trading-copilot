@@ -1,9 +1,11 @@
 // AI评分系统 - V1简单版（基于规则的评分）
 
 import { Trade, AIScore, Account } from './types';
+import type { Locale } from './i18n';
+import { i18nText } from './i18n-helpers';
 
 /** 评估入场交易 */
-export function scoreEntry(trade: Trade, account: Account): AIScore {
+export function scoreEntry(trade: Trade, account: Account, locale: Locale = 'zh'): AIScore {
   let entryScore = 100;
   const feedback: string[] = [];
   
@@ -11,18 +13,18 @@ export function scoreEntry(trade: Trade, account: Account): AIScore {
   const hasStopLoss = trade.stopLoss !== undefined;
   if (!hasStopLoss) {
     entryScore -= 30;
-    feedback.push('❌ 未设置止损！强烈建议设置止损以控制风险');
+    feedback.push(i18nText(locale, 'ai_scoring.entry.no_stop_loss'));
   } else {
-    feedback.push('✅ 已设置止损，风险管理良好');
+    feedback.push(i18nText(locale, 'ai_scoring.entry.has_stop_loss'));
   }
   
   // 检查止盈
   const hasTakeProfit = trade.takeProfit !== undefined;
   if (!hasTakeProfit) {
     entryScore -= 10;
-    feedback.push('⚠️ 未设置止盈，建议设定目标价位');
+    feedback.push(i18nText(locale, 'ai_scoring.entry.no_take_profit'));
   } else {
-    feedback.push('✅ 已设置止盈，有明确的盈利目标');
+    feedback.push(i18nText(locale, 'ai_scoring.entry.has_take_profit'));
   }
   
   // 检查仓位大小（不超过总资金的20%为优秀，20-50%为合理）
@@ -31,12 +33,12 @@ export function scoreEntry(trade: Trade, account: Account): AIScore {
   
   if (positionSizePercent > 50) {
     entryScore -= 30;
-    feedback.push(`❌ 仓位过大(${positionSizePercent.toFixed(1)}%)，建议不超过总资金的50%`);
+    feedback.push(i18nText(locale, 'ai_scoring.entry.position_too_large', { percent: positionSizePercent.toFixed(1) }));
   } else if (positionSizePercent > 20) {
     entryScore -= 10;
-    feedback.push(`⚠️ 仓位较大(${positionSizePercent.toFixed(1)}%)，建议控制在20%以内`);
+    feedback.push(i18nText(locale, 'ai_scoring.entry.position_large', { percent: positionSizePercent.toFixed(1) }));
   } else {
-    feedback.push(`✅ 仓位合理(${positionSizePercent.toFixed(1)}%)，风险可控`);
+    feedback.push(i18nText(locale, 'ai_scoring.entry.position_ok', { percent: positionSizePercent.toFixed(1) }));
   }
   
   // 检查杠杆（1-3x为保守，3-5x为适中，5-10x为激进）
@@ -44,11 +46,11 @@ export function scoreEntry(trade: Trade, account: Account): AIScore {
   
   if (trade.leverage > 5) {
     entryScore -= 20;
-    feedback.push(`⚠️ 杠杆较高(${trade.leverage}x)，高杠杆放大风险，新手建议使用1-3x`);
+    feedback.push(i18nText(locale, 'ai_scoring.entry.leverage_high', { leverage: trade.leverage }));
   } else if (trade.leverage > 3) {
-    feedback.push(`ℹ️ 杠杆适中(${trade.leverage}x)，注意控制风险`);
+    feedback.push(i18nText(locale, 'ai_scoring.entry.leverage_mid', { leverage: trade.leverage }));
   } else {
-    feedback.push(`✅ 杠杆保守(${trade.leverage}x)，适合稳健交易`);
+    feedback.push(i18nText(locale, 'ai_scoring.entry.leverage_ok', { leverage: trade.leverage }));
   }
   
   // 检查风险回报比（如果设置了止损和止盈）
@@ -59,11 +61,11 @@ export function scoreEntry(trade: Trade, account: Account): AIScore {
     
     if (riskRewardRatio < 1) {
       entryScore -= 20;
-      feedback.push(`❌ 风险回报比不佳(1:${riskRewardRatio.toFixed(2)})，建议至少1:1.5`);
+      feedback.push(i18nText(locale, 'ai_scoring.entry.rr_low', { ratio: riskRewardRatio.toFixed(2) }));
     } else if (riskRewardRatio < 1.5) {
-      feedback.push(`⚠️ 风险回报比一般(1:${riskRewardRatio.toFixed(2)})，可以更优化`);
+      feedback.push(i18nText(locale, 'ai_scoring.entry.rr_mid', { ratio: riskRewardRatio.toFixed(2) }));
     } else {
-      feedback.push(`✅ 风险回报比良好(1:${riskRewardRatio.toFixed(2)})，符合交易原则`);
+      feedback.push(i18nText(locale, 'ai_scoring.entry.rr_good', { ratio: riskRewardRatio.toFixed(2) }));
     }
   }
   

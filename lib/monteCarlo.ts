@@ -1,4 +1,6 @@
-import { Trade, BacktestResult } from './backtestEngine';
+import { BacktestResult } from './backtestEngine';
+import type { Locale } from './i18n';
+import { i18nText } from './i18n-helpers';
 
 export interface MonteCarloConfig {
   numSimulations: number;  // e.g. 1000
@@ -46,15 +48,15 @@ export interface MonteCarloResult {
  */
 export function runMonteCarlo(
   result: BacktestResult,
-  config: MonteCarloConfig
+  config: MonteCarloConfig,
+  locale: Locale = 'zh'
 ): MonteCarloResult {
   const trades = result.trades;
   if (trades.length < 2) {
-    throw new Error('需要至少2笔交易才能运行蒙特卡洛模拟');
+    throw new Error(i18nText(locale, 'monte_carlo.need_two_trades'));
   }
 
   const pnlPercents = trades.map(t => t.pnlPercent / 100); // as decimal
-  const numTrades = pnlPercents.length;
   const paths: SimulationPath[] = [];
 
   for (let sim = 0; sim < config.numSimulations; sim++) {

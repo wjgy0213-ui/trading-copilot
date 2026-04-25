@@ -1,6 +1,6 @@
 'use client';
 
-import { DollarSign, TrendingUp, Percent, AlertCircle, RotateCcw, TrendingDown, Activity, ArrowRight } from 'lucide-react';
+import { DollarSign, TrendingUp, Percent, AlertCircle, RotateCcw, Activity, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Account } from '@/lib/types';
 import { resetAccount } from '@/lib/storage';
@@ -15,14 +15,14 @@ interface AccountPanelProps {
 }
 
 export default function AccountPanel({ account, currentPrice }: AccountPanelProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const equity = calculateEquity(account, currentPrice);
   const initialBalance = 10000;
   const totalReturn = ((equity - initialBalance) / initialBalance) * 100;
   
   // 交易分析
-  const analysis = analyzePerformance(account.closedTrades);
-  const recentSummary = getRecentPerformanceSummary(account.closedTrades, 7);
+  const analysis = analyzePerformance(account.closedTrades, locale);
+  const recentSummary = getRecentPerformanceSummary(account.closedTrades, 7, locale);
 
   const handleReset = () => {
     const confirmed = confirm(t('account_panel.confirm_reset'));

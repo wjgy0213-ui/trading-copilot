@@ -1,6 +1,8 @@
 // 交易分析器 - 基于历史交易生成优化建议
 
 import { Trade } from './types';
+import type { Locale } from './i18n';
+import { i18nText } from './i18n-helpers';
 
 /** 交易表现分析结果 */
 export interface PerformanceAnalysis {
@@ -15,7 +17,7 @@ export interface PerformanceAnalysis {
 }
 
 /** 分析交易表现并生成建议 */
-export function analyzePerformance(trades: Trade[]): PerformanceAnalysis {
+export function analyzePerformance(trades: Trade[], locale: Locale = 'zh'): PerformanceAnalysis {
   if (trades.length === 0) {
     return {
       winRate: 0,
@@ -25,7 +27,7 @@ export function analyzePerformance(trades: Trade[]): PerformanceAnalysis {
       profitFactor: 0,
       avgWin: 0,
       avgLoss: 0,
-      suggestions: ['开始交易以获取分析数据'],
+      suggestions: [i18nText(locale, 'analysis.start_trading')],
     };
   }
   
@@ -41,7 +43,7 @@ export function analyzePerformance(trades: Trade[]): PerformanceAnalysis {
       profitFactor: 0,
       avgWin: 0,
       avgLoss: 0,
-      suggestions: ['暂无已平仓交易，继续练习'],
+      suggestions: [i18nText(locale, 'analysis.no_closed_trades')],
     };
   }
   
@@ -82,43 +84,43 @@ export function analyzePerformance(trades: Trade[]): PerformanceAnalysis {
   
   // 胜率建议
   if (winRate < 40) {
-    suggestions.push('⚠️ 胜率偏低（<40%），建议优化入场时机，等待更明确的信号');
+    suggestions.push(i18nText(locale, 'analysis.winrate_low'));
   } else if (winRate > 70) {
-    suggestions.push('✅ 胜率优秀（>70%），继续保持，可适当提高盈亏比目标');
+    suggestions.push(i18nText(locale, 'analysis.winrate_high'));
   }
   
   // 盈亏比建议
   if (avgRR < 1.0) {
-    suggestions.push('⚠️ 盈亏比过低（<1:1），建议拉大止盈目标或收紧止损');
+    suggestions.push(i18nText(locale, 'analysis.rr_low'));
   } else if (avgRR < 1.5) {
-    suggestions.push('💡 盈亏比可以提升，尝试将止盈设置为止损的2倍以上');
+    suggestions.push(i18nText(locale, 'analysis.rr_mid'));
   } else if (avgRR >= 2.0) {
-    suggestions.push('✅ 盈亏比优秀（>=2:1），风险管理做得很好');
+    suggestions.push(i18nText(locale, 'analysis.rr_high'));
   }
   
   // 盈利因子建议
   if (profitFactor < 1.0) {
-    suggestions.push('🔴 盈利因子<1，整体亏损，建议暂停实盘，回顾交易记录找问题');
+    suggestions.push(i18nText(locale, 'analysis.profit_factor_low'));
   } else if (profitFactor < 1.5) {
-    suggestions.push('💡 盈利因子偏低，可通过提高胜率或盈亏比来改善');
+    suggestions.push(i18nText(locale, 'analysis.profit_factor_mid'));
   } else if (profitFactor >= 2.0) {
-    suggestions.push('✅ 盈利因子优秀（>=2.0），策略表现稳健');
+    suggestions.push(i18nText(locale, 'analysis.profit_factor_high'));
   }
   
   // 回撤建议
   if (maxDrawdown > 20) {
-    suggestions.push('⚠️ 最大回撤过大（>20%），建议减小仓位或优化止损策略');
+    suggestions.push(i18nText(locale, 'analysis.drawdown_high'));
   } else if (maxDrawdown > 15) {
-    suggestions.push('💡 回撤稍大，可考虑降低单笔风险敞口');
+    suggestions.push(i18nText(locale, 'analysis.drawdown_mid'));
   } else if (maxDrawdown <= 10) {
-    suggestions.push('✅ 回撤控制优秀（<=10%），风险管理到位');
+    suggestions.push(i18nText(locale, 'analysis.drawdown_low'));
   }
   
   // 交易数量建议
   if (closedTrades.length < 10) {
-    suggestions.push('📊 交易样本较少（<10笔），继续积累数据以获得更准确的分析');
+    suggestions.push(i18nText(locale, 'analysis.sample_low'));
   } else if (closedTrades.length >= 30) {
-    suggestions.push('✅ 交易样本充足（>=30笔），数据统计更具参考价值');
+    suggestions.push(i18nText(locale, 'analysis.sample_high'));
   }
   
   // 止损止盈使用情况
@@ -126,30 +128,30 @@ export function analyzePerformance(trades: Trade[]): PerformanceAnalysis {
   const hasTakeProfit = closedTrades.filter(t => t.takeProfit).length;
   
   if (hasStopLoss / closedTrades.length < 0.8) {
-    suggestions.push('⚠️ 大部分交易未设置止损，这非常危险！强烈建议每笔交易都设置止损');
+    suggestions.push(i18nText(locale, 'analysis.stop_loss_missing'));
   }
   
   if (hasTakeProfit / closedTrades.length < 0.8) {
-    suggestions.push('💡 建议每笔交易都设置止盈目标，避免盈利回吐');
+    suggestions.push(i18nText(locale, 'analysis.take_profit_missing'));
   }
   
   // 杠杆使用建议
   const avgLeverage = closedTrades.reduce((sum, t) => sum + t.leverage, 0) / closedTrades.length;
   
   if (avgLeverage > 5) {
-    suggestions.push('⚠️ 平均杠杆过高（>5x），高杠杆会放大风险，建议降低杠杆倍数');
+    suggestions.push(i18nText(locale, 'analysis.leverage_high'));
   } else if (avgLeverage > 3) {
-    suggestions.push('💡 杠杆适中，但仍需谨慎控制仓位大小');
+    suggestions.push(i18nText(locale, 'analysis.leverage_mid'));
   }
   
   // 如果没有明显问题，给出正向建议
   if (suggestions.length === 0) {
-    suggestions.push('🎉 整体表现良好，继续保持纪律，稳定执行策略');
+    suggestions.push(i18nText(locale, 'analysis.overall_good'));
   }
   
   // 始终添加一条策略优化建议
   if (winRate < 50 || avgRR < 1.5) {
-    suggestions.push('🔧 考虑在策略工坊回测不同参数，找到更适合当前市场的策略');
+    suggestions.push(i18nText(locale, 'analysis.optimize_strategy'));
   }
   
   return {
@@ -165,7 +167,7 @@ export function analyzePerformance(trades: Trade[]): PerformanceAnalysis {
 }
 
 /** 获取最近表现总结 */
-export function getRecentPerformanceSummary(trades: Trade[], days: number = 7): string {
+export function getRecentPerformanceSummary(trades: Trade[], days: number = 7, locale: Locale = 'zh'): string {
   const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
   const recentTrades = trades.filter(t => 
     t.status === 'closed' && 
@@ -173,11 +175,17 @@ export function getRecentPerformanceSummary(trades: Trade[], days: number = 7): 
   );
   
   if (recentTrades.length === 0) {
-    return `最近${days}天无交易记录`;
+    return i18nText(locale, 'analysis.recent_none', { days });
   }
   
   const totalPnl = recentTrades.reduce((sum, t) => sum + (t.pnl || 0), 0);
   const wins = recentTrades.filter(t => (t.pnl || 0) > 0).length;
   
-  return `最近${days}天：${recentTrades.length}笔交易，${wins}胜${recentTrades.length - wins}负，${totalPnl > 0 ? '+' : ''}$${totalPnl.toFixed(2)}`;
+  return i18nText(locale, 'analysis.recent_summary', {
+    days,
+    trades: recentTrades.length,
+    wins,
+    losses: recentTrades.length - wins,
+    pnl: `${totalPnl > 0 ? '+' : ''}$${totalPnl.toFixed(2)}`,
+  });
 }

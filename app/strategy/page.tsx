@@ -682,7 +682,7 @@ function StrategyPage() {
                     setMcRunning(true);
                     setTimeout(() => {
                       try {
-                        const mc = runMonteCarlo(latest, { numSimulations: 1000, initialCapital: capital, confidenceLevels: [0.05, 0.25, 0.5, 0.75, 0.95] });
+                        const mc = runMonteCarlo(latest, { numSimulations: 1000, initialCapital: capital, confidenceLevels: [0.05, 0.25, 0.5, 0.75, 0.95] }, locale);
                         setMcResult(mc);
                       } catch (e: any) { setError(e.message); }
                       setMcRunning(false);

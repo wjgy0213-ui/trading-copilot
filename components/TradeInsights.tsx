@@ -5,15 +5,15 @@ import Link from 'next/link';
 import { BarChart3, ArrowRight } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import { Trade } from '@/lib/types';
-import { analyzePerformance, PerformanceAnalysis } from '@/lib/tradeAnalyzer';
+import { analyzePerformance } from '@/lib/tradeAnalyzer';
 
 interface TradeInsightsProps {
   trades: Trade[];
 }
 
 export default function TradeInsights({ trades }: TradeInsightsProps) {
-  const { t } = useI18n();
-  const analysis = useMemo(() => analyzePerformance(trades), [trades]);
+  const { t, locale } = useI18n();
+  const analysis = useMemo(() => analyzePerformance(trades, locale), [trades, locale]);
 
   if (analysis.totalTrades === 0 && analysis.suggestions.length <= 1) return null;
 
@@ -27,7 +27,7 @@ export default function TradeInsights({ trades }: TradeInsightsProps) {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-3 gap-2 mb-3">
-        <Stat label={t('insights.win_rate')} value={`${(analysis.winRate * 100).toFixed(0)}%`} good={analysis.winRate >= 0.45} />
+        <Stat label={t('insights.win_rate')} value={`${analysis.winRate.toFixed(0)}%`} good={analysis.winRate >= 45} />
         <Stat label={t('insights.rr_ratio')} value={`1:${analysis.avgRR.toFixed(1)}`} good={analysis.avgRR >= 1.5} />
         <Stat label={t('insights.profit_factor')} value={analysis.profitFactor.toFixed(1)} good={analysis.profitFactor >= 1.2} />
       </div>

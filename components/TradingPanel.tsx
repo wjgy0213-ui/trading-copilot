@@ -14,13 +14,12 @@ interface TradingPanelProps {
 }
 
 export default function TradingPanel({ currentPrice, onTradeComplete }: TradingPanelProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [side, setSide] = useState<PositionSide>('long');
   const [size, setSize] = useState<number>(100);
   const [leverage, setLeverage] = useState<number>(1);
   const [stopLoss, setStopLoss] = useState<string>('');
   const [takeProfit, setTakeProfit] = useState<string>('');
-  const [showAIFeedback, setShowAIFeedback] = useState(false);
 
   const handleOpenPosition = () => {
     const result = openPosition({
@@ -30,7 +29,7 @@ export default function TradingPanel({ currentPrice, onTradeComplete }: TradingP
       currentPrice,
       stopLoss: stopLoss ? parseFloat(stopLoss) : undefined,
       takeProfit: takeProfit ? parseFloat(takeProfit) : undefined,
-    });
+    }, locale);
 
     if (!result.success) {
       alert(result.message);
@@ -40,12 +39,11 @@ export default function TradingPanel({ currentPrice, onTradeComplete }: TradingP
     if (result.trade) {
       // 生成AI评分
       const account = getAccount();
-      const aiScore = scoreEntry(result.trade, account);
+      const aiScore = scoreEntry(result.trade, account, locale);
       saveAIScore(aiScore);
       
       // 显示反馈
       alert(result.message + '\n\n' + t('trading.ai_score_label') + aiScore.entryScore + '/100\n' + aiScore.feedback.entry.join('\n'));
-      setShowAIFeedback(true);
     }
 
     // 重置表单

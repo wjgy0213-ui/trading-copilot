@@ -66,7 +66,7 @@ export default function AutoTraderPanel({ currentPrice, onTradeComplete }: AutoT
         currentPrice,
         stopLoss: result.signal === 'buy' ? currentPrice * (1 - slPct) : currentPrice * (1 + slPct),
         takeProfit: result.signal === 'buy' ? currentPrice * (1 + tpPct) : currentPrice * (1 - tpPct),
-      });
+      }, locale);
 
       addSignalLog({
         time: Date.now(),
@@ -78,7 +78,7 @@ export default function AutoTraderPanel({ currentPrice, onTradeComplete }: AutoT
       setLogs(getSignalLogs());
       if (tradeResult.success) onTradeComplete();
     }
-  }, [currentPrice, strategy?.active]);
+  }, [currentPrice, locale, onTradeComplete, strategy, t]);
 
   if (!strategy) return null;
 
@@ -86,8 +86,7 @@ export default function AutoTraderPanel({ currentPrice, onTradeComplete }: AutoT
     if (strategy.active) {
       stopStrategy();
     } else {
-      strategy.active = true;
-      localStorage.setItem('tc-auto-strategy', JSON.stringify(strategy));
+      localStorage.setItem('tc-auto-strategy', JSON.stringify({ ...strategy, active: true }));
     }
     setStrategy(getDeployedStrategy());
   };

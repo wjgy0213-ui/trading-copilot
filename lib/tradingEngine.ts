@@ -3,6 +3,8 @@
 import { Account, Trade, PositionSide } from './types';
 import { getAccount, saveAccount } from './storage';
 import { v4 as uuidv4 } from 'uuid';
+import type { Locale } from './i18n';
+import { i18nText } from './i18n-helpers';
 
 /** 开仓参数 */
 export interface OpenPositionParams {
@@ -15,22 +17,22 @@ export interface OpenPositionParams {
 }
 
 /** 开仓 */
-export function openPosition(params: OpenPositionParams): { success: boolean; message: string; trade?: Trade } {
+export function openPosition(params: OpenPositionParams, locale: Locale = 'zh'): { success: boolean; message: string; trade?: Trade } {
   const account = getAccount();
   
   // 检查余额是否足够
   if (account.balance < params.size) {
-    return { success: false, message: '余额不足' };
+    return { success: false, message: i18nText(locale, 'engine.balance_insufficient') };
   }
   
   // 检查仓位大小（不超过总资金的50%）
   if (params.size > account.equity * 0.5) {
-    return { success: false, message: '单笔仓位过大，建议不超过总资金的50%' };
+    return { success: false, message: i18nText(locale, 'engine.position_too_large') };
   }
   
   // 检查杠杆
   if (params.leverage < 1 || params.leverage > 10) {
-    return { success: false, message: '杠杆必须在1-10倍之间' };
+    return { success: false, message: i18nText(locale, 'engine.invalid_leverage') };
   }
   
   // 创建交易
@@ -51,16 +53,16 @@ export function openPosition(params: OpenPositionParams): { success: boolean; me
   account.positions.push(trade);
   saveAccount(account);
   
-  return { success: true, message: '开仓成功', trade };
+  return { success: true, message: i18nText(locale, 'engine.open_success'), trade };
 }
 
 /** 平仓 */
-export function closePosition(tradeId: string, currentPrice: number): { success: boolean; message: string; pnl?: number } {
+export function closePosition(tradeId: string, currentPrice: number, locale: Locale = 'zh'): { success: boolean; message: string; pnl?: number } {
   const account = getAccount();
   const positionIndex = account.positions.findIndex(p => p.id === tradeId);
   
   if (positionIndex === -1) {
-    return { success: false, message: '找不到该持仓' };
+    return { success: false, message: i18nText(locale, 'engine.position_not_found') };
   }
   
   const position = account.positions[positionIndex];
@@ -94,7 +96,7 @@ export function closePosition(tradeId: string, currentPrice: number): { success:
   
   saveAccount(account);
   
-  return { success: true, message: `平仓成功，盈亏: ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}`, pnl };
+  return { success: true, message: i18nText(locale, 'engine.close_success', { pnl: `${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}` }), pnl };
 }
 
 /** 计算盈亏 */
@@ -136,7 +138,7 @@ export function calculateMaxDrawdown(account: Account): number {
 }
 
 /** 检查是否触发止损止盈 */
-export function checkStopLossAndTakeProfit(account: Account, currentPrice: number): string[] {
+export function checkStopLossAndTakeProfit(account: Account, currentPrice: number, locale: Locale = 'zh'): string[] {
   const messages: string[] = [];
   
   account.positions.forEach(position => {
@@ -147,9 +149,9 @@ export function checkStopLossAndTakeProfit(account: Account, currentPrice: numbe
         : currentPrice >= position.stopLoss;
       
       if (shouldTriggerStopLoss) {
-        const result = closePosition(position.id, currentPrice);
+        const result = closePosition(position.id, currentPrice, locale);
         if (result.success) {
-          messages.push(`触发止损：${result.message}`);
+          messages.push(i18nText(locale, 'engine.stop_loss_triggered', { message: result.message }));
         }
       }
     }
@@ -161,9 +163,9 @@ export function checkStopLossAndTakeProfit(account: Account, currentPrice: numbe
         : currentPrice <= position.takeProfit;
       
       if (shouldTriggerTakeProfit) {
-        const result = closePosition(position.id, currentPrice);
+        const result = closePosition(position.id, currentPrice, locale);
         if (result.success) {
-          messages.push(`触发止盈：${result.message}`);
+          messages.push(i18nText(locale, 'engine.take_profit_triggered', { message: result.message }));
         }
       }
     }
