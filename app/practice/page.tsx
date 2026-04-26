@@ -59,6 +59,12 @@ function formatUsd(n: number): string {
 
 export default function PracticePage() {
   const { t } = useI18n();
+  const tierLabels = {
+    bronze: t('practice.tier_bronze'),
+    silver: t('practice.tier_silver'),
+    gold: t('practice.tier_gold'),
+    platinum: t('practice.tier_platinum'),
+  } as const;
   const [prices, setPrices] = useState<Record<string, { usd: number; usd_24h_change: number }>>({});
   const [tier, setTier] = useState<keyof typeof TIERS>('bronze');
   const [balance, setBalance] = useState(10000);
@@ -230,7 +236,7 @@ export default function PracticePage() {
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <span>🎮</span>
               <span className={`bg-gradient-to-r ${tierInfo.color} bg-clip-text text-transparent`}>
-                {t('practice.title')} {tierInfo.label}
+                {t('practice.title')} {tierLabels[tier]}
               </span>
             </h1>
             <p className="text-gray-500 text-sm">{t('practice.subtitle')}</p>
@@ -273,8 +279,8 @@ export default function PracticePage() {
         {tierInfo.next && (
           <div className="bg-gray-800/30 rounded-xl p-3 border border-gray-700/30 mb-6">
             <div className="flex justify-between text-xs text-gray-400 mb-1">
-              <span>{tierInfo.label}</span>
-              <span>{t('practice.next_tier')}: {TIERS[tierInfo.next as keyof typeof TIERS].label}</span>
+              <span>{tierLabels[tier]}</span>
+              <span>{t('practice.next_tier')}: {tierLabels[tierInfo.next as keyof typeof tierLabels]}</span>
             </div>
             <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-yellow-500 to-green-500 rounded-full transition-all" 
@@ -410,7 +416,7 @@ export default function PracticePage() {
                           <div className="flex items-center gap-2">
                             <span className={`px-2 py-0.5 rounded text-xs font-bold ${
                               pos.side === 'long' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                            }`}>{pos.side === 'long' ? 'LONG' : 'SHORT'}</span>
+                            }`}>{pos.side === 'long' ? t('practice.long_badge') : t('practice.short_badge')}</span>
                             <span className="font-bold">{pos.coin}</span>
                             <span className="text-xs text-gray-500">{pos.leverage}x</span>
                           </div>
@@ -446,7 +452,7 @@ export default function PracticePage() {
                           <span className={t.pnl >= 0 ? 'text-green-400' : 'text-red-400'}>
                             {t.pnl >= 0 ? '🟢' : '🔴'}
                           </span>
-                          <span className="font-medium text-sm">{t.coin} {t.side.toUpperCase()}</span>
+                          <span className="font-medium text-sm">{t.coin} {t.side === 'long' ? t('practice.long_badge') : t('practice.short_badge')}</span>
                           <span className="text-xs text-gray-500">{t.leverage}x</span>
                           {t.aiScore !== undefined && (
                             <span className={`text-xs px-1.5 py-0.5 rounded ${

@@ -1858,5 +1858,22 @@
   "meta.trade.title": "Paper Trading Practice — AI Real-time Scoring",
   "meta.trade.description": "Practice trading with real BTC prices, AI scoring, and zero-risk discipline training for entries, stops, and emotions.",
   "meta.waitlist.title": "Waitlist — Early Access to New Features",
-  "meta.waitlist.description": "Join the waitlist to get early access to new features, product updates, and exclusive launch offers."
+  "meta.waitlist.description": "Join the waitlist to get early access to new features, product updates, and exclusive launch offers.",
+  "account.plan_pro": "Pro",
+  "account.plan_elite": "Elite",
+  "account.plan_price_pro": "$39.99/mo",
+  "account.plan_price_elite": "$79.99/mo",
+  "account.value_included": "✓",
+  "account.value_unavailable": "—",
+  "practice.tier_bronze": "🥉 Bronze",
+  "practice.tier_silver": "🥈 Silver",
+  "practice.tier_gold": "🥇 Gold",
+  "practice.tier_platinum": "💎 Platinum",
+  "practice.long_badge": "LONG",
+  "practice.short_badge": "SHORT",
+  "elite.connect_failed": "Connection failed",
+  "elite.exchange_connected_success": "✅ Exchange connected successfully!",
+  "elite.close_position_failed": "Failed to close position",
+  "elite.telegram_setup_failed": "Setup failed",
+  "elite.telegram_connected_success": "✅ Telegram connected! Check your messages."
 }

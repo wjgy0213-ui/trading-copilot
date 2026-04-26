@@ -1858,5 +1858,22 @@
   "meta.trade.title": "模拟交易练习 — AI 实时评分",
   "meta.trade.description": "用真实 BTC 行情做模拟交易，AI 实时评估进场、止损和情绪纪律，零风险打磨执行力。",
   "meta.waitlist.title": "候补名单 — 抢先体验新功能",
-  "meta.waitlist.description": "加入候补名单，第一时间获取新功能体验、产品更新和专属上线优惠。"
+  "meta.waitlist.description": "加入候补名单，第一时间获取新功能体验、产品更新和专属上线优惠。",
+  "account.plan_pro": "专业版",
+  "account.plan_elite": "精英版",
+  "account.plan_price_pro": "$39.99/月",
+  "account.plan_price_elite": "$79.99/月",
+  "account.value_included": "✓",
+  "account.value_unavailable": "—",
+  "practice.tier_bronze": "🥉 青铜",
+  "practice.tier_silver": "🥈 白银",
+  "practice.tier_gold": "🥇 黄金",
+  "practice.tier_platinum": "💎 白金",
+  "practice.long_badge": "做多",
+  "practice.short_badge": "做空",
+  "elite.connect_failed": "连接失败",
+  "elite.exchange_connected_success": "✅ 交易所连接成功！",
+  "elite.close_position_failed": "平仓失败",
+  "elite.telegram_setup_failed": "Telegram 设置失败",
+  "elite.telegram_connected_success": "✅ Telegram 已连接，请检查消息。"
 }

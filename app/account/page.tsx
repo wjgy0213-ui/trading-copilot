@@ -58,7 +58,7 @@ export default function AccountPage() {
     </div>
   );
 
-  const planName = session.plan === 'elite' ? 'Elite' : session.plan === 'pro' ? 'Pro' : t('account.free_plan');
+  const planName = session.plan === 'elite' ? t('account.plan_elite') : session.plan === 'pro' ? t('account.plan_pro') : t('account.free_plan');
   const planColor = session.plan === 'elite' ? 'text-violet-400' : session.plan === 'pro' ? 'text-emerald-400' : 'text-gray-400';
   const planBg = session.plan === 'elite' ? 'bg-violet-500/10 border-violet-800/50' : session.plan === 'pro' ? 'bg-emerald-500/10 border-emerald-800/50' : 'bg-gray-800/30 border-gray-700/50';
 
@@ -90,7 +90,7 @@ export default function AccountPage() {
               <div>
                 <div className={`text-xl font-bold ${planColor}`}>{planName}</div>
                 <div className="text-sm text-gray-500">
-                  {session.plan === 'free' ? t('account.basic_features') : session.plan === 'pro' ? '$39.99/mo' : '$79.99/mo'}
+                  {session.plan === 'free' ? t('account.basic_features') : session.plan === 'pro' ? t('account.plan_price_pro') : t('account.plan_price_elite')}
                 </div>
               </div>
             </div>
@@ -143,7 +143,7 @@ export default function AccountPage() {
                 <div key={f.name} className="flex items-center justify-between py-1.5">
                   <span className="text-sm text-gray-300">{f.name}</span>
                   <span className={`text-sm font-mono ${hasIt ? 'text-green-400' : 'text-gray-600'}`}>
-                    {typeof hasIt === 'string' ? hasIt : hasIt ? '✓' : '—'}
+                    {typeof hasIt === 'string' ? hasIt : hasIt ? t('account.value_included') : t('account.value_unavailable')}
                   </span>
                 </div>
               );

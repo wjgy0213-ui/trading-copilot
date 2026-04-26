@@ -69,11 +69,11 @@ export default function ElitePage() {
         body: JSON.stringify({ exchange, apiKey, apiSecret, passphrase: exchange === 'okx' ? passphrase : undefined }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Connection failed');
+      if (!res.ok) throw new Error(data.error || t('elite.connect_failed'));
       
       setConnected(true);
       setBalance(data.balance);
-      setSuccess('✅ Exchange connected successfully!');
+      setSuccess(t('elite.exchange_connected_success'));
       setApiKey('');
       setApiSecret('');
       setTimeout(() => setSuccess(''), 3000);
@@ -122,7 +122,7 @@ export default function ElitePage() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to close position');
+      if (!res.ok) throw new Error(data.error || t('elite.close_position_failed'));
       
       setSuccess(`✅ ${position.symbol} ${t('elite.closed')}`);
       fetchPositions();
@@ -145,10 +145,10 @@ export default function ElitePage() {
         body: JSON.stringify({ chatId }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Setup failed');
+      if (!res.ok) throw new Error(data.error || t('elite.telegram_setup_failed'));
       
       setTelegramConnected(true);
-      setSuccess('✅ Telegram connected! Check your messages.');
+      setSuccess(t('elite.telegram_connected_success'));
       setTimeout(() => setSuccess(''), 3000);
     } catch (err: any) {
       setError(err.message);
