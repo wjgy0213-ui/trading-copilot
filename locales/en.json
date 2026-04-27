@@ -1875,5 +1875,17 @@
   "elite.exchange_connected_success": "✅ Exchange connected successfully!",
   "elite.close_position_failed": "Failed to close position",
   "elite.telegram_setup_failed": "Setup failed",
-  "elite.telegram_connected_success": "✅ Telegram connected! Check your messages."
+  "elite.telegram_connected_success": "✅ Telegram connected! Check your messages.",
+  "seo.schema.answerType": "Answer",
+  "seo.schema.articleType": "article",
+  "seo.schema.blogPostingType": "BlogPosting",
+  "seo.schema.faqPageType": "FAQPage",
+  "seo.schema.financeApplicationCategory": "FinanceApplication",
+  "seo.schema.offerType": "Offer",
+  "seo.schema.organizationType": "Organization",
+  "seo.schema.personType": "Person",
+  "seo.schema.questionType": "Question",
+  "seo.schema.softwareApplicationType": "SoftwareApplication",
+  "seo.schema.webOperatingSystem": "Web",
+  "seo.twitter.summaryLargeImage": "summary_large_image"
 }

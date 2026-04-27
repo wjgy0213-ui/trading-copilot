@@ -5,29 +5,29 @@ export default async function JsonLd() {
 
   const data = {
     '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
+    '@type': t('seo.schema.softwareApplicationType'),
     name: t('app.name'),
-    applicationCategory: 'FinanceApplication',
-    operatingSystem: 'Web',
+    applicationCategory: t('seo.schema.financeApplicationCategory'),
+    operatingSystem: t('seo.schema.webOperatingSystem'),
     url: 'https://www.tradingcopilot.app',
     description: t('seo.jsonLd.description'),
     offers: [
       {
-        '@type': 'Offer',
+        '@type': t('seo.schema.offerType'),
         price: '0',
         priceCurrency: 'USD',
         name: t('seo.jsonLd.offer.free.name'),
         description: t('seo.jsonLd.offer.free.description'),
       },
       {
-        '@type': 'Offer',
+        '@type': t('seo.schema.offerType'),
         price: '39.99',
         priceCurrency: 'USD',
         name: t('seo.jsonLd.offer.pro.name'),
         description: t('seo.jsonLd.offer.pro.description'),
       },
       {
-        '@type': 'Offer',
+        '@type': t('seo.schema.offerType'),
         price: '79.99',
         priceCurrency: 'USD',
         name: t('seo.jsonLd.offer.elite.name'),
@@ -45,7 +45,7 @@ export default async function JsonLd() {
       t('seo.jsonLd.feature.8'),
     ],
     author: {
-      '@type': 'Person',
+      '@type': t('seo.schema.personType'),
       name: 'SlowManJW',
       url: 'https://x.com/SlowManJW',
     },
@@ -53,45 +53,45 @@ export default async function JsonLd() {
 
   const faqData = {
     '@context': 'https://schema.org',
-    '@type': 'FAQPage',
+    '@type': t('seo.schema.faqPageType'),
     mainEntity: [
       {
-        '@type': 'Question',
+        '@type': t('seo.schema.questionType'),
         name: t('seo.faq.1.q'),
         acceptedAnswer: {
-          '@type': 'Answer',
+          '@type': t('seo.schema.answerType'),
           text: t('seo.faq.1.a'),
         },
       },
       {
-        '@type': 'Question',
+        '@type': t('seo.schema.questionType'),
         name: t('seo.faq.2.q'),
         acceptedAnswer: {
-          '@type': 'Answer',
+          '@type': t('seo.schema.answerType'),
           text: t('seo.faq.2.a'),
         },
       },
       {
-        '@type': 'Question',
+        '@type': t('seo.schema.questionType'),
         name: t('seo.faq.3.q'),
         acceptedAnswer: {
-          '@type': 'Answer',
+          '@type': t('seo.schema.answerType'),
           text: t('seo.faq.3.a'),
         },
       },
       {
-        '@type': 'Question',
+        '@type': t('seo.schema.questionType'),
         name: t('seo.faq.4.q'),
         acceptedAnswer: {
-          '@type': 'Answer',
+          '@type': t('seo.schema.answerType'),
           text: t('seo.faq.4.a'),
         },
       },
       {
-        '@type': 'Question',
+        '@type': t('seo.schema.questionType'),
         name: t('seo.faq.5.q'),
         acceptedAnswer: {
-          '@type': 'Answer',
+          '@type': t('seo.schema.answerType'),
           text: t('seo.faq.5.a'),
         },
       },

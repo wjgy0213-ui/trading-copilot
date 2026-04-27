@@ -57,12 +57,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org',
-            '@type': 'BlogPosting',
+            '@type': t('seo.schema.blogPostingType'),
             headline: post.title,
             description: post.description,
             datePublished: post.date,
-            author: { '@type': 'Organization', name: post.author },
-            publisher: { '@type': 'Organization', name: t('app.name') },
+            author: { '@type': t('seo.schema.organizationType'), name: post.author },
+            publisher: { '@type': t('seo.schema.organizationType'), name: t('app.name') },
           }),
         }}
       />

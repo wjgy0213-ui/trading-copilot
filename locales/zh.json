@@ -1875,5 +1875,17 @@
   "elite.exchange_connected_success": "✅ 交易所连接成功！",
   "elite.close_position_failed": "平仓失败",
   "elite.telegram_setup_failed": "Telegram 设置失败",
-  "elite.telegram_connected_success": "✅ Telegram 已连接，请检查消息。"
+  "elite.telegram_connected_success": "✅ Telegram 已连接，请检查消息。",
+  "seo.schema.answerType": "Answer",
+  "seo.schema.articleType": "article",
+  "seo.schema.blogPostingType": "BlogPosting",
+  "seo.schema.faqPageType": "FAQPage",
+  "seo.schema.financeApplicationCategory": "FinanceApplication",
+  "seo.schema.offerType": "Offer",
+  "seo.schema.organizationType": "Organization",
+  "seo.schema.personType": "Person",
+  "seo.schema.questionType": "Question",
+  "seo.schema.softwareApplicationType": "SoftwareApplication",
+  "seo.schema.webOperatingSystem": "Web",
+  "seo.twitter.summaryLargeImage": "summary_large_image"
 }

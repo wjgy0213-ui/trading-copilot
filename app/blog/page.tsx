@@ -7,7 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getServerT();
 
   return {
-    title: `${t('blog.pageTitle')} | Trading Copilot`,
+    title: `${t('blog.pageTitle')} | ${t('app.name')}`,
     description: t('blog.pageSubtitle'),
     openGraph: {
       title: t('blog.ogTitle'),
