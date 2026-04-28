@@ -57,13 +57,14 @@ function PnlBadge({ value }: { value: number }) {
 }
 
 function BiasIndicator({ longPct }: { longPct: number }) {
+  const { t } = useI18n();
   return (
     <div className="flex items-center gap-2">
       <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden flex">
         <div className="h-full bg-green-500 transition-all" style={{ width: `${longPct}%` }} />
         <div className="h-full bg-red-500 transition-all" style={{ width: `${100 - longPct}%` }} />
       </div>
-      <span className="text-xs text-gray-400 w-12 text-right">{longPct.toFixed(0)}% L</span>
+      <span className="text-xs text-gray-400 w-12 text-right">{longPct.toFixed(0)}% {t('whales.longShortLongSuffix')}</span>
     </div>
   );
 }
@@ -150,9 +151,9 @@ export default function WhalesPage() {
               <div key={tc.coin} className="bg-gray-800/60 rounded-lg p-2 text-center">
                 <div className="font-bold text-sm">{tc.coin}</div>
                 <div className="flex items-center justify-center gap-1 mt-1">
-                  <span className="text-green-400 text-xs">{tc.longCount}L</span>
+                  <span className="text-green-400 text-xs">{tc.longCount}{t('whales.longShortLongSuffix')}</span>
                   <span className="text-gray-600">/</span>
-                  <span className="text-red-400 text-xs">{tc.shortCount}S</span>
+                  <span className="text-red-400 text-xs">{tc.shortCount}{t('whales.longShortShortSuffix')}</span>
                 </div>
                 <div className={`text-xs mt-0.5 ${
                   tc.bias === 'LONG' ? 'text-green-400' : tc.bias === 'SHORT' ? 'text-red-400' : 'text-gray-400'
@@ -208,7 +209,7 @@ export default function WhalesPage() {
                           <div className={`text-xs px-2 py-0.5 rounded font-bold ${
                             p.side === 'LONG' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
                           }`}>
-                            {p.side}
+                            {p.side === 'LONG' ? t('whales.long') : t('whales.short')}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
@@ -216,7 +217,7 @@ export default function WhalesPage() {
                               <span className="text-xs text-gray-500">{p.leverage}x</span>
                             </div>
                             <div className="text-xs text-gray-400">
-                              Entry ${p.entryPrice < 1 ? p.entryPrice.toFixed(4) : p.entryPrice.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+                              {t('whales.entry')} ${p.entryPrice < 1 ? p.entryPrice.toFixed(4) : p.entryPrice.toLocaleString(undefined, { maximumFractionDigits: 1 })}
                               {' · '}{formatUsd(p.size)}
                             </div>
                           </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { BarChart3, Users, Eye, CreditCard, TrendingUp, RefreshCw } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 
@@ -29,7 +29,7 @@ interface DayStat {
 }
 
 export default function AdminPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [stats, setStats] = useState<DayStat[]>([]);
   const [leads, setLeads] = useState<LeadItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -195,11 +195,11 @@ export default function AdminPage() {
               <tbody>
                 {leads.map((lead) => (
                   <tr key={lead.id} className="border-b border-gray-800/50 hover:bg-gray-800/30">
-                    <td className="py-2 px-3 text-gray-300">{lead.email || lead.wechat || '—'}</td>
-                    <td className="py-2 px-3 text-gray-400">{lead.source || '—'}</td>
-                    <td className="py-2 px-3 text-emerald-400">{lead.status || 'new'}</td>
-                    <td className="py-2 px-3 text-violet-400">{lead.paid_plan || '—'}</td>
-                    <td className="py-2 px-3 text-gray-500">{lead.created_at ? new Date(lead.created_at).toLocaleString() : '—'}</td>
+                    <td className="py-2 px-3 text-gray-300">{lead.email || lead.wechat || t('admin.emptyValue')}</td>
+                    <td className="py-2 px-3 text-gray-400">{lead.source || t('admin.emptyValue')}</td>
+                    <td className="py-2 px-3 text-emerald-400">{lead.status || t('admin.statusNew')}</td>
+                    <td className="py-2 px-3 text-violet-400">{lead.paid_plan || t('admin.emptyValue')}</td>
+                    <td className="py-2 px-3 text-gray-500">{lead.created_at ? new Date(lead.created_at).toLocaleString(locale === 'zh' ? 'zh-CN' : 'en-US') : t('admin.emptyValue')}</td>
                   </tr>
                 ))}
                 {leads.length === 0 && (

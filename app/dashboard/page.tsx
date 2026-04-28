@@ -195,7 +195,7 @@ export default function DashboardPage() {
         <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between mb-5">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-300">
-              <CircleDot className="w-3 h-3" /> Start Here
+              <CircleDot className="w-3 h-3" /> {t('dashboard.startHere')}
             </div>
             <h2 className="mt-3 text-2xl font-semibold text-white">{t('dashboard.pathHeader')}</h2>
             <p className="mt-2 max-w-3xl text-sm text-gray-400">
