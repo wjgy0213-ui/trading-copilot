@@ -89,13 +89,13 @@ function PnlText({ pnl }: { pnl: number }) {
   return <span className={`font-medium ${color}`}>{pnl > 0 ? '+' : ''}{pnl.toFixed(1)}%</span>;
 }
 
-function timeAgo(isoStr: string): string {
+function timeAgo(isoStr: string, t: (key: string, fallback?: string) => string): string {
   const diff = Date.now() - new Date(isoStr).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins}m`;
+  if (mins < 60) return t('sniper.time.minutes').replace('{value}', String(mins));
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h`;
-  return `${Math.floor(hrs / 24)}d`;
+  if (hrs < 24) return t('sniper.time.hours').replace('{value}', String(hrs));
+  return t('sniper.time.days').replace('{value}', String(Math.floor(hrs / 24)));
 }
 
 /* ========== Mode Selection Screen ========== */
@@ -108,7 +108,7 @@ function ModeSelector({ onSelect }: { onSelect: (mode: SniperMode) => void }) {
           <h1 className="text-3xl font-bold flex items-center justify-center gap-3">
             <span>🔫</span>
             <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-              Meme Sniper
+              {t('sniper.title')}
             </span>
           </h1>
           <p className="text-gray-400 mt-2">{t('sniper.aiDesc')}</p>
@@ -320,7 +320,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
                   onClick={connectBinance} disabled={connecting}
                   className="w-full bg-yellow-600 hover:bg-yellow-500 disabled:opacity-50 text-black font-bold py-2.5 rounded-lg transition-all text-sm"
                 >
-                  {connecting ? t('sniper.phantomConnecting') : `🔗 ${t('sniper.connectBinance')}`}
+                  {connecting ? t('sniper.connecting') : `🔗 ${t('sniper.connectBinance')}`}
                 </button>
               </div>
             )}
@@ -594,7 +594,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <span>🔫</span>
               <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-                Meme Sniper
+                {t('sniper.title')}
               </span>
             </h1>
             <p className="text-gray-500 text-sm">
@@ -611,7 +611,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
             </span>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-xs text-gray-400">{t('sniper.liveBadge')}</span>
+              <span className="text-xs text-gray-400">{t('sniper.liveNow')}</span>
             </div>
           </div>
         </div>
@@ -723,7 +723,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                       </div>
                       <div>
                         <div className="text-gray-500 text-xs">{t('sniper.holdTime')}</div>
-                        <div className="text-gray-300">{timeAgo(pos.entry_time)}</div>
+                        <div className="text-gray-300">{timeAgo(pos.entry_time, t)}</div>
                       </div>
                     </div>
 
@@ -799,7 +799,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                       )}
                     </div>
                   </div>
-                  <div className="text-xs text-gray-600">{timeAgo(trade.ts)}</div>
+                  <div className="text-xs text-gray-600">{timeAgo(trade.ts, t)}</div>
                 </div>
               ))
             )}

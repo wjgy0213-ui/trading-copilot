@@ -330,18 +330,18 @@ export default function PracticePage() {
               <div className="mb-2">
                 <label className="text-xs text-gray-400">{t('practice.size')}</label>
                 <input type="number" value={orderSize} onChange={e => setOrderSize(e.target.value)}
-                  className="w-full bg-gray-700 rounded-lg px-3 py-2 text-white mt-1" placeholder="500" />
+                  className="w-full bg-gray-700 rounded-lg px-3 py-2 text-white mt-1" placeholder={t('practice.sizePlaceholder')} />
                 <div className="flex gap-1 mt-1">
                   {[100, 500, 1000, 2000].map(v => (
                     <button key={v} onClick={() => setOrderSize(String(v))}
-                      className="flex-1 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs text-gray-400">${v}</button>
+                      className="flex-1 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs text-gray-400">{t('practice.quickAmount').replace('{amount}', String(v))}</button>
                   ))}
                 </div>
               </div>
 
               {/* Leverage */}
               <div className="mb-2">
-                <label className="text-xs text-gray-400">{t('practice.leverage')} {orderLeverage}x</label>
+                <label className="text-xs text-gray-400">{t('practice.leverage')} {t('practice.leverageValue').replace('{value}', orderLeverage)}</label>
                 <input type="range" min="1" max="20" value={orderLeverage} onChange={e => setOrderLeverage(e.target.value)}
                   className="w-full mt-1" />
               </div>
@@ -383,7 +383,7 @@ export default function PracticePage() {
                   <div className={`text-3xl font-bold ${
                     lastGrade.score >= 70 ? 'text-green-400' : lastGrade.score >= 40 ? 'text-yellow-400' : 'text-red-400'
                   }`}>{lastGrade.score}</div>
-                  <div className="text-sm text-gray-400">/100</div>
+                  <div className="text-sm text-gray-400">{t('practice.scoreOutOf')}</div>
                 </div>
                 <p className="text-xs text-gray-300">{lastGrade.advice}</p>
               </div>
@@ -418,7 +418,7 @@ export default function PracticePage() {
                               pos.side === 'long' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
                             }`}>{pos.side === 'long' ? t('practice.long_badge') : t('practice.short_badge')}</span>
                             <span className="font-bold">{pos.coin}</span>
-                            <span className="text-xs text-gray-500">{pos.leverage}x</span>
+                            <span className="text-xs text-gray-500">{t('practice.leverageValue').replace('{value}', String(pos.leverage))}</span>
                           </div>
                           <span className={`font-bold ${pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                             {pnl >= 0 ? '+' : ''}{formatUsd(pnl)} ({pnlPct >= 0 ? '+' : ''}{pnlPct.toFixed(1)}%)
@@ -445,28 +445,28 @@ export default function PracticePage() {
                 {history.length === 0 ? (
                   <div className="text-center text-gray-500 text-sm py-4">{t('practice.no_history')}</div>
                 ) : (
-                  history.map((t, i) => (
+                  history.map((trade, i) => (
                     <div key={i} className="bg-gray-800/40 rounded-lg p-3 border border-gray-700/30">
                       <div className="flex items-center justify-between mb-1">
                         <div className="flex items-center gap-2">
-                          <span className={t.pnl >= 0 ? 'text-green-400' : 'text-red-400'}>
-                            {t.pnl >= 0 ? '🟢' : '🔴'}
+                          <span className={trade.pnl >= 0 ? 'text-green-400' : 'text-red-400'}>
+                            {trade.pnl >= 0 ? '🟢' : '🔴'}
                           </span>
-                          <span className="font-medium text-sm">{t.coin} {t.side === 'long' ? t('practice.long_badge') : t('practice.short_badge')}</span>
-                          <span className="text-xs text-gray-500">{t.leverage}x</span>
-                          {t.aiScore !== undefined && (
+                          <span className="font-medium text-sm">{trade.coin} {trade.side === 'long' ? t('practice.long_badge') : t('practice.short_badge')}</span>
+                          <span className="text-xs text-gray-500">{t('practice.leverageValue').replace('{value}', String(trade.leverage))}</span>
+                          {trade.aiScore !== undefined && (
                             <span className={`text-xs px-1.5 py-0.5 rounded ${
-                              t.aiScore >= 70 ? 'bg-green-500/20 text-green-400' :
-                              t.aiScore >= 40 ? 'bg-yellow-500/20 text-yellow-400' :
+                              trade.aiScore >= 70 ? 'bg-green-500/20 text-green-400' :
+                              trade.aiScore >= 40 ? 'bg-yellow-500/20 text-yellow-400' :
                               'bg-red-500/20 text-red-400'
-                            }`}>AI: {t.aiScore}</span>
+                            }`}>{t('practice.aiBadge').replace('{score}', String(trade.aiScore))}</span>
                           )}
                         </div>
-                        <span className={`font-medium text-sm ${t.pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          {t.pnl >= 0 ? '+' : ''}{formatUsd(t.pnl)}
+                        <span className={`font-medium text-sm ${trade.pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          {trade.pnl >= 0 ? '+' : ''}{formatUsd(trade.pnl)}
                         </span>
                       </div>
-                      {t.aiAdvice && <p className="text-xs text-gray-400 mt-1">💡 {t.aiAdvice}</p>}
+                      {trade.aiAdvice && <p className="text-xs text-gray-400 mt-1">💡 {trade.aiAdvice}</p>}
                     </div>
                   ))
                 )}

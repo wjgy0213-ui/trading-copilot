@@ -67,11 +67,12 @@ function TrafficLight({ light }: { light: string }) {
   );
 }
 
-function DimensionBar({ dim, locale }: { dim: Dimension; locale: string }) {
+function DimensionBar({ dim, locale, t }: { dim: Dimension; locale: string; t: (key: string, fallback?: string) => string }) {
   const color = dim.signal === 'bullish' ? 'bg-green-500' : dim.signal === 'bearish' ? 'bg-red-500' : 'bg-yellow-500';
   const textColor = dim.signal === 'bullish' ? 'text-green-400' : dim.signal === 'bearish' ? 'text-red-400' : 'text-yellow-400';
   const displayName = locale === 'zh' ? dim.nameZh : dim.name;
   const secondaryName = locale === 'zh' ? dim.name : dim.nameZh;
+  const weightText = t('health.weightPct').replace('{percent}', String(Math.round(dim.weight * 100)));
   
   return (
     <div className="bg-gray-800/60 rounded-xl p-4 border border-gray-700/50">
@@ -82,7 +83,7 @@ function DimensionBar({ dim, locale }: { dim: Dimension; locale: string }) {
         </div>
         <div className="flex items-center gap-2">
           <span className={`text-lg font-bold ${textColor}`}>{dim.score}</span>
-          <span className="text-xs text-gray-500">({Math.round(dim.weight * 100)}%)</span>
+          <span className="text-xs text-gray-500">{weightText}</span>
         </div>
       </div>
       <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden mb-2">
@@ -185,7 +186,7 @@ export default function HealthCheckPage() {
             <h2 className="text-lg font-semibold mb-3">{t('health.dimensions')}</h2>
             <div className="space-y-3 mb-8">
               {data.dimensions.map((dim) => (
-                <DimensionBar key={dim.name} dim={dim} locale={locale} />
+                <DimensionBar key={dim.name} dim={dim} locale={locale} t={t} />
               ))}
             </div>
 
