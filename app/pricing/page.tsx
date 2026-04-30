@@ -14,9 +14,9 @@ const PLAN_IDS = ['free', 'pro', 'elite'] as const;
 type PlanId = typeof PLAN_IDS[number];
 
 const PLAN_META = {
-  free: { icon: Zap, color: 'gray', popular: false, disabled: true, monthlyPrice: 0, yearlyPrice: 0, yearlyMonthly: 0 },
-  pro: { icon: Crown, color: 'emerald', popular: true, disabled: false, monthlyPrice: 39.99, yearlyPrice: 239.88, yearlyMonthly: 19.99 },
-  elite: { icon: Shield, color: 'violet', popular: false, disabled: false, monthlyPrice: 79.99, yearlyPrice: 479.88, yearlyMonthly: 39.99 },
+  free: { icon: Zap, color: 'gray', popular: false, disabled: true, monthlyPrice: 0, yearlyPrice: 0, yearlyMonthly: 0, launchPrice: 0 },
+  pro: { icon: Crown, color: 'emerald', popular: true, disabled: false, monthlyPrice: 39.99, yearlyPrice: 239.88, yearlyMonthly: 19.99, launchPrice: 19.99 },
+  elite: { icon: Shield, color: 'violet', popular: false, disabled: false, monthlyPrice: 79.99, yearlyPrice: 479.88, yearlyMonthly: 39.99, launchPrice: 39.99 },
 } as const;
 
 export default function PricingPageWrapper() {
@@ -128,7 +128,11 @@ function PricingPage() {
             <Sparkles className="w-3.5 h-3.5" /> {t('pricing.badge')}
           </div>
           <h1 className="text-3xl font-bold mb-3">{t('pricing.heading')}</h1>
-          <p className="text-gray-500 max-w-lg mx-auto mb-6">{t('pricing.desc')}</p>
+          <p className="text-gray-500 max-w-lg mx-auto mb-4">{t('pricing.desc')}</p>
+          <div className="mx-auto mb-6 max-w-2xl rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-sm text-amber-100">
+            <div className="font-semibold">{t('pricing.launchSpecial')}</div>
+            <div className="mt-1 text-amber-200/80">{t('pricing.trialBanner')}</div>
+          </div>
 
           {/* Billing Toggle */}
           <div className="inline-flex items-center gap-3 bg-gray-900 border border-gray-800 rounded-xl p-1">
@@ -207,9 +211,7 @@ function PricingPage() {
             const borderColor = plan.popular ? 'border-emerald-500/50' : 'border-gray-800';
             const displayPrice = plan.id === 'free'
               ? 0
-              : billingInterval === 'yearly'
-                ? plan.yearlyMonthly
-                : plan.monthlyPrice;
+              : plan.launchPrice;
             
             return (
               <div key={plan.id}
@@ -232,17 +234,21 @@ function PricingPage() {
                 </div>
                 
                 <div className="mb-1">
-                  <span className="text-3xl font-bold">${displayPrice}</span>
-                  <span className="text-gray-500 text-sm">{t('pricing.perMonth')}</span>
+                  {plan.id !== 'free' ? <div className="text-sm text-gray-500 line-through">${plan.monthlyPrice}{t('pricing.perMonth')}</div> : null}
+                  <div className="flex items-end gap-2">
+                    <span className="text-3xl font-bold">${displayPrice}</span>
+                    <span className="text-gray-500 text-sm">{t('pricing.perMonth')}</span>
+                    {plan.id !== 'free' ? <span className="mb-1 rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-300">{t('pricing.limitedTime')}</span> : null}
+                  </div>
                 </div>
                 {plan.id !== 'free' && billingInterval === 'yearly' && (
                   <p className="text-xs text-gray-500 mb-3">
                     {t('pricing.billedYearly')} <span className="text-emerald-400">${plan.yearlyPrice}{t('pricing.perYear')}</span>
-                    <span className="ml-1.5 text-amber-400">({t('pricing.save50')})</span>
+                    <span className="ml-1.5 text-amber-400">({t('pricing.launchSpecial')})</span>
                   </p>
                 )}
                 {plan.id !== 'free' && billingInterval === 'monthly' && (
-                  <p className="text-xs text-gray-500 mb-3">&nbsp;</p>
+                  <p className="text-xs text-gray-500 mb-3">{t('pricing.noCardTrial')}</p>
                 )}
                 {plan.id === 'free' && <p className="text-xs text-gray-500 mb-3">&nbsp;</p>}
                 

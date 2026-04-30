@@ -14,8 +14,15 @@ export async function POST(req: NextRequest) {
     // Verify the checkout session with Stripe
     const checkoutSession = await getStripe().checkout.sessions.retrieve(sessionId);
     
-    if (checkoutSession.payment_status !== 'paid') {
-      return NextResponse.json({ error: 'Payment not completed' }, { status: 400 });
+    const subscription = checkoutSession.subscription
+      ? await getStripe().subscriptions.retrieve(checkoutSession.subscription as string)
+      : null;
+
+    const isPaid = checkoutSession.payment_status === 'paid';
+    const isTrialing = subscription?.status === 'trialing';
+
+    if (!isPaid && !isTrialing) {
+      return NextResponse.json({ error: 'Payment or trial activation not completed' }, { status: 400 });
     }
 
     const planId = checkoutSession.metadata?.planId as 'pro' | 'elite' || 'pro';

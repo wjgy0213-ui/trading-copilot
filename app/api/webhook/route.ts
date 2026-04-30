@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
           await setUser(email, {
             ...user,
             cancelAtPeriodEnd: sub.cancel_at_period_end,
-            status: sub.status === 'active' ? 'active' : 'past_due',
+            status: sub.status === 'active' || sub.status === 'trialing' ? 'active' : 'past_due',
           });
           console.log(`🔄 KV: Subscription updated: ${email} cancel_at_period_end=${sub.cancel_at_period_end}`);
         }

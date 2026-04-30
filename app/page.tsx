@@ -6,6 +6,8 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { analytics } from '@/lib/analytics';
+import { useSession as useClientSession } from '@/lib/useSession';
+import WelcomeModal from '@/components/WelcomeModal';
 
 function CountUpNumber({ target, suffix = '' }: { target: number; suffix?: string }) {
   const [count, setCount] = useState(0);
@@ -33,6 +35,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 
 export default function LandingPage() {
   const { t } = useI18n();
+  const { session } = useClientSession();
 
   const features = [
     { icon: Gamepad2, titleKey: 'features.practice.title', descKey: 'features.practice.desc', color: 'emerald', href: '/practice' },
@@ -62,12 +65,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white pt-16">
-      {/* Launch Banner */}
-      <div className="bg-gradient-to-r from-emerald-600 to-cyan-600 text-white text-center py-2.5 px-4 text-sm font-medium">
-        <Link href="/pricing" className="hover:underline">
-          🚀 {t('hero.badge')} — {t('hero.cta.primary')} <ArrowRight className="w-4 h-4 inline ml-1" />
-        </Link>
-      </div>
+      {session ? <WelcomeModal /> : null}
       {/* Hero */}
       <div className="container mx-auto px-4 py-20">
         <div className="max-w-4xl mx-auto text-center">
@@ -90,22 +88,25 @@ export default function LandingPage() {
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.5 }}
             className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/health"
-              onClick={() => analytics.ctaClick({ cta_id: 'hero_primary', cta_text: 'start_market_health', target: '/health', page: '/', location: 'hero' })}
-              className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all hover:scale-105 shadow-lg shadow-emerald-900/30">
+              href="/login"
+              onClick={() => analytics.ctaClick({ cta_id: 'hero_primary', cta_text: 'start_free_no_card', target: '/login', page: '/', location: 'hero' })}
+              className="inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-gray-950 px-8 py-4 rounded-xl text-lg font-semibold transition-all hover:scale-105 shadow-lg shadow-emerald-900/40">
               {t('hero.cta.primary')} <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
-              href="/pricing"
-              onClick={() => analytics.ctaClick({ cta_id: 'hero_secondary', cta_text: 'view_pricing', target: '/pricing', page: '/', location: 'hero' })}
+              href="/practice"
+              onClick={() => analytics.ctaClick({ cta_id: 'hero_secondary', cta_text: 'see_how_it_works', target: '/practice', page: '/', location: 'hero' })}
               className="inline-flex items-center justify-center gap-2 bg-gray-800/80 hover:bg-gray-700/80 text-gray-200 border border-gray-700 px-8 py-4 rounded-xl text-lg font-semibold transition-all">
               <Zap className="w-5 h-5 text-emerald-400" /> {t('hero.cta.secondary')}
             </Link>
           </motion.div>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.8 }}
-            className="text-xs text-gray-600 mt-4">
-            {t('hero.trust.noCreditCard')} &nbsp;·&nbsp; {t('hero.trust.fullAccess')} &nbsp;·&nbsp; {t('hero.trust.autoRevert')}
-          </motion.p>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.8 }}
+            className="mt-6 flex flex-col items-center gap-3 text-sm text-gray-300">
+            <p className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-center text-sm text-emerald-200">
+              {t('hero.trust.line')}
+            </p>
+            <p className="text-sm text-gray-400">{t('hero.socialProof')}</p>
+          </motion.div>
         </div>
       </div>
 
@@ -331,8 +332,12 @@ export default function LandingPage() {
               transition={{ duration: 0.5, delay: i * 0.15 }}
               className={`bg-gray-900/50 border ${p.popular ? 'border-emerald-500/50 ring-1 ring-emerald-500/20' : 'border-gray-800'} rounded-2xl p-6 relative`}>
               {p.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full">{t('pricing.popular')}</div>}
+              {'badge' in p && p.badge ? <div className="absolute top-4 right-4 rounded-full border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-[10px] font-bold text-amber-300">{p.badge}</div> : null}
               <h3 className="text-lg font-bold mb-1">{t(p.nameKey)}</h3>
-              <div className="mb-4"><span className="text-3xl font-bold">{p.price}</span>{p.price !== '$0' && <span className="text-gray-500 text-sm">{t('pricing.perMonth')}</span>}</div>
+              <div className="mb-4">
+                {'originalPrice' in p && p.originalPrice ? <div className="text-sm text-gray-500 line-through">{p.originalPrice}{t('pricing.perMonth')}</div> : null}
+                <span className="text-3xl font-bold">{p.price}</span>{p.price !== '$0' && <span className="text-gray-500 text-sm">{t('pricing.perMonth')}</span>}
+              </div>
               <ul className="space-y-2 mb-6">
                 {p.features.map(fk => <li key={fk} className="flex items-center gap-2 text-sm text-gray-400"><span className={`text-${p.color}-400`}>✓</span>{t(fk)}</li>)}
               </ul>

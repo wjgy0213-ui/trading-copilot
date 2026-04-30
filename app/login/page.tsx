@@ -37,14 +37,14 @@ export default function LoginPage() {
     const result = await signIn('email-code', {
       email,
       code,
-      callbackUrl: '/strategy',
+      callbackUrl: '/',
       redirect: false,
     });
     if (result?.error) {
       setError(t('login.code_error'));
       setLoading(false);
     } else if (result?.ok) {
-      window.location.href = '/strategy';
+      window.location.href = '/';
     }
   };
 
@@ -67,7 +67,7 @@ export default function LoginPage() {
         <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-8 space-y-6">
           {mode === 'choose' && (<>
             {/* Google Login */}
-            <button onClick={() => signIn('google', { callbackUrl: '/strategy' })}
+            <button onClick={() => signIn('google', { callbackUrl: '/' })}
               className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white hover:bg-gray-100 text-gray-800 rounded-xl font-medium text-sm transition">
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>

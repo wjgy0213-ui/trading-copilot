@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Zap, Shield, Brain, TrendingUp } from 'lucide-react';
+import { X, Zap, Shield, Brain, TrendingUp, ArrowRight } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 
 export default function WelcomeModal() {
@@ -36,16 +36,21 @@ export default function WelcomeModal() {
         </div>
 
         <div className="space-y-4 mb-8">
-          <Feature icon={<TrendingUp className="w-5 h-5 text-green-400" />} title={t('welcome.feat_realtime')} desc={t('welcome.feat_realtime_desc')} />
-          <Feature icon={<Brain className="w-5 h-5 text-blue-400" />} title={t('welcome.feat_ai')} desc={t('welcome.feat_ai_desc')} />
-          <Feature icon={<Shield className="w-5 h-5 text-yellow-400" />} title={t('welcome.feat_risk')} desc={t('welcome.feat_risk_desc')} />
+          <Feature icon={<TrendingUp className="w-5 h-5 text-green-400" />} title={t('welcome.step1.title')} desc={t('welcome.step1.desc')} />
+          <Feature icon={<Brain className="w-5 h-5 text-blue-400" />} title={t('welcome.step2.title')} desc={t('welcome.step2.desc')} />
+          <Feature icon={<Shield className="w-5 h-5 text-yellow-400" />} title={t('welcome.step3.title')} desc={t('welcome.step3.desc')} />
+        </div>
+
+        <div className="mb-6 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-left">
+          <p className="text-sm font-semibold text-emerald-300">{t('welcome.onboardingTitle')}</p>
+          <p className="mt-1 text-xs text-gray-300">{t('welcome.onboardingDesc')}</p>
         </div>
 
         <button
           onClick={dismiss}
           className="w-full py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold rounded-xl text-lg transition-all"
         >
-          {t('welcome.start')}
+          {t('welcome.start')} <ArrowRight className="inline ml-1 h-4 w-4" />
         </button>
 
         <p className="text-center text-xs text-gray-600 mt-4">
