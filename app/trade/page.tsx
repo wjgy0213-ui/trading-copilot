@@ -44,7 +44,11 @@ const SYMBOL_MAP: Record<TradingPair, string> = {
 };
 
 export default function TradePage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const formatCurrency = (value: number) => new Intl.NumberFormat(locale === 'zh' ? 'zh-CN' : 'en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
   const [activePair, setActivePair] = useState<TradingPair>('BTC/USD');
   const [activeCategory, setActiveCategory] = useState<AssetCategory>('crypto');
   const [price, setPrice] = useState<PriceData | null>(null);
@@ -164,7 +168,7 @@ export default function TradePage() {
                     priceFlash === 'down' ? 'text-red-400' : 'text-white'
                   }`}
                 >
-                  ${price.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  ${formatCurrency(price.price)}
                 </span>
                 <span className={`flex items-center gap-1 text-sm font-bold px-2 py-1 rounded-lg ${
                   price.change24h >= 0 ? 'text-green-400 bg-green-400/10' : 'text-red-400 bg-red-400/10'
@@ -179,18 +183,18 @@ export default function TradePage() {
             <div className="flex gap-6">
               <div className="text-right">
                 <div className="text-xs text-gray-500 uppercase tracking-wider">{t('trade.balance')}</div>
-                <div className="text-xl font-bold text-blue-400">${account.balance.toFixed(2)}</div>
+                <div className="text-xl font-bold text-blue-400">${formatCurrency(account.balance)}</div>
               </div>
               <div className="text-right">
                 <div className="text-xs text-gray-500 uppercase tracking-wider">{t('trade.equity')}</div>
                 <div className={`text-xl font-bold ${equity >= 10000 ? 'text-green-400' : 'text-red-400'}`}>
-                  ${equity.toFixed(2)}
+                  ${formatCurrency(equity)}
                 </div>
               </div>
               <div className="text-right">
                 <div className="text-xs text-gray-500 uppercase tracking-wider">{t('trade.pnl')}</div>
                 <div className={`text-xl font-bold ${account.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                  {account.totalPnl >= 0 ? '+' : ''}${account.totalPnl.toFixed(2)}
+                  {account.totalPnl >= 0 ? '+' : ''}${formatCurrency(account.totalPnl)}
                 </div>
               </div>
             </div>

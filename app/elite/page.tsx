@@ -29,7 +29,12 @@ interface RiskData {
 }
 
 export default function ElitePage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const formatCurrency = (value: number) => new Intl.NumberFormat(locale === 'zh' ? 'zh-CN' : 'en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+  const sideLabel = (side: Position['side']) => side === 'LONG' ? t('common.long') : t('common.short');
   const { data: session } = useSession();
   const [exchange, setExchange] = useState('binance');
   const [apiKey, setApiKey] = useState('');
@@ -124,7 +129,7 @@ export default function ElitePage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || t('elite.close_position_failed'));
       
-      setSuccess(`✅ ${position.symbol} ${t('elite.closed')}`);
+      setSuccess(`✅ ${position.symbol} ${sideLabel(position.side)} ${t('elite.closed')}`);
       fetchPositions();
       fetchRiskData();
       setTimeout(() => setSuccess(''), 3000);
@@ -286,7 +291,7 @@ export default function ElitePage() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-400">{t('elite.balance')}</span>
-                    <span className="text-2xl font-bold">${balance?.toFixed(2) || '0.00'}</span>
+                    <span className="text-2xl font-bold">${formatCurrency(balance ?? 0)}</span>
                   </div>
                 </div>
 
@@ -500,12 +505,12 @@ export default function ElitePage() {
                               ? 'bg-emerald-500/20 text-emerald-400' 
                               : 'bg-red-500/20 text-red-400'
                           }`}>
-                            {pos.side}
+                            {sideLabel(pos.side)}
                           </span>
                         </td>
                         <td className="py-3 px-2 text-right">{pos.size.toFixed(3)}</td>
-                        <td className="py-3 px-2 text-right">${pos.entryPrice.toFixed(2)}</td>
-                        <td className="py-3 px-2 text-right">${pos.markPrice.toFixed(2)}</td>
+                        <td className="py-3 px-2 text-right">${formatCurrency(pos.entryPrice)}</td>
+                        <td className="py-3 px-2 text-right">${formatCurrency(pos.markPrice)}</td>
                         <td className={`py-3 px-2 text-right font-semibold ${
                           pos.pnl >= 0 ? 'text-emerald-400' : 'text-red-400'
                         }`}>

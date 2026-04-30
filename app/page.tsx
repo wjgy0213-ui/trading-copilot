@@ -129,7 +129,7 @@ export default function LandingPage() {
             ].map((item) => (
               <Link key={item.step} href={item.href} className="group rounded-2xl border border-gray-800 bg-black/20 p-5 hover:border-gray-700 hover:bg-black/30 transition-all">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold tracking-[0.2em] text-gray-500">STEP {item.step}</span>
+                  <span className="text-xs font-semibold tracking-[0.2em] text-gray-500">{t('workflow.stepLabel')} {item.step}</span>
                   <item.icon className={`w-5 h-5 ${item.color}`} />
                 </div>
                 <h3 className="mt-4 text-xl font-semibold text-white">{t(item.titleKey)}</h3>

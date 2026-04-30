@@ -278,6 +278,7 @@ function renderInline(text: string): React.ReactNode {
 function QuizSection({ quiz, lessonId }: { quiz: QuizQuestion[]; lessonId: string }) {
   const { t, locale } = useI18n();
   const en = locale === 'en';
+  const countLabel = locale === 'zh' ? `（${quiz.length}${t('learn.questions_count')}）` : `(${quiz.length}${t('learn.questions_count')})`;
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
 
@@ -291,7 +292,7 @@ function QuizSection({ quiz, lessonId }: { quiz: QuizQuestion[]; lessonId: strin
   return (
     <div className="border border-gray-800 rounded-xl p-5 bg-gray-900/50">
       <h4 className="font-bold text-sm mb-4 flex items-center gap-2">
-        {t('learn.quiz')}（{quiz.length}{t('learn.questions_count')}）
+        {t('learn.quiz')}{countLabel}
         {showResults && <span className={`text-xs px-2 py-0.5 rounded-full ${score === quiz.length ? 'bg-green-600/20 text-green-400' : 'bg-yellow-600/20 text-yellow-400'}`}>{score}/{quiz.length}</span>}
       </h4>
       <div className="space-y-5">
@@ -339,13 +340,14 @@ function QuizSection({ quiz, lessonId }: { quiz: QuizQuestion[]; lessonId: strin
 
 function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; chapterTitle: string }) {
   const { t, locale } = useI18n();
-  const en = locale === 'en';
-  const quiz = CHAPTER_QUIZZES[chapterId];
-  if (!quiz || quiz.length === 0) return null;
+  const quiz = CHAPTER_QUIZZES[chapterId] ?? [];
+  const countLabel = locale === 'zh' ? `（${quiz.length}${t('learn.questions_count')}）` : `(${quiz.length}${t('learn.questions_count')})`;
 
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
   const [expanded, setExpanded] = useState(false);
+
+  if (quiz.length === 0) return null;
 
   const handleAnswer = (qIdx: number, optIdx: number) => {
     if (showResults) return;
@@ -364,7 +366,7 @@ function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; ch
         <span className="text-xl">📝</span>
         <div className="flex-1">
           <span className="font-semibold text-sm">{t('learn.chapter_quiz')}：{chapterTitle}</span>
-          <span className="text-xs text-gray-500 ml-2">（{quiz.length}{t('learn.questions_count')}）</span>
+          <span className="text-xs text-gray-500 ml-2">{countLabel}</span>
           {showResults && (
             <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${score >= quiz.length * 0.8 ? 'bg-green-600/20 text-green-400' : score >= quiz.length * 0.6 ? 'bg-yellow-600/20 text-yellow-400' : 'bg-red-600/20 text-red-400'}`}>
               {score}/{quiz.length} · {Math.round(score / quiz.length * 100)}%
@@ -407,7 +409,7 @@ function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; ch
                 disabled={!allAnswered}
                 className={`px-5 py-2 rounded-lg text-sm font-medium transition ${allAnswered ? 'bg-purple-600 hover:bg-purple-500 text-white' : 'bg-gray-800 text-gray-600 cursor-not-allowed'}`}
               >
-                {t('learn.submit_test')}（{Object.keys(answers).length}/{quiz.length}）
+                {t('learn.submit_test')}{locale === 'zh' ? `（${Object.keys(answers).length}/${quiz.length}）` : ` (${Object.keys(answers).length}/${quiz.length})`}
               </button>
             ) : (
               <button onClick={() => { setAnswers({}); setShowResults(false); }} className="px-5 py-2 rounded-lg text-sm font-medium bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
@@ -466,7 +468,7 @@ function ChapterSection({ chapter, isPro, chapterIndex }: { chapter: Chapter; is
         <div className="mt-4 ml-2 p-4 bg-gray-900/30 border border-gray-800/50 rounded-xl opacity-60">
           <div className="flex items-center gap-2">
             <span className="text-xl">📝</span>
-            <span className="text-sm text-gray-500">{t('learn.chapter_quiz')}（{CHAPTER_QUIZZES[chapter.id].length}{t('learn.questions_count')}）{t('learn.chapter_quiz_locked')}</span>
+            <span className="text-sm text-gray-500">{t('learn.chapter_quiz')}{locale === 'zh' ? `（${CHAPTER_QUIZZES[chapter.id].length}${t('learn.questions_count')}）` : ` (${CHAPTER_QUIZZES[chapter.id].length}${t('learn.questions_count')})`}{t('learn.chapter_quiz_locked')}</span>
             <Lock className="w-3.5 h-3.5 text-gray-600" />
           </div>
         </div>

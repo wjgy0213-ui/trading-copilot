@@ -1815,6 +1815,7 @@
   "workflow.step03.desc": "把思路变成可验证参数和策略，不再靠感觉拍脑袋。",
   "workflow.step03.title": "策略工坊",
   "workflow.stepCta": "立即开始",
+  "workflow.stepLabel": "步骤",
   "workflow.title": "3 步进入状态，而不是先被功能淹没",
   "i18n.switchToEnglish": "切换到英文",
   "i18n.switchToChinese": "切换到中文",
