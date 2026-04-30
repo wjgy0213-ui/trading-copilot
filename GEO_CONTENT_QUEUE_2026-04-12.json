@@ -1,0 +1,61 @@
+{
+  "generated_at": "2026-04-12T05:08:00-07:00",
+  "source": "GEO_GAP_REPORT_2026-04-12.md",
+  "objective": "Close high-intent GEO content gaps with landing-page-style blog posts that map directly to search intent and product CTAs.",
+  "batch": "P1",
+  "items": [
+    {
+      "priority": 1,
+      "status": "drafted",
+      "title": "Paper Trading vs Real Trading: Complete Guide for Crypto Traders",
+      "slug": "paper-trading-vs-real-trading-complete-guide",
+      "intent": "comparison",
+      "focus_keyword": "paper trading vs real trading",
+      "cta_target": "/practice",
+      "supporting_features": ["Practice", "Trade Review", "AI Coach"],
+      "internal_links": [
+        "best-crypto-trading-practice-app-2026",
+        "how-to-practice-crypto-trading-without-losing-money",
+        "crypto-paper-trading-guide",
+        "crypto-trading-mistakes-beginners"
+      ]
+    },
+    {
+      "priority": 2,
+      "status": "drafted",
+      "title": "Crypto Risk Management Calculator: Position Size, Risk Per Trade, and Drawdown Planning",
+      "slug": "crypto-risk-management-calculator",
+      "intent": "tool",
+      "focus_keyword": "crypto risk management calculator",
+      "cta_target": "/health",
+      "supporting_features": ["Risk Calculator", "Position Sizing", "Market Health"],
+      "internal_links": [
+        "position-sizing-calculator-crypto",
+        "crypto-position-sizing-guide",
+        "crypto-trading-risk-management-2026",
+        "crypto-risk-reward-ratio-guide"
+      ]
+    },
+    {
+      "priority": 3,
+      "status": "queued",
+      "title": "Best Paper Trading App 2026: Which Platform Is Actually Worth Using?",
+      "slug": "best-paper-trading-app-2026",
+      "intent": "commercial-comparison",
+      "focus_keyword": "best paper trading app 2026",
+      "cta_target": "/practice",
+      "supporting_features": ["Practice", "AI Coach", "Trade Review"],
+      "internal_links": [
+        "best-crypto-trading-practice-app-2026",
+        "crypto-trading-practice-simulator-guide",
+        "how-to-practice-crypto-trading-without-losing-money"
+      ]
+    }
+  ],
+  "next_batch": [
+    "crypto-trading-simulator-for-beginners",
+    "learn-day-trading-without-risk",
+    "from-paper-trading-to-real-profits-step-by-step",
+    "why-most-new-traders-fail-and-what-survivors-do-differently"
+  ]
+}

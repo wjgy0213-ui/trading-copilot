@@ -56,12 +56,18 @@ export default function LandingPage() {
 
   const plans = [
     { nameKey: 'pricing.free', price: '$0', features: ['pricing.free.f1', 'pricing.free.f2', 'pricing.free.f3', 'pricing.free.f4'], ctaKey: 'pricing.cta.free', href: '/trade', color: 'gray' },
-    { nameKey: 'pricing.pro', price: '$39.99', features: ['pricing.pro.f1', 'pricing.pro.f2', 'pricing.pro.f3', 'pricing.pro.f4', 'pricing.pro.f5'], ctaKey: 'pricing.cta.pro', href: '/pricing', color: 'emerald', popular: true },
-    { nameKey: 'pricing.elite', price: '$79.99', features: ['pricing.elite.f1', 'pricing.elite.f2', 'pricing.elite.f3', 'pricing.elite.f4', 'pricing.elite.f5'], ctaKey: 'pricing.cta.elite', href: '/pricing', color: 'violet' },
+    { nameKey: 'pricing.pro', price: '$19.99', originalPrice: '$39.99', features: ['pricing.pro.f1', 'pricing.pro.f2', 'pricing.pro.f3', 'pricing.pro.f4', 'pricing.pro.f5'], ctaKey: 'pricing.cta.pro', href: '/pricing', color: 'emerald', popular: true, badge: '50% OFF' },
+    { nameKey: 'pricing.elite', price: '$39.99', originalPrice: '$79.99', features: ['pricing.elite.f1', 'pricing.elite.f2', 'pricing.elite.f3', 'pricing.elite.f4', 'pricing.elite.f5'], ctaKey: 'pricing.cta.elite', href: '/pricing', color: 'violet', badge: '50% OFF' },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white pt-16">
+      {/* Launch Banner */}
+      <div className="bg-gradient-to-r from-emerald-600 to-cyan-600 text-white text-center py-2.5 px-4 text-sm font-medium">
+        <Link href="/pricing" className="hover:underline">
+          🚀 {t('hero.badge')} — {t('hero.cta.primary')} <ArrowRight className="w-4 h-4 inline ml-1" />
+        </Link>
+      </div>
       {/* Hero */}
       <div className="container mx-auto px-4 py-20">
         <div className="max-w-4xl mx-auto text-center">
