@@ -340,6 +340,7 @@ function QuizSection({ quiz, lessonId }: { quiz: QuizQuestion[]; lessonId: strin
 
 function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; chapterTitle: string }) {
   const { t, locale } = useI18n();
+  const en = locale === 'en';
   const quiz = CHAPTER_QUIZZES[chapterId] ?? [];
   const countLabel = locale === 'zh' ? `（${quiz.length}${t('learn.questions_count')}）` : `(${quiz.length}${t('learn.questions_count')})`;
 
@@ -380,9 +381,9 @@ function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; ch
         <div className="mt-3 p-5 bg-gray-900/50 border border-gray-800 rounded-xl space-y-5">
           {quiz.map((q, qi) => (
             <div key={qi}>
-              <p className="text-sm font-medium mb-2">{qi + 1}. {q.question}</p>
+              <p className="text-sm font-medium mb-2">{qi + 1}. {en && q.questionEn ? q.questionEn : q.question}</p>
               <div className="space-y-1.5">
-                {q.options.map((opt, oi) => {
+                {(en && q.optionsEn ? q.optionsEn : q.options).map((opt, oi) => {
                   const selected = answers[qi] === oi;
                   const isCorrect = q.correctIndex === oi;
                   let cls = 'bg-gray-800 border-gray-700 text-gray-300 hover:border-gray-600';
@@ -398,7 +399,7 @@ function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; ch
                 })}
               </div>
               {showResults && answers[qi] !== undefined && (
-                <p className="text-xs text-gray-400 mt-2 pl-2 border-l-2 border-gray-700">{q.explanation}</p>
+                <p className="text-xs text-gray-400 mt-2 pl-2 border-l-2 border-gray-700">{en && q.explanationEn ? q.explanationEn : q.explanation}</p>
               )}
             </div>
           ))}
@@ -424,7 +425,8 @@ function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; ch
 }
 
 function ChapterSection({ chapter, isPro, chapterIndex }: { chapter: Chapter; isPro: boolean; chapterIndex: number }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const en = locale === 'en';
   const locked = chapter.tier === 'pro' && !isPro;
   
   return (
@@ -438,7 +440,7 @@ function ChapterSection({ chapter, isPro, chapterIndex }: { chapter: Chapter; is
         <span className="text-3xl">{chapter.icon}</span>
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-bold">{chapter.title}</h2>
+            <h2 className="text-xl font-bold">{en && chapter.titleEn ? chapter.titleEn : chapter.title}</h2>
             {chapter.tier === 'pro' && (
               <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                 isPro ? 'bg-green-600/20 text-green-400' : 'bg-purple-600/20 text-purple-400'
@@ -452,7 +454,7 @@ function ChapterSection({ chapter, isPro, chapterIndex }: { chapter: Chapter; is
               </span>
             )}
           </div>
-          <p className="text-sm text-gray-500">{chapter.description}</p>
+          <p className="text-sm text-gray-500">{en && chapter.descriptionEn ? chapter.descriptionEn : chapter.description}</p>
         </div>
       </div>
       <div className="space-y-2 ml-2">
@@ -462,7 +464,7 @@ function ChapterSection({ chapter, isPro, chapterIndex }: { chapter: Chapter; is
       </div>
       {/* Chapter Quiz for pro chapters */}
       {chapter.tier === 'pro' && !locked && CHAPTER_QUIZZES[chapter.id] && (
-        <ChapterQuizSection chapterId={chapter.id} chapterTitle={chapter.title} />
+        <ChapterQuizSection chapterId={chapter.id} chapterTitle={en && chapter.titleEn ? chapter.titleEn : chapter.title} />
       )}
       {chapter.tier === 'pro' && locked && CHAPTER_QUIZZES[chapter.id] && (
         <div className="mt-4 ml-2 p-4 bg-gray-900/30 border border-gray-800/50 rounded-xl opacity-60">

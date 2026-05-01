@@ -23,7 +23,7 @@ const SentimentIcon = ({ sentiment }: { sentiment: string }) => {
 };
 
 export default function NewsPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [category, setCategory] = useState<NewsCategory | undefined>(undefined);
   const [sentimentFilter, setSentimentFilter] = useState<string>('all');
   const { news: MOCK_NEWS, loading: newsLoading, isLive } = useNewsData();
@@ -72,12 +72,12 @@ export default function NewsPage() {
       {/* Filters */}
       <div className="flex items-center gap-4 mb-4 overflow-x-auto pb-1">
         <div className="flex gap-1">
-          {NEWS_CATEGORIES.map(({ id, label, icon }) => (
+          {NEWS_CATEGORIES.map(({ id, label, labelEn, icon }) => (
             <button key={id} onClick={() => setCategory(id === 'all' ? undefined : id as NewsCategory)}
               className={`flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-medium transition-all whitespace-nowrap ${
                 (id === 'all' && !category) || category === id ? 'bg-gray-700 text-white' : 'text-gray-500 hover:bg-gray-800'
               }`}>
-              <span className="text-[10px]">{icon}</span>{label}
+              <span className="text-[10px]">{icon}</span>{locale === 'en' ? labelEn : label}
             </button>
           ))}
         </div>
@@ -134,7 +134,7 @@ export default function NewsPage() {
                   <span className={`font-medium px-1.5 py-0.5 rounded ${getSentimentBgColor(item.sentiment)}`}>
                     <SentimentIcon sentiment={item.sentiment} />
                   </span>
-                  <span className={`${getImpactColor(item.impact)}`}>{getImpactLabel(item.impact)}</span>
+                  <span className={`${getImpactColor(item.impact)}`}>{getImpactLabel(item.impact, locale as 'zh' | 'en')}</span>
                   <span className="text-gray-600">{item.source}</span>
                   <span className="text-gray-600 flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" />{formatTimeAgo(item.timestamp, t)}</span>
                 </div>

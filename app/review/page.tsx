@@ -26,7 +26,7 @@ interface ReviewData {
   tradeGroups: any[];
 }
 
-function ScoreRing({ score, grade }: { score: number; grade: string }) {
+function ScoreRing({ score, grade, t }: { score: number; grade: string; t: (key: string) => string }) {
   const circumference = 2 * Math.PI * 54;
   const offset = circumference - (score / 100) * circumference;
   const color = score >= 80 ? '#10b981' : score >= 65 ? '#3b82f6' : score >= 50 ? '#f59e0b' : score >= 35 ? '#f97316' : '#ef4444';
@@ -41,7 +41,7 @@ function ScoreRing({ score, grade }: { score: number; grade: string }) {
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-3xl font-bold" style={{ color }}>{score}</span>
-        <span className="text-lg font-semibold text-gray-400">Grade {grade}</span>
+        <span className="text-lg font-semibold text-gray-400">{t('review.gradePrefix')} {grade}</span>
       </div>
     </div>
   );
@@ -89,7 +89,11 @@ function HeatMap({ data, t }: { data: Record<string, { wins: number; losses: num
               : `bg-red-500`;
 
           return (
-            <div key={h} className="text-center" title={`${h}:00 UTC — PnL: $${d.pnl.toFixed(2)} (${d.wins}W/${d.losses}L)`}>
+            <div key={h} className="text-center" title={t('review.heatmapTooltip')
+              .replace('{hour}', String(h))
+              .replace('{pnl}', d.pnl.toFixed(2))
+              .replace('{wins}', String(d.wins))
+              .replace('{losses}', String(d.losses))}>
               <div className={`h-8 rounded ${bg} transition-all`} style={{ opacity: d.wins + d.losses === 0 ? 0.2 : 0.3 + intensity * 0.7 }} />
               <span className="text-[10px] text-gray-600">{h}</span>
             </div>
@@ -167,7 +171,7 @@ export default function ReviewPage() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, []);
+  }, [t]);
 
   if (loading) {
     return (
@@ -220,7 +224,7 @@ export default function ReviewPage() {
         {/* Score + Key Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-gray-900/50 border border-gray-800/50 rounded-xl p-6 flex flex-col items-center justify-center">
-            <ScoreRing score={s.score} grade={s.grade} />
+            <ScoreRing score={s.score} grade={s.grade} t={t} />
             <p className="text-xs text-gray-500 mt-2">{t('review.score_label')}</p>
           </div>
           <div className="md:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-3">

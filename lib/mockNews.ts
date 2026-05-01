@@ -139,6 +139,9 @@ export function getImpactColor(impact: string): string {
   return { high: 'text-red-400', medium: 'text-amber-400', low: 'text-gray-500' }[impact] || 'text-gray-500';
 }
 
-export function getImpactLabel(impact: string): string {
+export function getImpactLabel(impact: string, locale: 'zh' | 'en' = 'zh'): string {
+  if (locale === 'en') {
+    return { high: 'High Impact', medium: 'Medium Impact', low: 'Low Impact' }[impact] || impact;
+  }
   return { high: '高影响', medium: '中影响', low: '低影响' }[impact] || impact;
 }

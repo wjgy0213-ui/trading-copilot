@@ -503,7 +503,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-sm">
               <div className="bg-gray-800/60 rounded-xl p-3">
-                <div className="text-purple-400 font-bold">10 SOL</div>
+                <div className="text-purple-400 font-bold">{t('sniper.paperStartingValue')}</div>
                 <div className="text-gray-500 text-xs">{t('sniper.startFund')}</div>
               </div>
               <div className="bg-gray-800/60 rounded-xl p-3">
@@ -621,7 +621,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
           <div className="text-center mb-4">
             <div className="text-gray-400 text-sm">{t('sniper.portfolioValue')}</div>
             <div className="text-4xl font-bold mt-1">
-              {portfolio.total_value_sol.toFixed(2)} <span className="text-lg text-gray-400">SOL</span>
+              {portfolio.total_value_sol.toFixed(2)} <span className="text-lg text-gray-400">{t('sniper.solUnit')}</span>
             </div>
             <div className="text-gray-400 text-sm">${portfolio.total_value_usd.toLocaleString()}</div>
             <div className={`text-lg font-semibold mt-1 ${pnlColor}`}>
@@ -630,12 +630,12 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <StatCard label={t('sniper.balance')} value={`${state.balance_sol.toFixed(2)} SOL`} />
+            <StatCard label={t('sniper.balance')} value={`${state.balance_sol.toFixed(2)} ${t('sniper.solUnit')}`} />
             <StatCard label={t('sniper.posCount')} value={`${positions.length} / 10`} sub={`${state.total_trades} ${t('sniper.totalTradesLabel')}`} />
             <StatCard 
               label={t('sniper.winRate')} 
               value={`${portfolio.win_rate.toFixed(0)}%`}
-              sub={`${state.wins}W ${state.losses}L`}
+              sub={`${state.wins}${t('sniper.winsSuffix')} ${state.losses}${t('sniper.lossesSuffix')}`}
               color={portfolio.win_rate >= 50 ? 'text-green-400' : portfolio.win_rate > 0 ? 'text-red-400' : 'text-gray-400'}
             />
             <StatCard 
@@ -719,7 +719,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                       </div>
                       <div>
                         <div className="text-gray-500 text-xs">{t('sniper.positionSize')}</div>
-                        <div className="text-gray-300">{pos.size_sol.toFixed(3)} SOL</div>
+                        <div className="text-gray-300">{pos.size_sol.toFixed(3)} {t('sniper.solUnit')}</div>
                       </div>
                       <div>
                         <div className="text-gray-500 text-xs">{t('sniper.holdTime')}</div>
@@ -754,7 +754,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                         rel="noopener noreferrer"
                         className="text-xs text-purple-400 hover:text-purple-300"
                       >
-                        DexScreener ↗
+                        {t('sniper.dexScreenerLink')}
                       </a>
                     </div>
                   </div>
@@ -782,7 +782,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{trade.symbol}</span>
                       <span className={`text-xs ${trade.action === 'BUY' ? 'text-green-400' : 'text-red-400'}`}>
-                        {trade.action}
+                        {trade.action === 'BUY' ? t('sniper.actionBuy') : t('sniper.actionSell')}
                       </span>
                       {trade.score && <ScoreBadge score={trade.score} />}
                       {trade.reason && (
@@ -790,7 +790,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                       )}
                     </div>
                     <div className="text-xs text-gray-500 mt-0.5">
-                      {trade.size_sol && <span>{trade.size_sol.toFixed(3)} SOL</span>}
+                      {trade.size_sol && <span>{trade.size_sol.toFixed(3)} {t('sniper.solUnit')}</span>}
                       {trade.price && <span> @ ${trade.price.toFixed(8)}</span>}
                       {trade.pnl_pct !== undefined && (
                         <span className={trade.pnl_pct >= 0 ? 'text-green-400' : 'text-red-400'}>
@@ -810,7 +810,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
         <div className="mt-8 text-center text-xs text-gray-600">
           <p>{t('sniper.footerScan')}</p>
           <p className="mt-1">
-            {mode === 'paper' ? t('sniper.paperFooter') : t('sniper.liveFooter')} · SOL ${portfolio.sol_price.toFixed(2)}
+            {mode === 'paper' ? t('sniper.paperFooter') : t('sniper.liveFooter')} · {t('sniper.solTicker')} ${portfolio.sol_price.toFixed(2)}
           </p>
         </div>
       </div>
