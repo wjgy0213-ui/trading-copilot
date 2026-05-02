@@ -59,8 +59,8 @@ export default function LandingPage() {
 
   const plans = [
     { nameKey: 'pricing.free', price: '$0', features: ['pricing.free.f1', 'pricing.free.f2', 'pricing.free.f3', 'pricing.free.f4'], ctaKey: 'pricing.cta.free', href: '/trade', color: 'gray' },
-    { nameKey: 'pricing.pro', price: '$19.99', originalPrice: '$39.99', features: ['pricing.pro.f1', 'pricing.pro.f2', 'pricing.pro.f3', 'pricing.pro.f4', 'pricing.pro.f5'], ctaKey: 'pricing.cta.pro', href: '/pricing', color: 'emerald', popular: true, badge: '50% OFF' },
-    { nameKey: 'pricing.elite', price: '$39.99', originalPrice: '$79.99', features: ['pricing.elite.f1', 'pricing.elite.f2', 'pricing.elite.f3', 'pricing.elite.f4', 'pricing.elite.f5'], ctaKey: 'pricing.cta.elite', href: '/pricing', color: 'violet', badge: '50% OFF' },
+    { nameKey: 'pricing.pro', price: '$19.99', originalPrice: '$39.99', features: ['pricing.pro.f1', 'pricing.pro.f2', 'pricing.pro.f3', 'pricing.pro.f4', 'pricing.pro.f5'], ctaKey: 'pricing.cta.pro', href: '/pricing', color: 'emerald', popular: true, badgeKey: 'pricing.save50' },
+    { nameKey: 'pricing.elite', price: '$39.99', originalPrice: '$79.99', features: ['pricing.elite.f1', 'pricing.elite.f2', 'pricing.elite.f3', 'pricing.elite.f4', 'pricing.elite.f5'], ctaKey: 'pricing.cta.elite', href: '/pricing', color: 'violet', badgeKey: 'pricing.save50' },
   ];
 
   return (
@@ -332,7 +332,7 @@ export default function LandingPage() {
               transition={{ duration: 0.5, delay: i * 0.15 }}
               className={`bg-gray-900/50 border ${p.popular ? 'border-emerald-500/50 ring-1 ring-emerald-500/20' : 'border-gray-800'} rounded-2xl p-6 relative`}>
               {p.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full">{t('pricing.popular')}</div>}
-              {'badge' in p && p.badge ? <div className="absolute top-4 right-4 rounded-full border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-[10px] font-bold text-amber-300">{p.badge}</div> : null}
+              {'badgeKey' in p && p.badgeKey ? <div className="absolute top-4 right-4 rounded-full border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-[10px] font-bold text-amber-300">{t(p.badgeKey)}</div> : null}
               <h3 className="text-lg font-bold mb-1">{t(p.nameKey)}</h3>
               <div className="mb-4">
                 {'originalPrice' in p && p.originalPrice ? <div className="text-sm text-gray-500 line-through">{p.originalPrice}{t('pricing.perMonth')}</div> : null}
