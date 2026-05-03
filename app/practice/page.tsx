@@ -47,10 +47,10 @@ const COIN_IDS: Record<string, string> = {
 };
 
 const TIERS = {
-  bronze:   { balance: 10000,  label: '🥉 Bronze', color: 'from-orange-600 to-orange-800', next: 'silver', reqKey: 'practice.tier_bronze_req' },
-  silver:   { balance: 50000,  label: '🥈 Silver', color: 'from-gray-400 to-gray-600', next: 'gold', reqKey: 'practice.tier_silver_req' },
-  gold:     { balance: 100000, label: '🥇 Gold', color: 'from-yellow-500 to-yellow-700', next: 'platinum', reqKey: 'practice.tier_gold_req' },
-  platinum: { balance: 500000, label: '💎 Platinum', color: 'from-purple-500 to-purple-700', next: null, reqKey: 'practice.tier_platinum_req' },
+  bronze:   { balance: 10000, color: 'from-orange-600 to-orange-800', next: 'silver', reqKey: 'practice.tier_bronze_req' },
+  silver:   { balance: 50000, color: 'from-gray-400 to-gray-600', next: 'gold', reqKey: 'practice.tier_silver_req' },
+  gold:     { balance: 100000, color: 'from-yellow-500 to-yellow-700', next: 'platinum', reqKey: 'practice.tier_gold_req' },
+  platinum: { balance: 500000, color: 'from-purple-500 to-purple-700', next: null, reqKey: 'practice.tier_platinum_req' },
 };
 
 function formatUsd(n: number): string {

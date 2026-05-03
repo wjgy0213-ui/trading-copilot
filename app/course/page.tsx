@@ -52,7 +52,7 @@ function usePlans() {
 const STATS = { students: 127, rating: 4.8, chapters: 24, hours: 12 };
 
 export default function CoursePage() {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const PLANS = usePlans();
   const { session, hasCourse } = useSession();
   const [loading, setLoading] = useState<string | null>(null);
@@ -113,10 +113,10 @@ export default function CoursePage() {
         {/* Stats */}
         <div className="flex justify-center gap-8 mb-12">
           {[
-            { icon: Users, label: t('course.students'), value: `${STATS.students}+` },
+            { icon: Users, label: t('course.students'), value: `${STATS.students}${t('course.studentsValueSuffix')}` },
             { icon: Star, label: t('course.rating'), value: `${STATS.rating}/5` },
             { icon: BookOpen, label: t('course.chapters'), value: `${STATS.chapters}` },
-            { icon: Clock, label: t('course.duration'), value: `${STATS.hours}h+` },
+            { icon: Clock, label: t('course.duration'), value: `${STATS.hours}${t('course.hoursValueSuffix')}` },
           ].map(s => (
             <div key={s.label} className="text-center">
               <s.icon className="w-5 h-5 text-gray-500 mx-auto mb-1" />

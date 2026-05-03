@@ -15,7 +15,7 @@ import { useI18n } from '@/lib/i18n';
  *   Each render of gated content consumes one quota.
  * - When quota is exhausted: shows upgrade prompt.
  *
- * Usage: <QuotaGate feature="Market Health"><YourComponent /></QuotaGate>
+ * Usage: <QuotaGate feature={t('health.title')}><YourComponent /></QuotaGate>
  *
  * For non-gated features (practice, learn, etc.), don't wrap them.
  */
@@ -86,7 +86,7 @@ export default function QuotaGate({
 
           <h3 className="font-bold text-lg mb-1">{t('quota.exhausted')}</h3>
           <p className="text-sm text-gray-500 mb-2">
-            {feature ? `${feature} · ` : ''}{t('quota.daily_limit').replace('{limit}', String(getFreeQuotaLimit()))}
+            {(feature || t('quota.thisFeature')) ? `${feature || t('quota.thisFeature')} · ` : ''}{t('quota.daily_limit').replace('{limit}', String(getFreeQuotaLimit()))}
           </p>
           <p className="text-xs text-gray-600 mb-5">
             {t('quota.reset_tomorrow')}
