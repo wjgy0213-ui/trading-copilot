@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { getRiskColor, getRiskBgColor, getRiskLabel, getRiskStrokeColor, type ITCIndicator } from '@/lib/mockData';
 import { useITCData } from '@/lib/useITCData';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleCurrency } from '@/lib/i18n-helpers';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Area, AreaChart, ReferenceLine } from 'recharts';
 import { Activity, TrendingUp, TrendingDown, X, Maximize2, BarChart3, Globe, Link2, Wifi, WifiOff, ArrowRight, CircleDot, Gamepad2, Sparkles } from 'lucide-react';
 
@@ -174,7 +175,7 @@ export default function DashboardPage() {
           <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
             {ITCIndicators.length} {t('dashboard.subtitle_indicators')} · {t('dashboard.subtitle_click')}
             {isLive ? <span className="inline-flex items-center gap-1 text-emerald-400"><Wifi className="w-3 h-3" />{t('dashboard.live')}</span> : <span className="inline-flex items-center gap-1 text-gray-600"><WifiOff className="w-3 h-3" />{t('dashboard.simulated')}</span>}
-            {prices && <span className="text-gray-500">BTC ${prices.BTC.toLocaleString()} · ETH ${prices.ETH.toLocaleString()}</span>}
+            {prices && <span className="text-gray-500">{t('dashboard.priceSummary').replace('{btc}', formatLocaleCurrency(prices.BTC, locale, 'USD', { maximumFractionDigits: 0 })).replace('{eth}', formatLocaleCurrency(prices.ETH, locale, 'USD', { maximumFractionDigits: 0 }))}</span>}
           </p>
         </div>
         <div className="flex gap-1">

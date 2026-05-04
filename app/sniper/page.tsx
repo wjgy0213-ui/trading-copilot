@@ -1,6 +1,7 @@
 'use client';
 
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleCurrency } from '@/lib/i18n-helpers';
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -623,7 +624,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
             <div className="text-4xl font-bold mt-1">
               {portfolio.total_value_sol.toFixed(2)} <span className="text-lg text-gray-400">{t('sniper.solUnit')}</span>
             </div>
-            <div className="text-gray-400 text-sm">${portfolio.total_value_usd.toLocaleString()}</div>
+            <div className="text-gray-400 text-sm">{formatLocaleCurrency(portfolio.total_value_usd, locale, 'USD', { maximumFractionDigits: 0 })}</div>
             <div className={`text-lg font-semibold mt-1 ${pnlColor}`}>
               {portfolio.total_pnl_pct >= 0 ? '+' : ''}{portfolio.total_pnl_pct.toFixed(1)}%
             </div>

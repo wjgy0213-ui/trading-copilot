@@ -1,6 +1,7 @@
 'use client';
 
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleCurrency, formatLocaleNumber, getIntlLocale } from '@/lib/i18n-helpers';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
@@ -104,17 +105,15 @@ function formatUptime(isoStr: string, t: (key: string, fallback?: string) => str
   return t('missionControl.time.uptime').replace('{hrs}', String(hrs)).replace('{mins}', String(mins));
 }
 
-function formatUsd(value?: number): string {
-  if (value === undefined || Number.isNaN(value)) return 'N/A';
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+function formatUsd(value: number | undefined, locale: 'zh' | 'en', t: (key: string, fallback?: string) => string): string {
+  if (value === undefined || Number.isNaN(value)) return t('missionControl.notAvailable');
+  return formatLocaleCurrency(value, locale, 'USD', {
     maximumFractionDigits: value >= 100 ? 0 : 2,
-  }).format(value);
+  });
 }
 
-function formatPct(value?: number): string {
-  if (value === undefined || Number.isNaN(value)) return 'N/A';
+function formatPct(value: number | undefined, t: (key: string, fallback?: string) => string): string {
+  if (value === undefined || Number.isNaN(value)) return t('missionControl.notAvailable');
   return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;
 }
 
@@ -242,7 +241,7 @@ function Column({
 }
 
 export default function MissionControlPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [sniperData, setSniperData] = useState<SniperData | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
@@ -387,7 +386,7 @@ export default function MissionControlPage() {
 
               <div className="flex flex-wrap items-center gap-3 text-sm">
                 <div className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-2 text-gray-400">
-                  {t('missionControl.lastSync')} <span className="ml-2 text-gray-200">{lastRefresh.toLocaleTimeString()}</span>
+                  {t('missionControl.lastSync')} <span className="ml-2 text-gray-200">{lastRefresh.toLocaleTimeString(getIntlLocale(locale))}</span>
                 </div>
                 <button
                   onClick={fetchData}
@@ -419,12 +418,12 @@ export default function MissionControlPage() {
                   {t('missionControl.portfolio')}
                 </div>
                 <div className="text-2xl font-semibold text-white">
-                  {portfolio ? `${portfolio.total_value_sol.toFixed(2)} SOL` : 'N/A'}
+                  {portfolio ? t('missionControl.valueSol').replace('{value}', formatLocaleNumber(portfolio.total_value_sol, locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })).replace('{unit}', t('missionControl.solUnit')) : t('missionControl.notAvailable')}
                 </div>
                 <div className={`mt-1 text-xs ${
                   (portfolio?.total_pnl_pct || 0) >= 0 ? 'text-emerald-300' : 'text-red-300'
                 }`}>
-                  {portfolio ? `${formatPct(portfolio.total_pnl_pct)} · ${formatUsd(portfolio.total_value_usd)}` : t('missionControl.noPortfolio')}
+                  {portfolio ? `${formatPct(portfolio.total_pnl_pct, t)} · ${formatUsd(portfolio.total_value_usd, locale, t)}` : t('missionControl.noPortfolio')}
                 </div>
               </div>
 
@@ -440,7 +439,7 @@ export default function MissionControlPage() {
                         .replace('{wins}', String(state.wins))
                         .replace('{losses}', String(state.losses))
                         .replace('{winRate}', String(portfolio?.win_rate.toFixed(0) ?? '0'))
-                    : 'N/A'}
+                    : t('missionControl.notAvailable')}
                 </div>
               </div>
 
@@ -450,10 +449,10 @@ export default function MissionControlPage() {
                   {t('missionControl.riskGuard')}
                 </div>
                 <div className="text-2xl font-semibold text-white">
-                  {state ? `${state.max_drawdown.toFixed(1)}%` : 'N/A'}
+                  {state ? `${state.max_drawdown.toFixed(1)}%` : t('missionControl.notAvailable')}
                 </div>
                 <div className="mt-1 text-xs text-gray-400">
-                  {t('missionControl.peak')} {state ? `${state.peak_balance.toFixed(2)} SOL` : 'N/A'}
+                  {t('missionControl.peak')} {state ? t('missionControl.valueSol').replace('{value}', formatLocaleNumber(state.peak_balance, locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })).replace('{unit}', t('missionControl.solUnit')) : t('missionControl.notAvailable')}
                 </div>
               </div>
             </div>
@@ -467,13 +466,13 @@ export default function MissionControlPage() {
                       tone="violet"
                       title={pos.symbol}
                       subtitle={t('missionControl.card.entryTokens')
-                        .replace('{entry}', formatUsd(pos.entry_price))
+                        .replace('{entry}', formatUsd(pos.entry_price, locale, t))
                         .replace('{tokens}', String(pos.tokens?.toLocaleString() || 0))}
                       meta={timeAgo(pos.entry_time, t)}
                       score={t('missionControl.card.score').replace('{score}', pos.score.toFixed(1))}
-                      pnl={formatPct(pos.pnl_pct)}
+                      pnl={formatPct(pos.pnl_pct, t)}
                       footer={t('missionControl.card.peakSize')
-                        .replace('{peak}', formatUsd(pos.peak_price))
+                        .replace('{peak}', formatUsd(pos.peak_price, locale, t))
                         .replace('{size}', pos.size_sol.toFixed(3))}
                     />
                   ))
@@ -503,11 +502,11 @@ export default function MissionControlPage() {
                     tone="blue"
                     title={t('missionControl.card.watch').replace('{symbol}', pos.symbol)}
                     subtitle={t('missionControl.card.currentEntry')
-                      .replace('{current}', formatUsd(pos.current_price))
-                      .replace('{entry}', formatUsd(pos.entry_price))}
+                      .replace('{current}', formatUsd(pos.current_price, locale, t))
+                      .replace('{entry}', formatUsd(pos.entry_price, locale, t))}
                     meta={timeAgo(pos.entry_time, t)}
                     score={t('missionControl.card.score').replace('{score}', pos.score.toFixed(1))}
-                    pnl={formatPct(pos.pnl_pct)}
+                    pnl={formatPct(pos.pnl_pct, t)}
                     footer={`${t('missionControl.dexReady')} · ${pos.partial_sold ? t('missionControl.partialSold') : t('missionControl.fullPosLive')}`}
                   />
                 ))}
@@ -526,7 +525,7 @@ export default function MissionControlPage() {
                       title={`${t(`missionControl.action.${trade.action}`)} ${trade.symbol}`}
                       subtitle={trade.reason || t('missionControl.exitRecorded')}
                       meta={timeAgo(trade.ts, t)}
-                      pnl={trade.pnl_pct !== undefined ? formatPct(trade.pnl_pct) : undefined}
+                      pnl={trade.pnl_pct !== undefined ? formatPct(trade.pnl_pct, t) : undefined}
                       footer={trade.size_sol !== undefined ? t('missionControl.card.closed').replace('{size}', trade.size_sol.toFixed(3)) : t('missionControl.exitSnapshot')}
                     />
                   ))
@@ -538,10 +537,10 @@ export default function MissionControlPage() {
                   tone="amber"
                   title={t('missionControl.systemHealth')}
                   subtitle={t('missionControl.card.dataSource').replace('{source}', sniperData?.source || t('missionControl.unknownSource'))}
-                  score={t('missionControl.card.avgScore').replace('{score}', avgScore ? avgScore.toFixed(1) : 'N/A')}
+                  score={t('missionControl.card.avgScore').replace('{score}', avgScore ? avgScore.toFixed(1) : t('missionControl.notAvailable'))}
                   footer={t('missionControl.card.cashSol')
-                    .replace('{cash}', state ? `${state.balance_sol.toFixed(2)} SOL` : 'N/A')
-                    .replace('{solPrice}', portfolio ? formatUsd(portfolio.sol_price) : 'N/A')}
+                    .replace('{cash}', state ? t('missionControl.valueSol').replace('{value}', formatLocaleNumber(state.balance_sol, locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })).replace('{unit}', t('missionControl.solUnit')) : t('missionControl.notAvailable'))
+                    .replace('{solPrice}', portfolio ? formatUsd(portfolio.sol_price, locale, t) : t('missionControl.notAvailable'))}
                 />
 
                 <TaskCard
@@ -594,7 +593,7 @@ export default function MissionControlPage() {
                       </div>
                       <div className="text-right text-xs">
                         {trade.pnl_pct !== undefined ? (
-                          <div className={trade.pnl_pct >= 0 ? 'text-emerald-300' : 'text-red-300'}>{formatPct(trade.pnl_pct)}</div>
+                          <div className={trade.pnl_pct >= 0 ? 'text-emerald-300' : 'text-red-300'}>{formatPct(trade.pnl_pct, t)}</div>
                         ) : (
                           <div className="text-gray-400">—</div>
                         )}

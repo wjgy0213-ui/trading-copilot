@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Play, Pause, X, Zap, Activity } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleCurrency } from '@/lib/i18n-helpers';
 import {
   getDeployedStrategy, stopStrategy, removeStrategy,
   getSignalLogs, addSignalLog, evaluateSignal,
@@ -142,7 +143,7 @@ export default function AutoTraderPanel({ currentPrice, onTradeComplete }: AutoT
             }`}>
               <span className="font-mono">{new Date(log.time).toLocaleTimeString(locale === 'zh' ? 'zh-CN' : 'en-US', { hour: '2-digit', minute: '2-digit' })}</span>
               {' '}{log.message}
-              {log.price && <span className="text-gray-500"> @${log.price.toLocaleString()}</span>}
+              {log.price && <span className="text-gray-500"> {t('auto.priceAt').replace('{price}', formatLocaleCurrency(log.price, locale, 'USD', { maximumFractionDigits: 0 }))}</span>}
             </div>
           ))}
         </div>

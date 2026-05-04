@@ -7,6 +7,7 @@ import { resetAccount } from '@/lib/storage';
 import { useI18n } from '@/lib/i18n';
 import { calculateEquity } from '@/lib/tradingEngine';
 import { analyzePerformance, getRecentPerformanceSummary } from '@/lib/tradeAnalyzer';
+import { formatLocaleCurrency } from '@/lib/i18n-helpers';
 import RankBadge from './RankBadge';
 
 interface AccountPanelProps {
@@ -69,7 +70,7 @@ export default function AccountPanel({ account, currentPrice }: AccountPanelProp
 
           <div className="pt-4 border-t border-gray-700">
             <div className="text-sm text-gray-400 mb-2">{t('account_panel.initial_balance')}</div>
-            <div className="text-lg font-semibold">${initialBalance.toLocaleString()}.00</div>
+            <div className="text-lg font-semibold">{formatLocaleCurrency(initialBalance, locale, 'USD', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</div>
           </div>
         </div>
       </div>
