@@ -95,6 +95,7 @@ export default function TelegramNotify() {
     { key: 'riskAlert' as const, label: t('telegram.risk_alert'), icon: '⚠️' },
     { key: 'dailySummary' as const, label: t('telegram.daily_summary'), icon: '📊' },
   ];
+  const enabledCount = notificationItems.filter(item => config.notifications[item.key]).length;
 
   return (
     <EliteGate>
@@ -149,9 +150,14 @@ export default function TelegramNotify() {
 
         {/* Notification Toggles */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 mb-3">
-            <Bell className="w-4 h-4 text-gray-400" />
-            <h3 className="text-sm font-medium text-gray-400">{t('telegram.notify_types')}</h3>
+          <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
+            <div className="flex items-center gap-2">
+              <Bell className="w-4 h-4 text-gray-400" />
+              <h3 className="text-sm font-medium text-gray-400">{t('telegram.notify_types')}</h3>
+            </div>
+            <span className="text-xs text-violet-300 bg-violet-500/10 border border-violet-500/20 px-2 py-1 rounded-full">
+              {t('telegram.enabled_count').replace('{count}', String(enabledCount))}
+            </span>
           </div>
           <div className="space-y-2">
             {notificationItems.map(item => (
@@ -165,6 +171,7 @@ export default function TelegramNotify() {
                 </div>
                 <button
                   type="button"
+                  aria-label={t('telegram.toggle_notification').replace('{label}', item.label)}
                   onClick={() => toggleNotification(item.key)}
                   className={`relative w-11 h-6 rounded-full transition-colors ${
                     config.notifications[item.key] ? 'bg-violet-600' : 'bg-gray-700'

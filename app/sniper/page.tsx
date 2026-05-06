@@ -406,7 +406,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
 
 /* ========== Main Sniper Dashboard ========== */
 function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () => void }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [data, setData] = useState<SniperData | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<'positions' | 'history'>('positions');

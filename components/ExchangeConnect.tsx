@@ -23,7 +23,12 @@ const EXCHANGES = [
 ];
 
 export default function ExchangeConnect() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const numberLocale = locale === 'zh' ? 'zh-CN' : 'en-US';
+  const formatCurrency = (value: number) => new Intl.NumberFormat(numberLocale, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
   const [selectedExchange, setSelectedExchange] = useState<Exchange>('binance');
   const [apiKey, setApiKey] = useState('');
   const [apiSecret, setApiSecret] = useState('');
@@ -89,7 +94,8 @@ export default function ExchangeConnect() {
 
     setTestResult({
       success: true,
-      message: `${t('exchange.connect_success')} $${mockBalance.toFixed(2)} USDT`,
+      message: t('exchange.connect_success_with_balance')
+        .replace('{amount}', formatCurrency(mockBalance)),
     });
     setTesting(false);
   };
@@ -134,7 +140,7 @@ export default function ExchangeConnect() {
               {currentConfig.balance && (
                 <div className="text-xs text-gray-400 flex items-center gap-1 mt-1">
                   <Wallet className="w-3 h-3" />
-                  {t('exchange.balance')}: ${currentConfig.balance.toFixed(2)} USDT
+                  {t('exchange.balance_with_amount').replace('{amount}', formatCurrency(currentConfig.balance))}
                 </div>
               )}
             </div>

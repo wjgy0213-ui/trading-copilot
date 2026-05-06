@@ -30,9 +30,18 @@ interface RiskData {
 
 export default function ElitePage() {
   const { t, locale } = useI18n();
-  const formatCurrency = (value: number) => new Intl.NumberFormat(locale === 'zh' ? 'zh-CN' : 'en-US', {
+  const numberLocale = locale === 'zh' ? 'zh-CN' : 'en-US';
+  const formatCurrency = (value: number) => new Intl.NumberFormat(numberLocale, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
+  }).format(value);
+  const formatPercent = (value: number) => new Intl.NumberFormat(numberLocale, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+  const formatSize = (value: number) => new Intl.NumberFormat(numberLocale, {
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3,
   }).format(value);
   const sideLabel = (side: Position['side']) => side === 'LONG' ? t('common.long') : t('common.short');
   const { data: session } = useSession();
@@ -112,7 +121,10 @@ export default function ElitePage() {
   };
 
   const closePosition = async (position: Position) => {
-    if (!confirm(`${t('elite.confirmClose')} ${position.symbol} ${position.side}?`)) return;
+    const prompt = t('elite.confirmClosePrompt')
+      .replace('{symbol}', position.symbol)
+      .replace('{side}', sideLabel(position.side));
+    if (!confirm(prompt)) return;
     
     setLoading(true);
     setError('');
@@ -129,7 +141,11 @@ export default function ElitePage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || t('elite.close_position_failed'));
       
-      setSuccess(`✅ ${position.symbol} ${sideLabel(position.side)} ${t('elite.closed')}`);
+      setSuccess(
+        t('elite.closeSuccess')
+          .replace('{symbol}', position.symbol)
+          .replace('{side}', sideLabel(position.side))
+      );
       fetchPositions();
       fetchRiskData();
       setTimeout(() => setSuccess(''), 3000);
@@ -416,7 +432,7 @@ export default function ElitePage() {
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-gray-400">{t('elite.singleRisk')}</span>
-                    <span className="font-semibold">{riskData.details.maxPositionRisk.toFixed(2)}%</span>
+                    <span className="font-semibold">{formatPercent(riskData.details.maxPositionRisk)}%</span>
                   </div>
                   <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
                     <div 
@@ -432,7 +448,7 @@ export default function ElitePage() {
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-gray-400">{t('elite.dailyLoss')}</span>
-                    <span className="font-semibold">{riskData.details.dailyLoss.toFixed(2)}%</span>
+                    <span className="font-semibold">{formatPercent(riskData.details.dailyLoss)}%</span>
                   </div>
                   <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
                     <div 
@@ -508,13 +524,13 @@ export default function ElitePage() {
                             {sideLabel(pos.side)}
                           </span>
                         </td>
-                        <td className="py-3 px-2 text-right">{pos.size.toFixed(3)}</td>
+                        <td className="py-3 px-2 text-right">{formatSize(pos.size)}</td>
                         <td className="py-3 px-2 text-right">${formatCurrency(pos.entryPrice)}</td>
                         <td className="py-3 px-2 text-right">${formatCurrency(pos.markPrice)}</td>
                         <td className={`py-3 px-2 text-right font-semibold ${
                           pos.pnl >= 0 ? 'text-emerald-400' : 'text-red-400'
                         }`}>
-                          {pos.pnl >= 0 ? '+' : ''}{pos.pnl.toFixed(2)}
+                          {pos.pnl >= 0 ? '+' : ''}{formatCurrency(pos.pnl)}
                         </td>
                         <td className="py-3 px-2 text-right">{pos.leverage}x</td>
                         <td className="py-3 px-2 text-right">
