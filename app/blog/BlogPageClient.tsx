@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useI18n } from '@/lib/i18n';
+import { estimateReadingMinutes } from '@/lib/readingTime';
 
 interface BlogPost {
   slug: string;
@@ -42,7 +43,7 @@ export default function BlogPageClient({ posts }: { posts: BlogPost[] }) {
               <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
                 <time>{new Date(post.date).toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
                 <span>·</span>
-                <span>{Math.ceil(post.content.split(/\s+/).length / 200)} {t('blog.minRead')}</span>
+                <span>{estimateReadingMinutes(post.content, locale)} {t('blog.minRead')}</span>
               </div>
               
               <h2 className="text-xl font-semibold text-white group-hover:text-emerald-400 transition-colors mb-2">

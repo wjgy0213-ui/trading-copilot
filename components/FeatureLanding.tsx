@@ -17,6 +17,16 @@ interface FeatureLandingProps {
   color?: string;
 }
 
+const primaryButtonMap: Record<string, string> = {
+  emerald: 'bg-emerald-600 hover:bg-emerald-500',
+  blue: 'bg-blue-600 hover:bg-blue-500',
+  cyan: 'bg-cyan-600 hover:bg-cyan-500',
+  amber: 'bg-amber-500 hover:bg-amber-400 text-gray-950',
+  violet: 'bg-violet-600 hover:bg-violet-500',
+  rose: 'bg-rose-600 hover:bg-rose-500',
+  orange: 'bg-orange-600 hover:bg-orange-500',
+};
+
 export default function FeatureLanding({
   icon,
   title,
@@ -39,6 +49,7 @@ export default function FeatureLanding({
     orange: { bg: 'bg-orange-500/10', text: 'text-orange-400', border: 'border-orange-500/20', ring: 'ring-orange-500/20' },
   };
   const c = colorMap[color] || colorMap.emerald;
+  const primaryButton = primaryButtonMap[color] || primaryButtonMap.emerald;
   const { t } = useI18n();
   const resolvedCtaText = ctaText || t('featureLanding.ctaText');
 
@@ -55,7 +66,7 @@ export default function FeatureLanding({
           <p className="text-gray-500 max-w-2xl mx-auto mb-8">{description}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
             <Link href={ctaHref}
-              className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3.5 rounded-xl transition text-center">
+              className={`inline-flex items-center justify-center gap-2 ${primaryButton} font-medium px-6 py-3.5 rounded-xl transition text-center`}>
               {resolvedCtaText} <ArrowRight className="w-4 h-4 shrink-0" />
             </Link>
             <Link href="/pricing"
@@ -101,7 +112,7 @@ export default function FeatureLanding({
           <h3 className="text-xl font-bold mb-2">{t('featureLanding.readyToTry')}</h3>
           <p className="text-gray-400 mb-4">{t('featureLanding.freeUpgrade')}</p>
           <Link href={ctaHref}
-            className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-xl transition">
+            className={`inline-flex items-center justify-center gap-2 ${primaryButton} font-medium px-6 py-3 rounded-xl transition`}>
             {t('featureLanding.getStartedFree')} <ArrowRight className="w-4 h-4 shrink-0" />
           </Link>
         </div>
