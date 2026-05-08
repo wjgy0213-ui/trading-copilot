@@ -1,6 +1,7 @@
 'use client';
 
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleCurrency, getIntlLocale } from '@/lib/i18n-helpers';
 
 import { useState, useCallback, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -74,7 +75,7 @@ function StatCard({ label, value, sub, color }: { label: string; value: string; 
 }
 
 function TradeTable({ trades }: { trades: BacktestResult['trades'] }) {
-  const { t: tr } = useI18n();
+  const { t: tr, locale } = useI18n();
   const [show, setShow] = useState(false);
   if (trades.length === 0) return null;
   return (
@@ -94,11 +95,11 @@ function TradeTable({ trades }: { trades: BacktestResult['trades'] }) {
             </tr></thead>
             <tbody>{trades.map((t, i) => (
               <tr key={i} className="border-b border-gray-800/50 hover:bg-gray-800/30">
-                <td className="py-1.5 px-2 text-gray-400">{new Date(t.entryTime).toLocaleDateString()}</td>
+                <td className="py-1.5 px-2 text-gray-400">{new Date(t.entryTime).toLocaleDateString(getIntlLocale(locale))}</td>
                 <td className="py-1.5 px-2"><span className={t.direction === 'long' ? 'text-green-400' : 'text-red-400'}>{t.direction === 'long' ? tr('strategy.long') : tr('strategy.short')}</span></td>
-                <td className="py-1.5 px-2 text-right font-mono text-gray-300">${t.entryPrice.toFixed(2)}</td>
-                <td className="py-1.5 px-2 text-right font-mono text-gray-300">${t.exitPrice.toFixed(2)}</td>
-                <td className={`py-1.5 px-2 text-right font-mono ${t.pnl > 0 ? 'text-green-400' : 'text-red-400'}`}>{t.pnl > 0 ? '+' : ''}${t.pnl.toFixed(2)}</td>
+                <td className="py-1.5 px-2 text-right font-mono text-gray-300">{formatLocaleCurrency(t.entryPrice, locale, 'USD')}</td>
+                <td className="py-1.5 px-2 text-right font-mono text-gray-300">{formatLocaleCurrency(t.exitPrice, locale, 'USD')}</td>
+                <td className={`py-1.5 px-2 text-right font-mono ${t.pnl > 0 ? 'text-green-400' : 'text-red-400'}`}>{`${t.pnl > 0 ? '+' : ''}${formatLocaleCurrency(Math.abs(t.pnl), locale, 'USD')}`}</td>
                 <td className={`py-1.5 px-2 text-right font-mono ${t.pnl > 0 ? 'text-green-400' : 'text-red-400'}`}>{t.pnlPercent > 0 ? '+' : ''}{t.pnlPercent.toFixed(2)}%</td>
                 <td className="py-1.5 px-2 text-gray-500">{t.exitReason === 'stopLoss' ? tr('strategy.exitStopLoss') : t.exitReason === 'takeProfit' ? tr('strategy.exitTakeProfit') : tr('strategy.exitSignal')}</td>
               </tr>
@@ -440,8 +441,8 @@ function StrategyPage() {
             {STRATEGY_TEMPLATES.map(t => (
               <button key={t.id} onClick={() => handleSelect(t.id)}
                 className={`w-full text-left p-3 rounded-xl border transition ${selectedId === t.id ? 'border-emerald-500/50 bg-emerald-500/10' : 'border-gray-800 bg-gray-900/30 hover:border-gray-700'}`}>
-                <div className="flex items-center gap-2"><span className="text-lg">{t.icon}</span><span className="font-medium text-sm">{t.name}</span></div>
-                <p className="text-[11px] text-gray-500 mt-1">{t.description}</p>
+                <div className="flex items-center gap-2"><span className="text-lg">{t.icon}</span><span className="font-medium text-sm">{locale === 'en' ? t.nameEn || t.name : t.name}</span></div>
+                <p className="text-[11px] text-gray-500 mt-1">{locale === 'en' ? t.descriptionEn || t.description : t.description}</p>
               </button>
             ))}
           </div>
@@ -471,7 +472,7 @@ function StrategyPage() {
                     {SYMBOLS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}</select></div>
                 <div><label className="text-[10px] text-gray-500 block mb-1">{tr('strategy.timeframeLabel')}</label>
                   <select value={timeframe} onChange={e => setTimeframe(e.target.value as any)} className="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 py-1.5 text-sm">
-                    {TIMEFRAMES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}</select></div>
+                    {TIMEFRAMES.map(t => <option key={t.value} value={t.value}>{locale === 'en' ? t.labelEn || t.label : t.label}</option>)}</select></div>
                 <div><label className="text-[10px] text-gray-500 block mb-1">{tr('strategy.periodLabel')}</label>
                   <select value={periodDays} onChange={e => setPeriodDays(parseInt(e.target.value))} className="w-full bg-gray-800 border border-gray-700 rounded-lg px-2 py-1.5 text-sm">
                     {BACKTEST_PERIODS.map(p => <option key={p.value} value={p.value}>{locale === 'en' ? p.labelEn || p.label : p.label}</option>)}</select></div>
@@ -755,7 +756,7 @@ function StrategyPage() {
                       <tbody>{mcResult.percentiles.map(p => (
                         <tr key={p.level} className={`border-b border-gray-800/50 ${p.level === 0.5 ? 'bg-emerald-500/5' : ''}`}>
                           <td className="py-1.5 px-2 text-gray-400">{(p.level * 100).toFixed(0)}%</td>
-                          <td className="py-1.5 px-2 text-right font-mono text-gray-300">${p.finalCapital.toLocaleString()}</td>
+                          <td className="py-1.5 px-2 text-right font-mono text-gray-300">{formatLocaleCurrency(p.finalCapital, locale, 'USD', { maximumFractionDigits: 0 })}</td>
                           <td className={`py-1.5 px-2 text-right font-mono ${p.returnPercent > 0 ? 'text-green-400' : 'text-red-400'}`}>{p.returnPercent > 0 ? '+' : ''}{p.returnPercent.toFixed(1)}%</td>
                           <td className="py-1.5 px-2 text-right font-mono text-red-400">{p.maxDrawdown.toFixed(1)}%</td>
                         </tr>

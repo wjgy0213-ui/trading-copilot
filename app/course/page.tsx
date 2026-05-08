@@ -1,8 +1,9 @@
 'use client';
 
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleCurrency, formatLocaleNumber } from '@/lib/i18n-helpers';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSession } from '@/lib/useSession';
 import { BookOpen, Check, Crown, Shield, Star, Zap, Users, Clock, ArrowRight, Loader2 } from 'lucide-react';
 
@@ -52,11 +53,18 @@ function usePlans() {
 const STATS = { students: 127, rating: 4.8, chapters: 24, hours: 12 };
 
 export default function CoursePage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const PLANS = usePlans();
   const { session, hasCourse } = useSession();
   const [loading, setLoading] = useState<string | null>(null);
   const [email, setEmail] = useState('');
+
+  const stats = useMemo(() => ([
+    { icon: Users, label: t('course.students'), value: `${formatLocaleNumber(STATS.students, locale)}${t('course.studentsValueSuffix')}` },
+    { icon: Star, label: t('course.rating'), value: `${STATS.rating}/5` },
+    { icon: BookOpen, label: t('course.chapters'), value: formatLocaleNumber(STATS.chapters, locale) },
+    { icon: Clock, label: t('course.duration'), value: `${formatLocaleNumber(STATS.hours, locale)}${t('course.hoursValueSuffix')}` },
+  ]), [locale, t]);
 
   const handleBuy = async (planId: string) => {
     const userEmail = session?.email || email;
@@ -112,12 +120,7 @@ export default function CoursePage() {
 
         {/* Stats */}
         <div className="flex justify-center gap-8 mb-12">
-          {[
-            { icon: Users, label: t('course.students'), value: `${STATS.students}${t('course.studentsValueSuffix')}` },
-            { icon: Star, label: t('course.rating'), value: `${STATS.rating}/5` },
-            { icon: BookOpen, label: t('course.chapters'), value: `${STATS.chapters}` },
-            { icon: Clock, label: t('course.duration'), value: `${STATS.hours}${t('course.hoursValueSuffix')}` },
-          ].map(s => (
+          {stats.map(s => (
             <div key={s.label} className="text-center">
               <s.icon className="w-5 h-5 text-gray-500 mx-auto mb-1" />
               <div className="text-lg font-bold text-white">{s.value}</div>
@@ -162,10 +165,10 @@ export default function CoursePage() {
 
               <div className="mb-6">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold text-white">${plan.price}</span>
-                  <span className="text-lg text-gray-600 line-through">${plan.originalPrice}</span>
+                  <span className="text-4xl font-bold text-white">{formatLocaleCurrency(plan.price, locale, 'USD', { maximumFractionDigits: 0 })}</span>
+                  <span className="text-lg text-gray-600 line-through">{formatLocaleCurrency(plan.originalPrice, locale, 'USD', { maximumFractionDigits: 0 })}</span>
                   <span className="text-xs text-emerald-400 font-medium">
-                    {t('course.save')}${plan.originalPrice - plan.price}
+                    {t('course.save')}{formatLocaleCurrency(plan.originalPrice - plan.price, locale, 'USD', { maximumFractionDigits: 0 })}
                   </span>
                 </div>
                 <div className="text-sm text-gray-500 mt-1">{t('course.oneTime')}</div>

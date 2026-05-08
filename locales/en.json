@@ -22,6 +22,7 @@
   "account.heading": "Account Settings",
   "account.login_desc": "Log in to view account details and subscription status",
   "account.login_required": "Please Log In",
+  "account.loading_subscription": "Loading subscription details…",
   "account.logout": "Log Out",
   "account.next_billing": "Next Billing Date",
   "account.optimize_count": "Optimizations",

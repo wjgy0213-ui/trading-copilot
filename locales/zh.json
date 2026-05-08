@@ -22,6 +22,7 @@
   "account.heading": "账户管理",
   "account.login_desc": "登录后可查看账户信息和订阅状态",
   "account.login_required": "请先登录",
+  "account.loading_subscription": "正在加载订阅信息…",
   "account.logout": "退出登录",
   "account.next_billing": "下次续费日",
   "account.optimize_count": "优化次数",

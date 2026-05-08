@@ -5,11 +5,12 @@ import { useSession } from '@/lib/useSession';
 import { User, CreditCard, LogOut, Shield, Clock, ChevronRight, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { useI18n } from '@/lib/i18n';
+import { getIntlLocale } from '@/lib/i18n-helpers';
 
 export default function AccountPage() {
   const { t, locale } = useI18n();
   const formatDate = (ts: number) =>
-    new Date(ts * 1000).toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    new Date(ts * 1000).toLocaleDateString(getIntlLocale(locale), { year: 'numeric', month: 'long', day: 'numeric' });
   const { session, loading: sessionLoading, logout } = useSession();
   const [subData, setSubData] = useState<any>(null);
   const [loadingSub, setLoadingSub] = useState(false);
@@ -102,6 +103,12 @@ export default function AccountPage() {
           </div>
 
           {/* Subscription details */}
+          {loadingSub && (
+            <div className="mt-6 pt-4 border-t border-gray-800/50">
+              <div className="text-xs text-gray-500">{t('account.loading_subscription')}</div>
+            </div>
+          )}
+
           {subData && !subData.error && (
             <div className="mt-6 pt-4 border-t border-gray-800/50 space-y-3">
               <div className="grid grid-cols-2 gap-4 text-sm">
