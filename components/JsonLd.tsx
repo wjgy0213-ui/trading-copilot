@@ -11,6 +11,11 @@ export default async function JsonLd() {
     operatingSystem: t('seo.schema.webOperatingSystem'),
     url: 'https://www.tradingcopilot.app',
     description: t('seo.jsonLd.description'),
+    inLanguage: t('seo.jsonLd.inLanguage.current'),
+    availableLanguage: [
+      t('seo.jsonLd.inLanguage.en'),
+      t('seo.jsonLd.inLanguage.zh'),
+    ],
     offers: [
       {
         '@type': t('seo.schema.offerType'),

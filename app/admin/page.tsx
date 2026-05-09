@@ -76,8 +76,9 @@ export default function AdminPage() {
             value={secret}
             onChange={e => setSecret(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && fetchStats(secret)}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white mb-4"
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white"
           />
+          <p className="mt-2 mb-4 text-xs text-gray-500">{t('admin.enterKeyHint')}</p>
           <button
             onClick={() => fetchStats(secret)}
             className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-lg font-medium transition"

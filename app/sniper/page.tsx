@@ -359,7 +359,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
             onClick={() => router.push('/elite')}
             className="w-full bg-gray-800/60 rounded-xl p-5 border border-gray-700/50 hover:border-blue-500/50 transition-all flex items-center gap-4 text-left"
           >
-            <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center text-xl font-bold text-blue-400">OK</div>
+            <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center text-sm font-bold tracking-[0.18em] text-blue-300">{t('sniper.exchangeBadge.okx')}</div>
             <div>
               <div className="font-bold">{t('sniper.exchangeNames.okx')}</div>
               <div className="text-gray-400 text-sm">{t('sniper.okxDesc')}</div>
@@ -372,7 +372,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
             onClick={() => router.push('/elite')}
             className="w-full bg-gray-800/60 rounded-xl p-5 border border-gray-700/50 hover:border-orange-500/50 transition-all flex items-center gap-4 text-left"
           >
-            <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center text-xl font-bold text-orange-400">By</div>
+            <div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center text-[11px] font-bold tracking-[0.18em] text-orange-300">{t('sniper.exchangeBadge.bybit')}</div>
             <div>
               <div className="font-bold">{t('sniper.exchangeNames.bybit')}</div>
               <div className="text-gray-400 text-sm">{t('sniper.bybitDesc')}</div>
@@ -385,7 +385,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
             onClick={() => router.push('/elite')}
             className="w-full bg-gray-800/60 rounded-xl p-5 border border-gray-700/50 hover:border-green-500/50 transition-all flex items-center gap-4 text-left"
           >
-            <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center text-xl font-bold text-green-400">HL</div>
+            <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center text-[11px] font-bold tracking-[0.18em] text-green-300">{t('sniper.exchangeBadge.hyperliquid')}</div>
             <div>
               <div className="font-bold">{t('sniper.exchangeNames.hyperliquid')}</div>
               <div className="text-gray-400 text-sm">{t('sniper.hlDesc')}</div>

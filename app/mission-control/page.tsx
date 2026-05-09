@@ -308,8 +308,9 @@ export default function MissionControlPage() {
               if (e.key === 'Enter' && password === ADMIN_PASS) setAuthenticated(true);
             }}
             placeholder={t('missionControl.password')}
-            className="mb-4 w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none transition focus:border-cyan-400/40"
+            className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none transition focus:border-cyan-400/40"
           />
+          <p className="mt-2 mb-4 text-xs text-gray-500">{t('missionControl.enterKeyHint')}</p>
           <button
             onClick={() => {
               if (password === ADMIN_PASS) setAuthenticated(true);

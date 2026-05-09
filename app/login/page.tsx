@@ -100,6 +100,7 @@ export default function LoginPage() {
                 placeholder={t('login.email_placeholder')}
                 onKeyDown={e => e.key === 'Enter' && handleSendCode()}
                 className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-sm text-white placeholder-gray-600 focus:outline-none focus:border-emerald-500 transition" />
+              <p className="mt-2 text-xs text-gray-500">{t('login.enterKeyHint')}</p>
             </div>
             <button onClick={handleSendCode} disabled={loading}
               className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-medium text-sm transition disabled:opacity-50">
@@ -123,6 +124,7 @@ export default function LoginPage() {
                 placeholder={t('login.code_placeholder')} maxLength={6}
                 onKeyDown={e => e.key === 'Enter' && handleVerifyCode()}
                 className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-2xl text-center font-mono text-white tracking-[0.5em] placeholder-gray-600 focus:outline-none focus:border-emerald-500 transition" />
+              <p className="mt-2 text-xs text-gray-500">{t('login.enterKeyHint')}</p>
             </div>
             <button onClick={handleVerifyCode} disabled={loading || code.length !== 6}
               className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-medium text-sm transition disabled:opacity-50">
