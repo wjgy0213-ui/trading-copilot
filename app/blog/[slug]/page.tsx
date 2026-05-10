@@ -16,16 +16,25 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = getPostBySlug(slug);
   if (!post) return {};
   
+  const canonical = `https://www.tradingcopilot.app/blog/${slug}`;
+
   return {
     title: `${post.title} | ${t('blog.seoTitleSuffix')}`,
     description: post.description,
     alternates: {
-      canonical: `https://www.tradingcopilot.app/blog/${slug}`,
+      canonical,
+      languages: {
+        'en-US': `${canonical}?lang=en`,
+        'zh-CN': `${canonical}?lang=zh`,
+      },
     },
     openGraph: {
       title: `${post.title} | ${t('blog.ogTitle')}`,
       description: post.description,
       type: 'article',
+      locale: t('seo.jsonLd.inLanguage.current') === 'zh-CN' ? 'zh_CN' : 'en_US',
+      alternateLocale: t('seo.jsonLd.inLanguage.current') === 'zh-CN' ? ['en_US'] : ['zh_CN'],
+      url: canonical,
       publishedTime: post.date,
       authors: [post.author],
       tags: post.tags,

@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
@@ -14,6 +14,7 @@ export const viewport = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t, locale } = await getServerT();
+  const baseUrl = 'https://www.tradingcopilot.app';
 
   return {
     verification: {
@@ -25,15 +26,20 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: t('layout.meta.description'),
     keywords: t('layout.meta.keywords').split('|'),
-    metadataBase: new URL('https://www.tradingcopilot.app'),
+    metadataBase: new URL(baseUrl),
     alternates: {
-      canonical: 'https://www.tradingcopilot.app',
+      canonical: baseUrl,
+      languages: {
+        'en-US': `${baseUrl}?lang=en`,
+        'zh-CN': `${baseUrl}?lang=zh`,
+      },
     },
     openGraph: {
       title: t('layout.meta.ogTitle'),
       description: t('layout.meta.ogDescription'),
       type: 'website',
       locale: locale === 'zh' ? 'zh_CN' : 'en_US',
+      alternateLocale: locale === 'zh' ? ['en_US'] : ['zh_CN'],
       siteName: t('layout.meta.siteName'),
       images: [{ url: '/og-image.png', width: 1200, height: 630, alt: t('layout.meta.siteName') }],
     },
