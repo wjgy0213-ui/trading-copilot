@@ -12,7 +12,7 @@ export function generateStaticParams() {
 // Dynamic metadata for SEO
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const { t } = await getServerT();
+  const { t, locale } = await getServerT();
   const post = getPostBySlug(slug);
   if (!post) return {};
   
@@ -32,8 +32,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: `${post.title} | ${t('blog.ogTitle')}`,
       description: post.description,
       type: 'article',
-      locale: t('seo.jsonLd.inLanguage.current') === 'zh-CN' ? 'zh_CN' : 'en_US',
-      alternateLocale: t('seo.jsonLd.inLanguage.current') === 'zh-CN' ? ['en_US'] : ['zh_CN'],
+      locale: locale === 'zh' ? 'zh_CN' : 'en_US',
+      alternateLocale: locale === 'zh' ? ['en_US'] : ['zh_CN'],
       url: canonical,
       publishedTime: post.date,
       authors: [post.author],
@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const { t } = await getServerT();
+  const { t, locale } = await getServerT();
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
@@ -70,6 +70,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             headline: post.title,
             description: post.description,
             datePublished: post.date,
+            inLanguage: locale === 'zh' ? 'zh-CN' : 'en-US',
             author: { '@type': t('seo.schema.organizationType'), name: post.author },
             publisher: { '@type': t('seo.schema.organizationType'), name: t('app.name') },
           }),

@@ -6,10 +6,12 @@ import { getServerT } from '@/lib/server-i18n';
 export async function generateMetadata(): Promise<Metadata> {
   const { t, locale } = await getServerT();
   const canonical = 'https://www.tradingcopilot.app/blog';
+  const pageTitle = `${t('blog.pageTitle')} | ${t('app.name')}`;
+  const pageDescription = t('blog.pageSubtitle');
 
   return {
-    title: `${t('blog.pageTitle')} | ${t('app.name')}`,
-    description: t('blog.pageSubtitle'),
+    title: pageTitle,
+    description: pageDescription,
     alternates: {
       canonical,
       languages: {
@@ -19,10 +21,15 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     openGraph: {
       title: t('blog.ogTitle'),
-      description: t('blog.pageSubtitle'),
+      description: pageDescription,
       locale: locale === 'zh' ? 'zh_CN' : 'en_US',
       alternateLocale: locale === 'zh' ? ['en_US'] : ['zh_CN'],
       url: canonical,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: pageTitle,
+      description: pageDescription,
     },
   };
 }

@@ -3,10 +3,12 @@
 import { useEffect } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { analytics } from '@/lib/analytics';
+import { useI18n } from '@/lib/i18n';
 
 export default function PageViewTracker() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { locale } = useI18n();
 
   useEffect(() => {
     const page = pathname || '/';
@@ -22,8 +24,12 @@ export default function PageViewTracker() {
               ? 'strategy'
               : 'other';
 
-    analytics.pageView(page, { path_group: pathGroup, query: searchParams?.toString() || '' });
-  }, [pathname, searchParams]);
+    analytics.pageView(page, {
+      path_group: pathGroup,
+      query: searchParams?.toString() || '',
+      locale,
+    });
+  }, [locale, pathname, searchParams]);
 
   return null;
 }
