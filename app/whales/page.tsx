@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleCurrency } from '@/lib/i18n-helpers';
 
 interface Position {
   coin: string;
@@ -43,17 +44,17 @@ interface WhaleData {
   };
 }
 
-function formatUsd(n: number): string {
-  if (Math.abs(n) >= 1e9) return `$${(n / 1e9).toFixed(1)}B`;
-  if (Math.abs(n) >= 1e6) return `$${(n / 1e6).toFixed(1)}M`;
-  if (Math.abs(n) >= 1e3) return `$${(n / 1e3).toFixed(0)}K`;
-  return `$${n.toFixed(0)}`;
+function formatUsd(n: number, locale: 'en' | 'zh'): string {
+  if (Math.abs(n) >= 1e9) return `${formatLocaleCurrency(n / 1e9, locale, 'USD', { maximumFractionDigits: 1, minimumFractionDigits: 1 })}B`;
+  if (Math.abs(n) >= 1e6) return `${formatLocaleCurrency(n / 1e6, locale, 'USD', { maximumFractionDigits: 1, minimumFractionDigits: 1 })}M`;
+  if (Math.abs(n) >= 1e3) return `${formatLocaleCurrency(n / 1e3, locale, 'USD', { maximumFractionDigits: 0 })}K`;
+  return formatLocaleCurrency(n, locale, 'USD', { maximumFractionDigits: 0 });
 }
 
-function PnlBadge({ value }: { value: number }) {
+function PnlBadge({ value, locale }: { value: number; locale: 'en' | 'zh' }) {
   if (value === 0) return <span className="text-gray-500">-</span>;
   const color = value > 0 ? 'text-green-400' : 'text-red-400';
-  return <span className={`font-medium ${color}`}>{value > 0 ? '+' : ''}{formatUsd(value)}</span>;
+  return <span className={`font-medium ${color}`}>{value > 0 ? '+' : ''}{formatUsd(Math.abs(value), locale)}</span>;
 }
 
 function BiasIndicator({ longPct }: { longPct: number }) {
@@ -70,7 +71,7 @@ function BiasIndicator({ longPct }: { longPct: number }) {
 }
 
 export default function WhalesPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [data, setData] = useState<WhaleData | null>(null);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -139,8 +140,8 @@ export default function WhalesPage() {
           {/* Long/Short Ratio */}
           <div className="mb-4">
             <div className="flex justify-between text-sm mb-1">
-              <span className="text-green-400">{t('whales.long')} {formatUsd(summary.totalLongExposure)}</span>
-              <span className="text-red-400">{t('whales.short')} {formatUsd(summary.totalShortExposure)}</span>
+              <span className="text-green-400">{t('whales.long')} {formatUsd(summary.totalLongExposure, locale)}</span>
+              <span className="text-red-400">{t('whales.short')} {formatUsd(summary.totalShortExposure, locale)}</span>
             </div>
             <BiasIndicator longPct={longPct} />
           </div>
@@ -160,7 +161,7 @@ export default function WhalesPage() {
                 }`}>
                   {tc.bias === 'LONG' ? t('whales.bias_long') : tc.bias === 'SHORT' ? t('whales.bias_short') : t('whales.bias_neutral')}
                 </div>
-                <div className="text-xs text-gray-500">{formatUsd(tc.totalSize)}</div>
+                <div className="text-xs text-gray-500">{formatUsd(tc.totalSize, locale)}</div>
               </div>
             ))}
           </div>
@@ -187,9 +188,9 @@ export default function WhalesPage() {
                       <span className="text-xs text-gray-500 font-mono">{w.address.slice(0, 6)}...{w.address.slice(-4)}</span>
                     </div>
                     <div className="flex items-center gap-4 mt-1 text-sm">
-                      <span className="text-gray-400">💰 {formatUsd(w.accountValue)}</span>
+                      <span className="text-gray-400">💰 {formatUsd(w.accountValue, locale)}</span>
                       <span className="text-gray-400">📊 {w.positions.length} {t('whales.positions')}</span>
-                      <span>{t('whales.today')} <PnlBadge value={w.dayPnl} /></span>
+                      <span>{t('whales.today')} <PnlBadge value={w.dayPnl} locale={locale} /></span>
                     </div>
                   </div>
                   <div className="w-32 hidden sm:block">
@@ -217,12 +218,15 @@ export default function WhalesPage() {
                               <span className="text-xs text-gray-500">{p.leverage}x</span>
                             </div>
                             <div className="text-xs text-gray-400">
-                              {t('whales.entry')} ${p.entryPrice < 1 ? p.entryPrice.toFixed(4) : p.entryPrice.toLocaleString(undefined, { maximumFractionDigits: 1 })}
-                              {' · '}{formatUsd(p.size)}
+                              {t('whales.entry')} {formatLocaleCurrency(p.entryPrice, locale, 'USD', {
+                                minimumFractionDigits: p.entryPrice < 1 ? 4 : 0,
+                                maximumFractionDigits: p.entryPrice < 1 ? 4 : 1,
+                              })}
+                              {' · '}{formatUsd(p.size, locale)}
                             </div>
                           </div>
                           <div className="text-right">
-                            <PnlBadge value={p.unrealizedPnl} />
+                            <PnlBadge value={p.unrealizedPnl} locale={locale} />
                           </div>
                         </div>
                       ))}

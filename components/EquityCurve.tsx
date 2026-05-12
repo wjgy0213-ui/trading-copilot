@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { Trade } from '@/lib/types';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleCurrency, formatLocaleNumber } from '@/lib/i18n-helpers';
 
 interface EquityCurveProps {
   trades: Trade[];
@@ -10,7 +11,7 @@ interface EquityCurveProps {
 }
 
 export default function EquityCurve({ trades, initialBalance }: EquityCurveProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const tEquityTitle = t('equity.title');
@@ -88,7 +89,11 @@ export default function EquityCurve({ trades, initialBalance }: EquityCurveProps
       ctx.fillStyle = '#666';
       ctx.font = '11px system-ui';
       ctx.textAlign = 'right';
-      ctx.fillText(`$${val.toFixed(0)}`, padding.left - 8, y + 4);
+      ctx.fillText(
+        formatLocaleCurrency(val, locale, 'USD', { maximumFractionDigits: 0 }),
+        padding.left - 8,
+        y + 4,
+      );
     }
 
     // Initial balance line
@@ -106,7 +111,11 @@ export default function EquityCurve({ trades, initialBalance }: EquityCurveProps
     ctx.fillStyle = '#888';
     ctx.font = '10px system-ui';
     ctx.textAlign = 'left';
-    ctx.fillText(`${tInitial} $${initialBalance}`, padding.left + 4, baseY - 6);
+    ctx.fillText(
+      `${tInitial} ${formatLocaleCurrency(initialBalance, locale, 'USD', { maximumFractionDigits: 0 })}`,
+      padding.left + 4,
+      baseY - 6,
+    );
 
     // Gradient fill under curve
     const gradient = ctx.createLinearGradient(0, padding.top, 0, H - padding.bottom);
@@ -188,7 +197,7 @@ export default function EquityCurve({ trades, initialBalance }: EquityCurveProps
       ctx.font = 'bold 10px system-ui';
       ctx.textAlign = 'center';
       ctx.fillText(
-        `${tMaxDrawdown} ${(maxDd * 100).toFixed(1)}%`,
+        `${tMaxDrawdown} ${formatLocaleNumber(maxDd * 100, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`,
         (scaleX(peakIdx) + scaleX(ddEnd)) / 2,
         padding.top + 14
       );
@@ -204,9 +213,12 @@ export default function EquityCurve({ trades, initialBalance }: EquityCurveProps
     ctx.textAlign = 'right';
     ctx.fillStyle = lastEquity >= initialBalance ? '#22c55e' : '#ef4444';
     ctx.font = 'bold 14px system-ui';
-    const pnlPct = ((lastEquity - initialBalance) / initialBalance * 100).toFixed(1);
+    const pnlPct = formatLocaleNumber((lastEquity - initialBalance) / initialBalance * 100, locale, {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    });
     ctx.fillText(
-      `$${lastEquity.toFixed(0)} (${lastEquity >= initialBalance ? '+' : ''}${pnlPct}%)`,
+      `${formatLocaleCurrency(lastEquity, locale, 'USD', { maximumFractionDigits: 0 })} (${lastEquity >= initialBalance ? '+' : ''}${pnlPct}%)`,
       W - padding.right,
       padding.top - 10
     );
@@ -224,7 +236,7 @@ export default function EquityCurve({ trades, initialBalance }: EquityCurveProps
       ctx.fillText(tTradeNth(mid), scaleX(mid), H - padding.bottom + 16);
     }
 
-  }, [trades, initialBalance, tEquityTitle, tInitial, tMaxDrawdown]);
+  }, [trades, initialBalance, locale, tEquityTitle, tInitial, tMaxDrawdown]);
 
   if (trades.filter(t => t.closedAt).length === 0) {
     return (

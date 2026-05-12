@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleCurrency } from '@/lib/i18n-helpers';
 
 interface Position {
   id: string;
@@ -53,12 +54,12 @@ const TIERS = {
   platinum: { balance: 500000, color: 'from-purple-500 to-purple-700', next: null, reqKey: 'practice.tier_platinum_req' },
 };
 
-function formatUsd(n: number): string {
-  return `$${n.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+function formatUsd(n: number, locale: 'en' | 'zh'): string {
+  return formatLocaleCurrency(n, locale, 'USD', { maximumFractionDigits: 2 });
 }
 
 export default function PracticePage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const tierLabels = {
     bronze: t('practice.tier_bronze'),
     silver: t('practice.tier_silver'),
@@ -242,7 +243,7 @@ export default function PracticePage() {
             <p className="text-gray-500 text-sm">{t('practice.subtitle')}</p>
           </div>
           <div className="text-right">
-            <div className="text-2xl font-bold">{formatUsd(balance)}</div>
+            <div className="text-2xl font-bold">{formatUsd(balance, locale)}</div>
             <div className={`text-sm ${totalPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
               {totalPnl >= 0 ? '+' : ''}{totalPnl.toFixed(2)}%
             </div>
@@ -311,7 +312,7 @@ export default function PracticePage() {
               {/* Price display */}
               <div className="text-center mb-3">
                 <span className="text-gray-400 text-xs">{t('practice.current_price')}</span>
-                <div className="text-xl font-bold">{currentPrice(selectedCoin) ? formatUsd(currentPrice(selectedCoin)) : t('practice.loading')}</div>
+                <div className="text-xl font-bold">{currentPrice(selectedCoin) ? formatUsd(currentPrice(selectedCoin), locale) : t('practice.loading')}</div>
               </div>
 
               {/* Side */}
@@ -362,7 +363,7 @@ export default function PracticePage() {
 
               {/* Margin preview */}
               <div className="text-xs text-gray-400 mb-3">
-                {t('practice.margin_req')}: {formatUsd(parseFloat(orderSize || '0') / parseFloat(orderLeverage || '1'))}
+                {t('practice.margin_req')}: {formatUsd(parseFloat(orderSize || '0') / parseFloat(orderLeverage || '1'), locale)}
               </div>
 
               <button onClick={openPosition} disabled={!currentPrice(selectedCoin)}
@@ -421,11 +422,11 @@ export default function PracticePage() {
                             <span className="text-xs text-gray-500">{t('practice.leverageValue').replace('{value}', String(pos.leverage))}</span>
                           </div>
                           <span className={`font-bold ${pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                            {pnl >= 0 ? '+' : ''}{formatUsd(pnl)} ({pnlPct >= 0 ? '+' : ''}{pnlPct.toFixed(1)}%)
+                            {pnl >= 0 ? '+' : ''}{formatUsd(Math.abs(pnl), locale)} ({pnlPct >= 0 ? '+' : ''}{pnlPct.toFixed(1)}%)
                           </span>
                         </div>
                         <div className="flex items-center justify-between text-xs text-gray-400">
-                          <span>{t('practice.entry')} {formatUsd(pos.entryPrice)} · {t('practice.position_size')} {formatUsd(pos.size)}</span>
+                          <span>{t('practice.entry')} {formatUsd(pos.entryPrice, locale)} · {t('practice.position_size')} {formatUsd(pos.size, locale)}</span>
                           <button onClick={() => closePosition(pos.id, 'manual')}
                             className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-lg text-white">
                             {t('practice.close')}
@@ -463,7 +464,7 @@ export default function PracticePage() {
                           )}
                         </div>
                         <span className={`font-medium text-sm ${trade.pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          {trade.pnl >= 0 ? '+' : ''}{formatUsd(trade.pnl)}
+                          {trade.pnl >= 0 ? '+' : ''}{formatUsd(Math.abs(trade.pnl), locale)}
                         </span>
                       </div>
                       {trade.aiAdvice && <p className="text-xs text-gray-400 mt-1">💡 {trade.aiAdvice}</p>}

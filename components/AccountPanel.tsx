@@ -7,7 +7,7 @@ import { resetAccount } from '@/lib/storage';
 import { useI18n } from '@/lib/i18n';
 import { calculateEquity } from '@/lib/tradingEngine';
 import { analyzePerformance, getRecentPerformanceSummary } from '@/lib/tradeAnalyzer';
-import { formatLocaleCurrency } from '@/lib/i18n-helpers';
+import { formatLocaleCurrency, formatLocaleNumber } from '@/lib/i18n-helpers';
 import RankBadge from './RankBadge';
 
 interface AccountPanelProps {
@@ -24,6 +24,18 @@ export default function AccountPanel({ account, currentPrice }: AccountPanelProp
   // 交易分析
   const analysis = analyzePerformance(account.closedTrades, locale);
   const recentSummary = getRecentPerformanceSummary(account.closedTrades, 7, locale);
+  const formatMoney = (value: number) => formatLocaleCurrency(value, locale, 'USD', {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  });
+  const formatPercent = (value: number, digits = 2) => `${value >= 0 ? '+' : ''}${formatLocaleNumber(value, locale, {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  })}%`;
+  const formatRatio = (value: number) => formatLocaleNumber(value, locale, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 
   const handleReset = () => {
     const confirmed = confirm(t('account_panel.confirm_reset'));
@@ -50,21 +62,21 @@ export default function AccountPanel({ account, currentPrice }: AccountPanelProp
           <StatItem
             icon={<DollarSign className="w-5 h-5" />}
             label={t('account_panel.balance')}
-            value={`$${account.balance.toFixed(2)}`}
+            value={formatMoney(account.balance)}
             valueColor="text-blue-400"
           />
           
           <StatItem
             icon={<TrendingUp className="w-5 h-5" />}
             label={t('account_panel.equity')}
-            value={`$${equity.toFixed(2)}`}
+            value={formatMoney(equity)}
             valueColor={equity >= initialBalance ? 'text-green-400' : 'text-red-400'}
           />
           
           <StatItem
             icon={<Percent className="w-5 h-5" />}
             label={t('account_panel.total_return')}
-            value={`${totalReturn >= 0 ? '+' : ''}${totalReturn.toFixed(2)}%`}
+            value={formatPercent(totalReturn)}
             valueColor={totalReturn >= 0 ? 'text-green-400' : 'text-red-400'}
           />
 
@@ -83,21 +95,21 @@ export default function AccountPanel({ account, currentPrice }: AccountPanelProp
           <StatItem
             icon={<TrendingUp className="w-5 h-5" />}
             label={t('account_panel.total_pnl')}
-            value={`${account.totalPnl >= 0 ? '+' : ''}$${account.totalPnl.toFixed(2)}`}
+            value={`${account.totalPnl >= 0 ? '+' : ''}${formatMoney(Math.abs(account.totalPnl))}`}
             valueColor={account.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'}
           />
           
           <StatItem
             icon={<Percent className="w-5 h-5" />}
             label={t('account_panel.win_rate')}
-            value={account.closedTrades.length > 0 ? `${(account.winRate * 100).toFixed(1)}%` : '-'}
+            value={account.closedTrades.length > 0 ? formatPercent(account.winRate * 100, 1) : '-'}
             valueColor="text-blue-400"
           />
           
           <StatItem
             icon={<AlertCircle className="w-5 h-5" />}
             label={t('account_panel.max_drawdown')}
-            value={account.maxDrawdown > 0 ? `${(account.maxDrawdown * 100).toFixed(1)}%` : '-'}
+            value={account.maxDrawdown > 0 ? formatPercent(account.maxDrawdown * 100, 1) : '-'}
             valueColor={account.maxDrawdown > 0.2 ? 'text-red-400' : 'text-yellow-400'}
           />
 
@@ -133,13 +145,13 @@ export default function AccountPanel({ account, currentPrice }: AccountPanelProp
             <div className="bg-gray-900/50 rounded-lg p-3">
               <div className="text-xs text-gray-500 mb-1">{t('account_panel.rr_ratio')}</div>
               <div className={`text-xl font-bold ${analysis.avgRR >= 1.5 ? 'text-green-400' : analysis.avgRR >= 1 ? 'text-yellow-400' : 'text-red-400'}`}>
-                {analysis.avgRR.toFixed(2)}
+                {formatRatio(analysis.avgRR)}
               </div>
             </div>
             <div className="bg-gray-900/50 rounded-lg p-3">
               <div className="text-xs text-gray-500 mb-1">{t('account_panel.profit_factor')}</div>
               <div className={`text-xl font-bold ${analysis.profitFactor >= 1.5 ? 'text-green-400' : analysis.profitFactor >= 1 ? 'text-yellow-400' : 'text-red-400'}`}>
-                {analysis.profitFactor === Infinity ? '∞' : analysis.profitFactor.toFixed(2)}
+                {analysis.profitFactor === Infinity ? '∞' : formatRatio(analysis.profitFactor)}
               </div>
             </div>
           </div>

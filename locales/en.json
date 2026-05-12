@@ -199,6 +199,7 @@
   "chart.fullscreen": "Fullscreen",
   "coach.first_trade": "Complete your first trade to start the review",
   "coach.lesson_welcome": "Complete trades per course requirements, coach will auto-score.",
+  "coach.lesson_context": "📚 Lesson: {title}\n\n{homework}",
   "coach.monitoring": "Monitoring live",
   "coach.title": "Coach Feedback",
   "coach.welcome": "Plan your trades before the market opens. After each trade, you'll get a review here.",

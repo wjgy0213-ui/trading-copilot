@@ -27,7 +27,9 @@ export default function AICoach() {
         const lesson = JSON.parse(lessonData);
         lessonMsg = {
           type: 'coach',
-          text: `📚 ${lesson.lessonTitle}\n\n${lesson.homework}`,
+          text: t('coach.lesson_context')
+            .replace('{title}', lesson.lessonTitle)
+            .replace('{homework}', lesson.homework),
           timestamp: Date.now() - 5000,
           variant: 'info',
         };
