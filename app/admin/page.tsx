@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { BarChart3, Users, Eye, CreditCard, TrendingUp, RefreshCw } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleNumber, getIntlLocale } from '@/lib/i18n-helpers';
 
 interface LeadItem {
   id: string;
@@ -125,7 +126,7 @@ export default function AdminPage() {
                 <card.icon className={`w-4 h-4 ${card.color}`} />
                 <span className="text-xs text-gray-500">{card.label}</span>
               </div>
-              <div className="text-2xl font-bold">{card.value}</div>
+              <div className="text-2xl font-bold">{formatLocaleNumber(card.value, locale)}</div>
             </div>
           ))}
         </div>
@@ -150,10 +151,10 @@ export default function AdminPage() {
                 {stats.map((d, i) => (
                   <tr key={i} className="border-b border-gray-800/50 hover:bg-gray-800/30">
                     <td className="py-2 px-3 text-gray-300">{d.date}</td>
-                    <td className="py-2 px-3 text-right">{Number(d.pageviews) || 0}</td>
-                    <td className="py-2 px-3 text-right text-emerald-400">{Number(d.waitlists) || 0}</td>
-                    <td className="py-2 px-3 text-right text-amber-400">{Number(d.trials) || 0}</td>
-                    <td className="py-2 px-3 text-right text-violet-400">{Number(d.checkout_successes) || 0}</td>
+                    <td className="py-2 px-3 text-right">{formatLocaleNumber(Number(d.pageviews) || 0, locale)}</td>
+                    <td className="py-2 px-3 text-right text-emerald-400">{formatLocaleNumber(Number(d.waitlists) || 0, locale)}</td>
+                    <td className="py-2 px-3 text-right text-amber-400">{formatLocaleNumber(Number(d.trials) || 0, locale)}</td>
+                    <td className="py-2 px-3 text-right text-violet-400">{formatLocaleNumber(Number(d.checkout_successes) || 0, locale)}</td>
                   </tr>
                 ))}
                 {stats.length === 0 && (
@@ -172,7 +173,7 @@ export default function AdminPage() {
               {pages.map((p, i) => (
                 <div key={i} className="flex items-center justify-between py-1">
                   <span className="text-gray-300 text-sm font-mono">{p.page}</span>
-                  <span className="text-gray-400 text-sm">{p.views} {t('elite.views')}</span>
+                  <span className="text-gray-400 text-sm">{formatLocaleNumber(p.views, locale)} {t('elite.views')}</span>
                 </div>
               ))}
             </div>
@@ -200,7 +201,7 @@ export default function AdminPage() {
                     <td className="py-2 px-3 text-gray-400">{lead.source || t('admin.emptyValue')}</td>
                     <td className="py-2 px-3 text-emerald-400">{lead.status || t('admin.statusNew')}</td>
                     <td className="py-2 px-3 text-violet-400">{lead.paid_plan || t('admin.emptyValue')}</td>
-                    <td className="py-2 px-3 text-gray-500">{lead.created_at ? new Date(lead.created_at).toLocaleString(locale === 'zh' ? 'zh-CN' : 'en-US') : t('admin.emptyValue')}</td>
+                    <td className="py-2 px-3 text-gray-500">{lead.created_at ? new Date(lead.created_at).toLocaleString(getIntlLocale(locale)) : t('admin.emptyValue')}</td>
                   </tr>
                 ))}
                 {leads.length === 0 && (

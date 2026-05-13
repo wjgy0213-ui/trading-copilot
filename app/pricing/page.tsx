@@ -7,6 +7,7 @@ import { Check, Crown, Zap, Shield, Sparkles, ArrowRight, Loader2 } from 'lucide
 import { useI18n } from '@/lib/i18n';
 import { analytics } from '@/lib/analytics';
 import CancelRetentionModal from '@/components/CancelRetentionModal';
+import { formatLocaleCurrency } from '@/lib/i18n-helpers';
 
 type BillingInterval = 'monthly' | 'yearly';
 
@@ -24,7 +25,7 @@ export default function PricingPageWrapper() {
 }
 
 function PricingPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const searchParams = useSearchParams();
   const success = searchParams.get('success');
   const sessionId = searchParams.get('session_id');
@@ -234,16 +235,16 @@ function PricingPage() {
                 </div>
                 
                 <div className="mb-1">
-                  {plan.id !== 'free' ? <div className="text-sm text-gray-500 line-through">${plan.monthlyPrice}{t('pricing.perMonth')}</div> : null}
+                  {plan.id !== 'free' ? <div className="text-sm text-gray-500 line-through">{formatLocaleCurrency(plan.monthlyPrice, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{t('pricing.perMonth')}</div> : null}
                   <div className="flex items-end gap-2">
-                    <span className="text-3xl font-bold">${displayPrice}</span>
+                    <span className="text-3xl font-bold">{formatLocaleCurrency(displayPrice, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     <span className="text-gray-500 text-sm">{t('pricing.perMonth')}</span>
                     {plan.id !== 'free' ? <span className="mb-1 rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-300">{t('pricing.limitedTime')}</span> : null}
                   </div>
                 </div>
                 {plan.id !== 'free' && billingInterval === 'yearly' && (
                   <p className="text-xs text-gray-500 mb-3">
-                    {t('pricing.billedYearly')} <span className="text-emerald-400">${plan.yearlyPrice}{t('pricing.perYear')}</span>
+                    {t('pricing.billedYearly')} <span className="text-emerald-400">{formatLocaleCurrency(plan.yearlyPrice, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{t('pricing.perYear')}</span>
                     <span className="ml-1.5 text-amber-400">({t('pricing.launchSpecial')})</span>
                   </p>
                 )}

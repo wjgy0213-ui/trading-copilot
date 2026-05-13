@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Shield, AlertTriangle, TrendingDown, Layers, Link2, Zap, Target, RefreshCw, ChevronRight } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleCurrency, formatLocaleNumber } from '@/lib/i18n-helpers';
 
 interface RiskData {
   score: { overall: number; concentration: number; leverage: number; drawdown: number; correlation: number; liquidation: number };
@@ -92,7 +93,7 @@ function AlertCard({ alert }: { alert: RiskData['alerts'][0] }) {
 }
 
 function PositionRow({ p }: { p: any }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const pnlColor = p.unrealizedPnl >= 0 ? 'text-emerald-400' : 'text-red-400';
   const liqDist = p.liquidationPrice > 0 ? Math.abs(p.markPrice - p.liquidationPrice) / p.markPrice * 100 : 999;
   const liqColor = liqDist < 5 ? 'text-red-400' : liqDist < 10 ? 'text-yellow-400' : 'text-gray-400';
@@ -110,15 +111,15 @@ function PositionRow({ p }: { p: any }) {
       <div className="flex items-center gap-6 text-right">
         <div>
           <div className="text-xs text-gray-500">{t('guardian.position_size')}</div>
-          <div className="text-sm text-gray-300">${p.size.toLocaleString()}</div>
+          <div className="text-sm text-gray-300">{formatLocaleCurrency(p.size, locale, 'USD', { maximumFractionDigits: 0 })}</div>
         </div>
         <div>
           <div className="text-xs text-gray-500">{t('guardian.unrealized_pnl')}</div>
-          <div className={`text-sm font-semibold ${pnlColor}`}>{p.unrealizedPnl >= 0 ? '+' : ''}${p.unrealizedPnl.toFixed(2)}</div>
+          <div className={`text-sm font-semibold ${pnlColor}`}>{p.unrealizedPnl >= 0 ? '+' : ''}{formatLocaleCurrency(Math.abs(p.unrealizedPnl), locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
         </div>
         <div>
           <div className="text-xs text-gray-500">{t('guardian.liq_distance')}</div>
-          <div className={`text-sm font-semibold ${liqColor}`}>{liqDist.toFixed(1)}%</div>
+          <div className={`text-sm font-semibold ${liqColor}`}>{formatLocaleNumber(liqDist, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%</div>
         </div>
       </div>
     </div>
@@ -126,7 +127,7 @@ function PositionRow({ p }: { p: any }) {
 }
 
 export default function GuardianPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [data, setData] = useState<RiskData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -175,10 +176,10 @@ export default function GuardianPage() {
           <div className="bg-gray-900/50 border border-gray-800/50 rounded-xl p-6 flex flex-col items-center">
             <ScoreGauge score={data.score.overall} />
             <div className="flex items-center gap-4 mt-4 text-xs text-gray-500">
-              <span>{t('guardian.positions_count')} {data.positions.length}</span>
-              <span>{t('guardian.total_exposure')} ${data.totalNotional.toLocaleString()}</span>
+              <span>{t('guardian.positions_count')} {formatLocaleNumber(data.positions.length, locale)}</span>
+              <span>{t('guardian.total_exposure')} {formatLocaleCurrency(data.totalNotional, locale, 'USD', { maximumFractionDigits: 0 })}</span>
               <span className={data.totalPnl >= 0 ? 'text-emerald-400' : 'text-red-400'}>
-                {t('guardian.unrealized_pnl')} {data.totalPnl >= 0 ? '+' : ''}${data.totalPnl.toFixed(2)}
+                {t('guardian.unrealized_pnl')} {data.totalPnl >= 0 ? '+' : ''}{formatLocaleCurrency(Math.abs(data.totalPnl), locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
           </div>

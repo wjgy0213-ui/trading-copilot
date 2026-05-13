@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { X, Gift, ArrowRight, Loader2 } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleCurrency } from '@/lib/i18n-helpers';
 
 interface CancelRetentionModalProps {
   isOpen: boolean;
@@ -12,7 +13,7 @@ interface CancelRetentionModalProps {
 }
 
 export default function CancelRetentionModal({ isOpen, onClose, currentPlan, email }: CancelRetentionModalProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
@@ -59,13 +60,13 @@ export default function CancelRetentionModal({ isOpen, onClose, currentPlan, ema
 
           <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-5 mb-6">
             <div className="text-3xl font-bold text-white mb-1">
-              ${monthlyEquiv}<span className="text-base text-gray-400 font-normal">{t('cancel_modal.per_month')}</span>
+              {formatLocaleCurrency(monthlyEquiv, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}<span className="text-base text-gray-400 font-normal">{t('cancel_modal.per_month')}</span>
             </div>
             <div className="text-sm text-gray-500">
-              {t('cancel_modal.yearly_billed')} ${discountedPrice}
+              {t('cancel_modal.yearly_billed')} {formatLocaleCurrency(discountedPrice, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <div className="mt-2 inline-flex items-center gap-1 bg-amber-500/10 text-amber-400 text-xs font-medium px-2.5 py-1 rounded-full">
-              {t('cancel_modal.save_per_year').replace('{amount}', `$${(yearlyPrice - discountedPrice).toFixed(2)}`)}
+              {t('cancel_modal.save_per_year').replace('{amount}', formatLocaleCurrency(yearlyPrice - discountedPrice, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))}
             </div>
           </div>
 
