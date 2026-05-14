@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useI18n } from '@/lib/i18n';
-import { formatLocaleCurrency } from '@/lib/i18n-helpers';
+import { formatCompactLocaleCurrency, formatLocaleCurrency, formatLocaleNumber, formatLocalePercent } from '@/lib/i18n-helpers';
 
 interface Position {
   coin: string;
@@ -45,9 +45,13 @@ interface WhaleData {
 }
 
 function formatUsd(n: number, locale: 'en' | 'zh'): string {
-  if (Math.abs(n) >= 1e9) return `${formatLocaleCurrency(n / 1e9, locale, 'USD', { maximumFractionDigits: 1, minimumFractionDigits: 1 })}B`;
-  if (Math.abs(n) >= 1e6) return `${formatLocaleCurrency(n / 1e6, locale, 'USD', { maximumFractionDigits: 1, minimumFractionDigits: 1 })}M`;
-  if (Math.abs(n) >= 1e3) return `${formatLocaleCurrency(n / 1e3, locale, 'USD', { maximumFractionDigits: 0 })}K`;
+  if (Math.abs(n) >= 1e3) {
+    return formatCompactLocaleCurrency(n, locale, 'USD', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: Math.abs(n) >= 1e6 ? 1 : 0,
+    });
+  }
+
   return formatLocaleCurrency(n, locale, 'USD', { maximumFractionDigits: 0 });
 }
 
@@ -57,7 +61,7 @@ function PnlBadge({ value, locale }: { value: number; locale: 'en' | 'zh' }) {
   return <span className={`font-medium ${color}`}>{value > 0 ? '+' : ''}{formatUsd(Math.abs(value), locale)}</span>;
 }
 
-function BiasIndicator({ longPct }: { longPct: number }) {
+function BiasIndicator({ longPct, locale }: { longPct: number; locale: 'en' | 'zh' }) {
   const { t } = useI18n();
   return (
     <div className="flex items-center gap-2">
@@ -65,7 +69,7 @@ function BiasIndicator({ longPct }: { longPct: number }) {
         <div className="h-full bg-green-500 transition-all" style={{ width: `${longPct}%` }} />
         <div className="h-full bg-red-500 transition-all" style={{ width: `${100 - longPct}%` }} />
       </div>
-      <span className="text-xs text-gray-400 w-12 text-right">{longPct.toFixed(0)}% {t('whales.longShortLongSuffix')}</span>
+      <span className="text-xs text-gray-400 w-16 text-right">{formatLocalePercent(longPct / 100, locale, { maximumFractionDigits: 0 })} {t('whales.longShortLongSuffix')}</span>
     </div>
   );
 }
@@ -135,7 +139,7 @@ export default function WhalesPage() {
 
         {/* Consensus Overview */}
         <div className="bg-gradient-to-r from-cyan-900/20 to-blue-900/20 rounded-2xl p-6 border border-cyan-500/20 mb-6">
-          <h2 className="text-sm text-gray-400 mb-3">{t('whales.consensus')} — {summary.totalWhales} {t('whales.top_traders')}</h2>
+          <h2 className="text-sm text-gray-400 mb-3">{t('whales.consensus')} — {formatLocaleNumber(summary.totalWhales, locale)} {t('whales.top_traders')}</h2>
           
           {/* Long/Short Ratio */}
           <div className="mb-4">
@@ -143,7 +147,7 @@ export default function WhalesPage() {
               <span className="text-green-400">{t('whales.long')} {formatUsd(summary.totalLongExposure, locale)}</span>
               <span className="text-red-400">{t('whales.short')} {formatUsd(summary.totalShortExposure, locale)}</span>
             </div>
-            <BiasIndicator longPct={longPct} />
+            <BiasIndicator longPct={longPct} locale={locale} />
           </div>
 
           {/* Top coins consensus */}
@@ -152,9 +156,9 @@ export default function WhalesPage() {
               <div key={tc.coin} className="bg-gray-800/60 rounded-lg p-2 text-center">
                 <div className="font-bold text-sm">{tc.coin}</div>
                 <div className="flex items-center justify-center gap-1 mt-1">
-                  <span className="text-green-400 text-xs">{tc.longCount}{t('whales.longShortLongSuffix')}</span>
+                  <span className="text-green-400 text-xs">{formatLocaleNumber(tc.longCount, locale)}{t('whales.longShortLongSuffix')}</span>
                   <span className="text-gray-600">/</span>
-                  <span className="text-red-400 text-xs">{tc.shortCount}{t('whales.longShortShortSuffix')}</span>
+                  <span className="text-red-400 text-xs">{formatLocaleNumber(tc.shortCount, locale)}{t('whales.longShortShortSuffix')}</span>
                 </div>
                 <div className={`text-xs mt-0.5 ${
                   tc.bias === 'LONG' ? 'text-green-400' : tc.bias === 'SHORT' ? 'text-red-400' : 'text-gray-400'
@@ -189,12 +193,12 @@ export default function WhalesPage() {
                     </div>
                     <div className="flex items-center gap-4 mt-1 text-sm">
                       <span className="text-gray-400">💰 {formatUsd(w.accountValue, locale)}</span>
-                      <span className="text-gray-400">📊 {w.positions.length} {t('whales.positions')}</span>
+                      <span className="text-gray-400">📊 {formatLocaleNumber(w.positions.length, locale)} {t('whales.positions')}</span>
                       <span>{t('whales.today')} <PnlBadge value={w.dayPnl} locale={locale} /></span>
                     </div>
                   </div>
                   <div className="w-32 hidden sm:block">
-                    <BiasIndicator longPct={wLongPct} />
+                    <BiasIndicator longPct={wLongPct} locale={locale} />
                   </div>
                   <span className="text-gray-500 text-lg">{isExpanded ? '▲' : '▼'}</span>
                 </button>

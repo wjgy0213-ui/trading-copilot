@@ -1,6 +1,7 @@
 'use client';
 
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleCurrency, formatLocaleNumber, formatLocalePercent } from '@/lib/i18n-helpers';
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
@@ -30,19 +31,18 @@ interface RiskData {
 
 export default function ElitePage() {
   const { t, locale } = useI18n();
-  const numberLocale = locale === 'zh' ? 'zh-CN' : 'en-US';
-  const formatCurrency = (value: number) => new Intl.NumberFormat(numberLocale, {
+  const formatCurrency = (value: number) => formatLocaleCurrency(value, locale, 'USD', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(value);
-  const formatPercent = (value: number) => new Intl.NumberFormat(numberLocale, {
+  });
+  const formatPercent = (value: number) => formatLocalePercent(value / 100, locale, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(value);
-  const formatSize = (value: number) => new Intl.NumberFormat(numberLocale, {
+  });
+  const formatSize = (value: number) => formatLocaleNumber(value, locale, {
     minimumFractionDigits: 3,
     maximumFractionDigits: 3,
-  }).format(value);
+  });
   const sideLabel = (side: Position['side']) => side === 'LONG' ? t('common.long') : t('common.short');
   const { data: session } = useSession();
   const [exchange, setExchange] = useState('binance');
@@ -307,7 +307,7 @@ export default function ElitePage() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-400">{t('elite.balance')}</span>
-                    <span className="text-2xl font-bold">${formatCurrency(balance ?? 0)}</span>
+                    <span className="text-2xl font-bold">{formatCurrency(balance ?? 0)}</span>
                   </div>
                 </div>
 
@@ -432,7 +432,7 @@ export default function ElitePage() {
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-gray-400">{t('elite.singleRisk')}</span>
-                    <span className="font-semibold">{formatPercent(riskData.details.maxPositionRisk)}%</span>
+                    <span className="font-semibold">{formatPercent(riskData.details.maxPositionRisk)}</span>
                   </div>
                   <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
                     <div 
@@ -448,7 +448,7 @@ export default function ElitePage() {
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-gray-400">{t('elite.dailyLoss')}</span>
-                    <span className="font-semibold">{formatPercent(riskData.details.dailyLoss)}%</span>
+                    <span className="font-semibold">{formatPercent(riskData.details.dailyLoss)}</span>
                   </div>
                   <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
                     <div 
@@ -525,12 +525,16 @@ export default function ElitePage() {
                           </span>
                         </td>
                         <td className="py-3 px-2 text-right">{formatSize(pos.size)}</td>
-                        <td className="py-3 px-2 text-right">${formatCurrency(pos.entryPrice)}</td>
-                        <td className="py-3 px-2 text-right">${formatCurrency(pos.markPrice)}</td>
+                        <td className="py-3 px-2 text-right">{formatCurrency(pos.entryPrice)}</td>
+                        <td className="py-3 px-2 text-right">{formatCurrency(pos.markPrice)}</td>
                         <td className={`py-3 px-2 text-right font-semibold ${
                           pos.pnl >= 0 ? 'text-emerald-400' : 'text-red-400'
                         }`}>
-                          {pos.pnl >= 0 ? '+' : ''}{formatCurrency(pos.pnl)}
+                          {formatLocaleCurrency(pos.pnl, locale, 'USD', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                            signDisplay: 'always',
+                          })}
                         </td>
                         <td className="py-3 px-2 text-right">{pos.leverage}x</td>
                         <td className="py-3 px-2 text-right">

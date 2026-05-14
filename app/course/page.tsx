@@ -61,7 +61,7 @@ export default function CoursePage() {
 
   const stats = useMemo(() => ([
     { icon: Users, label: t('course.students'), value: `${formatLocaleNumber(STATS.students, locale)}${t('course.studentsValueSuffix')}` },
-    { icon: Star, label: t('course.rating'), value: `${STATS.rating}/5` },
+    { icon: Star, label: t('course.rating'), value: `${formatLocaleNumber(STATS.rating, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}/5` },
     { icon: BookOpen, label: t('course.chapters'), value: formatLocaleNumber(STATS.chapters, locale) },
     { icon: Clock, label: t('course.duration'), value: `${formatLocaleNumber(STATS.hours, locale)}${t('course.hoursValueSuffix')}` },
   ]), [locale, t]);
@@ -208,10 +208,10 @@ export default function CoursePage() {
         <h2 className="text-2xl font-bold text-white text-center mb-8">{t('course.outlineTitle')}</h2>
         <div className="grid md:grid-cols-2 gap-4">
           {[
-            { module: t('course.module1'), title: t('course.module1Title'), chapters: '6 ' + t('course.chapUnit'), desc: t('course.module1Desc') },
-            { module: t('course.module2'), title: t('course.module2Title'), chapters: '6 ' + t('course.chapUnit'), desc: t('course.module2Desc') },
-            { module: t('course.module3'), title: t('course.module3Title'), chapters: '6 ' + t('course.chapUnit'), desc: t('course.module3Desc') },
-            { module: t('course.module4'), title: t('course.module4Title'), chapters: '6 ' + t('course.chapUnit'), desc: t('course.module4Desc') },
+            { module: t('course.module1'), title: t('course.module1Title'), chapters: `${formatLocaleNumber(6, locale)}${t('course.chapUnit')}`, desc: t('course.module1Desc') },
+            { module: t('course.module2'), title: t('course.module2Title'), chapters: `${formatLocaleNumber(6, locale)}${t('course.chapUnit')}`, desc: t('course.module2Desc') },
+            { module: t('course.module3'), title: t('course.module3Title'), chapters: `${formatLocaleNumber(6, locale)}${t('course.chapUnit')}`, desc: t('course.module3Desc') },
+            { module: t('course.module4'), title: t('course.module4Title'), chapters: `${formatLocaleNumber(6, locale)}${t('course.chapUnit')}`, desc: t('course.module4Desc') },
           ].map(m => (
             <div key={m.module} className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">

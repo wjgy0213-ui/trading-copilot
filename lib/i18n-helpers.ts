@@ -40,3 +40,30 @@ export function formatLocaleCurrency(
     ...options,
   }).format(value);
 }
+
+export function formatCompactLocaleCurrency(
+  value: number,
+  locale: Locale,
+  currency = 'USD',
+  options?: Intl.NumberFormatOptions,
+): string {
+  return new Intl.NumberFormat(getIntlLocale(locale), {
+    style: 'currency',
+    currency,
+    notation: 'compact',
+    maximumFractionDigits: 1,
+    ...options,
+  }).format(value);
+}
+
+export function formatLocalePercent(
+  value: number,
+  locale: Locale,
+  options?: Intl.NumberFormatOptions,
+): string {
+  return new Intl.NumberFormat(getIntlLocale(locale), {
+    style: 'percent',
+    maximumFractionDigits: 1,
+    ...options,
+  }).format(value);
+}

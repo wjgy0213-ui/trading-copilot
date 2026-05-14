@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleNumber, formatLocalePercent, getIntlLocale } from '@/lib/i18n-helpers';
 
 interface Dimension {
   name: string;
@@ -67,12 +68,12 @@ function TrafficLight({ light }: { light: string }) {
   );
 }
 
-function DimensionBar({ dim, locale, t }: { dim: Dimension; locale: string; t: (key: string, fallback?: string) => string }) {
+function DimensionBar({ dim, locale, t }: { dim: Dimension; locale: 'en' | 'zh'; t: (key: string, fallback?: string) => string }) {
   const color = dim.signal === 'bullish' ? 'bg-green-500' : dim.signal === 'bearish' ? 'bg-red-500' : 'bg-yellow-500';
   const textColor = dim.signal === 'bullish' ? 'text-green-400' : dim.signal === 'bearish' ? 'text-red-400' : 'text-yellow-400';
   const displayName = locale === 'zh' ? dim.nameZh : dim.name;
   const secondaryName = locale === 'zh' ? dim.name : dim.nameZh;
-  const weightText = t('health.weightPct').replace('{percent}', String(Math.round(dim.weight * 100)));
+  const weightText = t('health.weightPct').replace('{percent}', formatLocalePercent(dim.weight, locale, { maximumFractionDigits: 0 }).replace('%', ''));
   
   return (
     <div className="bg-gray-800/60 rounded-xl p-4 border border-gray-700/50">
@@ -108,7 +109,11 @@ export default function HealthCheckPage() {
       if (!res.ok) throw new Error(t('health.fetchFailed'));
       const json = await res.json();
       setData(json);
-      setLastUpdate(new Date(json.timestamp).toLocaleTimeString(locale === 'zh' ? 'zh-CN' : 'en-US'));
+      setLastUpdate(new Intl.DateTimeFormat(getIntlLocale(locale), {
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit',
+      }).format(new Date(json.timestamp)));
       setError('');
     } catch (e: any) {
       setError(e.message);
@@ -165,17 +170,17 @@ export default function HealthCheckPage() {
               <h3 className="text-sm font-medium text-gray-400 mb-2">{t('health.howToRead')}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
                 <div className="text-center p-2 rounded-lg bg-red-500/10 border border-red-500/20">
-                  <div className="text-red-400 font-bold">0-39</div>
+                  <div className="text-red-400 font-bold">{formatLocaleNumber(0, locale)}-{formatLocaleNumber(39, locale)}</div>
                   <div className="text-gray-400">{t('health.danger')}</div>
                   <div className="text-gray-500 mt-1">{t('health.dangerHint')}</div>
                 </div>
                 <div className="text-center p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-                  <div className="text-yellow-400 font-bold">40-59</div>
+                  <div className="text-yellow-400 font-bold">{formatLocaleNumber(40, locale)}-{formatLocaleNumber(59, locale)}</div>
                   <div className="text-gray-400">{t('health.mixed')}</div>
                   <div className="text-gray-500 mt-1">{t('health.mixedHint')}</div>
                 </div>
                 <div className="text-center p-2 rounded-lg bg-green-500/10 border border-green-500/20">
-                  <div className="text-green-400 font-bold">60-100</div>
+                  <div className="text-green-400 font-bold">{formatLocaleNumber(60, locale)}-{formatLocaleNumber(100, locale)}</div>
                   <div className="text-gray-400">{t('health.favorable')}</div>
                   <div className="text-gray-500 mt-1">{t('health.favorableHint')}</div>
                 </div>
