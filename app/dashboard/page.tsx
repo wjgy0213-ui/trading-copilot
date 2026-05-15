@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { getRiskColor, getRiskBgColor, getRiskLabel, getRiskStrokeColor, type ITCIndicator } from '@/lib/mockData';
 import { useITCData } from '@/lib/useITCData';
 import { useI18n } from '@/lib/i18n';
-import { formatLocaleCurrency } from '@/lib/i18n-helpers';
+import { formatLocaleCurrency, formatLocaleNumber, formatSignedLocalePercent, getIntlLocale, i18nText } from '@/lib/i18n-helpers';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Area, AreaChart, ReferenceLine } from 'recharts';
 import { Activity, TrendingUp, TrendingDown, X, Maximize2, BarChart3, Globe, Link2, Wifi, WifiOff, ArrowRight, CircleDot, Gamepad2, Sparkles } from 'lucide-react';
 
@@ -23,6 +23,7 @@ function DetailModal({ indicator, onClose, t, locale }: { indicator: ITCIndicato
   
   const displayName = locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name;
   const displayDesc: string = indicator.description || '';
+  const intlLocale = getIntlLocale(locale as 'en' | 'zh');
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
@@ -46,18 +47,18 @@ function DetailModal({ indicator, onClose, t, locale }: { indicator: ITCIndicato
           <div className="bg-gray-800/50 rounded-lg p-3">
             <div className="text-[10px] text-gray-500 mb-1">{t('dashboard.change7d')}</div>
             <div className={`text-lg font-mono font-semibold ${Number(change7d) >= 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-              {Number(change7d) >= 0 ? '+' : ''}{change7d}%
+              {formatSignedLocalePercent(Number(change7d), locale as 'en' | 'zh', { maximumFractionDigits: 1 })}
             </div>
           </div>
           <div className="bg-gray-800/50 rounded-lg p-3">
             <div className="text-[10px] text-gray-500 mb-1">{t('dashboard.change30d')}</div>
             <div className={`text-lg font-mono font-semibold ${Number(change30d) >= 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-              {Number(change30d) >= 0 ? '+' : ''}{change30d}%
+              {formatSignedLocalePercent(Number(change30d), locale as 'en' | 'zh', { maximumFractionDigits: 1 })}
             </div>
           </div>
           <div className="bg-gray-800/50 rounded-lg p-3">
             <div className="text-[10px] text-gray-500 mb-1">{t('dashboard.range')}</div>
-            <div className="text-sm font-mono text-gray-300">{Math.round(min*100)} — {Math.round(max*100)}</div>
+            <div className="text-sm font-mono text-gray-300">{formatLocaleNumber(Math.round(min * 100), locale as 'en' | 'zh')} - {formatLocaleNumber(Math.round(max * 100), locale as 'en' | 'zh')}</div>
           </div>
         </div>
 
@@ -76,11 +77,11 @@ function DetailModal({ indicator, onClose, t, locale }: { indicator: ITCIndicato
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
-              <XAxis dataKey="timestamp" tickFormatter={v => new Date(v).toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', { month: 'short', day: 'numeric' })} tick={{ fill: '#6b7280', fontSize: 10 }} stroke="#374151" />
-              <YAxis domain={[0, 1]} tickFormatter={v => Math.round(v * 100).toString()} tick={{ fill: '#6b7280', fontSize: 10 }} stroke="#374151" />
+              <XAxis dataKey="timestamp" tickFormatter={v => new Date(v).toLocaleDateString(intlLocale, { month: 'short', day: 'numeric' })} tick={{ fill: '#6b7280', fontSize: 10 }} stroke="#374151" />
+              <YAxis domain={[0, 1]} tickFormatter={v => formatLocaleNumber(Math.round(v * 100), locale as 'en' | 'zh')} tick={{ fill: '#6b7280', fontSize: 10 }} stroke="#374151" />
               <Tooltip contentStyle={{ background: '#111827', border: '1px solid #374151', borderRadius: 8, fontSize: 12 }}
-                labelFormatter={v => new Date(v).toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US')}
-                formatter={(v: number | undefined) => [Math.round((v || 0) * 100), displayName]} />
+                labelFormatter={v => new Date(v).toLocaleDateString(intlLocale)}
+                formatter={(v: number | undefined) => [`${formatLocaleNumber(Math.round((v || 0) * 100), locale as 'en' | 'zh')}%`, displayName]} />
               <ReferenceLine y={0.3} stroke="#34d399" strokeDasharray="5 5" strokeOpacity={0.4} />
               <ReferenceLine y={0.7} stroke="#f87171" strokeDasharray="5 5" strokeOpacity={0.4} />
               <defs>
@@ -100,7 +101,7 @@ function DetailModal({ indicator, onClose, t, locale }: { indicator: ITCIndicato
             <p className="text-xs text-gray-400 leading-relaxed">{displayDesc}</p>
             <div className="flex items-center gap-2 mt-2">
               <span className={`text-[10px] font-medium px-2 py-0.5 rounded ${getRiskBgColor(indicator.value)}`}>
-                {getRiskLabel(indicator.value)}
+                {i18nText(locale as 'en' | 'zh', getRiskLabel(indicator.value))}
               </span>
               <span className="text-[10px] text-gray-600">{t('dashboard.modal_category')}: {
                 indicator.category === 'crypto' ? t('dashboard.modal_cat_crypto') :
@@ -304,7 +305,7 @@ export default function DashboardPage() {
 
               <div className="flex items-center justify-between mt-1.5">
                 <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${getRiskBgColor(indicator.value)}`}>
-                  {getRiskLabel(indicator.value)}
+                  {i18nText(locale as 'en' | 'zh', getRiskLabel(indicator.value))}
                 </span>
                 <span className="text-[9px] text-gray-600">{locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name}</span>
               </div>

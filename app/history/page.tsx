@@ -7,6 +7,7 @@ import { getAccount, getAIScores } from '@/lib/storage';
 import { Trade, AIScore } from '@/lib/types';
 import EquityCurve from '@/components/EquityCurve';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleCurrency, formatLocaleNumber, formatSignedLocaleCurrency, formatSignedLocalePercent, getIntlLocale } from '@/lib/i18n-helpers';
 
 export default function HistoryPage() {
   const { t, locale } = useI18n();
@@ -18,6 +19,16 @@ export default function HistoryPage() {
     setClosedTrades(account.closedTrades.reverse());
     setAIScores(getAIScores());
   }, []);
+
+  const formatTradeCurrency = (value: number, digits = 2) => formatLocaleCurrency(value, locale, 'USD', {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  });
+
+  const formatTradePercent = (value: number, digits = 2) => formatSignedLocalePercent(value, locale, {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  });
 
   if (closedTrades.length === 0) {
     return (
@@ -87,22 +98,22 @@ export default function HistoryPage() {
               </div>
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
                 <div className={`text-2xl font-bold ${winRate >= 50 ? 'text-green-400' : 'text-red-400'}`}>
-                  {winRate.toFixed(0)}%
+                  {formatLocaleNumber(winRate, locale, { maximumFractionDigits: 0 })}%
                 </div>
                 <div className="text-xs text-gray-400">{t('history.win_rate')} ({wins}{t('review.wins_suffix')}{losses}{t('review.losses_suffix')})</div>
               </div>
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
                 <div className={`text-2xl font-bold ${totalPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                  {totalPnl >= 0 ? '+' : ''}${totalPnl.toFixed(2)}
+                  {formatSignedLocaleCurrency(totalPnl, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
                 <div className="text-xs text-gray-400">{t('history.total_pnl')}</div>
               </div>
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
-                <div className="text-2xl font-bold text-green-400">${avgWin.toFixed(2)}</div>
+                <div className="text-2xl font-bold text-green-400">{formatTradeCurrency(avgWin)}</div>
                 <div className="text-xs text-gray-400">{t('history.avg_win')}</div>
               </div>
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
-                <div className="text-2xl font-bold text-red-400">${avgLoss.toFixed(2)}</div>
+                <div className="text-2xl font-bold text-red-400">{formatTradeCurrency(avgLoss)}</div>
                 <div className="text-xs text-gray-400">{t('history.avg_loss')}</div>
               </div>
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
@@ -141,14 +152,14 @@ export default function HistoryPage() {
                       )}
                       {trade.side === 'long' ? t('history.long') : t('history.short')}
                     </div>
-                    <span className="text-gray-400 text-sm">{trade.leverage}x {t('history.leverage')}</span>
+                    <span className="text-gray-400 text-sm">{formatLocaleNumber(trade.leverage, locale, { maximumFractionDigits: 0 })}x {t('history.leverage')}</span>
                   </div>
 
                   {score && (
                     <div className="flex items-center gap-2 bg-gray-700 px-3 py-1 rounded-full">
                       <Star className="w-4 h-4 text-yellow-400" />
                       <span className="text-sm font-semibold">
-                        {t('history.ai_score')}: {score.entryScore}/100
+                        {t('history.ai_score')}: {formatLocaleNumber(score.entryScore, locale, { maximumFractionDigits: 0 })}/100
                       </span>
                     </div>
                   )}
@@ -157,15 +168,15 @@ export default function HistoryPage() {
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                   <div>
                     <div className="text-xs text-gray-400 mb-1">{t('history.entry_price')}</div>
-                    <div className="font-semibold">${trade.entryPrice.toFixed(2)}</div>
+                    <div className="font-semibold">{formatTradeCurrency(trade.entryPrice)}</div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-400 mb-1">{t('history.exit_price')}</div>
-                    <div className="font-semibold">${trade.exitPrice?.toFixed(2) || '-'}</div>
+                    <div className="font-semibold">{trade.exitPrice ? formatTradeCurrency(trade.exitPrice) : '-'}</div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-400 mb-1">{t('history.invested')}</div>
-                    <div className="font-semibold">${trade.size.toFixed(2)}</div>
+                    <div className="font-semibold">{formatTradeCurrency(trade.size)}</div>
                   </div>
                   <div>
                     <div className="text-xs text-gray-400 mb-1">{t('history.pnl')}</div>
@@ -174,9 +185,9 @@ export default function HistoryPage() {
                         isProfitable ? 'text-green-400' : 'text-red-400'
                       }`}
                     >
-                      {isProfitable ? '+' : ''}${trade.pnl?.toFixed(2) || '0.00'}
+                      {formatSignedLocaleCurrency(trade.pnl || 0, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       <span className="text-xs ml-1">
-                        ({trade.pnlPercent?.toFixed(2)}%)
+                        ({formatTradePercent(trade.pnlPercent || 0)})
                       </span>
                     </div>
                   </div>
@@ -188,7 +199,7 @@ export default function HistoryPage() {
                       <div>
                         <span className="text-gray-400">{t('history.stop_loss')}: </span>
                         <span className="text-red-400 font-semibold">
-                          ${trade.stopLoss.toFixed(2)}
+                          {formatTradeCurrency(trade.stopLoss)}
                         </span>
                       </div>
                     )}
@@ -196,7 +207,7 @@ export default function HistoryPage() {
                       <div>
                         <span className="text-gray-400">{t('history.take_profit')}: </span>
                         <span className="text-green-400 font-semibold">
-                          ${trade.takeProfit.toFixed(2)}
+                          {formatTradeCurrency(trade.takeProfit)}
                         </span>
                       </div>
                     )}
@@ -206,8 +217,8 @@ export default function HistoryPage() {
                 <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
                   <Clock className="w-3 h-3" />
                   <span>
-                    {new Date(trade.openedAt).toLocaleString(locale === 'zh' ? 'zh-CN' : 'en-US')} -{' '}
-                    {trade.closedAt ? new Date(trade.closedAt).toLocaleString(locale === 'zh' ? 'zh-CN' : 'en-US') : t('history.ongoing')}
+                    {new Date(trade.openedAt).toLocaleString(getIntlLocale(locale))} -{' '}
+                    {trade.closedAt ? new Date(trade.closedAt).toLocaleString(getIntlLocale(locale)) : t('history.ongoing')}
                   </span>
                 </div>
 

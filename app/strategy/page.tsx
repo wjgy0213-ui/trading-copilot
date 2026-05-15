@@ -1,7 +1,7 @@
 'use client';
 
 import { useI18n } from '@/lib/i18n';
-import { formatLocaleCurrency, getIntlLocale } from '@/lib/i18n-helpers';
+import { formatLocaleCurrency, formatLocaleNumber, formatSignedLocaleCurrency, formatSignedLocalePercent, getIntlLocale } from '@/lib/i18n-helpers';
 
 import { useState, useCallback, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -13,11 +13,17 @@ import { saveStrategy } from '@/lib/autoTrader';
 import Paywall from '@/components/Paywall';
 import { ChevronDown, ChevronRight, Play, Trash2, BarChart3, Layers, Search, Share2, X as XIcon, Copy, Check, Rocket } from 'lucide-react';
 
+const formatMonthLabel = (value: string, locale: 'en' | 'zh') => {
+  const parsed = new Date(`${value}-01T00:00:00Z`);
+  if (Number.isNaN(parsed.getTime())) return value;
+  return parsed.toLocaleDateString(getIntlLocale(locale), { month: 'short' });
+};
+
 function EquityCurve({ data, color = '#10b981', height = 200, compareData }: {
   data: { time: number; equity: number }[]; color?: string; height?: number;
   compareData?: { data: { time: number; equity: number }[]; color: string; name: string }[];
 }) {
-  const { t: tr } = useI18n();
+  const { t: tr, locale } = useI18n();
   if (data.length < 2) return null;
   const allEquities = [data, ...(compareData?.map(c => c.data) || [])].flat().map(d => d.equity);
   const minE = Math.min(...allEquities) * 0.99, maxE = Math.max(...allEquities) * 1.01;
@@ -33,7 +39,7 @@ function EquityCurve({ data, color = '#10b981', height = 200, compareData }: {
       <svg viewBox={`0 0 ${w} ${height}`} className="w-full" preserveAspectRatio="none">
         {[0.25, 0.5, 0.75].map(pct => {
           const y = height - pct * (height - 20);
-          return <g key={pct}><line x1="0" y1={y} x2={w} y2={y} stroke="#1f2937" strokeWidth="1" /><text x="5" y={y-4} fill="#6b7280" fontSize="10">${(minE + pct * (maxE - minE)).toFixed(0)}</text></g>;
+          return <g key={pct}><line x1="0" y1={y} x2={w} y2={y} stroke="#1f2937" strokeWidth="1" /><text x="5" y={y-4} fill="#6b7280" fontSize="10">{formatLocaleCurrency(minE + pct * (maxE - minE), locale, 'USD', { maximumFractionDigits: 0 })}</text></g>;
         })}
         {compareData?.map((cd, idx) => <path key={idx} d={toPath(cd.data)} fill="none" stroke={cd.color} strokeWidth="1.5" opacity="0.6" />)}
         <defs><linearGradient id="eqGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={color} stopOpacity="0.3" /><stop offset="100%" stopColor={color} stopOpacity="0" /></linearGradient></defs>
@@ -51,13 +57,14 @@ function EquityCurve({ data, color = '#10b981', height = 200, compareData }: {
 }
 
 function MonthlyHeatmap({ data }: { data: { month: string; returnPct: number }[] }) {
+  const { locale } = useI18n();
   if (data.length === 0) return null;
   return (
     <div className="grid grid-cols-4 sm:grid-cols-6 gap-1.5">
       {data.map(d => (
         <div key={d.month} className={`rounded-lg p-2 text-center text-xs ${d.returnPct > 0 ? 'bg-green-600/20 text-green-400' : d.returnPct < 0 ? 'bg-red-600/20 text-red-400' : 'bg-gray-800 text-gray-500'}`}>
-          <div className="text-[10px] text-gray-500 mb-0.5">{d.month}</div>
-          <div className="font-mono font-bold">{d.returnPct > 0 ? '+' : ''}{d.returnPct.toFixed(1)}%</div>
+          <div className="text-[10px] text-gray-500 mb-0.5">{formatMonthLabel(d.month, locale)}</div>
+          <div className="font-mono font-bold">{formatSignedLocalePercent(d.returnPct, locale, { maximumFractionDigits: 1 })}</div>
         </div>
       ))}
     </div>
@@ -99,8 +106,8 @@ function TradeTable({ trades }: { trades: BacktestResult['trades'] }) {
                 <td className="py-1.5 px-2"><span className={t.direction === 'long' ? 'text-green-400' : 'text-red-400'}>{t.direction === 'long' ? tr('strategy.long') : tr('strategy.short')}</span></td>
                 <td className="py-1.5 px-2 text-right font-mono text-gray-300">{formatLocaleCurrency(t.entryPrice, locale, 'USD')}</td>
                 <td className="py-1.5 px-2 text-right font-mono text-gray-300">{formatLocaleCurrency(t.exitPrice, locale, 'USD')}</td>
-                <td className={`py-1.5 px-2 text-right font-mono ${t.pnl > 0 ? 'text-green-400' : 'text-red-400'}`}>{`${t.pnl > 0 ? '+' : ''}${formatLocaleCurrency(Math.abs(t.pnl), locale, 'USD')}`}</td>
-                <td className={`py-1.5 px-2 text-right font-mono ${t.pnl > 0 ? 'text-green-400' : 'text-red-400'}`}>{t.pnlPercent > 0 ? '+' : ''}{t.pnlPercent.toFixed(2)}%</td>
+                <td className={`py-1.5 px-2 text-right font-mono ${t.pnl > 0 ? 'text-green-400' : 'text-red-400'}`}>{formatSignedLocaleCurrency(t.pnl, locale, 'USD')}</td>
+                <td className={`py-1.5 px-2 text-right font-mono ${t.pnl > 0 ? 'text-green-400' : 'text-red-400'}`}>{formatSignedLocalePercent(t.pnlPercent, locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                 <td className="py-1.5 px-2 text-gray-500">{t.exitReason === 'stopLoss' ? tr('strategy.exitStopLoss') : t.exitReason === 'takeProfit' ? tr('strategy.exitTakeProfit') : tr('strategy.exitSignal')}</td>
               </tr>
             ))}</tbody>
@@ -112,6 +119,7 @@ function TradeTable({ trades }: { trades: BacktestResult['trades'] }) {
 }
 
 function DrawdownChart({ data }: { data: { time: number; equity: number }[] }) {
+  const { locale } = useI18n();
   if (data.length < 2) return null;
   const drawdowns: number[] = [];
   let peak = data[0].equity;
@@ -131,8 +139,8 @@ function DrawdownChart({ data }: { data: { time: number; equity: number }[] }) {
     <div className="w-full overflow-hidden">
       <svg viewBox={`0 0 ${w} ${h}`} className="w-full" preserveAspectRatio="none">
         <line x1="0" y1="0" x2={w} y2="0" stroke="#374151" strokeWidth="1" />
-        <text x="5" y="12" fill="#6b7280" fontSize="9">0%</text>
-        <text x="5" y={h - 4} fill="#6b7280" fontSize="9">{minDD.toFixed(1)}%</text>
+        <text x="5" y="12" fill="#6b7280" fontSize="9">{formatSignedLocalePercent(0, locale, { maximumFractionDigits: 0 })}</text>
+        <text x="5" y={h - 4} fill="#6b7280" fontSize="9">{formatSignedLocalePercent(minDD, locale, { maximumFractionDigits: 1 })}</text>
         <defs>
           <linearGradient id="ddGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#ef4444" stopOpacity="0.4" />
@@ -147,6 +155,7 @@ function DrawdownChart({ data }: { data: { time: number; equity: number }[] }) {
 }
 
 function TradeScatter({ trades }: { trades: BacktestResult['trades'] }) {
+  const { locale } = useI18n();
   if (trades.length === 0) return null;
   const maxAbs = Math.max(...trades.map(t => Math.abs(t.pnl)), 1);
   const w = 800, h = 150;
@@ -155,7 +164,7 @@ function TradeScatter({ trades }: { trades: BacktestResult['trades'] }) {
     <div className="w-full overflow-hidden">
       <svg viewBox={`0 0 ${w} ${h}`} className="w-full" preserveAspectRatio="none">
         <line x1="0" y1={midY} x2={w} y2={midY} stroke="#374151" strokeWidth="1" strokeDasharray="4,4" />
-        <text x="5" y={midY - 4} fill="#6b7280" fontSize="9">$0</text>
+        <text x="5" y={midY - 4} fill="#6b7280" fontSize="9">{formatLocaleCurrency(0, locale, 'USD', { maximumFractionDigits: 0 })}</text>
         {trades.map((t, i) => {
           const x = (i / Math.max(trades.length - 1, 1)) * (w - 20) + 10;
           const y = midY - (t.pnl / maxAbs) * (midY - 10);
@@ -188,12 +197,12 @@ function CompareTable({ results }: { results: BacktestResult[] }) {
   if (results.length < 2) return null;
   const colors = ['#10b981', '#3b82f6', '#f59e0b'];
   const metrics = [
-    { label: tr('strategy.totalReturn'), fn: (r: BacktestResult) => `${r.totalReturnPercent > 0 ? '+' : ''}${r.totalReturnPercent.toFixed(2)}%` },
-    { label: tr('strategy.winRateLabel'), fn: (r: BacktestResult) => `${r.winRate.toFixed(1)}%` },
+    { label: tr('strategy.totalReturn'), fn: (r: BacktestResult) => formatSignedLocalePercent(r.totalReturnPercent, locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
+    { label: tr('strategy.winRateLabel'), fn: (r: BacktestResult) => `${formatLocaleNumber(r.winRate, locale, { maximumFractionDigits: 1 })}%` },
     { label: tr('strategy.profitFactor'), fn: (r: BacktestResult) => r.profitFactor === Infinity ? '∞' : r.profitFactor.toFixed(2) },
-    { label: tr('strategy.maxDrawdown'), fn: (r: BacktestResult) => `${r.maxDrawdownPercent.toFixed(2)}%` },
+    { label: tr('strategy.maxDrawdown'), fn: (r: BacktestResult) => `${formatLocaleNumber(r.maxDrawdownPercent, locale, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}%` },
     { label: tr('strategy.sharpeRatio'), fn: (r: BacktestResult) => r.sharpeRatio.toFixed(2) },
-    { label: tr('strategy.totalTrades'), fn: (r: BacktestResult) => `${r.totalTrades} ${tr('strategy.tradeUnit2')}` },
+    { label: tr('strategy.totalTrades'), fn: (r: BacktestResult) => `${formatLocaleNumber(r.totalTrades, locale)} ${tr('strategy.tradeUnit2')}` },
   ];
   return (
     <div className="overflow-x-auto"><table className="w-full text-sm">
@@ -240,7 +249,7 @@ function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
     miniSVG = pts;
   }
 
-  const shareText = `${tr('strategy.shareText')}\n📊 ${strategyName} (${symbolLabel} ${tfLabel[timeframe]})\n⭐ ${tr('strategy.shareOverallScore')} ${score} ${tr('strategy.scoreLabel')} (${grade}${tr('strategy.shareGradeSuffix')})\n💰 ${tr('strategy.shareTotalReturn')} ${result.totalReturnPercent > 0 ? '+' : ''}${result.totalReturnPercent.toFixed(1)}%\n✅ ${tr('strategy.shareWinRate')} ${result.winRate.toFixed(1)}%  📉 ${tr('strategy.shareMaxDD')} ${result.maxDrawdownPercent.toFixed(1)}%\n\n${tr('strategy.shareFreeTrialCTA')} 👉 trading-copilot-delta.vercel.app`;
+  const shareText = `${tr('strategy.shareText')}\n📊 ${strategyName} (${symbolLabel} ${tfLabel[timeframe]})\n⭐ ${tr('strategy.shareOverallScore')} ${formatLocaleNumber(score, locale)} ${tr('strategy.scoreLabel')} (${grade}${tr('strategy.shareGradeSuffix')})\n💰 ${tr('strategy.shareTotalReturn')} ${formatSignedLocalePercent(result.totalReturnPercent, locale, { maximumFractionDigits: 1 })}\n✅ ${tr('strategy.shareWinRate')} ${formatLocaleNumber(result.winRate, locale, { maximumFractionDigits: 1 })}%  📉 ${tr('strategy.shareMaxDD')} ${formatLocaleNumber(result.maxDrawdownPercent, locale, { maximumFractionDigits: 1 })}%\n\n${tr('strategy.shareFreeTrialCTA')} 👉 trading-copilot-delta.vercel.app`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareText).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
@@ -279,12 +288,12 @@ function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
             {/* Metrics grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
               {[
-                { label: tr('strategy.totalReturn'), value: `${result.totalReturnPercent > 0 ? '+' : ''}${result.totalReturnPercent.toFixed(1)}%`, color: returnColor },
-                { label: tr('strategy.winRateLabel'), value: `${result.winRate.toFixed(1)}%`, color: result.winRate >= 50 ? '#34d399' : '#fbbf24' },
+                { label: tr('strategy.totalReturn'), value: formatSignedLocalePercent(result.totalReturnPercent, locale, { maximumFractionDigits: 1 }), color: returnColor },
+                { label: tr('strategy.winRateLabel'), value: `${formatLocaleNumber(result.winRate, locale, { maximumFractionDigits: 1 })}%`, color: result.winRate >= 50 ? '#34d399' : '#fbbf24' },
                 { label: tr('strategy.profitFactor'), value: result.profitFactor === Infinity ? '∞' : result.profitFactor.toFixed(2), color: result.profitFactor >= 1.5 ? '#34d399' : '#fbbf24' },
-                { label: tr('strategy.maxDrawdown'), value: `-${result.maxDrawdownPercent.toFixed(1)}%`, color: result.maxDrawdownPercent < 10 ? '#34d399' : '#fbbf24' },
+                { label: tr('strategy.maxDrawdown'), value: formatSignedLocalePercent(-result.maxDrawdownPercent, locale, { maximumFractionDigits: 1 }), color: result.maxDrawdownPercent < 10 ? '#34d399' : '#fbbf24' },
                 { label: tr('strategy.sharpeRatio'), value: result.sharpeRatio.toFixed(2), color: result.sharpeRatio > 1 ? '#34d399' : '#fbbf24' },
-                { label: tr('strategy.annualized'), value: `${(result.totalReturnPercent * 365 / (result.totalTrades > 0 ? 90 : 90)).toFixed(0)}%`, color: '#a78bfa' },
+                { label: tr('strategy.annualized'), value: `${formatLocaleNumber((result.totalReturnPercent * 365 / (result.totalTrades > 0 ? 90 : 90)), locale, { maximumFractionDigits: 0 })}%`, color: '#a78bfa' },
               ].map((m, i) => (
                 <div key={i} className="bg-gray-800/60 rounded-lg px-3 py-2">
                   <div className="text-[9px] text-gray-500 mb-0.5">{m.label}</div>
@@ -643,13 +652,13 @@ function StrategyPage() {
                   </div>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {(() => { const s = calcScore(latest); const color = s >= 61 ? 'text-green-400' : s >= 31 ? 'text-yellow-400' : 'text-red-400'; const grade = s >= 80 ? tr('strategy.gradeS') : s >= 61 ? tr('strategy.gradeA') : s >= 31 ? tr('strategy.gradeB') : tr('strategy.gradeC'); return <StatCard label={tr('strategy.overallScore')} value={`${s}`} sub={grade} color={color} />; })()}
-                  <StatCard label={tr('strategy.totalReturn')} value={`${latest.totalReturnPercent > 0 ? '+' : ''}${latest.totalReturnPercent.toFixed(2)}%`} sub={`$${latest.totalReturn.toFixed(0)}`} color={latest.totalReturnPercent > 0 ? 'text-green-400' : 'text-red-400'} />
-                  <StatCard label={tr('strategy.winRateLabel')} value={`${latest.winRate.toFixed(1)}%`} sub={`${latest.winTrades} ${tr('strategy.winLabel')} ${latest.lossTrades} ${tr('strategy.loseLabel')}`} color={latest.winRate >= 50 ? 'text-green-400' : 'text-yellow-400'} />
+                  {(() => { const s = calcScore(latest); const color = s >= 61 ? 'text-green-400' : s >= 31 ? 'text-yellow-400' : 'text-red-400'; const grade = s >= 80 ? tr('strategy.gradeS') : s >= 61 ? tr('strategy.gradeA') : s >= 31 ? tr('strategy.gradeB') : tr('strategy.gradeC'); return <StatCard label={tr('strategy.overallScore')} value={formatLocaleNumber(s, locale)} sub={grade} color={color} />; })()}
+                  <StatCard label={tr('strategy.totalReturn')} value={formatSignedLocalePercent(latest.totalReturnPercent, locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} sub={formatLocaleCurrency(latest.totalReturn, locale, 'USD', { maximumFractionDigits: 0 })} color={latest.totalReturnPercent > 0 ? 'text-green-400' : 'text-red-400'} />
+                  <StatCard label={tr('strategy.winRateLabel')} value={`${formatLocaleNumber(latest.winRate, locale, { maximumFractionDigits: 1 })}%`} sub={`${formatLocaleNumber(latest.winTrades, locale)} ${tr('strategy.winLabel')} ${formatLocaleNumber(latest.lossTrades, locale)} ${tr('strategy.loseLabel')}`} color={latest.winRate >= 50 ? 'text-green-400' : 'text-yellow-400'} />
                   <StatCard label={tr('strategy.profitFactor')} value={latest.profitFactor === Infinity ? '∞' : latest.profitFactor.toFixed(2)} color={latest.profitFactor >= 1.5 ? 'text-green-400' : latest.profitFactor >= 1 ? 'text-yellow-400' : 'text-red-400'} />
-                  <StatCard label={tr('strategy.maxDrawdown')} value={`${latest.maxDrawdownPercent.toFixed(2)}%`} sub={`$${latest.maxDrawdown.toFixed(0)}`} color={latest.maxDrawdownPercent < 10 ? 'text-green-400' : latest.maxDrawdownPercent < 20 ? 'text-yellow-400' : 'text-red-400'} />
+                  <StatCard label={tr('strategy.maxDrawdown')} value={`${formatLocaleNumber(latest.maxDrawdownPercent, locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`} sub={formatLocaleCurrency(latest.maxDrawdown, locale, 'USD', { maximumFractionDigits: 0 })} color={latest.maxDrawdownPercent < 10 ? 'text-green-400' : latest.maxDrawdownPercent < 20 ? 'text-yellow-400' : 'text-red-400'} />
                   <StatCard label={tr('strategy.sharpeRatio')} value={latest.sharpeRatio.toFixed(2)} color={latest.sharpeRatio > 1 ? 'text-green-400' : latest.sharpeRatio > 0 ? 'text-yellow-400' : 'text-red-400'} />
-                  <StatCard label={tr('strategy.totalTrades')} value={`${latest.totalTrades} ${tr('strategy.tradeUnit2')}`} sub={tr('strategy.avgHoldBars').replace('{bars}', latest.avgHoldBars.toFixed(1))} />
+                  <StatCard label={tr('strategy.totalTrades')} value={`${formatLocaleNumber(latest.totalTrades, locale)} ${tr('strategy.tradeUnit2')}`} sub={tr('strategy.avgHoldBars').replace('{bars}', formatLocaleNumber(latest.avgHoldBars, locale, { maximumFractionDigits: 1 }))} />
                 </div>
               </div>
 

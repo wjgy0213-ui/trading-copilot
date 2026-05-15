@@ -67,3 +67,27 @@ export function formatLocalePercent(
     ...options,
   }).format(value);
 }
+
+export function formatSignedLocalePercent(
+  value: number,
+  locale: Locale,
+  options?: Intl.NumberFormatOptions,
+): string {
+  const abs = Math.abs(value) / 100;
+  const formatted = formatLocalePercent(abs, locale, options);
+  if (value > 0) return `+${formatted}`;
+  if (value < 0) return `-${formatted}`;
+  return formatted;
+}
+
+export function formatSignedLocaleCurrency(
+  value: number,
+  locale: Locale,
+  currency = 'USD',
+  options?: Intl.NumberFormatOptions,
+): string {
+  const formatted = formatLocaleCurrency(Math.abs(value), locale, currency, options);
+  if (value > 0) return `+${formatted}`;
+  if (value < 0) return `-${formatted}`;
+  return formatted;
+}
