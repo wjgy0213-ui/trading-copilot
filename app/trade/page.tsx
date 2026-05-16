@@ -20,6 +20,7 @@ import ExchangeConnect from '@/components/ExchangeConnect';
 import RiskManager from '@/components/RiskManager';
 import TelegramNotify from '@/components/TelegramNotify';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleCurrency, formatSignedLocalePercent } from '@/lib/i18n-helpers';
 
 const SYMBOL_MAP: Record<TradingPair, string> = {
   // Crypto
@@ -45,10 +46,6 @@ const SYMBOL_MAP: Record<TradingPair, string> = {
 
 export default function TradePage() {
   const { t, locale } = useI18n();
-  const formatCurrency = (value: number) => new Intl.NumberFormat(locale === 'zh' ? 'zh-CN' : 'en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value);
   const [activePair, setActivePair] = useState<TradingPair>('BTC/USD');
   const [activeCategory, setActiveCategory] = useState<AssetCategory>('crypto');
   const [price, setPrice] = useState<PriceData | null>(null);
@@ -168,13 +165,13 @@ export default function TradePage() {
                     priceFlash === 'down' ? 'text-red-400' : 'text-white'
                   }`}
                 >
-                  ${formatCurrency(price.price)}
+                  {formatLocaleCurrency(price.price, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
                 <span className={`flex items-center gap-1 text-sm font-bold px-2 py-1 rounded-lg ${
                   price.change24h >= 0 ? 'text-green-400 bg-green-400/10' : 'text-red-400 bg-red-400/10'
                 }`}>
                   {price.change24h >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                  {price.change24h >= 0 ? '+' : ''}{price.change24h.toFixed(2)}%
+                  {formatSignedLocalePercent(price.change24h, locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
             </div>
@@ -183,18 +180,18 @@ export default function TradePage() {
             <div className="flex gap-6">
               <div className="text-right">
                 <div className="text-xs text-gray-500 uppercase tracking-wider">{t('trade.balance')}</div>
-                <div className="text-xl font-bold text-blue-400">${formatCurrency(account.balance)}</div>
+                <div className="text-xl font-bold text-blue-400">{formatLocaleCurrency(account.balance, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
               </div>
               <div className="text-right">
                 <div className="text-xs text-gray-500 uppercase tracking-wider">{t('trade.equity')}</div>
                 <div className={`text-xl font-bold ${equity >= 10000 ? 'text-green-400' : 'text-red-400'}`}>
-                  ${formatCurrency(equity)}
+                  {formatLocaleCurrency(equity, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
               </div>
               <div className="text-right">
                 <div className="text-xs text-gray-500 uppercase tracking-wider">{t('trade.pnl')}</div>
                 <div className={`text-xl font-bold ${account.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                  {account.totalPnl >= 0 ? '+' : ''}${formatCurrency(account.totalPnl)}
+                  {formatLocaleCurrency(account.totalPnl, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'always' })}
                 </div>
               </div>
             </div>

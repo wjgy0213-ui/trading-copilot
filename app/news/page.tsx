@@ -42,6 +42,12 @@ export default function NewsPage() {
           <h1 className="text-lg font-semibold text-gray-100">{t('news.title')}</h1>
           <p className="text-xs text-gray-500 mt-0.5">{MOCK_NEWS.length} {t('news.count')}</p>
         </div>
+        <div className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-medium ${
+          isLive ? 'border-emerald-500/20 bg-emerald-500/5 text-emerald-400' : 'border-amber-500/20 bg-amber-500/5 text-amber-300'
+        }`}>
+          {isLive ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
+          {isLive ? t('news.live') : t('news.delayed')}
+        </div>
       </div>
 
       {/* Market Sentiment Summary */}
@@ -134,6 +140,7 @@ export default function NewsPage() {
                   <span className={`font-medium px-1.5 py-0.5 rounded ${getSentimentBgColor(item.sentiment)}`}>
                     <SentimentIcon sentiment={item.sentiment} />
                   </span>
+                  <span className="text-gray-500">{getSentimentLabel(item.sentiment, locale as 'zh' | 'en')}</span>
                   <span className={`${getImpactColor(item.impact)}`}>{getImpactLabel(item.impact, locale as 'zh' | 'en')}</span>
                   <span className="text-gray-600">{item.source}</span>
                   <span className="text-gray-600 flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" />{formatTimeAgo(item.timestamp, t)}</span>

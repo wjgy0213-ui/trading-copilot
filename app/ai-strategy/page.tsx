@@ -6,6 +6,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Paywall from '@/components/Paywall';
 import { Sparkles, ArrowRight, Loader2, Lightbulb, Zap, BarChart3 } from 'lucide-react';
+import { STRATEGY_TEMPLATES } from '@/lib/strategies';
+import { formatLocaleNumber, formatSignedLocalePercent } from '@/lib/i18n-helpers';
 
 const EXAMPLES = [
   { textKey: 'aiStrategy.prompt1', icon: '🚀' },
@@ -29,7 +31,7 @@ interface AIResult {
 
 // @i18n
 export default function AIStrategyPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AIResult | null>(null);
@@ -52,6 +54,18 @@ export default function AIStrategyPage() {
       alert(e.message || t('aiStrategy.genFail'));
     }
     setLoading(false);
+  };
+
+  const getLocalizedStrategyName = (result: AIResult) => {
+    const template = STRATEGY_TEMPLATES.find(item => item.id === result.strategy.strategyId);
+    if (!template) return result.strategy.name;
+    return locale === 'zh' ? template.name : template.nameEn;
+  };
+
+  const getLocalizedParamLabel = (strategyId: string, key: string) => {
+    const template = STRATEGY_TEMPLATES.find(item => item.id === strategyId);
+    const param = template?.params.find(item => item.key === key);
+    return locale === 'zh' ? (param?.label || key) : (param?.labelEn || param?.label || key);
   };
 
   return (
@@ -114,7 +128,7 @@ export default function AIStrategyPage() {
                   <Zap className="w-4 h-4 text-violet-400" />
                 </div>
                 <div>
-                  <h3 className="font-bold">{result.strategy.name}</h3>
+                  <h3 className="font-bold">{getLocalizedStrategyName(result)}</h3>
                   <p className="text-xs text-gray-500">{t('aiStrategy.strategyId')}: {result.strategy.strategyId}</p>
                 </div>
               </div>
@@ -130,8 +144,8 @@ export default function AIStrategyPage() {
                   <div className="space-y-1">
                     {Object.entries(result.strategy.params).map(([k, v]) => (
                       <div key={k} className="flex justify-between text-xs">
-                        <span className="text-gray-400">{k}</span>
-                        <span className="font-mono text-white">{v}</span>
+                        <span className="text-gray-400">{getLocalizedParamLabel(result.strategy.strategyId, k)}</span>
+                        <span className="font-mono text-white">{formatLocaleNumber(v, locale, { maximumFractionDigits: 2 })}</span>
                       </div>
                     ))}
                   </div>
@@ -141,15 +155,15 @@ export default function AIStrategyPage() {
                   <div className="space-y-1">
                     <div className="flex justify-between text-xs">
                       <span className="text-gray-400">{t('aiStrategy.slLabel')}</span>
-                      <span className="font-mono text-red-400">{result.risk.stopLoss}%</span>
+                      <span className="font-mono text-red-400">{formatSignedLocalePercent(-result.risk.stopLoss, locale, { maximumFractionDigits: 0 })}</span>
                     </div>
                     <div className="flex justify-between text-xs">
                       <span className="text-gray-400">{t('aiStrategy.tpLabel')}</span>
-                      <span className="font-mono text-green-400">{result.risk.takeProfit}%</span>
+                      <span className="font-mono text-green-400">{formatSignedLocalePercent(result.risk.takeProfit, locale, { maximumFractionDigits: 0 })}</span>
                     </div>
                     <div className="flex justify-between text-xs">
                       <span className="text-gray-400">{t('aiStrategy.maxPosLabel')}</span>
-                      <span className="font-mono text-white">{result.risk.maxPosition}%</span>
+                      <span className="font-mono text-white">{formatLocaleNumber(result.risk.maxPosition, locale, { maximumFractionDigits: 0 })}%</span>
                     </div>
                   </div>
                 </div>

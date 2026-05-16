@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { useI18n } from '@/lib/i18n';
-import { formatLocaleCurrency } from '@/lib/i18n-helpers';
+import { formatLocaleCurrency, formatLocaleNumber, formatSignedLocalePercent } from '@/lib/i18n-helpers';
 
 interface Position {
   id: string;
@@ -56,6 +56,13 @@ const TIERS = {
 
 function formatUsd(n: number, locale: 'en' | 'zh'): string {
   return formatLocaleCurrency(n, locale, 'USD', { maximumFractionDigits: 2 });
+}
+
+function formatPracticeReason(reason: string, t: (key: string) => string): string {
+  if (reason === 'manual') return t('practice.reason_manual');
+  if (reason === 'stop_loss') return t('practice.reason_stop_loss');
+  if (reason === 'take_profit') return t('practice.reason_take_profit');
+  return reason;
 }
 
 export default function PracticePage() {
@@ -245,7 +252,7 @@ export default function PracticePage() {
           <div className="text-right">
             <div className="text-2xl font-bold">{formatUsd(balance, locale)}</div>
             <div className={`text-sm ${totalPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-              {totalPnl >= 0 ? '+' : ''}{totalPnl.toFixed(2)}%
+              {formatSignedLocalePercent(totalPnl, locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
           </div>
         </div>
@@ -254,24 +261,24 @@ export default function PracticePage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           <div className="bg-gray-800/60 rounded-xl p-3 border border-gray-700/50 text-center">
             <div className="text-gray-400 text-xs">{t('practice.stats_trades')}</div>
-            <div className="text-lg font-bold">{stats.totalTrades}</div>
+            <div className="text-lg font-bold">{formatLocaleNumber(stats.totalTrades, locale)}</div>
           </div>
           <div className="bg-gray-800/60 rounded-xl p-3 border border-gray-700/50 text-center">
             <div className="text-gray-400 text-xs">{t('practice.stats_winrate')}</div>
             <div className={`text-lg font-bold ${winRate >= 50 ? 'text-green-400' : winRate > 0 ? 'text-red-400' : 'text-gray-400'}`}>
-              {winRate.toFixed(0)}%
+              {formatLocaleNumber(winRate, locale, { maximumFractionDigits: 0 })}%
             </div>
           </div>
           <div className="bg-gray-800/60 rounded-xl p-3 border border-gray-700/50 text-center">
             <div className="text-gray-400 text-xs">{t('practice.stats_best')}</div>
             <div className="text-lg font-bold text-green-400">
-              {stats.bestTrade > 0 ? `+${stats.bestTrade.toFixed(1)}%` : '-'}
+              {stats.bestTrade > 0 ? formatSignedLocalePercent(stats.bestTrade, locale, { maximumFractionDigits: 1 }) : '-'}
             </div>
           </div>
           <div className="bg-gray-800/60 rounded-xl p-3 border border-gray-700/50 text-center">
             <div className="text-gray-400 text-xs">{t('practice.stats_drawdown')}</div>
             <div className="text-lg font-bold text-red-400">
-              {stats.maxDrawdown < 0 ? `${stats.maxDrawdown.toFixed(1)}%` : '0%'}
+              {stats.maxDrawdown < 0 ? formatSignedLocalePercent(stats.maxDrawdown, locale, { maximumFractionDigits: 1 }) : formatLocaleNumber(0, locale) + '%'}
             </div>
           </div>
         </div>
@@ -421,8 +428,8 @@ export default function PracticePage() {
                             <span className="font-bold">{pos.coin}</span>
                             <span className="text-xs text-gray-500">{t('practice.leverageValue').replace('{value}', String(pos.leverage))}</span>
                           </div>
-                          <span className={`font-bold ${pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                            {pnl >= 0 ? '+' : ''}{formatUsd(Math.abs(pnl), locale)} ({pnlPct >= 0 ? '+' : ''}{pnlPct.toFixed(1)}%)
+                            <span className={`font-bold ${pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                            {formatLocaleCurrency(pnl, locale, 'USD', { maximumFractionDigits: 2, signDisplay: 'always' })} ({formatSignedLocalePercent(pnlPct, locale, { maximumFractionDigits: 1 })})
                           </span>
                         </div>
                         <div className="flex items-center justify-between text-xs text-gray-400">
@@ -464,9 +471,10 @@ export default function PracticePage() {
                           )}
                         </div>
                         <span className={`font-medium text-sm ${trade.pnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          {trade.pnl >= 0 ? '+' : ''}{formatUsd(Math.abs(trade.pnl), locale)}
+                          {formatLocaleCurrency(trade.pnl, locale, 'USD', { maximumFractionDigits: 2, signDisplay: 'always' })}
                         </span>
                       </div>
+                      <div className="text-[11px] text-gray-500">{t('practice.closed_by')}: {formatPracticeReason(trade.reason, t)}</div>
                       {trade.aiAdvice && <p className="text-xs text-gray-400 mt-1">💡 {trade.aiAdvice}</p>}
                     </div>
                   ))
