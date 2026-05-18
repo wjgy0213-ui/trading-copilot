@@ -5,12 +5,12 @@ import { useSession } from '@/lib/useSession';
 import { User, CreditCard, LogOut, Shield, Clock, ChevronRight, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { useI18n } from '@/lib/i18n';
-import { getIntlLocale } from '@/lib/i18n-helpers';
+import { formatLocaleDate } from '@/lib/i18n-helpers';
 
 export default function AccountPage() {
   const { t, locale } = useI18n();
   const formatDate = (ts: number) =>
-    new Date(ts * 1000).toLocaleDateString(getIntlLocale(locale), { year: 'numeric', month: 'long', day: 'numeric' });
+    formatLocaleDate(ts * 1000, locale, { year: 'numeric', month: 'long', day: 'numeric' });
   const { session, loading: sessionLoading, logout } = useSession();
   const [subData, setSubData] = useState<any>(null);
   const [loadingSub, setLoadingSub] = useState(false);

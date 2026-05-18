@@ -56,6 +56,22 @@ export function formatCompactLocaleCurrency(
   }).format(value);
 }
 
+export function formatLocaleDate(
+  value: string | number | Date,
+  locale: Locale,
+  options?: Intl.DateTimeFormatOptions,
+): string {
+  return new Intl.DateTimeFormat(getIntlLocale(locale), options).format(new Date(value));
+}
+
+export function formatLocaleDateTime(
+  value: string | number | Date,
+  locale: Locale,
+  options?: Intl.DateTimeFormatOptions,
+): string {
+  return new Intl.DateTimeFormat(getIntlLocale(locale), options).format(new Date(value));
+}
+
 export function formatLocalePercent(
   value: number,
   locale: Locale,

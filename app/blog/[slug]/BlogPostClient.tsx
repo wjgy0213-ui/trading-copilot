@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useI18n } from '@/lib/i18n';
 import { estimateReadingMinutes } from '@/lib/readingTime';
+import { formatLocaleDate } from '@/lib/i18n-helpers';
 
 interface BlogPost {
   slug: string;
@@ -109,7 +110,7 @@ export default function BlogPostClient({ post, relatedPosts }: { post: BlogPost;
         {/* Header */}
         <header className="mb-10">
           <div className="flex items-center gap-3 text-xs text-gray-500 mb-4">
-            <time>{new Date(post.date).toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+            <time>{formatLocaleDate(post.date, locale, { year: 'numeric', month: 'long', day: 'numeric' })}</time>
             <span>·</span>
             <span>{estimateReadingMinutes(post.content, locale)} {t('blog.minRead')}</span>
             <span>·</span>
@@ -160,7 +161,7 @@ export default function BlogPostClient({ post, relatedPosts }: { post: BlogPost;
             {relatedPosts.map(p => (
               <Link key={p.slug} href={`/blog/${p.slug}`}
                 className="border border-gray-800 rounded-lg p-4 hover:border-gray-600 transition-all">
-                <div className="text-xs text-gray-500 mb-1">{new Date(p.date).toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                <div className="text-xs text-gray-500 mb-1">{formatLocaleDate(p.date, locale, { month: 'short', day: 'numeric', year: 'numeric' })}</div>
                 <div className="font-medium text-gray-200 hover:text-emerald-400 transition">{p.title}</div>
               </Link>
             ))}
