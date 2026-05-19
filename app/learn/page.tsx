@@ -9,6 +9,13 @@ import Link from 'next/link';
 import { COURSE_CHAPTERS, Chapter, Lesson, QuizQuestion } from '@/lib/courseData';
 import { CHAPTER_QUIZZES } from '@/lib/chapterQuizzes';
 import { isProUser, activatePro } from '@/lib/paywall';
+import { formatLocaleNumber } from '@/lib/i18n-helpers';
+
+function formatQuestionCount(count: number, locale: 'zh' | 'en', t: (key: string, fallback?: string) => string) {
+  return t('learn.questionsCountLabel')
+    .replace('{count}', formatLocaleNumber(count, locale))
+    .replace('{unit}', t('learn.questions_count'));
+}
 
 function PaywallBanner({ onUnlock }: { onUnlock: () => void }) {
   const { t } = useI18n();
@@ -278,7 +285,7 @@ function renderInline(text: string): React.ReactNode {
 function QuizSection({ quiz, lessonId }: { quiz: QuizQuestion[]; lessonId: string }) {
   const { t, locale } = useI18n();
   const en = locale === 'en';
-  const countLabel = locale === 'zh' ? `（${quiz.length}${t('learn.questions_count')}）` : `(${quiz.length}${t('learn.questions_count')})`;
+  const countLabel = formatQuestionCount(quiz.length, locale, t);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
 
@@ -342,7 +349,7 @@ function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; ch
   const { t, locale } = useI18n();
   const en = locale === 'en';
   const quiz = CHAPTER_QUIZZES[chapterId] ?? [];
-  const countLabel = locale === 'zh' ? `（${quiz.length}${t('learn.questions_count')}）` : `(${quiz.length}${t('learn.questions_count')})`;
+  const countLabel = formatQuestionCount(quiz.length, locale, t);
 
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
@@ -470,7 +477,7 @@ function ChapterSection({ chapter, isPro, chapterIndex }: { chapter: Chapter; is
         <div className="mt-4 ml-2 p-4 bg-gray-900/30 border border-gray-800/50 rounded-xl opacity-60">
           <div className="flex items-center gap-2">
             <span className="text-xl">📝</span>
-            <span className="text-sm text-gray-500">{t('learn.chapter_quiz')}{locale === 'zh' ? `（${CHAPTER_QUIZZES[chapter.id].length}${t('learn.questions_count')}）` : ` (${CHAPTER_QUIZZES[chapter.id].length}${t('learn.questions_count')})`}{t('learn.chapter_quiz_locked')}</span>
+          <span className="text-sm text-gray-500">{t('learn.chapter_quiz')}{formatQuestionCount(CHAPTER_QUIZZES[chapter.id].length, locale, t)}{t('learn.chapter_quiz_locked')}</span>
             <Lock className="w-3.5 h-3.5 text-gray-600" />
           </div>
         </div>
@@ -480,19 +487,13 @@ function ChapterSection({ chapter, isPro, chapterIndex }: { chapter: Chapter; is
 }
 
 export default function LearnPage() {
-  const { t } = useI18n();
-  const { session, isPro: sessionIsPro, hasCourse } = useSession();
-  const [isPro, setIsPro] = useState(() => {
+  const { t, locale } = useI18n();
+  const { isPro: sessionIsPro, hasCourse } = useSession();
+  const [localUnlock, setLocalUnlock] = useState(() => {
     if (typeof window !== 'undefined') return isProUser();
     return false;
   });
-
-  // Sync server-side auth: if user has paid plan or course access, unlock
-  useEffect(() => {
-    if (sessionIsPro || hasCourse) {
-      setIsPro(true);
-    }
-  }, [sessionIsPro, hasCourse]);
+  const isPro = localUnlock || sessionIsPro || hasCourse;
 
   const totalLessons = COURSE_CHAPTERS.reduce((acc, ch) => acc + ch.lessons.length, 0);
   const freeLessons = COURSE_CHAPTERS.filter(ch => ch.tier === 'free').reduce((acc, ch) => acc + ch.lessons.length, 0);
@@ -510,22 +511,22 @@ export default function LearnPage() {
             {t('learn.heading')}
           </h1>
           <p className="text-gray-400">
-            {t('learn.desc').replace('{total}', String(totalLessons)).replace('{free}', String(freeLessons))}
+            {t('learn.desc').replace('{total}', formatLocaleNumber(totalLessons, locale)).replace('{free}', formatLocaleNumber(freeLessons, locale))}
           </p>
           <div className="flex items-center gap-4 mt-4 text-sm text-gray-500">
             <span className="flex items-center gap-1">
               <CheckCircle className="w-4 h-4 text-green-400" />
-              {freeLessons} {t('learn.free_lessons')}
+              {formatLocaleNumber(freeLessons, locale)} {t('learn.free_lessons')}
             </span>
             <span className="flex items-center gap-1">
               {isPro ? <CheckCircle className="w-4 h-4 text-green-400" /> : <Lock className="w-4 h-4 text-purple-400" />}
-              {totalLessons - freeLessons} {t('learn.premium_lessons')}
+              {formatLocaleNumber(totalLessons - freeLessons, locale)} {t('learn.premium_lessons')}
             </span>
           </div>
         </motion.div>
 
         {/* Paywall */}
-        {!isPro && <PaywallBanner onUnlock={() => setIsPro(true)} />}
+        {!isPro && <PaywallBanner onUnlock={() => setLocalUnlock(true)} />}
 
         {/* Chapters */}
         {COURSE_CHAPTERS.map((chapter, i) => (

@@ -3,7 +3,7 @@
 import { useI18n } from '@/lib/i18n';
 import { formatLocaleCurrency, formatLocaleNumber, formatLocalePercent } from '@/lib/i18n-helpers';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { Shield, TrendingUp, AlertTriangle, Bell, Check, X, Loader2 } from 'lucide-react';
 
@@ -29,6 +29,10 @@ interface RiskData {
   positions: Position[];
 }
 
+function getErrorMessage(err: unknown, fallback: string) {
+  return err instanceof Error ? err.message : fallback;
+}
+
 export default function ElitePage() {
   const { t, locale } = useI18n();
   const formatCurrency = (value: number) => formatLocaleCurrency(value, locale, 'USD', {
@@ -43,6 +47,7 @@ export default function ElitePage() {
     minimumFractionDigits: 3,
     maximumFractionDigits: 3,
   });
+  const formatLeverage = (value: number) => t('elite.leverageValue').replace('{value}', formatLocaleNumber(value, locale, { maximumFractionDigits: 0 }));
   const sideLabel = (side: Position['side']) => side === 'LONG' ? t('common.long') : t('common.short');
   const { data: session } = useSession();
   const [exchange, setExchange] = useState('binance');
@@ -59,19 +64,6 @@ export default function ElitePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-
-  // Auto-refresh positions every 10 seconds
-  useEffect(() => {
-    if (connected) {
-      fetchPositions();
-      fetchRiskData();
-      const interval = setInterval(() => {
-        fetchPositions();
-        fetchRiskData();
-      }, 10000);
-      return () => clearInterval(interval);
-    }
-  }, [connected]);
 
   const connectExchange = async () => {
     setConnecting(true);
@@ -91,34 +83,34 @@ export default function ElitePage() {
       setApiKey('');
       setApiSecret('');
       setTimeout(() => setSuccess(''), 3000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, t('elite.connect_failed')));
     } finally {
       setConnecting(false);
     }
   };
 
-  const fetchPositions = async () => {
+  const fetchPositions = useCallback(async () => {
     try {
       const res = await fetch('/api/exchange/positions');
       if (!res.ok) return;
       const data = await res.json();
       setPositions(data.positions || []);
     } catch (err) {
-      console.error('Failed to fetch positions:', err);
+      console.error(t('elite.fetchPositionsError'), err);
     }
-  };
+  }, [t]);
 
-  const fetchRiskData = async () => {
+  const fetchRiskData = useCallback(async () => {
     try {
       const res = await fetch('/api/risk/monitor');
       if (!res.ok) return;
       const data = await res.json();
       setRiskData(data);
     } catch (err) {
-      console.error('Failed to fetch risk data:', err);
+      console.error(t('elite.fetchRiskError'), err);
     }
-  };
+  }, [t]);
 
   const closePosition = async (position: Position) => {
     const prompt = t('elite.confirmClosePrompt')
@@ -149,8 +141,8 @@ export default function ElitePage() {
       fetchPositions();
       fetchRiskData();
       setTimeout(() => setSuccess(''), 3000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, t('elite.close_position_failed')));
     } finally {
       setLoading(false);
     }
@@ -171,12 +163,25 @@ export default function ElitePage() {
       setTelegramConnected(true);
       setSuccess(t('elite.telegram_connected_success'));
       setTimeout(() => setSuccess(''), 3000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, t('elite.telegram_setup_failed')));
     } finally {
       setLoading(false);
     }
   };
+
+  // Auto-refresh positions every 10 seconds
+  useEffect(() => {
+    if (connected) {
+      fetchPositions();
+      fetchRiskData();
+      const interval = setInterval(() => {
+        fetchPositions();
+        fetchRiskData();
+      }, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [connected, fetchPositions, fetchRiskData]);
 
   if (!session) {
     return (
@@ -464,7 +469,7 @@ export default function ElitePage() {
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-gray-400">{t('elite.maxLeverage')}</span>
-                    <span className="font-semibold">{riskData.details.maxLeverage}x</span>
+                    <span className="font-semibold">{formatLeverage(riskData.details.maxLeverage)}</span>
                   </div>
                   <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
                     <div 
@@ -536,7 +541,7 @@ export default function ElitePage() {
                             signDisplay: 'always',
                           })}
                         </td>
-                        <td className="py-3 px-2 text-right">{pos.leverage}x</td>
+                        <td className="py-3 px-2 text-right">{formatLeverage(pos.leverage)}</td>
                         <td className="py-3 px-2 text-right">
                           <button
                             onClick={() => closePosition(pos)}

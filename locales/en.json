@@ -1972,5 +1972,10 @@
   "workflow.step03.title": "Strategy Workshop",
   "workflow.stepCta": "Get Started",
   "workflow.stepLabel": "STEP",
-  "workflow.title": "3 Steps to Get Started — Don't Get Overwhelmed by Features"
+  "workflow.title": "3 Steps to Get Started — Don't Get Overwhelmed by Features",
+  "elite.fetchPositionsError": "Failed to fetch positions",
+  "elite.fetchRiskError": "Failed to fetch risk data",
+  "elite.leverageValue": "{value}x",
+  "course.ratingOutOf": "{rating}/{max}",
+  "learn.questionsCountLabel": " ({count}{unit})"
 }

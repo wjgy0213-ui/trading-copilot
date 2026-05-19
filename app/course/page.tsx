@@ -21,6 +21,8 @@ function usePlans() {
       icon: BookOpen,
       color: 'emerald',
       gradient: 'from-emerald-600 to-cyan-600',
+      badgeClassName: 'bg-emerald-500/10 text-emerald-400',
+      iconClassName: 'text-emerald-400',
     },
     {
       id: 'bundle',
@@ -34,6 +36,8 @@ function usePlans() {
       icon: Crown,
       color: 'violet',
       gradient: 'from-violet-600 to-purple-600',
+      badgeClassName: 'bg-violet-500/10 text-violet-400',
+      iconClassName: 'text-violet-400',
     },
     {
       id: 'vip',
@@ -46,6 +50,8 @@ function usePlans() {
       icon: Shield,
       color: 'amber',
       gradient: 'from-amber-500 to-orange-600',
+      badgeClassName: 'bg-amber-500/10 text-amber-400',
+      iconClassName: 'text-amber-400',
     },
   ];
 }
@@ -61,7 +67,7 @@ export default function CoursePage() {
 
   const stats = useMemo(() => ([
     { icon: Users, label: t('course.students'), value: `${formatLocaleNumber(STATS.students, locale)}${t('course.studentsValueSuffix')}` },
-    { icon: Star, label: t('course.rating'), value: `${formatLocaleNumber(STATS.rating, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}/5` },
+    { icon: Star, label: t('course.rating'), value: t('course.ratingOutOf').replace('{rating}', formatLocaleNumber(STATS.rating, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })).replace('{max}', formatLocaleNumber(5, locale)) },
     { icon: BookOpen, label: t('course.chapters'), value: formatLocaleNumber(STATS.chapters, locale) },
     { icon: Clock, label: t('course.duration'), value: `${formatLocaleNumber(STATS.hours, locale)}${t('course.hoursValueSuffix')}` },
   ]), [locale, t]);
@@ -157,7 +163,7 @@ export default function CoursePage() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-white">{plan.name}</h3>
-                  <span className={`text-xs px-2 py-0.5 rounded-full bg-${plan.color}-500/10 text-${plan.color}-400`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${plan.badgeClassName}`}>
                     {t('course.giftPrefix')}{plan.eliteLabel}
                   </span>
                 </div>
@@ -177,7 +183,7 @@ export default function CoursePage() {
               <div className="flex-1 space-y-3 mb-6">
                 {plan.features.map(f => (
                   <div key={f} className="flex items-start gap-2 text-sm">
-                    <Check className={`w-4 h-4 mt-0.5 text-${plan.color}-400 shrink-0`} />
+                    <Check className={`w-4 h-4 mt-0.5 shrink-0 ${plan.iconClassName}`} />
                     <span className="text-gray-300">{f}</span>
                   </div>
                 ))}
