@@ -533,6 +533,7 @@
   "exchange.connect_success": "连接成功！账户余额:",
   "exchange.connect_success_with_balance": "连接成功，账户余额：${amount} USDT",
   "exchange.connected": "已连接",
+  "exchange.demo_latency": "演示延迟：约 {ms} 毫秒",
   "exchange.missing_fields": "请输入 API Key 和 Secret",
   "exchange.name.binance": "币安",
   "exchange.name.bybit": "Bybit",

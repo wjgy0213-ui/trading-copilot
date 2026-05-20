@@ -19,7 +19,9 @@ export default function CancelRetentionModal({ isOpen, onClose, currentPlan, ema
   if (!isOpen) return null;
 
   const yearlyPrice = currentPlan === 'pro' ? 239.88 : 479.88;
-  const discountedPrice = +(yearlyPrice * 0.7).toFixed(2);
+  const discountRate = 0.3;
+  const discountPct = String(Math.round(discountRate * 100));
+  const discountedPrice = +(yearlyPrice * (1 - discountRate)).toFixed(2);
   const monthlyEquiv = +(discountedPrice / 12).toFixed(2);
 
   const handleSwitchToYearly = async () => {
@@ -55,7 +57,7 @@ export default function CancelRetentionModal({ isOpen, onClose, currentPlan, ema
 
           <h2 className="text-xl font-bold mb-2">{t('cancel_modal.title')}</h2>
           <p className="text-gray-400 text-sm mb-6">
-            {t('cancel_modal.desc').replace('{discount}', '30%')}
+            {t('cancel_modal.desc').replace('{discount}', `${discountPct}%`)}
           </p>
 
           <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-5 mb-6">
@@ -76,7 +78,7 @@ export default function CancelRetentionModal({ isOpen, onClose, currentPlan, ema
             className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white px-5 py-3.5 rounded-xl text-sm font-semibold transition-all mb-3 disabled:opacity-50"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
-              <>{t('cancel_modal.switch_yearly').replace('{pct}', String(Math.round((1 - 0.7) * 100)))} <ArrowRight className="w-4 h-4" /></>
+              <>{t('cancel_modal.switch_yearly').replace('{pct}', discountPct)} <ArrowRight className="w-4 h-4" /></>
             )}
           </button>
 

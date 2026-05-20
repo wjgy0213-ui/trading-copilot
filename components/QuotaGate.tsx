@@ -26,7 +26,9 @@ export default function QuotaGate({
   children: React.ReactNode;
   feature?: string;
 }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const numberLocale = locale === 'zh' ? 'zh-CN' : 'en-US';
+  const formatCount = (value: number) => new Intl.NumberFormat(numberLocale).format(value);
   const { isPro, loading } = useSession();
   const [allowed, setAllowed] = useState<boolean | null>(null);
   const [remaining, setRemaining] = useState(0);
@@ -61,7 +63,7 @@ export default function QuotaGate({
         {!isPro && (
           <div className="flex items-center gap-2 bg-gray-900/50 border border-gray-800 rounded-lg px-3 py-2 mb-4 text-xs text-gray-400">
             <Zap className="w-3.5 h-3.5 text-amber-400" />
-            {t('quota.remaining')}<span className="text-white font-medium">{remaining}/{getFreeQuotaLimit()}</span>
+            {t('quota.remaining')}<span className="text-white font-medium">{formatCount(remaining)}/{formatCount(getFreeQuotaLimit())}</span>
             <Link href="/pricing" className="ml-auto text-emerald-400 hover:text-emerald-300 transition">
               {t('quota.upgrade_unlimited')}
             </Link>
@@ -86,7 +88,7 @@ export default function QuotaGate({
 
           <h3 className="font-bold text-lg mb-1">{t('quota.exhausted')}</h3>
           <p className="text-sm text-gray-500 mb-2">
-            {(feature || t('quota.thisFeature')) ? `${feature || t('quota.thisFeature')} · ` : ''}{t('quota.daily_limit').replace('{limit}', String(getFreeQuotaLimit()))}
+            {(feature || t('quota.thisFeature')) ? `${feature || t('quota.thisFeature')} · ` : ''}{t('quota.daily_limit').replace('{limit}', formatCount(getFreeQuotaLimit()))}
           </p>
           <p className="text-xs text-gray-600 mb-5">
             {t('quota.reset_tomorrow')}
@@ -112,8 +114,11 @@ export default function QuotaGate({
  * Inline quota indicator for navigation/headers
  */
 export function QuotaIndicator() {
+  const { locale } = useI18n();
   const { isPro, loading } = useSession();
   const [remaining, setRemaining] = useState<number | null>(null);
+  const numberLocale = locale === 'zh' ? 'zh-CN' : 'en-US';
+  const formatCount = (value: number) => new Intl.NumberFormat(numberLocale).format(value);
 
   useEffect(() => {
     if (loading || isPro) return;
@@ -129,7 +134,7 @@ export function QuotaIndicator() {
         : 'bg-red-500/10 text-red-400'
     }`}>
       <Zap className="w-3 h-3" />
-      {remaining}/{getFreeQuotaLimit()}
+      {formatCount(remaining)}/{formatCount(getFreeQuotaLimit())}
     </div>
   );
 }

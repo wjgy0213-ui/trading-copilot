@@ -533,6 +533,7 @@
   "exchange.connect_success": "Connected! Account balance:",
   "exchange.connect_success_with_balance": "Connected! Account balance: ${amount} USDT",
   "exchange.connected": "Connected",
+  "exchange.demo_latency": "Demo latency: ~{ms} ms",
   "exchange.missing_fields": "Please enter API Key and Secret",
   "exchange.name.binance": "Binance",
   "exchange.name.bybit": "Bybit",

@@ -29,6 +29,7 @@ export default function ExchangeConnect() {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(value);
+  const formatDelay = (ms: number) => new Intl.NumberFormat(numberLocale).format(ms);
   const [selectedExchange, setSelectedExchange] = useState<Exchange>('binance');
   const [apiKey, setApiKey] = useState('');
   const [apiSecret, setApiSecret] = useState('');
@@ -80,7 +81,7 @@ export default function ExchangeConnect() {
     setTesting(true);
     setTestResult(null);
 
-    // 模拟API测试
+    // Simulated API roundtrip for demo mode
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     const mockBalance = Math.random() * 10000 + 1000;
@@ -183,6 +184,9 @@ export default function ExchangeConnect() {
             <AlertCircle className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
             <div className="text-xs text-yellow-400">
               <strong>{t('exchange.security_notice')}</strong> {t('exchange.security_desc')}
+              <div className="mt-1 text-[11px] text-yellow-300/80">
+                {t('exchange.demo_latency').replace('{ms}', formatDelay(1500))}
+              </div>
             </div>
           </div>
         </div>
