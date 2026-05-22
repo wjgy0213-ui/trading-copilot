@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { MessageSquare, Sparkles } from 'lucide-react';
 import { getAIScores } from '@/lib/storage';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleTime } from '@/lib/i18n-helpers';
 
 interface ChatMessage {
   type: 'coach' | 'system';
@@ -114,7 +115,7 @@ export default function AICoach() {
             )}
             <p className="text-gray-300 leading-relaxed">{msg.text}</p>
             <div className="text-xs text-gray-600 mt-2 font-mono">
-              {new Date(msg.timestamp).toLocaleTimeString(locale === 'zh' ? 'zh-CN' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+              {formatLocaleTime(msg.timestamp, locale)}
             </div>
           </div>
         ))}

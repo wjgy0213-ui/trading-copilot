@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Shield, AlertTriangle, Activity, XCircle, History } from 'lucide-react';
 import EliteGate from './EliteGate';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleTime } from '@/lib/i18n-helpers';
 
 interface RiskSettings {
   maxRiskPerTrade: number; // %
@@ -267,10 +268,7 @@ export default function RiskManager() {
                   <div className="flex items-start justify-between gap-2">
                     <span className="flex-1">{event.message}</span>
                     <span className="text-gray-500 whitespace-nowrap">
-                      {new Date(event.timestamp).toLocaleTimeString(locale === 'zh' ? 'zh-CN' : 'en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
+                      {formatLocaleTime(event.timestamp, locale)}
                     </span>
                   </div>
                 </div>

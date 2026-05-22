@@ -5,11 +5,12 @@ import { ArrowRight, TrendingUp, Brain, BarChart3, ChevronDown, Sparkles, Shield
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleNumber } from '@/lib/i18n-helpers';
 import { analytics } from '@/lib/analytics';
 import { useSession as useClientSession } from '@/lib/useSession';
 import WelcomeModal from '@/components/WelcomeModal';
 
-function CountUpNumber({ target, suffix = '' }: { target: number; suffix?: string }) {
+function CountUpNumber({ target, suffix = '', locale }: { target: number; suffix?: string; locale: 'en' | 'zh' }) {
   const [count, setCount] = useState(0);
   useEffect(() => {
     const duration = 2000, steps = 60, inc = target / steps;
@@ -17,7 +18,7 @@ function CountUpNumber({ target, suffix = '' }: { target: number; suffix?: strin
     const t = setInterval(() => { cur += inc; if (cur >= target) { setCount(target); clearInterval(t); } else setCount(Math.floor(cur)); }, duration / steps);
     return () => clearInterval(t);
   }, [target]);
-  return <span>{count.toLocaleString()}{suffix}</span>;
+  return <span>{formatLocaleNumber(count, locale)}{suffix}</span>;
 }
 
 function FAQItem({ question, answer }: { question: string; answer: string }) {
@@ -34,7 +35,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 }
 
 export default function LandingPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { session } = useClientSession();
 
   const features = [
@@ -161,7 +162,7 @@ export default function LandingPage() {
             { n: 68, s: '%', labelKey: 'social.improvement', color: 'text-amber-400' },
           ].map((d, i) => (
             <div key={i}>
-              <div className={`text-3xl md:text-4xl font-bold ${d.color} mb-1`}><CountUpNumber target={d.n} suffix={d.s} /></div>
+              <div className={`text-3xl md:text-4xl font-bold ${d.color} mb-1`}><CountUpNumber target={d.n} suffix={d.s} locale={locale} /></div>
               <div className="text-xs text-gray-500">{t(d.labelKey)}</div>
             </div>
           ))}

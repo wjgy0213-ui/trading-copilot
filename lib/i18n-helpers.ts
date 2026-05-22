@@ -72,6 +72,18 @@ export function formatLocaleDateTime(
   return new Intl.DateTimeFormat(getIntlLocale(locale), options).format(new Date(value));
 }
 
+export function formatLocaleTime(
+  value: string | number | Date,
+  locale: Locale,
+  options?: Intl.DateTimeFormatOptions,
+): string {
+  return new Intl.DateTimeFormat(getIntlLocale(locale), {
+    hour: '2-digit',
+    minute: '2-digit',
+    ...options,
+  }).format(new Date(value));
+}
+
 export function formatLocalePercent(
   value: number,
   locale: Locale,

@@ -5,6 +5,7 @@ import { getAccount } from '@/lib/storage';
 import { closePosition, calculatePnL } from '@/lib/tradingEngine';
 import { Trade } from '@/lib/types';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleCurrency, formatSignedLocaleCurrency, formatSignedLocalePercent } from '@/lib/i18n-helpers';
 
 interface PositionsPanelProps {
   currentPrice: number;
@@ -14,6 +15,11 @@ interface PositionsPanelProps {
 export default function PositionsPanel({ currentPrice, onPositionClosed }: PositionsPanelProps) {
   const { t, locale } = useI18n();
   const positions: Trade[] = getAccount().positions;
+
+  const formatMoney = (value: number) => formatLocaleCurrency(value, locale, 'USD', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 
   const handleClose = (tradeId: string) => {
     const confirmed = confirm(t('positions.confirm_close'));
@@ -84,22 +90,28 @@ export default function PositionsPanel({ currentPrice, onPositionClosed }: Posit
               <div className="grid grid-cols-2 gap-4 mb-3">
                 <div>
                   <div className="text-xs text-gray-400">{t('positions.entry_price')}</div>
-                  <div className="font-semibold">${position.entryPrice.toFixed(2)}</div>
+                  <div className="font-semibold">{formatMoney(position.entryPrice)}</div>
                 </div>
                 <div>
                   <div className="text-xs text-gray-400">{t('positions.current_price')}</div>
-                  <div className="font-semibold">${currentPrice.toFixed(2)}</div>
+                  <div className="font-semibold">{formatMoney(currentPrice)}</div>
                 </div>
                 <div>
                   <div className="text-xs text-gray-400">{t('positions.invested')}</div>
-                  <div className="font-semibold">${position.size.toFixed(2)}</div>
+                  <div className="font-semibold">{formatMoney(position.size)}</div>
                 </div>
                 <div>
                   <div className="text-xs text-gray-400">{t('positions.unrealized_pnl')}</div>
                   <div className={`font-semibold ${isProfitable ? 'text-green-400' : 'text-red-400'}`}>
-                    {isProfitable ? '+' : ''}${unrealizedPnL.toFixed(2)}
+                    {formatSignedLocaleCurrency(unrealizedPnL, locale, 'USD', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
                     <span className="text-xs ml-1">
-                      ({unrealizedPnLPercent >= 0 ? '+' : ''}{unrealizedPnLPercent.toFixed(2)}%)
+                      ({formatSignedLocalePercent(unrealizedPnLPercent, locale, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })})
                     </span>
                   </div>
                 </div>
@@ -112,7 +124,7 @@ export default function PositionsPanel({ currentPrice, onPositionClosed }: Posit
                       <div>
                         <span className="text-gray-400">{t('positions.stop_loss')}: </span>
                         <span className="text-red-400 font-semibold">
-                          ${position.stopLoss.toFixed(2)}
+                          {formatMoney(position.stopLoss)}
                         </span>
                       </div>
                     )}
@@ -120,7 +132,7 @@ export default function PositionsPanel({ currentPrice, onPositionClosed }: Posit
                       <div>
                         <span className="text-gray-400">{t('positions.take_profit')}: </span>
                         <span className="text-green-400 font-semibold">
-                          ${position.takeProfit.toFixed(2)}
+                          {formatMoney(position.takeProfit)}
                         </span>
                       </div>
                     )}
