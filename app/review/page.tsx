@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { BarChart3, TrendingUp, TrendingDown, Clock, AlertTriangle, Award, Zap, Brain, Target, Flame, Shield } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleCurrency, formatLocaleNumber, formatLocalePercent } from '@/lib/i18n-helpers';
 
 interface ReviewData {
   summary: {
@@ -124,7 +125,7 @@ function InsightsList({ insights }: { insights: ReviewData['insights'] }) {
   );
 }
 
-function TradeList({ trades, t }: { trades: any[]; t: (key: string) => string }) {
+function TradeList({ trades, t, locale }: { trades: any[]; t: (key: string) => string; locale: 'zh' | 'en' }) {
   return (
     <div className="bg-gray-900/50 border border-gray-800/50 rounded-xl overflow-hidden">
       <div className="px-4 py-3 border-b border-gray-800/50">
@@ -135,12 +136,12 @@ function TradeList({ trades, t }: { trades: any[]; t: (key: string) => string })
           <div key={i} className="flex items-center justify-between px-4 py-2.5 hover:bg-gray-800/20">
             <div className="flex items-center gap-3">
               <span className="text-xs font-mono font-semibold text-gray-300">{t.symbol}</span>
-              <span className="text-[10px] text-gray-500">{t.entries?.length || 0}→{t.exits?.length || 0}</span>
+              <span className="text-[10px] text-gray-500">{formatLocaleNumber(t.entries?.length || 0, locale)}→{formatLocaleNumber(t.exits?.length || 0, locale)}</span>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-xs text-gray-500">{t.duration ? `${(t.duration / 60000).toFixed(0)}m` : '-'}</span>
+              <span className="text-xs text-gray-500">{t.duration ? t('review.duration_minutes').replace('{minutes}', formatLocaleNumber(Math.round(t.duration / 60000), locale)) : '-'}</span>
               <span className={`text-sm font-semibold ${t.pnl >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                {t.pnl >= 0 ? '+' : ''}{t.pnl?.toFixed(2)}
+                {formatLocaleCurrency(t.pnl || 0, locale, 'USD', { maximumFractionDigits: 2, signDisplay: 'always' })}
               </span>
             </div>
           </div>
@@ -151,7 +152,7 @@ function TradeList({ trades, t }: { trades: any[]; t: (key: string) => string })
 }
 
 export default function ReviewPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [data, setData] = useState<ReviewData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -228,12 +229,12 @@ export default function ReviewPage() {
             <p className="text-xs text-gray-500 mt-2">{t('review.score_label')}</p>
           </div>
           <div className="md:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <StatCard label={t('review.total_trades')} value={s.totalTrades} sub={`${s.wins}${t('review.wins_suffix')} ${s.losses}${t('review.losses_suffix')}`} icon={BarChart3} />
-            <StatCard label={t('review.win_rate')} value={`${(s.winRate * 100).toFixed(0)}%`} icon={Target} color={s.winRate >= 0.5 ? 'green' : 'red'} />
-            <StatCard label={t('review.net_pnl')} value={`$${s.totalPnl.toFixed(2)}`} icon={s.totalPnl >= 0 ? TrendingUp : TrendingDown} color={s.totalPnl >= 0 ? 'green' : 'red'} />
-            <StatCard label={t('review.profit_factor')} value={s.profitFactor.toFixed(2)} icon={Zap} color={s.profitFactor >= 1.5 ? 'green' : s.profitFactor >= 1 ? 'yellow' : 'red'} />
-            <StatCard label={t('review.fees')} value={`$${s.totalFees.toFixed(2)}`} sub={`${t('review.fees_pnl_pct')} ${(s.totalFees / Math.max(Math.abs(s.totalPnl), 1) * 100).toFixed(0)}%`} icon={Flame} color="yellow" />
-            <StatCard label={t('review.max_consec_losses')} value={`${s.maxConsecLosses}${t('review.trades_suffix')}`} icon={AlertTriangle} color={s.maxConsecLosses >= 4 ? 'red' : 'gray'} />
+            <StatCard label={t('review.total_trades')} value={formatLocaleNumber(s.totalTrades, locale)} sub={`${formatLocaleNumber(s.wins, locale)}${t('review.wins_suffix')} ${formatLocaleNumber(s.losses, locale)}${t('review.losses_suffix')}`} icon={BarChart3} />
+            <StatCard label={t('review.win_rate')} value={formatLocalePercent(s.winRate, locale, { maximumFractionDigits: 0 })} icon={Target} color={s.winRate >= 0.5 ? 'green' : 'red'} />
+            <StatCard label={t('review.net_pnl')} value={formatLocaleCurrency(s.totalPnl, locale, 'USD', { maximumFractionDigits: 2, signDisplay: 'always' })} icon={s.totalPnl >= 0 ? TrendingUp : TrendingDown} color={s.totalPnl >= 0 ? 'green' : 'red'} />
+            <StatCard label={t('review.profit_factor')} value={formatLocaleNumber(s.profitFactor, locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} icon={Zap} color={s.profitFactor >= 1.5 ? 'green' : s.profitFactor >= 1 ? 'yellow' : 'red'} />
+            <StatCard label={t('review.fees')} value={formatLocaleCurrency(s.totalFees, locale, 'USD', { maximumFractionDigits: 2 })} sub={`${t('review.fees_pnl_pct')} ${formatLocalePercent(s.totalFees / Math.max(Math.abs(s.totalPnl), 1), locale, { maximumFractionDigits: 0 })}`} icon={Flame} color="yellow" />
+            <StatCard label={t('review.max_consec_losses')} value={`${formatLocaleNumber(s.maxConsecLosses, locale)} ${t('review.trades_suffix')}`} icon={AlertTriangle} color={s.maxConsecLosses >= 4 ? 'red' : 'gray'} />
           </div>
         </div>
 
@@ -248,7 +249,7 @@ export default function ReviewPage() {
         {/* Heatmap + Trade List */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <HeatMap data={data.timeAnalysis} t={t} />
-          <TradeList trades={data.tradeGroups} t={t} />
+          <TradeList trades={data.tradeGroups} t={t} locale={locale} />
         </div>
 
         {/* CTA for non-Elite */}

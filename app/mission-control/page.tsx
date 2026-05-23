@@ -569,7 +569,7 @@ export default function MissionControlPage() {
                     <div className="mt-1 text-xs text-gray-500">{t('missionControl.tapeDesc')}</div>
                   </div>
                   <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-gray-400">
-                    {trades.length} {t('missionControl.events')}
+                    {formatLocaleNumber(trades.length, locale)} {t('missionControl.events')}
                   </span>
                 </div>
 
@@ -594,7 +594,7 @@ export default function MissionControlPage() {
                           <span className="text-xs text-gray-500">{t(`missionControl.action.${trade.action}`)}</span>
                           {trade.score !== undefined ? (
                             <span className="rounded-full border border-white/8 px-2 py-0.5 text-[11px] text-gray-300">
-                              {trade.score.toFixed(0)}
+                              {formatLocaleNumber(trade.score, locale, { maximumFractionDigits: 0 })}
                             </span>
                           ) : null}
                         </div>

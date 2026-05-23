@@ -342,7 +342,7 @@ export default function PracticePage() {
                 <div className="flex gap-1 mt-1">
                   {[100, 500, 1000, 2000].map(v => (
                     <button key={v} onClick={() => setOrderSize(String(v))}
-                      className="flex-1 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs text-gray-400">{t('practice.quickAmount').replace('{amount}', String(v))}</button>
+                      className="flex-1 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs text-gray-400">{t('practice.quickAmount').replace('{amount}', formatLocaleNumber(v, locale))}</button>
                   ))}
                 </div>
               </div>
@@ -402,7 +402,7 @@ export default function PracticePage() {
           <div className="lg:col-span-2 space-y-4">
             {/* Active Positions */}
             <div>
-              <h3 className="font-semibold mb-2">📊 {t('practice.positions')} ({positions.length})</h3>
+              <h3 className="font-semibold mb-2">📊 {t('practice.positions')} ({formatLocaleNumber(positions.length, locale)})</h3>
               {positions.length === 0 ? (
                 <div className="bg-gray-800/30 rounded-xl p-6 border border-gray-700/30 text-center text-gray-500">
                   <p className="text-2xl mb-2">🎯</p>
@@ -448,7 +448,7 @@ export default function PracticePage() {
 
             {/* Trade History */}
             <div>
-              <h3 className="font-semibold mb-2">📜 {t('practice.history')} ({history.length})</h3>
+              <h3 className="font-semibold mb-2">📜 {t('practice.history')} ({formatLocaleNumber(history.length, locale)})</h3>
               <div className="space-y-2 max-h-80 overflow-y-auto">
                 {history.length === 0 ? (
                   <div className="text-center text-gray-500 text-sm py-4">{t('practice.no_history')}</div>

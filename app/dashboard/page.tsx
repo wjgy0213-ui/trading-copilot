@@ -58,7 +58,7 @@ function DetailModal({ indicator, onClose, t, locale }: { indicator: ITCIndicato
           </div>
           <div className="bg-gray-800/50 rounded-lg p-3">
             <div className="text-[10px] text-gray-500 mb-1">{t('dashboard.range')}</div>
-            <div className="text-sm font-mono text-gray-300">{formatLocaleNumber(Math.round(min * 100), locale as 'en' | 'zh')} - {formatLocaleNumber(Math.round(max * 100), locale as 'en' | 'zh')}</div>
+            <div className="text-sm font-mono text-gray-300">{t('dashboard.rangeDisplay').replace('{min}', formatLocaleNumber(Math.round(min * 100), locale as 'en' | 'zh')).replace('{max}', formatLocaleNumber(Math.round(max * 100), locale as 'en' | 'zh'))}</div>
           </div>
         </div>
 
