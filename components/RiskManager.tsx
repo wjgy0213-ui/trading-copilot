@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Shield, AlertTriangle, Activity, XCircle, History } from 'lucide-react';
 import EliteGate from './EliteGate';
 import { useI18n } from '@/lib/i18n';
-import { formatLocaleTime } from '@/lib/i18n-helpers';
+import { formatLocaleNumber, formatLocaleTime } from '@/lib/i18n-helpers';
 
 interface RiskSettings {
   maxRiskPerTrade: number; // %
@@ -28,6 +28,14 @@ const DEFAULT_SETTINGS: RiskSettings = {
 
 export default function RiskManager() {
   const { t, locale } = useI18n();
+  const formatPercent = (value: number, digits = 2) => `${formatLocaleNumber(value, locale, {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  })}%`;
+  const formatLeverage = (value: number, digits = 1) => `${formatLocaleNumber(value, locale, {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  })}x`;
   const [settings, setSettings] = useState<RiskSettings>(DEFAULT_SETTINGS);
   const [currentRisk, setCurrentRisk] = useState({
     riskLevel: 'safe' as 'safe' | 'warning' | 'danger',
@@ -152,15 +160,15 @@ export default function RiskManager() {
           <div className="grid grid-cols-3 gap-3 text-xs">
             <div>
               <div className="text-gray-400">{t('risk.daily_loss')}</div>
-              <div className="font-bold">{currentRisk.dailyLoss.toFixed(2)}%</div>
+              <div className="font-bold">{formatPercent(currentRisk.dailyLoss)}</div>
             </div>
             <div>
               <div className="text-gray-400">{t('risk.position_count')}</div>
-              <div className="font-bold">{currentRisk.openPositions}</div>
+              <div className="font-bold">{formatLocaleNumber(currentRisk.openPositions, locale)}</div>
             </div>
             <div>
               <div className="text-gray-400">{t('risk.avg_leverage')}</div>
-              <div className="font-bold">{currentRisk.avgLeverage.toFixed(1)}x</div>
+              <div className="font-bold">{formatLeverage(currentRisk.avgLeverage)}</div>
             </div>
           </div>
         </div>

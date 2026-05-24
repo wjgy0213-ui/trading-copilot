@@ -1,7 +1,7 @@
 'use client';
 
 import { useI18n } from '@/lib/i18n';
-import { formatLocaleCurrency, formatLocaleNumber, formatLocalePercent } from '@/lib/i18n-helpers';
+import { formatLocaleCurrency, formatLocaleNumber, formatLocalePercent, formatSignedLocaleCurrency } from '@/lib/i18n-helpers';
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
@@ -49,6 +49,15 @@ export default function ElitePage() {
   });
   const formatLeverage = (value: number) => t('elite.leverageValue').replace('{value}', formatLocaleNumber(value, locale, { maximumFractionDigits: 0 }));
   const sideLabel = (side: Position['side']) => side === 'LONG' ? t('common.long') : t('common.short');
+  const exchangeLabel = (value: string) => {
+    switch (value) {
+      case 'binance': return t('elite.exchangeBinance');
+      case 'okx': return t('elite.exchangeOkx');
+      case 'bybit': return t('elite.exchangeBybit');
+      case 'hyperliquid': return t('elite.exchangeHyperliquid');
+      default: return value.toUpperCase();
+    }
+  };
   const { data: session } = useSession();
   const [exchange, setExchange] = useState('binance');
   const [apiKey, setApiKey] = useState('');
@@ -308,7 +317,7 @@ export default function ElitePage() {
                 <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-gray-400">{t('elite.connected')}</span>
-                    <span className="text-emerald-400 font-semibold">{exchange.toUpperCase()}</span>
+                    <span className="text-emerald-400 font-semibold text-right">{exchangeLabel(exchange)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-400">{t('elite.balance')}</span>
@@ -535,10 +544,9 @@ export default function ElitePage() {
                         <td className={`py-3 px-2 text-right font-semibold ${
                           pos.pnl >= 0 ? 'text-emerald-400' : 'text-red-400'
                         }`}>
-                          {formatLocaleCurrency(pos.pnl, locale, 'USD', {
+                          {formatSignedLocaleCurrency(pos.pnl, locale, 'USD', {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
-                            signDisplay: 'always',
                           })}
                         </td>
                         <td className="py-3 px-2 text-right">{formatLeverage(pos.leverage)}</td>

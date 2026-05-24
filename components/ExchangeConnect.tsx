@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { ArrowLeftRight, Key, Lock, CheckCircle2, AlertCircle, Wallet } from 'lucide-react';
 import EliteGate from './EliteGate';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleCurrency, formatLocaleNumber } from '@/lib/i18n-helpers';
 
 type Exchange = 'binance' | 'okx' | 'bybit' | 'hyperliquid';
 
@@ -24,12 +25,11 @@ const EXCHANGES = [
 
 export default function ExchangeConnect() {
   const { t, locale } = useI18n();
-  const numberLocale = locale === 'zh' ? 'zh-CN' : 'en-US';
-  const formatCurrency = (value: number) => new Intl.NumberFormat(numberLocale, {
+  const formatCurrency = (value: number) => formatLocaleCurrency(value, locale, 'USD', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(value);
-  const formatDelay = (ms: number) => new Intl.NumberFormat(numberLocale).format(ms);
+  });
+  const formatDelay = (ms: number) => formatLocaleNumber(ms, locale);
   const [selectedExchange, setSelectedExchange] = useState<Exchange>('binance');
   const [apiKey, setApiKey] = useState('');
   const [apiSecret, setApiSecret] = useState('');

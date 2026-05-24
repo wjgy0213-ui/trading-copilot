@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Send, Bell, CheckCircle2, AlertCircle } from 'lucide-react';
 import EliteGate from './EliteGate';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleNumber } from '@/lib/i18n-helpers';
 
 interface TelegramConfig {
   botToken: string;
@@ -30,7 +31,7 @@ const DEFAULT_CONFIG: TelegramConfig = {
 };
 
 export default function TelegramNotify() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [config, setConfig] = useState<TelegramConfig>(DEFAULT_CONFIG);
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
@@ -156,7 +157,7 @@ export default function TelegramNotify() {
               <h3 className="text-sm font-medium text-gray-400">{t('telegram.notify_types')}</h3>
             </div>
             <span className="text-xs text-violet-300 bg-violet-500/10 border border-violet-500/20 px-2 py-1 rounded-full">
-              {t('telegram.enabled_count').replace('{count}', String(enabledCount))}
+              {t('telegram.enabled_count').replace('{count}', formatLocaleNumber(enabledCount, locale))}
             </span>
           </div>
           <div className="space-y-2">
