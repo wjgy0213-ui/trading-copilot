@@ -196,6 +196,11 @@ function CompareTable({ results }: { results: BacktestResult[] }) {
   const { t: tr, locale } = useI18n();
   if (results.length < 2) return null;
   const colors = ['#10b981', '#3b82f6', '#f59e0b'];
+  const getStrategyName = (strategyId: string) => {
+    const strategy = STRATEGY_TEMPLATES.find((template) => template.id === strategyId);
+    if (!strategy) return strategyId;
+    return tr(`strategy.template.${strategyId}.name`, locale === 'en' ? strategy.nameEn || strategy.name : strategy.name);
+  };
   const metrics = [
     { label: tr('strategy.totalReturn'), fn: (r: BacktestResult) => formatSignedLocalePercent(r.totalReturnPercent, locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) },
     { label: tr('strategy.winRateLabel'), fn: (r: BacktestResult) => `${formatLocaleNumber(r.winRate, locale, { maximumFractionDigits: 1 })}%` },
@@ -207,7 +212,7 @@ function CompareTable({ results }: { results: BacktestResult[] }) {
   return (
     <div className="overflow-x-auto"><table className="w-full text-sm">
       <thead><tr className="border-b border-gray-800"><th className="text-left py-2 px-3 text-gray-500">{tr('strategy.metric')}</th>
-        {results.map((r, i) => <th key={i} className="text-right py-2 px-3"><span className="flex items-center justify-end gap-1.5"><span className="w-2 h-2 rounded-full" style={{background: colors[i]}} /><span className="text-gray-300">{(locale === 'en' ? (STRATEGY_TEMPLATES.find(t => t.id === r.strategyName)?.nameEn || STRATEGY_TEMPLATES.find(t => t.id === r.strategyName)?.name) : STRATEGY_TEMPLATES.find(t => t.id === r.strategyName)?.name) || r.strategyName}</span></span></th>)}
+        {results.map((r, i) => <th key={i} className="text-right py-2 px-3"><span className="flex items-center justify-end gap-1.5"><span className="w-2 h-2 rounded-full" style={{background: colors[i]}} /><span className="text-gray-300">{getStrategyName(r.strategyName)}</span></span></th>)}
       </tr></thead>
       <tbody>{metrics.map(m => <tr key={m.label} className="border-b border-gray-800/50"><td className="py-2 px-3 text-gray-400">{m.label}</td>
         {results.map((r, i) => <td key={i} className="py-2 px-3 text-right font-mono text-gray-200">{m.fn(r)}</td>)}
@@ -431,6 +436,21 @@ function StrategyPage() {
 
   const latest = results.length > 0 ? results[results.length - 1] : null;
   const colors = ['#10b981', '#3b82f6', '#f59e0b'];
+  const getStrategyName = useCallback((strategyId: string) => {
+    const strategy = STRATEGY_TEMPLATES.find((template) => template.id === strategyId);
+    if (!strategy) return strategyId;
+    return tr(`strategy.template.${strategyId}.name`, locale === 'en' ? strategy.nameEn || strategy.name : strategy.name);
+  }, [locale, tr]);
+
+  const getStrategyDescription = useCallback((strategyId: string) => {
+    const strategy = STRATEGY_TEMPLATES.find((template) => template.id === strategyId);
+    if (!strategy) return strategyId;
+    return tr(`strategy.template.${strategyId}.desc`, locale === 'en' ? strategy.descriptionEn || strategy.description : strategy.description);
+  }, [locale, tr]);
+
+  const getParamLabel = useCallback((strategyId: string, paramKey: string, fallbackZh: string, fallbackEn?: string) => {
+    return tr(`strategy.template.${strategyId}.param.${paramKey}`, locale === 'en' ? fallbackEn || fallbackZh : fallbackZh);
+  }, [locale, tr]);
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -450,8 +470,8 @@ function StrategyPage() {
             {STRATEGY_TEMPLATES.map(t => (
               <button key={t.id} onClick={() => handleSelect(t.id)}
                 className={`w-full text-left p-3 rounded-xl border transition ${selectedId === t.id ? 'border-emerald-500/50 bg-emerald-500/10' : 'border-gray-800 bg-gray-900/30 hover:border-gray-700'}`}>
-                <div className="flex items-center gap-2"><span className="text-lg">{t.icon}</span><span className="font-medium text-sm">{locale === 'en' ? t.nameEn || t.name : t.name}</span></div>
-                <p className="text-[11px] text-gray-500 mt-1">{locale === 'en' ? t.descriptionEn || t.description : t.description}</p>
+                <div className="flex items-center gap-2"><span className="text-lg">{t.icon}</span><span className="font-medium text-sm">{getStrategyName(t.id)}</span></div>
+                <p className="text-[11px] text-gray-500 mt-1">{getStrategyDescription(t.id)}</p>
               </button>
             ))}
           </div>
@@ -463,7 +483,7 @@ function StrategyPage() {
               <div className="space-y-4">
                 {selected.params.map(p => (
                   <div key={p.key}>
-                    <div className="flex justify-between text-xs mb-1"><span className="text-gray-400">{locale === 'en' ? p.labelEn || p.label : p.label}</span><span className="font-mono text-emerald-400">{params[p.key]}{p.unit||''}</span></div>
+                    <div className="flex justify-between text-xs mb-1"><span className="text-gray-400">{getParamLabel(selected.id, p.key, p.label, p.labelEn)}</span><span className="font-mono text-emerald-400">{params[p.key]}{p.unit||''}</span></div>
                     <input type="range" min={p.min} max={p.max} step={p.step} value={params[p.key] ?? p.default}
                       onChange={e => setParams(prev => ({...prev, [p.key]: parseFloat(e.target.value)}))}
                       className="w-full h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-emerald-500" />
@@ -565,48 +585,6 @@ function StrategyPage() {
             )}
             </Paywall>
 
-            <button onClick={handleOptimize} disabled={optimizing || loading}
-              className={`w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition ${optimizing ? 'bg-gray-800 text-gray-500 cursor-wait' : 'bg-violet-700 hover:bg-violet-600 text-white'}`}>
-              {optimizing
-                ? <><div className="w-4 h-4 border-2 border-gray-600 border-t-violet-400 rounded-full animate-spin" /> {tr('strategy.searching')}…</>
-                : <><Search className="w-4 h-4" /> {tr('strategy.autoSearchLabel')}</>}
-            </button>
-            {optimizing && optProgress.total > 0 && (
-              <div className="space-y-1">
-                <div className="flex justify-between text-[10px] text-gray-500"><span>{tr('strategy.testParams')}</span><span>{optProgress.current}/{optProgress.total}</span></div>
-                <div className="w-full bg-gray-800 rounded-full h-1.5"><div className="bg-violet-500 h-1.5 rounded-full transition-all" style={{width: `${(optProgress.current / optProgress.total) * 100}%`}} /></div>
-              </div>
-            )}
-            {optResults.length > 0 && (
-              <div className="bg-gray-900/30 border border-violet-800/40 rounded-xl p-3">
-                <div className="text-xs text-gray-400 font-medium mb-2">{tr('strategy.top5Best')}</div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-xs">
-                    <thead><tr className="text-gray-600 border-b border-gray-800">
-                      <th className="text-left py-1 pr-2">#</th>
-                      <th className="text-right py-1 pr-2">{tr('strategy.sharpeCol')}</th>
-                      <th className="text-right py-1 pr-2">{tr('strategy.returnCol')}</th>
-                      <th className="text-right py-1 pr-2">{tr('strategy.winRateCol')}</th>
-                      <th className="text-right py-1">{tr('strategy.drawdownCol')}</th>
-                      <th className="py-1"></th>
-                    </tr></thead>
-                    <tbody>{optResults.map((r, i) => (
-                      <tr key={i} className="border-b border-gray-800/40 hover:bg-gray-800/30">
-                        <td className="py-1 pr-2 text-gray-500">{i + 1}</td>
-                        <td className="py-1 pr-2 text-right font-mono text-violet-300">{r.sharpe.toFixed(2)}</td>
-                        <td className={`py-1 pr-2 text-right font-mono ${r.returnPct > 0 ? 'text-green-400' : 'text-red-400'}`}>{r.returnPct > 0 ? '+' : ''}{r.returnPct.toFixed(1)}%</td>
-                        <td className="py-1 pr-2 text-right font-mono text-gray-300">{r.winRate.toFixed(0)}%</td>
-                        <td className="py-1 text-right font-mono text-red-400">{r.maxDD.toFixed(1)}%</td>
-                        <td className="py-1 pl-2">
-                          <button onClick={() => setParams(r.params)} className="text-[10px] text-violet-400 hover:text-violet-300 border border-violet-700/50 rounded px-1.5 py-0.5">{tr('strategy.apply')}</button>
-                        </td>
-                      </tr>
-                    ))}</tbody>
-                  </table>
-                </div>
-                <div className="mt-2 text-[10px] text-gray-600">{tr('strategy.applyHintText')}</div>
-              </div>
-            )}
           </div>
 
           {/* Right: Results */}
@@ -620,7 +598,7 @@ function StrategyPage() {
               {showShareCard && (
                 <ShareCard
                   result={latest}
-                  strategyName={(locale === 'en' ? (STRATEGY_TEMPLATES.find(t => t.id === selectedId)?.nameEn || STRATEGY_TEMPLATES.find(t => t.id === selectedId)?.name) : STRATEGY_TEMPLATES.find(t => t.id === selectedId)?.name) || selectedId}
+                  strategyName={getStrategyName(selectedId)}
                   symbol={symbol}
                   timeframe={timeframe}
                   onClose={() => setShowShareCard(false)}
@@ -638,7 +616,7 @@ function StrategyPage() {
                           symbol: symbol,
                           timeframe: timeframe,
                           riskParams: { stopLoss, takeProfit, maxPosition },
-                          name: (locale === 'en' ? (STRATEGY_TEMPLATES.find(t => t.id === selectedId)?.nameEn || STRATEGY_TEMPLATES.find(t => t.id === selectedId)?.name) : STRATEGY_TEMPLATES.find(t => t.id === selectedId)?.name),
+                          name: getStrategyName(selectedId),
                         });
                         router.push('/trade');
                       }}
@@ -665,7 +643,7 @@ function StrategyPage() {
               <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">
                 <div className="text-xs text-gray-500 font-medium mb-3">{tr('strategy.equityChart')}</div>
                 <EquityCurve data={latest.equityCurve} color={colors[results.length-1]}
-                  compareData={results.slice(0,-1).map((r,i) => ({ data: r.equityCurve, color: colors[i], name: (locale === 'en' ? (STRATEGY_TEMPLATES.find(t => t.id === r.strategyName)?.nameEn || STRATEGY_TEMPLATES.find(t => t.id === r.strategyName)?.name) : STRATEGY_TEMPLATES.find(t => t.id === r.strategyName)?.name) || r.strategyName }))} />
+                  compareData={results.slice(0,-1).map((r,i) => ({ data: r.equityCurve, color: colors[i], name: getStrategyName(r.strategyName) }))} />
               </div>
 
               <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4">

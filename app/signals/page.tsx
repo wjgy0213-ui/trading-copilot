@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Radio, TrendingUp, TrendingDown, Minus, Layers, Link2, BarChart3, Globe, Activity, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleNumber } from '@/lib/i18n-helpers';
 
 interface Signal {
   source: string;
@@ -173,7 +174,7 @@ function AssetCard({ fused }: { fused: FusedSignal }) {
 }
 
 export default function SignalsPage() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [data, setData] = useState<SignalsData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -214,10 +215,10 @@ export default function SignalsPage() {
             <div className="text-right">
               <div className="text-[10px] text-gray-600">{t('signals.fearGreedShort')}</div>
               <div className={`text-sm font-bold ${data.fearGreed <= 25 ? 'text-red-400' : data.fearGreed >= 75 ? 'text-emerald-400' : 'text-yellow-400'}`}>
-                {data.fearGreed}
+                {formatLocaleNumber(data.fearGreed, locale)}
               </div>
             </div>
-            <button onClick={fetchData} className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition">
+            <button onClick={fetchData} aria-label={t('signals.refreshAria')} title={t('signals.refreshAria')} className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition">
               <RefreshCw className="w-4 h-4 text-gray-400" />
             </button>
           </div>
@@ -225,9 +226,9 @@ export default function SignalsPage() {
 
         {/* Stats bar */}
         <div className="flex items-center gap-4 text-xs text-gray-500">
-          <span className="flex items-center gap-1"><BarChart3 className="w-3 h-3" /> {data.totalSignals} {t('signals.sources')}</span>
+          <span className="flex items-center gap-1"><BarChart3 className="w-3 h-3" /> {formatLocaleNumber(data.totalSignals, locale)} {t('signals.sources')}</span>
           <span>{t('signals.layers_filter')}</span>
-          <span>{data.fused.length} {t('signals.assets')}</span>
+          <span>{formatLocaleNumber(data.fused.length, locale)} {t('signals.assets')}</span>
         </div>
 
         {/* Fused signals */}

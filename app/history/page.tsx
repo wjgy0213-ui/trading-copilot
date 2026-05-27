@@ -118,7 +118,7 @@ export default function HistoryPage() {
               </div>
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
                 <div className={`text-2xl font-bold ${avgScore >= 70 ? 'text-yellow-400' : 'text-gray-400'}`}>
-                  {avgScore > 0 ? avgScore.toFixed(0) : '-'}
+                  {avgScore > 0 ? formatLocaleNumber(avgScore, locale, { maximumFractionDigits: 0 }) : '-'}
                 </div>
                 <div className="text-xs text-gray-400">{t('history.avg_ai_score')}</div>
               </div>

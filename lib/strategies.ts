@@ -98,33 +98,6 @@ export const STRATEGY_TEMPLATES: StrategyTemplate[] = [
     ],
     pseudoCode: (p) => `// EMA+RSI组合\nema = EMA(close, ${p.emaPeriod})\nrsi = RSI(close, ${p.rsiPeriod})\n\n做多: 价格>EMA 且 RSI<${p.rsiEntry}\n做空: 价格<EMA 且 RSI>${100 - p.rsiEntry}`,
   },
-  {
-    id: 'supertrend', name: 'Supertrend', nameEn: 'Supertrend', icon: '🚀',
-    description: 'ATR动态止损趋势跟踪。适合趋势行情。', descriptionEn: 'ATR dynamic trailing stop trend following. Best for trending markets.',
-    params: [
-      { key: 'atrPeriod', label: 'ATR周期', labelEn: 'ATR Period', min: 10, max: 50, step: 1, default: 14 },
-      { key: 'multiplier', label: '乘数', labelEn: 'Multiplier', min: 1, max: 5, step: 0.5, default: 3 },
-    ],
-    pseudoCode: (p) => `// Supertrend策略\nATR = ATR(${p.atrPeriod}周期真实波幅均值)\nupperBand = (high+low)/2 + ${p.multiplier}×ATR\nlowerBand = (high+low)/2 - ${p.multiplier}×ATR\n\n做多: close > supertrend 且前一根 close <= supertrend\n做空: close < supertrend 且前一根 close >= supertrend`,
-  },
-  {
-    id: 'ema_volume', name: '双均线+量能', nameEn: 'Dual MA + Volume', icon: '📊',
-    description: 'EMA交叉配合成交量确认。减少假突破。', descriptionEn: 'EMA crossover with volume confirmation. Reduces false breakouts.',
-    params: [
-      { key: 'fastPeriod', label: '快线周期', labelEn: 'Fast Period', min: 3, max: 50, step: 1, default: 10 },
-      { key: 'slowPeriod', label: '慢线周期', labelEn: 'Slow Period', min: 10, max: 200, step: 1, default: 30 },
-      { key: 'volumeMult', label: '量能倍数', labelEn: 'Volume Multiplier', min: 1, max: 5, step: 0.5, default: 1.5 },
-    ],
-    pseudoCode: (p) => `// 双均线+量能策略\nfastEMA = EMA(close, ${p.fastPeriod})\nslowEMA = EMA(close, ${p.slowPeriod})\nvolumeSMA = SMA(volume, 20)\n\n做多: fastEMA上穿slowEMA 且 volume > volumeSMA×${p.volumeMult}\n做空: fastEMA下穿slowEMA 且 volume > volumeSMA×${p.volumeMult}`,
-  },
-  {
-    id: 'donchian', name: '通道突破', nameEn: 'Channel Breakout', icon: '🔔',
-    description: 'Donchian通道突破。海龟交易法核心策略。', descriptionEn: 'Donchian channel breakout. Core Turtle trading strategy.',
-    params: [
-      { key: 'period', label: '通道周期', labelEn: 'Channel Period', min: 10, max: 100, step: 1, default: 20 },
-    ],
-    pseudoCode: (p) => `// Donchian通道突破\nupperChannel = ${p.period}周期最高的high\nlowerChannel = ${p.period}周期最低的low\n\n做多: close > 前一根upperChannel\n做空: close < 前一根lowerChannel`,
-  },
 ];
 
 export interface RiskParams { stopLoss: number; takeProfit: number; maxPosition: number; }
