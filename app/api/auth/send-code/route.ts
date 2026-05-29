@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateVerifyCode } from '@/lib/authOptions';
+import { getRequestLocale, translateForLocale as tr } from '@/lib/server-i18n';
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
 
 export async function POST(req: NextRequest) {
+  const locale = getRequestLocale(req);
+
   try {
     const { email } = await req.json();
     if (!email || !email.includes('@')) {
-      return NextResponse.json({ error: 'Please enter a valid email' }, { status: 400 });
+      return NextResponse.json({ error: tr(locale, 'api.auth.validEmail') }, { status: 400 });
     }
 
     const code = generateVerifyCode(email);
@@ -25,8 +32,9 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify({
           from: process.env.EMAIL_FROM || 'Trading Copilot <noreply@tradingcopilot.app>',
           to: email,
-          subject: `Verification Code: ${code} — Trading Copilot`,
-          html: `
+          subject: locale === 'zh' ? `验证码：${code} · Trading Copilot` : `Verification Code: ${code} · Trading Copilot`,
+          html: locale === 'zh'
+            ? `
             <div style="font-family:sans-serif;max-width:400px;margin:0 auto;padding:32px;background:#0d1117;color:#e6edf3;border-radius:12px;">
               <h2 style="color:#10b981;margin:0 0 16px;">Trading Copilot</h2>
               <p style="color:#8b949e;font-size:14px;">你的验证码是：</p>
@@ -34,6 +42,16 @@ export async function POST(req: NextRequest) {
                 ${code}
               </div>
               <p style="color:#484f58;font-size:12px;">10分钟内有效。如果不是你本人操作，请忽略。</p>
+            </div>
+          `
+            : `
+            <div style="font-family:sans-serif;max-width:400px;margin:0 auto;padding:32px;background:#0d1117;color:#e6edf3;border-radius:12px;">
+              <h2 style="color:#10b981;margin:0 0 16px;">Trading Copilot</h2>
+              <p style="color:#8b949e;font-size:14px;">Your verification code is:</p>
+              <div style="font-size:36px;font-weight:bold;letter-spacing:8px;color:#fff;background:#161b22;padding:16px 24px;border-radius:8px;text-align:center;margin:16px 0;">
+                ${code}
+              </div>
+              <p style="color:#484f58;font-size:12px;">It expires in 10 minutes. If this wasn't you, you can ignore this email.</p>
             </div>
           `,
         }),
@@ -43,16 +61,16 @@ export async function POST(req: NextRequest) {
         console.error('[AUTH] Resend error:', resData);
         const detail = String(resData?.message || JSON.stringify(resData));
         const friendly = /testing emails|verify a domain|only to your own email/i.test(detail)
-          ? '邮件系统尚未正式上线：当前发信域名还没在 Resend 完成验证，所以只能发到站长自己的邮箱，外部邮箱（含 QQ 邮箱）会失败。'
-          : `邮件发送失败: ${detail}`;
+          ? tr(locale, 'api.auth.emailNotLive')
+          : `${tr(locale, 'api.auth.sendFailedPrefix')}: ${detail}`;
         return NextResponse.json({ error: friendly }, { status: 500 });
       }
     } else {
-      return NextResponse.json({ error: 'RESEND_API_KEY未配置' }, { status: 500 });
+      return NextResponse.json({ error: tr(locale, 'api.auth.resendMissing') }, { status: 500 });
     }
 
-    return NextResponse.json({ ok: true, message: '验证码已发送' });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 });
+    return NextResponse.json({ ok: true, message: tr(locale, 'api.auth.codeSent') });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: getErrorMessage(e) || tr(locale, 'api.auth.sendFailedGeneric') }, { status: 500 });
   }
 }

@@ -2,17 +2,34 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getStripe } from '@/lib/stripe';
 import { getSession } from '@/lib/auth';
 import { updateUserSubscription } from '@/lib/db';
+import { getRequestLocale, translateForLocale as tr } from '@/lib/server-i18n';
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
+
+type StripeSubscriptionLike = {
+  id: string;
+  status: string;
+  cancel_at_period_end: boolean;
+  current_period_start: number;
+  current_period_end: number;
+  items?: { data?: Array<{ price?: { id?: string | null } }> };
+  created: number;
+};
 
 export async function GET(req: NextRequest) {
+  const locale = getRequestLocale(req);
+
   try {
     const session = await getSession();
-    if (!session) return NextResponse.json({ error: 'not authenticated' }, { status: 401 });
-    if (!session.subscriptionId) return NextResponse.json({ error: 'no subscription' }, { status: 404 });
+    if (!session) return NextResponse.json({ error: tr(locale, 'api.subscription.notAuthenticated') }, { status: 401 });
+    if (!session.subscriptionId) return NextResponse.json({ error: tr(locale, 'api.subscription.noSubscription') }, { status: 404 });
 
     const stripe = getStripe();
-    if (!stripe) return NextResponse.json({ error: 'stripe not configured' }, { status: 500 });
+    if (!stripe) return NextResponse.json({ error: tr(locale, 'api.subscription.stripeMissing') }, { status: 500 });
 
-    const sub = await stripe.subscriptions.retrieve(session.subscriptionId) as any;
+    const sub = await stripe.subscriptions.retrieve(session.subscriptionId) as StripeSubscriptionLike;
     
     return NextResponse.json({
       id: sub.id,
@@ -23,24 +40,26 @@ export async function GET(req: NextRequest) {
       plan: sub.items?.data?.[0]?.price?.id,
       created: sub.created,
     });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: getErrorMessage(e) || tr(locale, 'api.subscription.fetchFailed') }, { status: 500 });
   }
 }
 
 export async function DELETE(req: NextRequest) {
+  const locale = getRequestLocale(req);
+
   try {
     const session = await getSession();
-    if (!session) return NextResponse.json({ error: 'not authenticated' }, { status: 401 });
-    if (!session.subscriptionId) return NextResponse.json({ error: 'no subscription' }, { status: 404 });
+    if (!session) return NextResponse.json({ error: tr(locale, 'api.subscription.notAuthenticated') }, { status: 401 });
+    if (!session.subscriptionId) return NextResponse.json({ error: tr(locale, 'api.subscription.noSubscription') }, { status: 404 });
 
     const stripe = getStripe();
-    if (!stripe) return NextResponse.json({ error: 'stripe not configured' }, { status: 500 });
+    if (!stripe) return NextResponse.json({ error: tr(locale, 'api.subscription.stripeMissing') }, { status: 500 });
 
     // Cancel at period end in Stripe
     const sub = await stripe.subscriptions.update(session.subscriptionId, {
       cancel_at_period_end: true,
-    }) as any;
+    }) as StripeSubscriptionLike;
 
     // Update KV to reflect cancellation
     await updateUserSubscription(session.email, {
@@ -50,9 +69,9 @@ export async function DELETE(req: NextRequest) {
 
     console.log(`🗓️ Subscription set to cancel: ${session.email} (expires: ${new Date(sub.current_period_end * 1000).toISOString()})`);
 
-    return NextResponse.json({ ok: true, message: 'Subscription will be canceled at end of current period' });
-  } catch (e: any) {
+    return NextResponse.json({ ok: true, message: tr(locale, 'api.subscription.cancelScheduled') });
+  } catch (e: unknown) {
     console.error('Subscription cancellation error:', e);
-    return NextResponse.json({ error: e.message }, { status: 500 });
+    return NextResponse.json({ error: getErrorMessage(e) || tr(locale, 'api.subscription.cancelFailed') }, { status: 500 });
   }
 }

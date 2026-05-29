@@ -2,18 +2,25 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { encrypt } from '@/lib/encryption';
 import { cookies } from 'next/headers';
+import { getRequestLocale, translateForLocale as tr } from '@/lib/server-i18n';
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
 
 export async function POST(req: NextRequest) {
+  const locale = getRequestLocale(req);
+
   try {
     const session = await getServerSession();
     if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: tr(locale, 'api.common.unauthorized') }, { status: 401 });
     }
 
     const { chatId, botToken } = await req.json();
 
     if (!chatId) {
-      return NextResponse.json({ error: 'Chat ID is required' }, { status: 400 });
+      return NextResponse.json({ error: tr(locale, 'api.telegram.chatIdRequired') }, { status: 400 });
     }
 
     // Use default bot token if not provided
@@ -21,7 +28,7 @@ export async function POST(req: NextRequest) {
 
     if (!token) {
       return NextResponse.json({ 
-        error: 'Telegram bot token not configured' 
+        error: tr(locale, 'api.telegram.tokenMissing') 
       }, { status: 400 });
     }
 
@@ -32,18 +39,20 @@ export async function POST(req: NextRequest) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: chatId,
-          text: '✅ Trading Copilot Elite notifications connected!\n\nYou will receive:\n• Position updates\n• Risk alerts\n• 平仓确认',
+          text: locale === 'zh'
+            ? '✅ Trading Copilot Elite 通知已连接！\n\n你将收到：\n• 持仓更新\n• 风险提醒\n• 平仓确认'
+            : '✅ Trading Copilot Elite notifications connected!\n\nYou will receive:\n• Position updates\n• Risk alerts\n• Close confirmations',
         }),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.description || 'Failed to send test message');
+        throw new Error(error.description || tr(locale, 'api.telegram.testSendFailed'));
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       return NextResponse.json({ 
-        error: 'Failed to send test message. Please check your Chat ID.',
-        details: error.message 
+        error: tr(locale, 'api.telegram.testSendCheckChatId'),
+        details: getErrorMessage(error) 
       }, { status: 400 });
     }
 
@@ -60,11 +69,11 @@ export async function POST(req: NextRequest) {
       path: '/',
     });
 
-    return NextResponse.json({ success: true });
-  } catch (error: any) {
+    return NextResponse.json({ success: true, message: tr(locale, 'api.telegram.connected') });
+  } catch (error: unknown) {
     console.error('Telegram setup error:', error);
     return NextResponse.json({ 
-      error: error.message || 'Failed to setup Telegram' 
+      error: getErrorMessage(error) || tr(locale, 'api.telegram.setupFailed') 
     }, { status: 500 });
   }
 }

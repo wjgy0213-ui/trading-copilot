@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { upsertLead } from '@/lib/supabase'
+import { getRequestLocale, translateForLocale as tr } from '@/lib/server-i18n'
 
 export async function POST(req: NextRequest) {
+  const locale = getRequestLocale(req)
+
   try {
     const {
       email,
@@ -18,16 +21,15 @@ export async function POST(req: NextRequest) {
     } = await req.json()
 
     if (!email && !wechat) {
-      return NextResponse.json({ error: 'Please provide contact information' }, { status: 400 })
+      return NextResponse.json({ error: tr(locale, 'api.waitlist.contactRequired') }, { status: 400 })
     }
 
     // Basic email validation
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 })
+      return NextResponse.json({ error: tr(locale, 'api.waitlist.invalidEmail') }, { status: 400 })
     }
 
     const timestamp = new Date().toISOString()
-    const entry = { email, wechat, source: source || 'waitlist', timestamp }
 
     await upsertLead({
       email,
@@ -69,8 +71,9 @@ export async function POST(req: NextRequest) {
         await resend.emails.send({
           from: process.env.EMAIL_FROM || 'Trading Copilot <noreply@tradingcopilot.app>',
           to: email,
-          subject: `✅ 你已成功加入 Trading Copilot 候补名单`,
-          html: `
+          subject: tr(locale, 'api.waitlist.userSubject'),
+          html: locale === 'zh'
+            ? `
             <!DOCTYPE html>
             <html>
             <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; max-width: 560px; margin: 0 auto; padding: 40px 20px;">
@@ -109,6 +112,46 @@ export async function POST(req: NextRequest) {
               </div>
             </body>
             </html>
+          `
+            : `
+            <!DOCTYPE html>
+            <html>
+            <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; max-width: 560px; margin: 0 auto; padding: 40px 20px;">
+              <div style="background: #1e293b; border-radius: 12px; padding: 32px; border: 1px solid #334155;">
+                <div style="text-align: center; margin-bottom: 24px;">
+                  <span style="font-size: 40px;">🚀</span>
+                  <h1 style="color: #10b981; font-size: 22px; margin: 12px 0 4px;">You're on the waitlist</h1>
+                  <p style="color: #94a3b8; font-size: 14px; margin: 0;">Trading Copilot · AI trading strategy platform</p>
+                </div>
+
+                <p style="color: #cbd5e1; line-height: 1.6; margin-bottom: 16px;">Thanks for joining. We're putting the final polish on the first release for early users.</p>
+
+                <div style="background: #0f172a; border-radius: 8px; padding: 20px; margin-bottom: 20px; border-left: 3px solid #10b981;">
+                  <p style="color: #10b981; font-weight: 600; margin: 0 0 10px; font-size: 14px;">🎁 Early access perks</p>
+                  <ul style="color: #94a3b8; font-size: 13px; line-height: 1.8; margin: 0; padding-left: 16px;">
+                    <li>Priority beta access for the first 50 users</li>
+                    <li>50% off the first month of Pro</li>
+                    <li>Private community + direct founder access</li>
+                  </ul>
+                </div>
+
+                <div style="background: #0f172a; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
+                  <p style="color: #94a3b8; font-size: 13px; margin: 0 0 8px; font-weight: 600;">Core platform features:</p>
+                  <ul style="color: #94a3b8; font-size: 13px; line-height: 1.8; margin: 0; padding-left: 16px;">
+                    <li>📊 Strategy Lab, 8 templates + parameter optimizer</li>
+                    <li>🎯 Paper trading with live market prices</li>
+                    <li>🤖 AI strategy builder from natural language</li>
+                    <li>📱 AI coaching to keep your execution disciplined</li>
+                  </ul>
+                </div>
+
+                <p style="color: #64748b; font-size: 12px; text-align: center; margin: 0;">
+                  We'll notify you as soon as beta access opens<br>
+                  <a href="https://trading-copilot-delta.vercel.app" style="color: #10b981;">trading-copilot-delta.vercel.app</a>
+                </p>
+              </div>
+            </body>
+            </html>
           `,
         })
       } catch (welcomeErr) {
@@ -117,9 +160,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({ success: true, message: '已加入候补名单' })
+    return NextResponse.json({ success: true, message: tr(locale, 'api.waitlist.joined') })
   } catch (err) {
     console.error('Waitlist error:', err)
-    return NextResponse.json({ error: 'Submission failed, please try again' }, { status: 500 })
+    return NextResponse.json({ error: tr(locale, 'api.waitlist.submitFailed') }, { status: 500 })
   }
 }
