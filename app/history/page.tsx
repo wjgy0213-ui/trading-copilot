@@ -7,7 +7,7 @@ import { getAccount, getAIScores } from '@/lib/storage';
 import { Trade, AIScore } from '@/lib/types';
 import EquityCurve from '@/components/EquityCurve';
 import { useI18n } from '@/lib/i18n';
-import { formatLocaleCurrency, formatLocaleNumber, formatSignedLocaleCurrency, formatSignedLocalePercent, getIntlLocale } from '@/lib/i18n-helpers';
+import { formatLocaleCurrency, formatLocaleDateTime, formatLocaleNumber, formatSignedLocaleCurrency, formatSignedLocalePercent } from '@/lib/i18n-helpers';
 
 export default function HistoryPage() {
   const { t, locale } = useI18n();
@@ -217,8 +217,8 @@ export default function HistoryPage() {
                 <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
                   <Clock className="w-3 h-3" />
                   <span>
-                    {new Date(trade.openedAt).toLocaleString(getIntlLocale(locale))} -{' '}
-                    {trade.closedAt ? new Date(trade.closedAt).toLocaleString(getIntlLocale(locale)) : t('history.ongoing')}
+                    {formatLocaleDateTime(trade.openedAt, locale)} -{' '}
+                    {trade.closedAt ? formatLocaleDateTime(trade.closedAt, locale) : t('history.ongoing')}
                   </span>
                 </div>
 

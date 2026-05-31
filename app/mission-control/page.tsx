@@ -476,7 +476,7 @@ export default function MissionControlPage() {
                       title={pos.symbol}
                       subtitle={t('missionControl.card.entryTokens')
                         .replace('{entry}', formatUsd(pos.entry_price, locale, t))
-                        .replace('{tokens}', String(pos.tokens?.toLocaleString() || 0))}
+                        .replace('{tokens}', formatLocaleNumber(pos.tokens || 0, locale))}
                       meta={timeAgo(pos.entry_time, t)}
                       score={t('missionControl.card.score').replace('{score}', formatLocaleNumber(pos.score, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }))}
                       pnl={formatPct(pos.pnl_pct, locale, t)}

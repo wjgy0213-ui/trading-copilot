@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { getRiskColor, getRiskBgColor, getRiskLabel, getRiskStrokeColor, type ITCIndicator } from '@/lib/mockData';
 import { useITCData } from '@/lib/useITCData';
 import { useI18n } from '@/lib/i18n';
-import { formatLocaleCurrency, formatLocaleNumber, formatSignedLocalePercent, getIntlLocale, i18nText } from '@/lib/i18n-helpers';
+import { formatLocaleCurrency, formatLocaleDate, formatLocaleNumber, formatSignedLocalePercent, i18nText } from '@/lib/i18n-helpers';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Area, AreaChart, ReferenceLine } from 'recharts';
 import { Activity, TrendingUp, TrendingDown, X, Maximize2, BarChart3, Globe, Link2, Wifi, WifiOff, ArrowRight, CircleDot, Gamepad2, Sparkles } from 'lucide-react';
 
@@ -23,7 +23,6 @@ function DetailModal({ indicator, onClose, t, locale }: { indicator: ITCIndicato
   
   const displayName = locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name;
   const displayDesc: string = indicator.description || '';
-  const intlLocale = getIntlLocale(locale as 'en' | 'zh');
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
@@ -77,10 +76,10 @@ function DetailModal({ indicator, onClose, t, locale }: { indicator: ITCIndicato
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
-              <XAxis dataKey="timestamp" tickFormatter={v => new Date(v).toLocaleDateString(intlLocale, { month: 'short', day: 'numeric' })} tick={{ fill: '#6b7280', fontSize: 10 }} stroke="#374151" />
+              <XAxis dataKey="timestamp" tickFormatter={v => formatLocaleDate(v, locale as 'en' | 'zh', { month: 'short', day: 'numeric' })} tick={{ fill: '#6b7280', fontSize: 10 }} stroke="#374151" />
               <YAxis domain={[0, 1]} tickFormatter={v => formatLocaleNumber(Math.round(v * 100), locale as 'en' | 'zh')} tick={{ fill: '#6b7280', fontSize: 10 }} stroke="#374151" />
               <Tooltip contentStyle={{ background: '#111827', border: '1px solid #374151', borderRadius: 8, fontSize: 12 }}
-                labelFormatter={v => new Date(v).toLocaleDateString(intlLocale)}
+                labelFormatter={v => formatLocaleDate(v, locale as 'en' | 'zh')}
                 formatter={(v: number | undefined) => [`${formatLocaleNumber(Math.round((v || 0) * 100), locale as 'en' | 'zh')}%`, displayName]} />
               <ReferenceLine y={0.3} stroke="#34d399" strokeDasharray="5 5" strokeOpacity={0.4} />
               <ReferenceLine y={0.7} stroke="#f87171" strokeDasharray="5 5" strokeOpacity={0.4} />

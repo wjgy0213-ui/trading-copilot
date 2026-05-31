@@ -1,7 +1,7 @@
 'use client';
 
 import { useI18n } from '@/lib/i18n';
-import { formatLocaleCurrency, formatLocaleNumber, formatSignedLocaleCurrency, formatSignedLocalePercent, getIntlLocale } from '@/lib/i18n-helpers';
+import { formatLocaleCurrency, formatLocaleDate, formatLocaleNumber, formatSignedLocaleCurrency, formatSignedLocalePercent } from '@/lib/i18n-helpers';
 
 import { useState, useCallback, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -16,7 +16,7 @@ import { ChevronDown, ChevronRight, Play, Trash2, BarChart3, Layers, Search, Sha
 const formatMonthLabel = (value: string, locale: 'en' | 'zh') => {
   const parsed = new Date(`${value}-01T00:00:00Z`);
   if (Number.isNaN(parsed.getTime())) return value;
-  return parsed.toLocaleDateString(getIntlLocale(locale), { month: 'short' });
+  return formatLocaleDate(parsed, locale, { month: 'short' });
 };
 
 function EquityCurve({ data, color = '#10b981', height = 200, compareData }: {
@@ -102,7 +102,7 @@ function TradeTable({ trades }: { trades: BacktestResult['trades'] }) {
             </tr></thead>
             <tbody>{trades.map((t, i) => (
               <tr key={i} className="border-b border-gray-800/50 hover:bg-gray-800/30">
-                <td className="py-1.5 px-2 text-gray-400">{new Date(t.entryTime).toLocaleDateString(getIntlLocale(locale))}</td>
+                <td className="py-1.5 px-2 text-gray-400">{formatLocaleDate(t.entryTime, locale)}</td>
                 <td className="py-1.5 px-2"><span className={t.direction === 'long' ? 'text-green-400' : 'text-red-400'}>{t.direction === 'long' ? tr('strategy.long') : tr('strategy.short')}</span></td>
                 <td className="py-1.5 px-2 text-right font-mono text-gray-300">{formatLocaleCurrency(t.entryPrice, locale, 'USD')}</td>
                 <td className="py-1.5 px-2 text-right font-mono text-gray-300">{formatLocaleCurrency(t.exitPrice, locale, 'USD')}</td>
@@ -331,7 +331,7 @@ function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
               <div className="text-xs font-semibold text-emerald-400">{tr('strategy.shareBrand')}</div>
               <div className="text-[9px] text-gray-600">{tr('strategy.shareDomain')}</div>
             </div>
-            <div className="text-[9px] text-gray-600">{new Date().toLocaleDateString(locale === 'zh' ? 'zh-CN' : 'en-US')}</div>
+            <div className="text-[9px] text-gray-600">{formatLocaleDate(new Date(), locale)}</div>
           </div>
         </div>
 
