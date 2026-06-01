@@ -5,7 +5,7 @@ import { getAccount } from '@/lib/storage';
 import { closePosition, calculatePnL } from '@/lib/tradingEngine';
 import { Trade } from '@/lib/types';
 import { useI18n } from '@/lib/i18n';
-import { formatLocaleCurrency, formatSignedLocaleCurrency, formatSignedLocalePercent } from '@/lib/i18n-helpers';
+import { formatLocaleCurrency, formatLocaleNumber, formatSignedLocaleCurrency, formatSignedLocalePercent } from '@/lib/i18n-helpers';
 
 interface PositionsPanelProps {
   currentPrice: number;
@@ -16,6 +16,7 @@ export default function PositionsPanel({ currentPrice, onPositionClosed }: Posit
   const { t, locale } = useI18n();
   const positions: Trade[] = getAccount().positions;
 
+  const formatCount = (value: number) => formatLocaleNumber(value, locale);
   const formatMoney = (value: number) => formatLocaleCurrency(value, locale, 'USD', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -44,7 +45,7 @@ export default function PositionsPanel({ currentPrice, onPositionClosed }: Posit
 
   return (
     <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-      <h2 className="text-xl font-bold mb-4">{t('positions.title')} ({positions.length})</h2>
+      <h2 className="text-xl font-bold mb-4">{t('positions.titleWithCount').replace('{count}', formatCount(positions.length))}</h2>
       
       <div className="space-y-4">
         {positions.map((position) => {
@@ -81,7 +82,8 @@ export default function PositionsPanel({ currentPrice, onPositionClosed }: Posit
                 <button
                   onClick={() => handleClose(position.id)}
                   className="text-gray-400 hover:text-white transition"
-                  title={t('positions.close')}
+                  title={t('positions.closeSymbol').replace('{symbol}', position.symbol)}
+                  aria-label={t('positions.closeSymbol').replace('{symbol}', position.symbol)}
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -149,7 +151,7 @@ export default function PositionsPanel({ currentPrice, onPositionClosed }: Posit
                       : 'bg-red-600 hover:bg-red-700 text-white'
                   }`}
                 >
-                  {t('positions.close')}
+                  {t('positions.closeSymbol').replace('{symbol}', position.symbol)}
                 </button>
               </div>
             </div>

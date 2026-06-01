@@ -1,7 +1,7 @@
 'use client';
 
 import { useI18n } from '@/lib/i18n';
-import { formatLocaleCurrency } from '@/lib/i18n-helpers';
+import { formatLocaleCurrency, formatLocaleNumber } from '@/lib/i18n-helpers';
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -169,7 +169,7 @@ function ModeSelector({ onSelect }: { onSelect: (mode: SniperMode) => void }) {
 
 /* Official lab stats - fetches our real data */
 function OfficialLabStats() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [stats, setStats] = useState<{ pnl: string; trades: number; winRate: string; running: string } | null>(null);
 
   useEffect(() => {
@@ -180,15 +180,15 @@ function OfficialLabStats() {
           const startTime = d.state?.start_time ? new Date(d.state.start_time) : new Date();
           const days = Math.max(1, Math.ceil((Date.now() - startTime.getTime()) / 86400000));
           setStats({
-            pnl: `${d.portfolio.total_pnl_pct >= 0 ? '+' : ''}${d.portfolio.total_pnl_pct.toFixed(1)}%`,
+            pnl: `${d.portfolio.total_pnl_pct >= 0 ? '+' : ''}${formatLocaleNumber(d.portfolio.total_pnl_pct, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`,
             trades: d.state?.total_trades || 0,
-            winRate: `${d.portfolio.win_rate.toFixed(0)}%`,
-            running: `${days}`,
+            winRate: `${formatLocaleNumber(d.portfolio.win_rate, locale, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}%`,
+            running: formatLocaleNumber(days, locale),
           });
         }
       })
       .catch(() => {});
-  }, []);
+  }, [locale]);
 
   if (!stats) return <div className="text-gray-500 text-sm">{t('sniper.loading')}</div>;
 
@@ -199,7 +199,7 @@ function OfficialLabStats() {
         <div className="text-gray-500 text-xs">{t('sniper.cumReturn')}</div>
       </div>
       <div>
-        <div className="font-bold text-white">{stats.trades}</div>
+        <div className="font-bold text-white">{formatLocaleNumber(stats.trades, locale)}</div>
         <div className="text-gray-500 text-xs">{t('sniper.totalTrades')}</div>
       </div>
       <div>
@@ -207,7 +207,7 @@ function OfficialLabStats() {
         <div className="text-gray-500 text-xs">{t('sniper.winRate')}</div>
       </div>
       <div>
-        <div className="font-bold text-purple-400">{stats.running}</div>
+        <div className="font-bold text-purple-400">{t('sniper.runDaysValue').replace('{value}', stats.running)}</div>
         <div className="text-gray-500 text-xs">{t('sniper.runDays')}</div>
       </div>
     </div>

@@ -1980,8 +1980,7 @@
   "elite.fetchRiskError": "获取风险数据失败",
   "elite.leverageValue": "{value}x",
   "course.ratingOutOf": "{rating}/{max}",
-  "learn.questionsCountLabel": "（{count}{unit}）"
-,
+  "learn.questionsCountLabel": "（{count}{unit}）",
   "signals.refreshAria": "刷新信号",
   "strategy.template.ema_cross.name": "EMA交叉",
   "strategy.template.ema_cross.desc": "快线上穿慢线做多，下穿做空。经典趋势跟踪策略。",
@@ -2048,5 +2047,14 @@
   "api.subscription.stripeMissing": "Stripe 未配置",
   "api.subscription.cancelScheduled": "订阅已设置为在当前周期结束后取消",
   "api.subscription.fetchFailed": "获取订阅信息失败",
-  "api.subscription.cancelFailed": "取消订阅失败"
+  "api.subscription.cancelFailed": "取消订阅失败",
+  "news.countLabel": "{count} 条资讯 · 实时更新",
+  "news.categoryFilterLabel": "按 {label} 筛选资讯",
+  "news.sentimentFilterLabel": "按 {label} 情绪筛选",
+  "positions.titleWithCount": "当前持仓 ({count})",
+  "positions.closeSymbol": "平仓 {symbol}",
+  "chart.symbolLabel": "图表 · {symbol}",
+  "chart.fullscreen_symbol": "全屏查看 {symbol} 图表",
+  "chart.exit_fullscreen_symbol": "退出 {symbol} 图表全屏",
+  "sniper.runDaysValue": "{value} 天"
 }

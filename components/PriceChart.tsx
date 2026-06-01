@@ -88,9 +88,11 @@ export default function PriceChart({ symbol = 'BINANCE:BTCUSDT' }: PriceChartPro
       {/* Top bar in fullscreen */}
       {isFullscreen && (
         <div className="flex items-center justify-between px-4 py-2 bg-gray-900/90 border-b border-gray-800 shrink-0">
-          <span className="text-sm text-gray-400 font-mono">{symbol}</span>
+          <span className="text-sm text-gray-400 font-mono">{t('chart.symbolLabel').replace('{symbol}', symbol)}</span>
           <button
             onClick={() => setIsFullscreen(false)}
+            aria-label={t('chart.exit_fullscreen_symbol').replace('{symbol}', symbol)}
+            title={t('chart.exit_fullscreen_symbol').replace('{symbol}', symbol)}
             className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 hover:bg-red-600/80 rounded-lg text-sm text-gray-300 hover:text-white transition-all"
           >
             <Minimize2 className="w-4 h-4" />
@@ -104,7 +106,8 @@ export default function PriceChart({ symbol = 'BINANCE:BTCUSDT' }: PriceChartPro
         <button
           onClick={() => setIsFullscreen(true)}
           className="absolute top-3 right-3 z-10 p-2 bg-gray-800/80 hover:bg-gray-700 rounded-lg transition-all border border-gray-700/50 backdrop-blur-sm group"
-          title={t('chart.fullscreen')}
+          title={t('chart.fullscreen_symbol').replace('{symbol}', symbol)}
+          aria-label={t('chart.fullscreen_symbol').replace('{symbol}', symbol)}
         >
           <Maximize2 className="w-5 h-5 text-gray-400 group-hover:text-white" />
         </button>

@@ -1980,8 +1980,7 @@
   "elite.fetchRiskError": "Failed to fetch risk data",
   "elite.leverageValue": "{value}x",
   "course.ratingOutOf": "{rating}/{max}",
-  "learn.questionsCountLabel": " ({count}{unit})"
-,
+  "learn.questionsCountLabel": " ({count}{unit})",
   "signals.refreshAria": "Refresh signals",
   "strategy.template.ema_cross.name": "EMA Crossover",
   "strategy.template.ema_cross.desc": "Go long on fast-line cross above slow-line, short on cross below. Classic trend-following.",
@@ -2048,5 +2047,14 @@
   "api.subscription.stripeMissing": "Stripe is not configured",
   "api.subscription.cancelScheduled": "Subscription will be canceled at the end of the current period",
   "api.subscription.fetchFailed": "Failed to fetch subscription",
-  "api.subscription.cancelFailed": "Failed to cancel subscription"
+  "api.subscription.cancelFailed": "Failed to cancel subscription",
+  "news.countLabel": "{count} articles · live updates",
+  "news.categoryFilterLabel": "Filter news by {label}",
+  "news.sentimentFilterLabel": "Filter sentiment by {label}",
+  "positions.titleWithCount": "Current Positions ({count})",
+  "positions.closeSymbol": "Close {symbol}",
+  "chart.symbolLabel": "Chart · {symbol}",
+  "chart.fullscreen_symbol": "Open {symbol} chart in fullscreen",
+  "chart.exit_fullscreen_symbol": "Exit fullscreen for {symbol} chart",
+  "sniper.runDaysValue": "{value}d"
 }
