@@ -52,7 +52,7 @@ export default function RiskManager() {
       try {
         setSettings(JSON.parse(saved));
       } catch (e) {
-        console.error('Failed to parse risk settings', e);
+        console.error(t('common.parseErrorRiskSettings'), e);
       }
     }
 
@@ -61,7 +61,7 @@ export default function RiskManager() {
       try {
         setEvents(JSON.parse(savedEvents));
       } catch (e) {
-        console.error('Failed to parse risk events', e);
+        console.error(t('common.parseErrorRiskEvents'), e);
       }
     }
 

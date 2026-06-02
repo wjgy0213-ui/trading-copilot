@@ -221,7 +221,7 @@ export default function TradePage() {
             <AICoach />
             <AccountPanel account={account} currentPrice={price.price} />
             
-            {/* Elite 专属功能 */}
+            {/* Elite-only tools */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-2">
                 <div className="h-px flex-1 bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />

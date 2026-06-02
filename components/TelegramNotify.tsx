@@ -42,7 +42,7 @@ export default function TelegramNotify() {
       try {
         setConfig(JSON.parse(saved));
       } catch (e) {
-        console.error('Failed to parse telegram config', e);
+        console.error(t('common.parseErrorTelegramConfig'), e);
       }
     }
   }, []);

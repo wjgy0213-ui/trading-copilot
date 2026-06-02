@@ -43,7 +43,7 @@ export default function ExchangeConnect() {
       try {
         setConfigs(JSON.parse(saved));
       } catch (e) {
-        console.error('Failed to parse exchange configs', e);
+        console.error(t('common.parseErrorExchangeConfigs'), e);
       }
     }
   }, []);
