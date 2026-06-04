@@ -63,9 +63,10 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const { t, locale } = await getServerT();
+  const htmlLang = locale === 'zh' ? 'zh-CN' : 'en-US';
 
   return (
-    <html lang={locale}>
+    <html lang={htmlLang}>
       <head>
         <JsonLd />
         <link rel="alternate" type="application/rss+xml" title={t('layout.rssTitle')} href="/feed" />

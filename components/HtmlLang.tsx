@@ -11,7 +11,7 @@ export default function HtmlLang() {
   const { locale } = useI18n();
 
   useEffect(() => {
-    document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
+    document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en-US';
   }, [locale]);
 
   return null;
