@@ -6,11 +6,13 @@ const ITC_API_KEY = process.env.ITC_API_KEY || '';
 // Dimensions: Fear & Greed, ITC Risk, Funding Rate, Price Momentum, Volatility
 
 interface HealthDimension {
+  key: 'fearGreed' | 'itcRisk' | 'priceMomentum' | 'fundingRate' | 'volatility';
   name: string;
   nameZh: string;
   score: number;       // 0-100 (higher = more favorable for longs)
   signal: 'bullish' | 'bearish' | 'neutral';
   detail: string;
+  detailEn: string;
   weight: number;
 }
 
@@ -49,11 +51,13 @@ export async function GET() {
       else score = 10;                 // extreme greed = danger
       
       dimensions.push({
+        key: 'fearGreed',
         name: 'Fear & Greed',
         nameZh: '恐惧贪婪指数',
         score,
         signal: score >= 65 ? 'bullish' : score <= 35 ? 'bearish' : 'neutral',
         detail: `F&G = ${val} (${fg.data?.[0]?.value_classification}) ${trend} | 逆向指标：极端恐惧 = 机会`,
+        detailEn: `F&G = ${val} (${fg.data?.[0]?.value_classification}) ${trend} | Contrarian signal: extreme fear = opportunity`,
         weight: 0.25,
       });
     }
@@ -66,11 +70,13 @@ export async function GET() {
       if (risk !== null) {
         const score = Math.round((1 - risk) * 100); // invert: low risk = high score
         dimensions.push({
+          key: 'itcRisk',
           name: 'ITC Risk',
           nameZh: 'ITC 风险值',
           score,
           signal: risk < 0.35 ? 'bullish' : risk > 0.65 ? 'bearish' : 'neutral',
           detail: `Risk = ${risk.toFixed(3)} | <0.3 低风险区, >0.7 高风险区`,
+          detailEn: `Risk = ${risk.toFixed(3)} | <0.3 low-risk zone, >0.7 high-risk zone`,
           weight: 0.25,
         });
       }
@@ -89,11 +95,13 @@ export async function GET() {
       const score = Math.min(95, Math.max(5, Math.round(50 + btcChange * 4)));
       
       dimensions.push({
+        key: 'priceMomentum',
         name: 'Price Momentum',
         nameZh: '价格动量',
         score,
         signal: btcChange > 2 ? 'bullish' : btcChange < -2 ? 'bearish' : 'neutral',
         detail: `BTC $${btcPrice.toLocaleString()} (${btcChange >= 0 ? '+' : ''}${btcChange.toFixed(2)}%) | ETH $${ethPrice.toLocaleString()} (${ethChange >= 0 ? '+' : ''}${ethChange.toFixed(2)}%)`,
+        detailEn: `BTC $${btcPrice.toLocaleString()} (${btcChange >= 0 ? '+' : ''}${btcChange.toFixed(2)}%) | ETH $${ethPrice.toLocaleString()} (${ethChange >= 0 ? '+' : ''}${ethChange.toFixed(2)}%)`,
         weight: 0.20,
       });
     }
@@ -115,11 +123,13 @@ export async function GET() {
       else score = 15;                       // extreme long crowding
       
       dimensions.push({
+        key: 'fundingRate',
         name: 'Funding Rate',
         nameZh: '资金费率',
         score,
         signal: ratePct < -0.01 ? 'bullish' : ratePct > 0.05 ? 'bearish' : 'neutral',
         detail: `BTC 费率 ${ratePct >= 0 ? '+' : ''}${ratePct.toFixed(4)}% | 负费率=空头付费=潜在轧空`,
+        detailEn: `BTC funding ${ratePct >= 0 ? '+' : ''}${ratePct.toFixed(4)}% | Negative funding = shorts pay = squeeze potential`,
         weight: 0.15,
       });
     }
@@ -143,11 +153,13 @@ export async function GET() {
         else score = 20;                        // extreme
         
         dimensions.push({
+          key: 'volatility',
           name: 'Volatility',
           nameZh: '波动率',
           score,
           signal: volRatio < 2 ? 'bullish' : volRatio > 4 ? 'bearish' : 'neutral',
           detail: `24h 成交量/市值 = ${volRatio.toFixed(2)}% | 低波动=稳定，高波动=风险`,
+          detailEn: `24h volume / market cap = ${volRatio.toFixed(2)}% | Lower volatility = calmer, higher volatility = risk`,
           weight: 0.15,
         });
       }
@@ -168,6 +180,12 @@ export async function GET() {
       overallScore >= 60 ? 'green' : overallScore >= 40 ? 'yellow' : 'red';
 
     // Action suggestion
+    const suggestionKey = light === 'green'
+      ? 'health.suggestion.green'
+      : light === 'yellow'
+      ? 'health.suggestion.yellow'
+      : 'health.suggestion.red';
+
     const suggestion = light === 'green' 
       ? '市场条件有利，可以寻找入场机会。注意仓位管理。'
       : light === 'yellow'
@@ -178,6 +196,7 @@ export async function GET() {
       score: overallScore,
       signal: overallSignal,
       light,
+      suggestionKey,
       suggestion,
       dimensions,
       timestamp: Date.now(),

@@ -18,8 +18,8 @@ export default function RankBadge({ totalTrades, winRate, showProgress = false }
   const formatCount = (value: number) => new Intl.NumberFormat(numberLocale).format(value);
   const formatPercent = (value: number) => new Intl.NumberFormat(numberLocale, { maximumFractionDigits: 0 }).format(value * 100);
   
-  const rankName = locale === 'en' ? (rank.nameEn || rank.name) : rank.name;
-  const nextName = next && (locale === 'en' ? (next.nameEn || next.name) : next.name);
+  const rankName = t(`rank.name.${rank.nameEn.toLowerCase()}`, rank.nameEn || rank.name);
+  const nextName = next ? t(`rank.name.${next.nameEn.toLowerCase()}`, next.nameEn || next.name) : null;
 
   return (
     <div className={`rounded-xl p-5 border ${rank.bgColor}`}>

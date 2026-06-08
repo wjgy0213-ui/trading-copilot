@@ -5,11 +5,13 @@ import { useI18n } from '@/lib/i18n';
 import { formatLocaleNumber, formatLocalePercent, getIntlLocale } from '@/lib/i18n-helpers';
 
 interface Dimension {
+  key?: 'fearGreed' | 'itcRisk' | 'priceMomentum' | 'fundingRate' | 'volatility';
   name: string;
   nameZh: string;
   score: number;
   signal: 'bullish' | 'bearish' | 'neutral';
   detail: string;
+  detailEn?: string;
   weight: number;
 }
 
@@ -17,6 +19,7 @@ interface HealthData {
   score: number;
   signal: 'bullish' | 'bearish' | 'neutral';
   light: 'green' | 'yellow' | 'red';
+  suggestionKey?: string;
   suggestion: string;
   dimensions: Dimension[];
   timestamp: number;
@@ -71,8 +74,13 @@ function TrafficLight({ light }: { light: string }) {
 function DimensionBar({ dim, locale, t }: { dim: Dimension; locale: 'en' | 'zh'; t: (key: string, fallback?: string) => string }) {
   const color = dim.signal === 'bullish' ? 'bg-green-500' : dim.signal === 'bearish' ? 'bg-red-500' : 'bg-yellow-500';
   const textColor = dim.signal === 'bullish' ? 'text-green-400' : dim.signal === 'bearish' ? 'text-red-400' : 'text-yellow-400';
-  const displayName = locale === 'zh' ? dim.nameZh : dim.name;
+  const displayName = dim.key
+    ? t(`health.dimension.${dim.key}.name`, locale === 'zh' ? dim.nameZh : dim.name)
+    : locale === 'zh' ? dim.nameZh : dim.name;
   const secondaryName = locale === 'zh' ? dim.name : dim.nameZh;
+  const detailText = dim.key
+    ? t(`health.dimension.${dim.key}.detail`, locale === 'zh' ? dim.detail : (dim.detailEn || dim.detail))
+    : locale === 'zh' ? dim.detail : (dim.detailEn || dim.detail);
   const weightText = t('health.weightPct').replace('{percent}', formatLocalePercent(dim.weight, locale, { maximumFractionDigits: 0 }).replace('%', ''));
   
   return (
@@ -90,7 +98,7 @@ function DimensionBar({ dim, locale, t }: { dim: Dimension; locale: 'en' | 'zh';
       <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden mb-2">
         <div className={`h-full ${color} rounded-full transition-all duration-1000`} style={{ width: `${dim.score}%` }} />
       </div>
-      <p className="text-xs text-gray-400">{dim.detail}</p>
+      <p className="text-xs text-gray-400">{detailText}</p>
     </div>
   );
 }
@@ -162,7 +170,7 @@ export default function HealthCheckPage() {
             <div className="bg-gray-800/40 rounded-2xl p-6 border border-gray-700/50 mb-6">
               <ScoreGauge score={data.score} light={data.light} scoreSuffix={t('health.scoreOutOf')} />
               <TrafficLight light={data.light} />
-              <p className="text-center text-gray-300 text-sm px-4">{data.suggestion}</p>
+              <p className="text-center text-gray-300 text-sm px-4">{data.suggestionKey ? t(data.suggestionKey, data.suggestion) : data.suggestion}</p>
             </div>
 
             {/* Interpretation */}

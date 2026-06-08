@@ -21,8 +21,8 @@ function DetailModal({ indicator, onClose, t, locale }: { indicator: ITCIndicato
   const min = Math.min(...data.map(d => d.value));
   const max = Math.max(...data.map(d => d.value));
   
-  const displayName = locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name;
-  const displayDesc: string = indicator.description || '';
+  const displayName = t(`dashboard.indicator.${indicator.id}.name`, locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name);
+  const displayDesc = t(`dashboard.indicator.${indicator.id}.desc`, indicator.description || '');
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
@@ -281,7 +281,7 @@ export default function DashboardPage() {
             <div key={indicator.id} onClick={() => setSelected(indicator)}
               className="border border-gray-800/50 rounded-lg p-3.5 bg-gray-900/30 hover:bg-gray-900/60 hover:border-gray-700 transition-all cursor-pointer group">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-gray-400">{locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name}</span>
+                <span className="text-xs font-medium text-gray-400">{t(`dashboard.indicator.${indicator.id}.name`, locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name)}</span>
                 <Maximize2 className="w-3 h-3 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
 
@@ -306,7 +306,7 @@ export default function DashboardPage() {
                 <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${getRiskBgColor(indicator.value)}`}>
                   {i18nText(locale as 'en' | 'zh', getRiskLabel(indicator.value))}
                 </span>
-                <span className="text-[9px] text-gray-600">{locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name}</span>
+                <span className="text-[9px] text-gray-600">{t(`dashboard.indicator.${indicator.id}.name`, locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name)}</span>
               </div>
             </div>
           );

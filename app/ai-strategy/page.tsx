@@ -59,13 +59,14 @@ export default function AIStrategyPage() {
   const getLocalizedStrategyName = (result: AIResult) => {
     const template = STRATEGY_TEMPLATES.find(item => item.id === result.strategy.strategyId);
     if (!template) return result.strategy.name;
-    return locale === 'zh' ? template.name : template.nameEn;
+    return t(`strategy.template.${template.id}.name`, locale === 'zh' ? template.name : template.nameEn);
   };
 
   const getLocalizedParamLabel = (strategyId: string, key: string) => {
     const template = STRATEGY_TEMPLATES.find(item => item.id === strategyId);
     const param = template?.params.find(item => item.key === key);
-    return locale === 'zh' ? (param?.label || key) : (param?.labelEn || param?.label || key);
+    const fallback = locale === 'zh' ? (param?.label || key) : (param?.labelEn || param?.label || key);
+    return t(`strategy.template.${strategyId}.param.${key}`, fallback);
   };
 
   return (
