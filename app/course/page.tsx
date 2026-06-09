@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useI18n } from '@/lib/i18n';
 import { formatLocaleCurrency, formatLocaleNumber } from '@/lib/i18n-helpers';
 
@@ -102,9 +103,9 @@ export default function CoursePage() {
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">{t('course.owned')}</h1>
           <p className="text-gray-500 mb-6">{t('course.ownedDesc')}</p>
-          <a href="/learn" className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-500">
+          <Link href="/learn" className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-xl font-medium transition hover:bg-emerald-500 hover:translate-y-[-1px]">
             {t('course.continueLearning')} <ArrowRight className="w-4 h-4" />
-          </a>
+          </Link>
         </div>
       </div>
     );
@@ -125,7 +126,7 @@ export default function CoursePage() {
         </p>
 
         {/* Stats */}
-        <div className="flex justify-center gap-8 mb-12">
+        <div className="flex flex-wrap justify-center gap-8 mb-12">
           {stats.map(s => (
             <div key={s.label} className="text-center">
               <s.icon className="w-5 h-5 text-gray-500 mx-auto mb-1" />

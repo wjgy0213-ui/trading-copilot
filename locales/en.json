@@ -1195,6 +1195,8 @@
   "missionControl.time.justNow": "just now",
   "missionControl.time.minutesAgo": "{mins}m ago",
   "missionControl.time.uptime": "{hrs}h {mins}m",
+  "missionControl.invalidPassword": "Invalid admin password",
+  "missionControl.mobileNav": "Quick tabs",
   "missionControl.title": "Mission Control",
   "missionControl.trades": "trades",
   "missionControl.unknownSource": "unknown source",

@@ -5,7 +5,7 @@ import { ArrowRight, TrendingUp, Brain, BarChart3, ChevronDown, Sparkles, Shield
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n';
-import { formatLocaleNumber } from '@/lib/i18n-helpers';
+import { formatLocaleCurrency, formatLocaleNumber } from '@/lib/i18n-helpers';
 import { analytics } from '@/lib/analytics';
 import { useSession as useClientSession } from '@/lib/useSession';
 import WelcomeModal from '@/components/WelcomeModal';
@@ -59,9 +59,9 @@ export default function LandingPage() {
   ];
 
   const plans = [
-    { nameKey: 'pricing.free', price: '$0', features: ['pricing.free.f1', 'pricing.free.f2', 'pricing.free.f3', 'pricing.free.f4'], ctaKey: 'pricing.cta.free', href: '/trade', color: 'gray' },
-    { nameKey: 'pricing.pro', price: '$19.99', originalPrice: '$39.99', features: ['pricing.pro.f1', 'pricing.pro.f2', 'pricing.pro.f3', 'pricing.pro.f4', 'pricing.pro.f5'], ctaKey: 'pricing.cta.pro', href: '/pricing', color: 'emerald', popular: true, badgeKey: 'pricing.save50' },
-    { nameKey: 'pricing.elite', price: '$39.99', originalPrice: '$79.99', features: ['pricing.elite.f1', 'pricing.elite.f2', 'pricing.elite.f3', 'pricing.elite.f4', 'pricing.elite.f5'], ctaKey: 'pricing.cta.elite', href: '/pricing', color: 'violet', badgeKey: 'pricing.save50' },
+    { nameKey: 'pricing.free', price: 0, features: ['pricing.free.f1', 'pricing.free.f2', 'pricing.free.f3', 'pricing.free.f4'], ctaKey: 'pricing.cta.free', href: '/trade', color: 'gray' },
+    { nameKey: 'pricing.pro', price: 19.99, originalPrice: 39.99, features: ['pricing.pro.f1', 'pricing.pro.f2', 'pricing.pro.f3', 'pricing.pro.f4', 'pricing.pro.f5'], ctaKey: 'pricing.cta.pro', href: '/pricing', color: 'emerald', popular: true, badgeKey: 'pricing.save50' },
+    { nameKey: 'pricing.elite', price: 39.99, originalPrice: 79.99, features: ['pricing.elite.f1', 'pricing.elite.f2', 'pricing.elite.f3', 'pricing.elite.f4', 'pricing.elite.f5'], ctaKey: 'pricing.cta.elite', href: '/pricing', color: 'violet', badgeKey: 'pricing.save50' },
   ];
 
   return (
@@ -336,8 +336,8 @@ export default function LandingPage() {
               {'badgeKey' in p && p.badgeKey ? <div className="absolute top-4 right-4 rounded-full border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-[10px] font-bold text-amber-300">{t(p.badgeKey)}</div> : null}
               <h3 className="text-lg font-bold mb-1">{t(p.nameKey)}</h3>
               <div className="mb-4">
-                {'originalPrice' in p && p.originalPrice ? <div className="text-sm text-gray-500 line-through">{p.originalPrice}{t('pricing.perMonth')}</div> : null}
-                <span className="text-3xl font-bold">{p.price}</span>{p.price !== '$0' && <span className="text-gray-500 text-sm">{t('pricing.perMonth')}</span>}
+                {'originalPrice' in p && p.originalPrice ? <div className="text-sm text-gray-500 line-through">{formatLocaleCurrency(p.originalPrice, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{t('pricing.perMonth')}</div> : null}
+                <span className="text-3xl font-bold">{formatLocaleCurrency(p.price, locale, 'USD', { minimumFractionDigits: p.price === 0 ? 0 : 2, maximumFractionDigits: p.price === 0 ? 0 : 2 })}</span>{p.price !== 0 && <span className="text-gray-500 text-sm">{t('pricing.perMonth')}</span>}
               </div>
               <ul className="space-y-2 mb-6">
                 {p.features.map(fk => <li key={fk} className="flex items-center gap-2 text-sm text-gray-400"><span className={`text-${p.color}-400`}>✓</span>{t(fk)}</li>)}

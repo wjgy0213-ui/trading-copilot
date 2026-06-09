@@ -1195,6 +1195,8 @@
   "missionControl.time.justNow": "刚刚",
   "missionControl.time.minutesAgo": "{mins}分钟前",
   "missionControl.time.uptime": "{hrs}小时 {mins}分钟",
+  "missionControl.invalidPassword": "管理员密码错误",
+  "missionControl.mobileNav": "快捷标签",
   "missionControl.title": "任务控制中心",
   "missionControl.trades": "笔交易",
   "missionControl.unknownSource": "未知来源",

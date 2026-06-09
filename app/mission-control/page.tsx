@@ -79,13 +79,6 @@ interface SniperData {
 
 const ADMIN_PASS = '0sw-wx3NdFPNvEqIeEdi4rGnD-FGnyk8';
 
-type SidebarTab = {
-  id: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  hint: string;
-};
-
 const SIDEBAR_TAB_IDS = ['tasks', 'agents', 'content', 'approvals', 'projects', 'memory', 'system', 'radar', 'factory', 'pipeline'] as const;
 const SIDEBAR_TAB_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   tasks: LayoutGrid, agents: Bot, content: Sparkles, approvals: ClipboardCheck,
@@ -254,6 +247,7 @@ export default function MissionControlPage() {
   const [loading, setLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('factory');
 
@@ -285,7 +279,7 @@ export default function MissionControlPage() {
     () => (state ? Object.entries(state.positions).sort(([, a], [, b]) => b.score - a.score) : []),
     [state]
   );
-  const trades = sniperData?.trades || [];
+  const trades = useMemo(() => sniperData?.trades || [], [sniperData?.trades]);
   const { buys, sells } = useMemo(() => groupTrades(trades), [trades]);
 
   const topPositions = positions.slice(0, 4);
@@ -298,6 +292,15 @@ export default function MissionControlPage() {
     : 0;
 
   if (!authenticated) {
+    const submitPassword = () => {
+      if (password === ADMIN_PASS) {
+        setPasswordError('');
+        setAuthenticated(true);
+        return;
+      }
+      setPasswordError(t('missionControl.invalidPassword'));
+    };
+
     return (
       <div className="min-h-screen bg-[#060816] text-white flex items-center justify-center px-4">
         <div className="w-full max-w-sm rounded-[28px] border border-white/10 bg-white/[0.03] p-8 shadow-2xl shadow-cyan-950/30 backdrop-blur-xl">
@@ -311,19 +314,21 @@ export default function MissionControlPage() {
           <input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (passwordError) setPasswordError('');
+            }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && password === ADMIN_PASS) setAuthenticated(true);
+              if (e.key === 'Enter') submitPassword();
             }}
             placeholder={t('missionControl.password')}
             className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none transition focus:border-cyan-400/40"
           />
-          <p className="mt-2 mb-4 text-xs text-gray-500">{t('missionControl.enterKeyHint')}</p>
+          <p className="mt-2 text-xs text-gray-500">{t('missionControl.enterKeyHint')}</p>
+          {passwordError ? <p className="mt-2 text-xs text-red-300">{passwordError}</p> : null}
           <button
-            onClick={() => {
-              if (password === ADMIN_PASS) setAuthenticated(true);
-            }}
-            className="w-full rounded-2xl bg-cyan-500 px-4 py-3 font-medium text-slate-950 transition hover:bg-cyan-400"
+            onClick={submitPassword}
+            className="mt-4 w-full rounded-2xl bg-cyan-500 px-4 py-3 font-medium text-slate-950 transition hover:bg-cyan-400"
           >
             {t('missionControl.enterControl')}
           </button>
@@ -409,6 +414,27 @@ export default function MissionControlPage() {
           </div>
 
           <div className="px-4 py-5 sm:px-6">
+            <div className="mb-5 lg:hidden">
+              <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-gray-500">{t('missionControl.mobileNav')}</div>
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {SIDEBAR_TAB_IDS.map((tabId) => {
+                  const active = tabId === activeTab;
+                  return (
+                    <button
+                      key={tabId}
+                      onClick={() => setActiveTab(tabId)}
+                      className={`shrink-0 rounded-full border px-3 py-1.5 text-xs transition ${
+                        active
+                          ? 'border-cyan-400/30 bg-cyan-400/10 text-cyan-200'
+                          : 'border-white/10 bg-white/[0.03] text-gray-400'
+                      }`}
+                    >
+                      {t(`missionControl.tab.${tabId}`)}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
             <div className="mb-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <div className="rounded-[26px] border border-emerald-400/15 bg-emerald-400/[0.04] p-4 shadow-[0_0_40px_rgba(16,185,129,0.06)]">
                 <div className="mb-3 flex items-center gap-2 text-xs text-emerald-200">
