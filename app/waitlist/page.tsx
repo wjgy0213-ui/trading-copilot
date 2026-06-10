@@ -1,11 +1,13 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { analytics } from '@/lib/analytics'
 import { useI18n } from '@/lib/i18n'
+import { formatLocaleNumber } from '@/lib/i18n-helpers'
 
 export default function WaitlistPage() {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const [email, setEmail] = useState('')
   const [wechat, setWechat] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
@@ -118,7 +120,7 @@ export default function WaitlistPage() {
             ))}
           </div>
           <span className="text-gray-400 text-sm">
-            {t('waitlist.social_proof').replace('{count}', String(count))}
+            {t('waitlist.social_proof').replace('{count}', formatLocaleNumber(count, locale))}
           </span>
         </div>
 
@@ -187,9 +189,9 @@ export default function WaitlistPage() {
         <div className="mt-8 text-center">
           <p className="text-gray-600 text-xs">
             {t('waitlist.has_account')}{' '}
-            <a href="/strategy" className="text-emerald-500 hover:text-emerald-400">
+            <Link href="/strategy" className="text-emerald-500 hover:text-emerald-400">
               {t('waitlist.try_free')}
-            </a>
+            </Link>
           </p>
         </div>
       </div>

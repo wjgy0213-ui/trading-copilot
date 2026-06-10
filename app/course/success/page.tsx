@@ -1,8 +1,9 @@
 'use client';
 
+import Link from 'next/link';
 import { useI18n } from '@/lib/i18n';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { CheckCircle, ArrowRight, BookOpen, Shield, Loader2 } from 'lucide-react';
@@ -11,15 +12,14 @@ function SuccessContent() {
   const { t } = useI18n();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
-  const [activated, setActivated] = useState(false);
+  const activatedRef = useRef(false);
 
   useEffect(() => {
-    if (sessionId && !activated) {
-      setActivated(true);
-      // Trigger session refresh
+    if (sessionId && !activatedRef.current) {
+      activatedRef.current = true;
       fetch('/api/auth/me').catch(() => {});
     }
-  }, [sessionId, activated]);
+  }, [sessionId]);
 
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center p-6">
@@ -50,9 +50,9 @@ function SuccessContent() {
           </div>
         </div>
 
-        <a href="/learn" className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:opacity-90 transition shadow-lg shadow-violet-900/30">
+        <Link href="/learn" className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:opacity-90 transition shadow-lg shadow-violet-900/30">
           {t('courseSuccess.startLesson')} <ArrowRight className="w-4 h-4" />
-        </a>
+        </Link>
         
         <p className="text-xs text-gray-600 mt-4">{t('courseSuccess.emailSent')}</p>
       </div>

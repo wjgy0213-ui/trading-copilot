@@ -13,7 +13,6 @@ export default function LoginPage() {
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [codeSent, setCodeSent] = useState(false);
 
   const handleSendCode = async () => {
     if (!email || !email.includes('@')) { setError(t('login.invalid_email')); return; }
@@ -25,7 +24,7 @@ export default function LoginPage() {
         body: JSON.stringify({ email }),
       });
       const data = await res.json();
-      if (data.ok) { setCodeSent(true); setMode('code'); }
+      if (data.ok) { setMode('code'); }
       else setError(data.error || t('login.send_failed'));
     } catch { setError(t('login.network_error')); }
     setLoading(false);
@@ -150,7 +149,7 @@ export default function LoginPage() {
         {/* Footer */}
         <div className="text-center mt-6 space-y-2">
           <p className="text-xs text-gray-600">
-            {t('login.terms')} <span className="text-gray-500 hover:text-gray-400 cursor-pointer">{t('login.tos')}</span> {t('login.and')} <span className="text-gray-500 hover:text-gray-400 cursor-pointer">{t('login.privacy')}</span>
+            {t('login.terms')} <Link href="/terms" className="text-gray-500 hover:text-gray-400">{t('login.tos')}</Link> {t('login.and')} <Link href="/privacy-apps" className="text-gray-500 hover:text-gray-400">{t('login.privacy')}</Link>
           </p>
           <Link href="/" className="text-xs text-gray-600 hover:text-gray-400 transition">
             {t('login.back_home')}

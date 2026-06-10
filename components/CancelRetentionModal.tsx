@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { X, Gift, ArrowRight, Loader2 } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
-import { formatLocaleCurrency } from '@/lib/i18n-helpers';
+import { formatLocaleCurrency, formatLocaleNumber } from '@/lib/i18n-helpers';
 
 interface CancelRetentionModalProps {
   isOpen: boolean;
@@ -20,7 +20,7 @@ export default function CancelRetentionModal({ isOpen, onClose, currentPlan, ema
 
   const yearlyPrice = currentPlan === 'pro' ? 239.88 : 479.88;
   const discountRate = 0.3;
-  const discountPct = String(Math.round(discountRate * 100));
+  const discountPct = formatLocaleNumber(Math.round(discountRate * 100), locale, { maximumFractionDigits: 0 });
   const discountedPrice = +(yearlyPrice * (1 - discountRate)).toFixed(2);
   const monthlyEquiv = +(discountedPrice / 12).toFixed(2);
 
@@ -46,7 +46,7 @@ export default function CancelRetentionModal({ isOpen, onClose, currentPlan, ema
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
       <div className="relative bg-gray-900 border border-gray-700 rounded-2xl p-8 max-w-md w-full shadow-2xl">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-300 transition">
+        <button onClick={onClose} aria-label={t('common.close')} className="absolute top-4 right-4 text-gray-500 hover:text-gray-300 transition">
           <X className="w-5 h-5" />
         </button>
 

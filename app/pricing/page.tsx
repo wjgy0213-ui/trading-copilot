@@ -12,7 +12,6 @@ import { formatLocaleCurrency } from '@/lib/i18n-helpers';
 type BillingInterval = 'monthly' | 'yearly';
 
 const PLAN_IDS = ['free', 'pro', 'elite'] as const;
-type PlanId = typeof PLAN_IDS[number];
 
 const PLAN_META = {
   free: { icon: Zap, color: 'gray', popular: false, disabled: true, monthlyPrice: 0, yearlyPrice: 0, yearlyMonthly: 0, launchPrice: 0 },
@@ -212,8 +211,15 @@ function PricingPage() {
             const borderColor = plan.popular ? 'border-emerald-500/50' : 'border-gray-800';
             const displayPrice = plan.id === 'free'
               ? 0
-              : plan.launchPrice;
-            
+              : billingInterval === 'yearly'
+                ? plan.yearlyMonthly
+                : plan.launchPrice;
+            const originalDisplayPrice = plan.id === 'free'
+              ? 0
+              : billingInterval === 'yearly'
+                ? plan.monthlyPrice
+                : plan.monthlyPrice;
+
             return (
               <div key={plan.id}
                 className={`relative bg-gray-900/50 border ${borderColor} rounded-2xl p-6 flex flex-col ${plan.popular ? 'ring-1 ring-emerald-500/20' : ''}`}>
@@ -235,8 +241,8 @@ function PricingPage() {
                 </div>
                 
                 <div className="mb-1">
-                  {plan.id !== 'free' ? <div className="text-sm text-gray-500 line-through">{formatLocaleCurrency(plan.monthlyPrice, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{t('pricing.perMonth')}</div> : null}
-                  <div className="flex items-end gap-2">
+                  {plan.id !== 'free' ? <div className="text-sm text-gray-500 line-through">{formatLocaleCurrency(originalDisplayPrice, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{t('pricing.perMonth')}</div> : null}
+                  <div className="flex items-end gap-2 flex-wrap">
                     <span className="text-3xl font-bold">{formatLocaleCurrency(displayPrice, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     <span className="text-gray-500 text-sm">{t('pricing.perMonth')}</span>
                     {plan.id !== 'free' ? <span className="mb-1 rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-300">{t('pricing.limitedTime')}</span> : null}
