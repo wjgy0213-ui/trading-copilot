@@ -15,6 +15,7 @@ export default function HealthFeatureClient() {
       description={t('fl.health.description')}
       color="blue"
       ctaHref="/health"
+      ctaText={t('fl.health.ctaText')}
       benefits={[
         t('fl.health.b1'),
         t('fl.health.b2'),

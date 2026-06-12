@@ -15,6 +15,7 @@ export default function WhalesFeatureClient() {
       description={t('fl.whales.description')}
       color="violet"
       ctaHref="/whales"
+      ctaText={t('fl.whales.ctaText')}
       benefits={[
         t('fl.whales.b1'),
         t('fl.whales.b2'),

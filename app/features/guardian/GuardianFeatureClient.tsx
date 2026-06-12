@@ -15,6 +15,7 @@ export default function GuardianFeatureClient() {
       description={t('fl.guardian.description')}
       color="orange"
       ctaHref="/guardian"
+      ctaText={t('fl.guardian.ctaText')}
       benefits={[
         t('fl.guardian.b1'),
         t('fl.guardian.b2'),
