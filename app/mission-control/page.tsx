@@ -339,8 +339,9 @@ export default function MissionControlPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#060816] flex items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-2 border-cyan-400/40 border-t-cyan-300" />
+      <div className="min-h-screen bg-[#060816] flex items-center justify-center" role="status" aria-live="polite" aria-label={t('common.loading')}>
+        <div className="h-10 w-10 animate-spin rounded-full border-2 border-cyan-400/40 border-t-cyan-300" aria-hidden="true" />
+        <span className="sr-only">{t('common.loading')}</span>
       </div>
     );
   }
@@ -404,6 +405,7 @@ export default function MissionControlPage() {
                 </div>
                 <button
                   onClick={fetchData}
+                  aria-label={t('missionControl.refresh')}
                   className="inline-flex items-center gap-2 rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-cyan-200 transition hover:bg-cyan-400/15"
                 >
                   <RefreshCw className="h-4 w-4" />

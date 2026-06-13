@@ -61,10 +61,13 @@ function SuccessContent() {
 }
 
 export default function CourseSuccessPage() {
+  const { t } = useI18n();
+
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-500" />
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center" role="status" aria-live="polite" aria-label={t('common.loading')}>
+        <Loader2 className="w-8 h-8 animate-spin text-gray-500" aria-hidden="true" />
+        <span className="sr-only">{t('common.loading')}</span>
       </div>
     }>
       <SuccessContent />

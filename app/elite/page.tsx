@@ -194,7 +194,7 @@ export default function ElitePage() {
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" role="status" aria-live="polite">
         <div className="text-center">
           <Shield className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold mb-2">{t('elite.loginRequired')}</h1>
@@ -296,6 +296,7 @@ export default function ElitePage() {
                 <button
                   onClick={connectExchange}
                   disabled={connecting || !apiKey || (exchange !== 'hyperliquid' && !apiSecret) || (exchange === 'okx' && !passphrase)}
+                  aria-busy={connecting}
                   className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-700 disabled:text-gray-500 text-white font-medium py-2.5 rounded-lg transition flex items-center justify-center gap-2"
                 >
                   {connecting ? (
@@ -362,6 +363,7 @@ export default function ElitePage() {
                 <button
                   onClick={setupTelegram}
                   disabled={loading || !chatId}
+                  aria-busy={loading}
                   className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:text-gray-500 text-white font-medium py-2.5 rounded-lg transition flex items-center justify-center gap-2"
                 >
                   {loading ? (
