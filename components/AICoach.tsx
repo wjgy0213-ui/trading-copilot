@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import { MessageSquare, Sparkles } from 'lucide-react';
 import { getAIScores } from '@/lib/storage';
 import { useI18n } from '@/lib/i18n';
@@ -10,16 +10,15 @@ interface ChatMessage {
   type: 'coach' | 'system';
   score?: number;
   text: string;
-  timestamp: number;
+  timestamp?: number;
   variant?: 'success' | 'warning' | 'info' | 'error';
 }
 
 export default function AICoach() {
   const { t, locale } = useI18n();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  const messages = useMemo<ChatMessage[]>(() => {
     // Check for lesson context
     const lessonData = typeof window !== 'undefined' ? localStorage.getItem('tc-lesson-context') : null;
     let lessonMsg: ChatMessage | null = null;
@@ -31,7 +30,7 @@ export default function AICoach() {
           text: t('coach.lesson_context')
             .replace('{title}', lesson.lessonTitle)
             .replace('{homework}', lesson.homework),
-          timestamp: Date.now() - 5000,
+          timestamp: undefined,
           variant: 'info',
         };
         // Clear after reading
@@ -39,30 +38,28 @@ export default function AICoach() {
       } catch {}
     }
 
-    // 初始欢迎消息
     const welcome: ChatMessage[] = [
       ...(lessonMsg ? [lessonMsg] : []),
       {
         type: 'coach',
         text: lessonMsg ? t('coach.lesson_welcome') : t('coach.welcome'),
-        timestamp: Date.now() - 10000,
+        timestamp: undefined,
         variant: 'info',
       },
     ];
 
-    // 从存储加载历史评分（最近5条）
     const scoresRecord = getAIScores();
     const scores = Object.values(scoresRecord);
     const scoreMessages: ChatMessage[] = scores.slice(-5).map((s) => ({
       type: 'coach' as const,
       score: s.entryScore,
       text: s.feedback.entry.join(' '),
-      timestamp: Date.now(),
+      timestamp: undefined,
       variant: s.entryScore >= 70 ? 'success' as const : s.entryScore >= 40 ? 'warning' as const : 'error' as const,
     }));
 
-    setMessages([...welcome, ...scoreMessages]);
-  }, []);
+    return [...welcome, ...scoreMessages];
+  }, [t]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -85,7 +82,7 @@ export default function AICoach() {
   };
 
   return (
-    <div className="bg-gray-900/50 rounded-xl border border-gray-800 flex flex-col h-[400px]">
+    <div className="bg-gray-900/50 rounded-xl border border-gray-800 flex flex-col h-[400px]" aria-label={t('coach.feed_label')}>
       {/* Header */}
       <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-800">
         <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-lg flex items-center justify-center">
@@ -101,7 +98,7 @@ export default function AICoach() {
       </div>
 
       {/* Messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3" role="log" aria-live="polite" aria-relevant="additions text" aria-label={t('coach.feed_label')}>
         {messages.map((msg, i) => (
           <div
             key={i}
@@ -110,13 +107,15 @@ export default function AICoach() {
             {msg.score !== undefined && (
               <div className={`font-mono font-bold mb-1.5 flex items-center gap-2 ${scoreColor(msg.score)}`}>
                 <Sparkles className="w-3.5 h-3.5" />
-                {msg.score}/100
+                {t('coach.score_out_of_100').replace('{score}', String(msg.score))}
               </div>
             )}
             <p className="text-gray-300 leading-relaxed">{msg.text}</p>
-            <div className="text-xs text-gray-600 mt-2 font-mono">
-              {formatLocaleTime(msg.timestamp, locale)}
-            </div>
+            {msg.timestamp ? (
+              <div className="text-xs text-gray-600 mt-2 font-mono">
+                {formatLocaleTime(msg.timestamp, locale)}
+              </div>
+            ) : null}
           </div>
         ))}
         {messages.length <= 1 && (

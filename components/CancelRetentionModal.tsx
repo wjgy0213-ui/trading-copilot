@@ -45,7 +45,12 @@ export default function CancelRetentionModal({ isOpen, onClose, currentPlan, ema
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-gray-900 border border-gray-700 rounded-2xl p-8 max-w-md w-full shadow-2xl">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cancel-retention-title"
+        className="relative bg-gray-900 border border-gray-700 rounded-2xl p-8 max-w-md w-full shadow-2xl"
+      >
         <button onClick={onClose} aria-label={t('common.close')} className="absolute top-4 right-4 text-gray-500 hover:text-gray-300 transition">
           <X className="w-5 h-5" />
         </button>
@@ -55,7 +60,7 @@ export default function CancelRetentionModal({ isOpen, onClose, currentPlan, ema
             <Gift className="w-8 h-8 text-amber-400" />
           </div>
 
-          <h2 className="text-xl font-bold mb-2">{t('cancel_modal.title')}</h2>
+          <h2 id="cancel-retention-title" className="text-xl font-bold mb-2">{t('cancel_modal.title')}</h2>
           <p className="text-gray-400 text-sm mb-6">
             {t('cancel_modal.desc').replace('{discount}', `${discountPct}%`)}
           </p>
@@ -75,9 +80,11 @@ export default function CancelRetentionModal({ isOpen, onClose, currentPlan, ema
           <button
             onClick={handleSwitchToYearly}
             disabled={loading}
+            aria-busy={loading}
             className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white px-5 py-3.5 rounded-xl text-sm font-semibold transition-all mb-3 disabled:opacity-50"
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+            {loading ? t('cancel_modal.switching') : (
               <>{t('cancel_modal.switch_yearly').replace('{pct}', discountPct)} <ArrowRight className="w-4 h-4" /></>
             )}
           </button>

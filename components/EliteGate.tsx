@@ -18,8 +18,16 @@ export default function EliteGate({ children, label }: EliteGateProps) {
     return (
       <div className="relative">
         {children}
-        <div className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center rounded-lg">
-          <div className="w-5 h-5 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
+        <div
+          className="absolute inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center rounded-lg"
+          role="status"
+          aria-live="polite"
+          aria-label={t('elite_gate.loading')}
+        >
+          <div className="flex flex-col items-center gap-3 text-violet-200">
+            <div className="w-5 h-5 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
+            <span className="text-xs text-gray-300">{t('elite_gate.loading')}</span>
+          </div>
         </div>
       </div>
     );
