@@ -30,6 +30,8 @@ export default function AutoTraderPanel({ currentPrice, onTradeComplete }: AutoT
     setLogs(getSignalLogs());
   }, []);
 
+  const strategyName = strategy ? t(`strategy.template.${strategy.strategyId}.name`, strategy.strategyName) : '';
+
   useEffect(() => {
     if (!strategy?.active || !currentPrice) return;
 
@@ -38,11 +40,11 @@ export default function AutoTraderPanel({ currentPrice, onTradeComplete }: AutoT
     const prices = history.map(h => h.price);
 
     if (prices.length < 30) {
-      setLastEval(`${t('auto.collecting')} (${prices.length}/30)`);
+      setLastEval(t('auto.collectingProgress').replace('{count}', String(prices.length)).replace('{total}', '30'));
       return;
     }
 
-    const result = evaluateSignal(strategy, prices);
+    const result = evaluateSignal(strategy, prices, locale);
     setLastEval(result.reason);
     setEvalCount(c => c + 1);
 
@@ -110,10 +112,20 @@ export default function AutoTraderPanel({ currentPrice, onTradeComplete }: AutoT
           </span>
         </div>
         <div className="flex gap-1">
-          <button onClick={handleToggle} className="p-1.5 rounded-lg hover:bg-gray-700 transition">
+          <button
+            onClick={handleToggle}
+            aria-label={strategy.active ? t('auto.pauseStrategy') : t('auto.resumeStrategy')}
+            title={strategy.active ? t('auto.pauseStrategy') : t('auto.resumeStrategy')}
+            className="p-1.5 rounded-lg hover:bg-gray-700 transition"
+          >
             {strategy.active ? <Pause className="w-4 h-4 text-yellow-400" /> : <Play className="w-4 h-4 text-green-400" />}
           </button>
-          <button onClick={handleRemove} className="p-1.5 rounded-lg hover:bg-gray-700 transition">
+          <button
+            onClick={handleRemove}
+            aria-label={t('auto.removeStrategy')}
+            title={t('auto.removeStrategy')}
+            className="p-1.5 rounded-lg hover:bg-gray-700 transition"
+          >
             <X className="w-4 h-4 text-red-400" />
           </button>
         </div>
@@ -121,7 +133,7 @@ export default function AutoTraderPanel({ currentPrice, onTradeComplete }: AutoT
 
       <div className="bg-gray-900/50 rounded-lg p-3 mb-3">
         <div className="text-xs text-gray-400 mb-1">{t('auto.strategy')}</div>
-        <div className="font-semibold text-sm">{strategy.strategyName}</div>
+        <div className="font-semibold text-sm">{strategyName}</div>
         <div className="text-xs text-gray-500 mt-1">
           {t('auto.sl_label')} {strategy.risk.stopLoss}% | {t('auto.tp_label')} {strategy.risk.takeProfit}% | {t('auto.max_position_label')} {strategy.risk.maxPosition}%
         </div>

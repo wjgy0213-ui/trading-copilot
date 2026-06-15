@@ -1,5 +1,7 @@
 // 自动交易引擎 - 将策略工坊的策略部署到纸盘执行
 
+import { i18nText } from './i18n-helpers';
+import type { Locale } from './i18n';
 import { PositionSide } from './types';
 
 export interface AutoStrategy {
@@ -155,11 +157,12 @@ function rsi(data: number[], period: number): number[] {
 
 export type SignalResult = { signal: 'buy' | 'sell' | 'none'; reason: string };
 
-export function evaluateSignal(strategy: AutoStrategy, prices: number[]): SignalResult {
-  if (prices.length < 30) return { signal: 'none', reason: '数据不足' };
+export function evaluateSignal(strategy: AutoStrategy, prices: number[], locale: Locale = 'zh'): SignalResult {
+  if (prices.length < 30) return { signal: 'none', reason: i18nText(locale, 'auto.signal.insufficientData') };
 
   const p = strategy.params;
   const len = prices.length;
+  const tr = (key: string, vars?: Record<string, string | number>) => i18nText(locale, key, vars);
 
   switch (strategy.strategyId) {
     case 'ema_cross': {
@@ -167,9 +170,9 @@ export function evaluateSignal(strategy: AutoStrategy, prices: number[]): Signal
       const slow = ema(prices, p.slowPeriod || 21);
       const prev = fast[len - 2] - slow[len - 2];
       const curr = fast[len - 1] - slow[len - 1];
-      if (prev <= 0 && curr > 0) return { signal: 'buy', reason: `EMA${p.fastPeriod}上穿EMA${p.slowPeriod}` };
-      if (prev >= 0 && curr < 0) return { signal: 'sell', reason: `EMA${p.fastPeriod}下穿EMA${p.slowPeriod}` };
-      return { signal: 'none', reason: '无交叉信号' };
+      if (prev <= 0 && curr > 0) return { signal: 'buy', reason: tr('auto.signal.emaCrossUp', { fast: p.fastPeriod || 9, slow: p.slowPeriod || 21 }) };
+      if (prev >= 0 && curr < 0) return { signal: 'sell', reason: tr('auto.signal.emaCrossDown', { fast: p.fastPeriod || 9, slow: p.slowPeriod || 21 }) };
+      return { signal: 'none', reason: tr('auto.signal.noCross') };
     }
 
     case 'rsi_reversal': {
@@ -177,10 +180,10 @@ export function evaluateSignal(strategy: AutoStrategy, prices: number[]): Signal
       const prevRsi = r[len - 2];
       const currRsi = r[len - 1];
       if (prevRsi < (p.oversold || 30) && currRsi >= (p.oversold || 30))
-        return { signal: 'buy', reason: `RSI从超卖区反弹 (${currRsi.toFixed(1)})` };
+        return { signal: 'buy', reason: tr('auto.signal.rsiBounce', { value: currRsi.toFixed(1) }) };
       if (prevRsi > (p.overbought || 70) && currRsi <= (p.overbought || 70))
-        return { signal: 'sell', reason: `RSI从超买区回落 (${currRsi.toFixed(1)})` };
-      return { signal: 'none', reason: `RSI: ${currRsi.toFixed(1)}` };
+        return { signal: 'sell', reason: tr('auto.signal.rsiPullback', { value: currRsi.toFixed(1) }) };
+      return { signal: 'none', reason: tr('auto.signal.rsiValue', { value: currRsi.toFixed(1) }) };
     }
 
     case 'bollinger': {
@@ -194,9 +197,9 @@ export function evaluateSignal(strategy: AutoStrategy, prices: number[]): Signal
       const lower = mid - stdMult * std;
       const prev = prices[len - 2];
       const curr = prices[len - 1];
-      if (prev <= lower && curr > lower) return { signal: 'buy', reason: `价格从布林下轨反弹` };
-      if (prev >= upper && curr < upper) return { signal: 'sell', reason: `价格从布林上轨回落` };
-      return { signal: 'none', reason: `价格在布林带内` };
+      if (prev <= lower && curr > lower) return { signal: 'buy', reason: tr('auto.signal.bollingerBounce') };
+      if (prev >= upper && curr < upper) return { signal: 'sell', reason: tr('auto.signal.bollingerPullback') };
+      return { signal: 'none', reason: tr('auto.signal.bollingerInside') };
     }
 
     case 'macd': {
@@ -206,21 +209,21 @@ export function evaluateSignal(strategy: AutoStrategy, prices: number[]): Signal
       const signalLine = ema(macdLine, p.signalPeriod || 9);
       const prevDiff = macdLine[len - 2] - signalLine[len - 2];
       const currDiff = macdLine[len - 1] - signalLine[len - 1];
-      if (prevDiff <= 0 && currDiff > 0) return { signal: 'buy', reason: 'MACD金叉' };
-      if (prevDiff >= 0 && currDiff < 0) return { signal: 'sell', reason: 'MACD死叉' };
-      return { signal: 'none', reason: '无MACD交叉' };
+      if (prevDiff <= 0 && currDiff > 0) return { signal: 'buy', reason: tr('auto.signal.macdBullishCross') };
+      if (prevDiff >= 0 && currDiff < 0) return { signal: 'sell', reason: tr('auto.signal.macdBearishCross') };
+      return { signal: 'none', reason: tr('auto.signal.macdNoCross') };
     }
 
     case 'donchian': {
       const period = p.period || 20;
-      if (prices.length < period + 1) return { signal: 'none', reason: '数据不足' };
+      if (prices.length < period + 1) return { signal: 'none', reason: tr('auto.signal.insufficientData') };
       const prevSlice = prices.slice(len - period - 1, len - 1);
       const upper = Math.max(...prevSlice);
       const lower = Math.min(...prevSlice);
       const curr = prices[len - 1];
-      if (curr > upper) return { signal: 'buy', reason: `突破${period}周期高点 $${upper.toFixed(0)}` };
-      if (curr < lower) return { signal: 'sell', reason: `跌破${period}周期低点 $${lower.toFixed(0)}` };
-      return { signal: 'none', reason: '价格在通道内' };
+      if (curr > upper) return { signal: 'buy', reason: tr('auto.signal.donchianBreakoutHigh', { period, price: upper.toFixed(0) }) };
+      if (curr < lower) return { signal: 'sell', reason: tr('auto.signal.donchianBreakoutLow', { period, price: lower.toFixed(0) }) };
+      return { signal: 'none', reason: tr('auto.signal.donchianInside') };
     }
 
     case 'ema_rsi_combo': {
@@ -231,10 +234,10 @@ export function evaluateSignal(strategy: AutoStrategy, prices: number[]): Signal
       const currRsi = r[len - 1];
       const entry = p.rsiEntry || 40;
       if (curr > currEma && currRsi < entry)
-        return { signal: 'buy', reason: `价格>EMA${p.emaPeriod} + RSI=${currRsi.toFixed(0)}<${entry}` };
+        return { signal: 'buy', reason: tr('auto.signal.emaRsiBuy', { ema: p.emaPeriod || 50, rsi: currRsi.toFixed(0), entry }) };
       if (curr < currEma && currRsi > (100 - entry))
-        return { signal: 'sell', reason: `价格<EMA${p.emaPeriod} + RSI=${currRsi.toFixed(0)}>${100 - entry}` };
-      return { signal: 'none', reason: '条件不满足' };
+        return { signal: 'sell', reason: tr('auto.signal.emaRsiSell', { ema: p.emaPeriod || 50, rsi: currRsi.toFixed(0), threshold: 100 - entry }) };
+      return { signal: 'none', reason: tr('auto.signal.conditionsNotMet') };
     }
 
     case 'supertrend': {
@@ -255,12 +258,12 @@ export function evaluateSignal(strategy: AutoStrategy, prices: number[]): Signal
       const longMa = sma(prices.slice(-20), 15);
       const trendUp = shortMa[shortMa.length - 1] > longMa[longMa.length - 1];
       const prevTrendUp = shortMa[shortMa.length - 2] > longMa[longMa.length - 2];
-      if (!prevTrendUp && trendUp) return { signal: 'buy', reason: 'Supertrend转多' };
-      if (prevTrendUp && !trendUp) return { signal: 'sell', reason: 'Supertrend转空' };
-      return { signal: 'none', reason: trendUp ? '趋势向上持有' : '趋势向下观望' };
+      if (!prevTrendUp && trendUp) return { signal: 'buy', reason: tr('auto.signal.supertrendBullish') };
+      if (prevTrendUp && !trendUp) return { signal: 'sell', reason: tr('auto.signal.supertrendBearish') };
+      return { signal: 'none', reason: trendUp ? tr('auto.signal.trendUpHold') : tr('auto.signal.trendDownWait') };
     }
 
     default:
-      return { signal: 'none', reason: '未知策略' };
+      return { signal: 'none', reason: tr('auto.signal.unknownStrategy') };
   }
 }
