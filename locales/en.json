@@ -2151,5 +2151,12 @@
   "workflow.step03.title": "Strategy Workshop",
   "workflow.stepCta": "Get Started",
   "workflow.stepLabel": "STEP",
-  "workflow.title": "3 Steps to Get Started — Don't Get Overwhelmed by Features"
+  "workflow.title": "3 Steps to Get Started — Don't Get Overwhelmed by Features",
+  "admin.invalidSecret": "Invalid admin secret",
+  "admin.loadFailed": "Failed to load admin dashboard",
+  "sniper.collapseExchange": "Collapse exchange card",
+  "sniper.expandExchange": "Expand exchange card",
+  "sniper.externalChartAria": "Open {symbol} chart on DexScreener",
+  "sniper.openExchange": "Open exchange setup",
+  "sniper.upgradeCta": "See live setup"
 }

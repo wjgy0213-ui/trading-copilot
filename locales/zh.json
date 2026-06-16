@@ -2151,5 +2151,12 @@
   "workflow.step03.title": "策略工坊",
   "workflow.stepCta": "立即开始",
   "workflow.stepLabel": "步骤",
-  "workflow.title": "3 步进入状态，而不是先被功能淹没"
+  "workflow.title": "3 步进入状态，而不是先被功能淹没",
+  "admin.invalidSecret": "管理员密钥不正确",
+  "admin.loadFailed": "管理员仪表板加载失败",
+  "sniper.collapseExchange": "收起交易所卡片",
+  "sniper.expandExchange": "展开交易所卡片",
+  "sniper.externalChartAria": "在 DexScreener 打开 {symbol} 图表",
+  "sniper.openExchange": "打开交易所接入",
+  "sniper.upgradeCta": "查看实盘接入"
 }

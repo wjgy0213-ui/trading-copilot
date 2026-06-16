@@ -238,6 +238,8 @@ export default function RiskManager() {
         <div className="flex gap-3 mb-6">
           <button
             onClick={saveSettings}
+            title={t('risk.save_settings')}
+            aria-label={t('risk.save_settings')}
             className="flex-1 px-4 py-3 bg-violet-600 hover:bg-violet-700 text-white font-medium rounded-lg transition-all"
           >
             {t('risk.save_settings')}
@@ -245,6 +247,8 @@ export default function RiskManager() {
           <button
             onClick={emergencyStop}
             disabled={emergencyLoading}
+            title={emergencyLoading ? t('risk.executing') : t('risk.emergency_stop')}
+            aria-label={emergencyLoading ? t('risk.executing') : t('risk.emergency_stop')}
             className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <XCircle className="w-4 h-4" />

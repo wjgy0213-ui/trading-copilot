@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { BarChart3, Users, Eye, CreditCard, TrendingUp, RefreshCw } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
-import { formatLocaleDateTime, formatLocaleNumber } from '@/lib/i18n-helpers';
+import { formatLocaleDate, formatLocaleDateTime, formatLocaleNumber } from '@/lib/i18n-helpers';
 
 interface LeadItem {
   id: string;
@@ -36,9 +36,11 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [secret, setSecret] = useState('');
   const [authed, setAuthed] = useState(false);
+  const [error, setError] = useState('');
 
   const fetchStats = async (key: string) => {
     setLoading(true);
+    setError('');
     try {
       const [statsRes, leadsRes] = await Promise.all([
         fetch(`/api/analytics?key=${key}&days=14`),
@@ -51,17 +53,20 @@ export default function AdminPage() {
         setAuthed(true);
       } else {
         setAuthed(false);
+        setLeads([]);
+        setError(t('admin.invalidSecret'));
       }
 
-      if (leadsRes.ok) {
+      if (statsRes.ok && leadsRes.ok) {
         const leadData = await leadsRes.json();
         setLeads(leadData.leads || []);
-      } else {
+      } else if (statsRes.ok) {
         setLeads([]);
       }
     } catch {
       setAuthed(false);
       setLeads([]);
+      setError(t('admin.loadFailed'));
     }
     setLoading(false);
   };
@@ -80,6 +85,7 @@ export default function AdminPage() {
             className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white"
           />
           <p className="mt-2 mb-4 text-xs text-gray-500">{t('admin.enterKeyHint')}</p>
+          {error ? <p className="mb-4 text-xs text-red-400">{error}</p> : null}
           <button
             onClick={() => fetchStats(secret)}
             className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-lg font-medium transition"
@@ -150,7 +156,7 @@ export default function AdminPage() {
               <tbody>
                 {stats.map((d, i) => (
                   <tr key={i} className="border-b border-gray-800/50 hover:bg-gray-800/30">
-                    <td className="py-2 px-3 text-gray-300">{d.date}</td>
+                    <td className="py-2 px-3 text-gray-300">{formatLocaleDate(d.date, locale, { month: 'short', day: 'numeric' })}</td>
                     <td className="py-2 px-3 text-right">{formatLocaleNumber(Number(d.pageviews) || 0, locale)}</td>
                     <td className="py-2 px-3 text-right text-emerald-400">{formatLocaleNumber(Number(d.waitlists) || 0, locale)}</td>
                     <td className="py-2 px-3 text-right text-amber-400">{formatLocaleNumber(Number(d.trials) || 0, locale)}</td>

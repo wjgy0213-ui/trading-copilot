@@ -63,6 +63,9 @@ interface SniperData {
 type SniperMode = 'choose' | 'paper' | 'live';
 type LiveExchange = 'binance' | 'phantom' | null;
 
+const INITIAL_PAPER_BALANCE_SOL = 10;
+const DEFAULT_SOL_PRICE = 93;
+
 function StatCard({ label, value, sub, color }: { label: string; value: string; sub?: string; color?: string }) {
   return (
     <div className="bg-gray-800/60 rounded-xl p-4 border border-gray-700/50">
@@ -74,20 +77,22 @@ function StatCard({ label, value, sub, color }: { label: string; value: string; 
 }
 
 function ScoreBadge({ score }: { score: number }) {
+  const { locale } = useI18n();
   const color = score >= 85 ? 'bg-green-500/20 text-green-400 border-green-500/30' :
                 score >= 70 ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' :
                 score >= 60 ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
                 'bg-gray-500/20 text-gray-400 border-gray-500/30';
   return (
     <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${color}`}>
-      {score.toFixed(1)}
+      {formatLocaleNumber(score, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
     </span>
   );
 }
 
 function PnlText({ pnl }: { pnl: number }) {
+  const { locale } = useI18n();
   const color = pnl > 0 ? 'text-green-400' : pnl < 0 ? 'text-red-400' : 'text-gray-400';
-  return <span className={`font-medium ${color}`}>{pnl > 0 ? '+' : ''}{pnl.toFixed(1)}%</span>;
+  return <span className={`font-medium ${color}`}>{pnl > 0 ? '+' : ''}{formatLocaleNumber(pnl, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%</span>;
 }
 
 function timeAgo(isoStr: string, t: (key: string, fallback?: string) => string): string {
@@ -293,7 +298,13 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
                 <div className="font-bold">{t('sniper.exchangeNames.binance')}</div>
                 <div className="text-gray-400 text-sm">{t('sniper.binanceDesc')}</div>
               </div>
-              <div className="ml-auto text-gray-500">{showBinanceForm ? '↑' : '→'}</div>
+              <div
+                className="ml-auto text-gray-500"
+                aria-label={showBinanceForm ? t('sniper.collapseExchange') : t('sniper.expandExchange')}
+                title={showBinanceForm ? t('sniper.collapseExchange') : t('sniper.expandExchange')}
+              >
+                {showBinanceForm ? '↑' : '→'}
+              </div>
             </button>
             {showBinanceForm && (
               <div className="px-5 pb-5 space-y-3">
@@ -342,7 +353,11 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
                  t('sniper.phantomDesc')}
               </div>
             </div>
-            <div className="ml-auto text-gray-500">
+            <div
+              className="ml-auto text-gray-500"
+              aria-label={phantomStatus === 'connecting' ? t('sniper.connecting') : t('sniper.openExchange')}
+              title={phantomStatus === 'connecting' ? t('sniper.connecting') : t('sniper.openExchange')}
+            >
               {phantomStatus === 'connecting' ? '⏳' : '→'}
             </div>
           </button>
@@ -364,7 +379,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
               <div className="font-bold">{t('sniper.exchangeNames.okx')}</div>
               <div className="text-gray-400 text-sm">{t('sniper.okxDesc')}</div>
             </div>
-            <div className="ml-auto text-gray-500">→</div>
+            <div className="ml-auto text-gray-500" aria-label={t('sniper.openExchange')} title={t('sniper.openExchange')}>→</div>
           </button>
 
           {/* Bybit */}
@@ -377,7 +392,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
               <div className="font-bold">{t('sniper.exchangeNames.bybit')}</div>
               <div className="text-gray-400 text-sm">{t('sniper.bybitDesc')}</div>
             </div>
-            <div className="ml-auto text-gray-500">→</div>
+            <div className="ml-auto text-gray-500" aria-label={t('sniper.openExchange')} title={t('sniper.openExchange')}>→</div>
           </button>
 
           {/* Hyperliquid */}
@@ -390,7 +405,7 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
               <div className="font-bold">{t('sniper.exchangeNames.hyperliquid')}</div>
               <div className="text-gray-400 text-sm">{t('sniper.hlDesc')}</div>
             </div>
-            <div className="ml-auto text-gray-500">→</div>
+            <div className="ml-auto text-gray-500" aria-label={t('sniper.openExchange')} title={t('sniper.openExchange')}>→</div>
           </button>
         </div>
 
@@ -418,11 +433,11 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
     if (saved) {
       try {
         const state = JSON.parse(saved);
-        const solPrice = 93; // approximate
+        const solPrice = DEFAULT_SOL_PRICE; // approximate
         const posEntries = Object.entries(state.positions || {});
         const posValue = posEntries.reduce((sum, [, p]: [string, any]) => sum + (p.size_sol || 0), 0);
         const totalValue = state.balance_sol + posValue;
-        const pnlPct = ((totalValue - 10) / 10) * 100;
+        const pnlPct = ((totalValue - INITIAL_PAPER_BALANCE_SOL) / INITIAL_PAPER_BALANCE_SOL) * 100;
         const winRate = state.total_trades > 0 ? (state.wins / (state.wins + state.losses)) * 100 : 0;
 
         setData({
@@ -441,14 +456,14 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
     } else {
       // Fresh paper state
       const freshState = {
-        balance_sol: 10,
+        balance_sol: INITIAL_PAPER_BALANCE_SOL,
         positions: {},
         total_trades: 0,
         wins: 0,
         losses: 0,
         total_pnl_sol: 0,
         max_drawdown: 0,
-        peak_balance: 10,
+        peak_balance: INITIAL_PAPER_BALANCE_SOL,
         start_time: new Date().toISOString(),
         trade_history: [],
       };
@@ -456,12 +471,12 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
       setData({
         state: freshState,
         portfolio: {
-          total_value_sol: 10,
-          total_value_usd: 930,
+          total_value_sol: INITIAL_PAPER_BALANCE_SOL,
+          total_value_usd: INITIAL_PAPER_BALANCE_SOL * DEFAULT_SOL_PRICE,
           total_pnl_pct: 0,
           unrealized_pnl_sol: 0,
           win_rate: 0,
-          sol_price: 93,
+          sol_price: DEFAULT_SOL_PRICE,
         },
         trades: [],
       });
@@ -533,7 +548,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
               onClick={() => {
                 localStorage.setItem('sniper_paper_session', JSON.stringify({
                   started: new Date().toISOString(),
-                  balance: 10,
+                  balance: INITIAL_PAPER_BALANCE_SOL,
                 }));
                 setPaperStarted(true);
                 loadPaperData();
@@ -622,26 +637,26 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
           <div className="text-center mb-4">
             <div className="text-gray-400 text-sm">{t('sniper.portfolioValue')}</div>
             <div className="text-4xl font-bold mt-1">
-              {portfolio.total_value_sol.toFixed(2)} <span className="text-lg text-gray-400">{t('sniper.solUnit')}</span>
+              {formatLocaleNumber(portfolio.total_value_sol, locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-lg text-gray-400">{t('sniper.solUnit')}</span>
             </div>
             <div className="text-gray-400 text-sm">{formatLocaleCurrency(portfolio.total_value_usd, locale, 'USD', { maximumFractionDigits: 0 })}</div>
             <div className={`text-lg font-semibold mt-1 ${pnlColor}`}>
-              {portfolio.total_pnl_pct >= 0 ? '+' : ''}{portfolio.total_pnl_pct.toFixed(1)}%
+              {portfolio.total_pnl_pct >= 0 ? '+' : ''}{formatLocaleNumber(portfolio.total_pnl_pct, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%
             </div>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <StatCard label={t('sniper.balance')} value={`${state.balance_sol.toFixed(2)} ${t('sniper.solUnit')}`} />
-            <StatCard label={t('sniper.posCount')} value={`${positions.length} / 10`} sub={`${state.total_trades} ${t('sniper.totalTradesLabel')}`} />
+            <StatCard label={t('sniper.balance')} value={`${formatLocaleNumber(state.balance_sol, locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${t('sniper.solUnit')}`} />
+            <StatCard label={t('sniper.posCount')} value={`${formatLocaleNumber(positions.length, locale)} / ${formatLocaleNumber(10, locale)}`} sub={`${formatLocaleNumber(state.total_trades, locale)} ${t('sniper.totalTradesLabel')}`} />
             <StatCard 
               label={t('sniper.winRate')} 
-              value={`${portfolio.win_rate.toFixed(0)}%`}
-              sub={`${state.wins}${t('sniper.winsSuffix')} ${state.losses}${t('sniper.lossesSuffix')}`}
+              value={`${formatLocaleNumber(portfolio.win_rate, locale, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}%`}
+              sub={`${formatLocaleNumber(state.wins, locale)}${t('sniper.winsSuffix')} ${formatLocaleNumber(state.losses, locale)}${t('sniper.lossesSuffix')}`}
               color={portfolio.win_rate >= 50 ? 'text-green-400' : portfolio.win_rate > 0 ? 'text-red-400' : 'text-gray-400'}
             />
             <StatCard 
               label={t('sniper.maxDrawdown')} 
-              value={`${state.max_drawdown.toFixed(1)}%`}
+              value={`${formatLocaleNumber(state.max_drawdown, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`}
               color={state.max_drawdown < -10 ? 'text-red-400' : 'text-yellow-400'}
             />
           </div>
@@ -657,8 +672,8 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                 <div className="text-xs text-gray-400">{t('sniper.upgradeDesc')}</div>
               </div>
             </div>
-            <button className="px-4 py-2 bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 rounded-lg text-sm font-medium border border-orange-500/30 transition-colors">
-              {t('sniper.connectWallet')}
+            <button onClick={onBack} className="px-4 py-2 bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 rounded-lg text-sm font-medium border border-orange-500/30 transition-colors">
+              {t('sniper.upgradeCta')}
             </button>
           </div>
         )}
@@ -712,15 +727,15 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
                       <div>
                         <div className="text-gray-500 text-xs">{t('sniper.entryPrice')}</div>
-                        <div className="text-gray-300 font-mono">${pos.entry_price.toFixed(8)}</div>
+                        <div className="text-gray-300 font-mono">{formatLocaleCurrency(pos.entry_price, locale, 'USD', { minimumFractionDigits: 8, maximumFractionDigits: 8 })}</div>
                       </div>
                       <div>
                         <div className="text-gray-500 text-xs">{t('sniper.currentPrice')}</div>
-                        <div className="text-gray-300 font-mono">${pos.current_price.toFixed(8)}</div>
+                        <div className="text-gray-300 font-mono">{formatLocaleCurrency(pos.current_price, locale, 'USD', { minimumFractionDigits: 8, maximumFractionDigits: 8 })}</div>
                       </div>
                       <div>
                         <div className="text-gray-500 text-xs">{t('sniper.positionSize')}</div>
-                        <div className="text-gray-300">{pos.size_sol.toFixed(3)} {t('sniper.solUnit')}</div>
+                        <div className="text-gray-300">{formatLocaleNumber(pos.size_sol, locale, { minimumFractionDigits: 3, maximumFractionDigits: 3 })} {t('sniper.solUnit')}</div>
                       </div>
                       <div>
                         <div className="text-gray-500 text-xs">{t('sniper.holdTime')}</div>
@@ -754,6 +769,8 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-xs text-purple-400 hover:text-purple-300"
+                        aria-label={t('sniper.externalChartAria').replace('{symbol}', pos.symbol)}
+                        title={t('sniper.externalChartAria').replace('{symbol}', pos.symbol)}
                       >
                         {t('sniper.dexScreenerLink')}
                       </a>
@@ -791,11 +808,11 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                       )}
                     </div>
                     <div className="text-xs text-gray-500 mt-0.5">
-                      {trade.size_sol && <span>{trade.size_sol.toFixed(3)} {t('sniper.solUnit')}</span>}
-                      {trade.price && <span> @ ${trade.price.toFixed(8)}</span>}
+                      {trade.size_sol && <span>{formatLocaleNumber(trade.size_sol, locale, { minimumFractionDigits: 3, maximumFractionDigits: 3 })} {t('sniper.solUnit')}</span>}
+                      {trade.price && <span> @ {formatLocaleCurrency(trade.price, locale, 'USD', { minimumFractionDigits: 8, maximumFractionDigits: 8 })}</span>}
                       {trade.pnl_pct !== undefined && (
                         <span className={trade.pnl_pct >= 0 ? 'text-green-400' : 'text-red-400'}>
-                          {' '}({trade.pnl_pct >= 0 ? '+' : ''}{trade.pnl_pct.toFixed(1)}%)
+                          {' '}({trade.pnl_pct >= 0 ? '+' : ''}{formatLocaleNumber(trade.pnl_pct, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%)
                         </span>
                       )}
                     </div>
