@@ -975,6 +975,8 @@
   "howItWorks.title": "3步开始",
   "i18n.switchToChinese": "切换到中文",
   "i18n.switchToEnglish": "切换到英文",
+  "i18n.labelChineseShort": "中文",
+  "i18n.labelEnglishShort": "EN",
   "insights.optimize": "优化我的策略",
   "insights.profit_factor": "盈利因子",
   "insights.rr_ratio": "盈亏比",

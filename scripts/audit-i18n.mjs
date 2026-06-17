@@ -4,7 +4,8 @@ import { join, relative } from 'node:path';
 const root = process.cwd();
 const includeDirs = ['app', 'components'];
 const ignoreDirs = new Set(['node_modules', '.next', '.git']);
-const localeAwarePatterns = ['useI18n(', 'useI18n()', 'getServerT(', 'getServerT()'];
+const clientLocalePatterns = ['useI18n(', 'useI18n()'];
+const serverLocalePatterns = ['getServerT(', 'getServerT()'];
 const userVisibleStringPatterns = [
   />\s*([^<>{}\n]*[A-Za-z\u4e00-\u9fff][^<>{}\n]*)\s*</g,
   /(?:title|description|label|placeholder|aria-label)=\{?['"]([^'"\n]*[A-Za-z\u4e00-\u9fff][^'"\n]*)['"]\}?/g,
@@ -48,24 +49,35 @@ function extractUserVisibleStrings(source) {
 const files = includeDirs.flatMap(dir => walk(join(root, dir)));
 const report = files.map(file => {
   const source = readFileSync(file, 'utf8');
-  const hasLocaleSupport = localeAwarePatterns.some(pattern => source.includes(pattern));
+  const hasClientLocale = clientLocalePatterns.some(pattern => source.includes(pattern));
+  const hasServerLocale = serverLocalePatterns.some(pattern => source.includes(pattern));
   const strings = extractUserVisibleStrings(source);
   return {
     file: relative(root, file),
-    hasLocaleSupport,
+    hasClientLocale,
+    hasServerLocale,
     strings,
   };
 });
 
-const missing = report.filter(item => !item.hasLocaleSupport);
-const userVisibleMissing = missing.filter(item => item.strings.length > 0);
+const fullyMissing = report.filter(item => !item.hasClientLocale && !item.hasServerLocale);
+const userVisibleMissing = fullyMissing.filter(item => item.strings.length > 0);
+const clientCovered = report.filter(item => item.hasClientLocale);
+const serverCovered = report.filter(item => !item.hasClientLocale && item.hasServerLocale);
 
 console.log(`i18n coverage audit`);
 console.log(`- tsx files scanned: ${report.length}`);
-console.log(`- locale-aware files: ${report.length - missing.length}`);
-console.log(`- files missing useI18n/getServerT: ${missing.length}`);
+console.log(`- client useI18n files: ${clientCovered.length}`);
+console.log(`- server getServerT files: ${serverCovered.length}`);
+console.log(`- files missing i18n hooks/helpers: ${fullyMissing.length}`);
 console.log(`- files with likely user-visible hardcoded text: ${userVisibleMissing.length}`);
 console.log('');
+
+if (serverCovered.length > 0) {
+  console.log('server-localized files (getServerT):');
+  serverCovered.forEach(item => console.log(`  - ${item.file}`));
+  console.log('');
+}
 
 for (const item of userVisibleMissing) {
   console.log(item.file);

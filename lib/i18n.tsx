@@ -65,13 +65,18 @@ export function useI18n() {
 // Language switcher component
 export function LanguageSwitcher({ className = '' }: { className?: string }) {
   const { locale, setLocale, t } = useI18n();
+  const nextLocale = locale === 'zh' ? 'en' : 'zh';
+  const switchTitle = nextLocale === 'en' ? t('i18n.switchToEnglish') : t('i18n.switchToChinese');
+  const switchLabel = nextLocale === 'en' ? t('i18n.labelEnglishShort') : t('i18n.labelChineseShort');
+
   return (
     <button
-      onClick={() => setLocale(locale === 'zh' ? 'en' : 'zh')}
+      onClick={() => setLocale(nextLocale)}
       className={`text-xs text-gray-400 hover:text-gray-200 transition px-2 py-1 rounded border border-gray-700 hover:border-gray-600 ${className}`}
-      title={locale === 'zh' ? t('i18n.switchToEnglish', 'Switch to English') : t('i18n.switchToChinese', '切换到中文')}
+      title={switchTitle}
+      aria-label={switchTitle}
     >
-      {locale === 'zh' ? 'EN' : '中文'}
+      {switchLabel}
     </button>
   );
 }
