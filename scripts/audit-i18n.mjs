@@ -64,13 +64,19 @@ const fullyMissing = report.filter(item => !item.hasClientLocale && !item.hasSer
 const userVisibleMissing = fullyMissing.filter(item => item.strings.length > 0);
 const clientCovered = report.filter(item => item.hasClientLocale);
 const serverCovered = report.filter(item => !item.hasClientLocale && item.hasServerLocale);
+const coveredCount = report.length - fullyMissing.length;
+const coveragePct = report.length === 0 ? 0 : ((coveredCount / report.length) * 100).toFixed(1);
 
 console.log(`i18n coverage audit`);
 console.log(`- tsx files scanned: ${report.length}`);
+console.log(`- total covered files: ${coveredCount} (${coveragePct}%)`);
 console.log(`- client useI18n files: ${clientCovered.length}`);
 console.log(`- server getServerT files: ${serverCovered.length}`);
 console.log(`- files missing i18n hooks/helpers: ${fullyMissing.length}`);
 console.log(`- files with likely user-visible hardcoded text: ${userVisibleMissing.length}`);
+if (fullyMissing.length === 0) {
+  console.log(`- status: full i18n coverage across app/ + components/ ✅`);
+}
 console.log('');
 
 if (serverCovered.length > 0) {

@@ -9,6 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `${t('privacy.title')} - ${t('privacy.appsSuffix')}`,
     description: t('privacy.subtitle'),
+    keywords: t('privacy.keywords').split('|'),
     alternates: {
       canonical,
       languages: {
@@ -22,6 +23,11 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: locale === 'zh' ? 'zh_CN' : 'en_US',
       alternateLocale: locale === 'zh' ? ['en_US'] : ['zh_CN'],
       url: canonical,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${t('privacy.title')} - ${t('privacy.appsSuffix')}`,
+      description: t('privacy.subtitle'),
     },
   };
 }
