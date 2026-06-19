@@ -15,6 +15,7 @@ export default function SignalsFeatureClient() {
       description={t('fl.signals.description')}
       color="cyan"
       ctaHref="/signals"
+      ctaText={t('fl.signals.ctaText')}
       benefits={[
         t('fl.signals.b1'),
         t('fl.signals.b2'),

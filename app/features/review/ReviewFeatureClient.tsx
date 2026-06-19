@@ -15,6 +15,7 @@ export default function ReviewFeatureClient() {
       description={t('fl.review.description')}
       color="rose"
       ctaHref="/review"
+      ctaText={t('fl.review.ctaText')}
       benefits={[
         t('fl.review.b1'),
         t('fl.review.b2'),

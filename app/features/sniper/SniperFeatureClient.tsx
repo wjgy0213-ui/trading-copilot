@@ -15,6 +15,7 @@ export default function SniperFeatureClient() {
       description={t('fl.sniper.description')}
       color="amber"
       ctaHref="/sniper"
+      ctaText={t('fl.sniper.ctaText')}
       benefits={[
         t('fl.sniper.b1'),
         t('fl.sniper.b2'),
