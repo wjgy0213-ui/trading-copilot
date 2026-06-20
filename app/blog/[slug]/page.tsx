@@ -41,9 +41,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       images: post.image ? [post.image] : [],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: t('seo.twitter.summaryLargeImage'),
       title: `${post.title} | ${t('blog.ogTitle')}`,
       description: post.description,
+      creator: t('seo.twitter.creator'),
     },
   };
 }
@@ -71,7 +72,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             description: post.description,
             datePublished: post.date,
             inLanguage: locale === 'zh' ? 'zh-CN' : 'en-US',
-            author: { '@type': t('seo.schema.organizationType'), name: post.author },
+            author: { '@type': t('seo.schema.personType'), name: post.author || t('seo.author.name') },
             publisher: { '@type': t('seo.schema.organizationType'), name: t('app.name') },
           }),
         }}

@@ -44,10 +44,10 @@ export async function generateMetadata(): Promise<Metadata> {
       images: [{ url: '/og-image.png', width: 1200, height: 630, alt: t('layout.meta.siteName') }],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: t('seo.twitter.summaryLargeImage'),
       title: t('layout.meta.twitterTitle'),
       description: t('layout.meta.twitterDescription'),
-      creator: '@SlowManJW',
+      creator: t('seo.twitter.creator'),
       images: ['/og-image.png'],
     },
     robots: {

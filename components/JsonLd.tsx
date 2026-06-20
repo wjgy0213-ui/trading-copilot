@@ -51,8 +51,8 @@ export default async function JsonLd() {
     ],
     author: {
       '@type': t('seo.schema.personType'),
-      name: 'SlowManJW',
-      url: 'https://x.com/SlowManJW',
+      name: t('seo.author.name'),
+      url: t('seo.author.url'),
     },
   };
 

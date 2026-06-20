@@ -27,9 +27,10 @@ export async function generateMetadata(): Promise<Metadata> {
       url: canonical,
     },
     twitter: {
-      card: 'summary_large_image',
+      card: t('seo.twitter.summaryLargeImage'),
       title: pageTitle,
       description: pageDescription,
+      creator: t('seo.twitter.creator'),
     },
   };
 }
