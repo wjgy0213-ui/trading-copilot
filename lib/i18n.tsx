@@ -1,8 +1,38 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { Locale, LOCALE_COOKIE_NAME, normalizeLocale } from '@/lib/locale';
 
-export type Locale = 'zh' | 'en';
+function readLocaleCookie(): Locale | null {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie
+    .split('; ')
+    .find(part => part.startsWith(`${LOCALE_COOKIE_NAME}=`));
+  return match ? normalizeLocale(match.split('=')[1]) : null;
+}
+
+function getInitialLocale(): Locale {
+  if (typeof document === 'undefined') return 'en';
+
+  const cookieLocale = readLocaleCookie();
+  if (cookieLocale) return cookieLocale;
+
+  const htmlLang = document.documentElement.lang;
+  if (htmlLang) return normalizeLocale(htmlLang);
+
+  return normalizeLocale(navigator.language || 'en');
+}
+
+function persistLocale(locale: Locale) {
+  if (typeof document === 'undefined' || typeof window === 'undefined') return;
+
+  localStorage.setItem(LOCALE_COOKIE_NAME, locale);
+  document.cookie = `${LOCALE_COOKIE_NAME}=${locale}; path=/; max-age=31536000; samesite=lax`;
+
+  const url = new URL(window.location.href);
+  url.searchParams.set('lang', locale);
+  window.history.replaceState({}, '', url.toString());
+}
 
 // Flat key-value translations
 import zh from '@/locales/zh.json';
@@ -23,28 +53,15 @@ const I18nContext = createContext<I18nContextType>({
 });
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>('zh');
+  const [locale, setLocaleState] = useState<Locale>(getInitialLocale);
 
   useEffect(() => {
-    const saved = localStorage.getItem('locale') as Locale | null;
-    if (saved && (saved === 'zh' || saved === 'en')) {
-      setLocaleState(saved);
-      document.cookie = `locale=${saved}; path=/; max-age=31536000; samesite=lax`;
-    } else {
-      // Auto-detect: default to English unless browser is Chinese
-      const browserLang = navigator.language || '';
-      const isZh = browserLang.startsWith('zh');
-      const detected = isZh ? 'zh' : 'en';
-      setLocaleState(detected);
-      localStorage.setItem('locale', detected);
-      document.cookie = `locale=${detected}; path=/; max-age=31536000; samesite=lax`;
-    }
-  }, []);
+    persistLocale(locale);
+  }, [locale]);
 
   const setLocale = useCallback((l: Locale) => {
     setLocaleState(l);
-    localStorage.setItem('locale', l);
-    document.cookie = `locale=${l}; path=/; max-age=31536000; samesite=lax`;
+    persistLocale(l);
   }, []);
 
   const t = useCallback((key: string, fallback?: string): string => {
