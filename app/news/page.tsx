@@ -4,7 +4,7 @@ import { useI18n } from '@/lib/i18n';
 import { formatLocaleNumber } from '@/lib/i18n-helpers';
 
 import { useState } from 'react';
-import { NEWS_CATEGORIES, type NewsCategory, getSentimentBgColor, getSentimentLabel, getImpactColor, getImpactLabel } from '@/lib/mockNews';
+import { NEWS_CATEGORIES, type NewsCategory, getSentimentBgColor, getSentimentLabel, getImpactColor, getImpactLabel, localizeNewsText } from '@/lib/mockNews';
 import { useNewsData } from '@/lib/useNewsData';
 import { Clock, Flame, TrendingUp, TrendingDown, Minus, Wifi, WifiOff } from 'lucide-react';
 
@@ -125,19 +125,20 @@ export default function NewsPage() {
                 <div className="flex items-start justify-between gap-2 mb-1.5">
                   <h3 className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors leading-snug">
                     {item.impact === 'high' && <Flame className="w-3 h-3 text-red-400 inline mr-1 -mt-0.5" />}
-                    {item.title}
+                    {localizeNewsText(item.title, locale as 'zh' | 'en')}
                   </h3>
                 </div>
 
                 {/* Summary */}
-                <p className="text-xs text-gray-500 leading-relaxed mb-2.5">{item.summary}</p>
+                <p className="text-xs text-gray-500 leading-relaxed mb-2.5">{localizeNewsText(item.summary, locale as 'zh' | 'en')}</p>
 
                 {/* Tags */}
                 {item.tags && (
                   <div className="flex flex-wrap gap-1 mb-2">
-                    {item.tags.map(tag => (
-                      <span key={tag} className="text-[9px] px-1.5 py-0.5 rounded bg-gray-800/80 text-gray-400">#{tag}</span>
-                    ))}
+                    {item.tags.map((tag) => {
+                      const localizedTag = localizeNewsText(tag, locale as 'zh' | 'en');
+                      return <span key={localizedTag} className="text-[9px] px-1.5 py-0.5 rounded bg-gray-800/80 text-gray-400">#{localizedTag}</span>;
+                    })}
                   </div>
                 )}
 
@@ -148,7 +149,7 @@ export default function NewsPage() {
                   </span>
                   <span className="text-gray-500">{getSentimentLabel(item.sentiment, locale as 'zh' | 'en')}</span>
                   <span className={`${getImpactColor(item.impact)}`}>{getImpactLabel(item.impact, locale as 'zh' | 'en')}</span>
-                  <span className="text-gray-600">{item.source}</span>
+                  <span className="text-gray-600">{localizeNewsText(item.source, locale as 'zh' | 'en')}</span>
                   <span className="text-gray-600 flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" />{formatTimeAgo(item.timestamp, t)}</span>
                 </div>
               </div>

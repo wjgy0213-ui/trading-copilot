@@ -6,6 +6,7 @@ import { useI18n } from '@/lib/i18n';
 import { openPosition } from '@/lib/tradingEngine';
 import { scoreEntry } from '@/lib/aiScoring';
 import { getAccount, saveAIScore } from '@/lib/storage';
+import { formatLocaleCurrency } from '@/lib/i18n-helpers';
 import { PositionSide } from '@/lib/types';
 
 interface TradingPanelProps {
@@ -68,6 +69,11 @@ export default function TradingPanel({ currentPrice, onTradeComplete }: TradingP
   };
 
   const pnl = calculatePotentialPnL();
+  const formatMoney = (value: number, signDisplay: 'auto' | 'always' = 'auto') => formatLocaleCurrency(value, locale, 'USD', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    signDisplay,
+  });
 
   return (
     <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
@@ -161,7 +167,7 @@ export default function TradingPanel({ currentPrice, onTradeComplete }: TradingP
           type="number"
           value={takeProfit}
           onChange={(e) => setTakeProfit(e.target.value)}
-          placeholder={`${t('trading.sl_suggest')}: ${side === 'long' ? (currentPrice * 1.1).toFixed(2) : (currentPrice * 0.9).toFixed(2)}`}
+          placeholder={`${t('trading.tp_suggest')}: ${side === 'long' ? (currentPrice * 1.1).toFixed(2) : (currentPrice * 0.9).toFixed(2)}`}
           className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           step="0.01"
         />
@@ -175,13 +181,13 @@ export default function TradingPanel({ currentPrice, onTradeComplete }: TradingP
             {stopLoss && (
               <div className="text-red-400">
                 <div className="text-xs">{t('trading.max_loss')}</div>
-                <div className="font-semibold">-${pnl.potentialLoss.toFixed(2)}</div>
+                <div className="font-semibold">{formatMoney(-pnl.potentialLoss)}</div>
               </div>
             )}
             {takeProfit && (
               <div className="text-green-400">
                 <div className="text-xs">{t('trading.target_profit')}</div>
-                <div className="font-semibold">+${pnl.potentialProfit.toFixed(2)}</div>
+                <div className="font-semibold">{formatMoney(pnl.potentialProfit, 'always')}</div>
               </div>
             )}
           </div>

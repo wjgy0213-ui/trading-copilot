@@ -2,7 +2,7 @@
 
 import { Trade } from './types';
 import type { Locale } from './i18n';
-import { i18nText } from './i18n-helpers';
+import { formatLocaleCurrency, i18nText } from './i18n-helpers';
 
 /** 交易表现分析结果 */
 export interface PerformanceAnalysis {
@@ -186,6 +186,10 @@ export function getRecentPerformanceSummary(trades: Trade[], days: number = 7, l
     trades: recentTrades.length,
     wins,
     losses: recentTrades.length - wins,
-    pnl: `${totalPnl > 0 ? '+' : ''}$${totalPnl.toFixed(2)}`,
+    pnl: formatLocaleCurrency(totalPnl, locale, 'USD', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+      signDisplay: 'always',
+    }),
   });
 }

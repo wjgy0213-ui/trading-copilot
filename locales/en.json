@@ -2063,6 +2063,7 @@
   "trading.sl_label": "Stop Loss (optional but strongly recommended)",
   "trading.sl_suggest": "Suggested",
   "trading.target_profit": "Target Profit",
+  "trading.tp_suggest": "Suggested",
   "trading.title": "Open Position",
   "trading.tp_label": "Take Profit (optional)",
   "waitlist.badge": "Beta Opening Soon",

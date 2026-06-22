@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import { BarChart3, ArrowRight } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
+import { formatLocaleNumber } from '@/lib/i18n-helpers';
 import { Trade } from '@/lib/types';
 import { analyzePerformance } from '@/lib/tradeAnalyzer';
 
@@ -22,14 +23,14 @@ export default function TradeInsights({ trades }: TradeInsightsProps) {
       <div className="flex items-center gap-2 mb-3">
         <BarChart3 className="w-5 h-5 text-blue-400" />
         <span className="font-semibold text-sm">{t('insights.title')}</span>
-        <span className="text-xs text-gray-500 ml-auto">{analysis.totalTrades} {t('insights.trades_suffix')}</span>
+        <span className="text-xs text-gray-500 ml-auto">{formatLocaleNumber(analysis.totalTrades, locale)} {t('insights.trades_suffix')}</span>
       </div>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-3 gap-2 mb-3">
-        <Stat label={t('insights.win_rate')} value={`${analysis.winRate.toFixed(0)}%`} good={analysis.winRate >= 45} />
-        <Stat label={t('insights.rr_ratio')} value={`1:${analysis.avgRR.toFixed(1)}`} good={analysis.avgRR >= 1.5} />
-        <Stat label={t('insights.profit_factor')} value={analysis.profitFactor.toFixed(1)} good={analysis.profitFactor >= 1.2} />
+        <Stat label={t('insights.win_rate')} value={`${formatLocaleNumber(analysis.winRate, locale, { maximumFractionDigits: 0 })}%`} good={analysis.winRate >= 45} />
+        <Stat label={t('insights.rr_ratio')} value={`1:${formatLocaleNumber(analysis.avgRR, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}`} good={analysis.avgRR >= 1.5} />
+        <Stat label={t('insights.profit_factor')} value={formatLocaleNumber(analysis.profitFactor, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} good={analysis.profitFactor >= 1.2} />
       </div>
 
       {/* Suggestions */}

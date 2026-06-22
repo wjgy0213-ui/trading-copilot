@@ -2078,6 +2078,7 @@
   "trading.sl_label": "止损价格 (可选但强烈建议)",
   "trading.sl_suggest": "建议",
   "trading.target_profit": "目标盈利",
+  "trading.tp_suggest": "建议",
   "trading.title": "开仓交易",
   "trading.tp_label": "止盈价格 (可选)",
   "waitlist.badge": "内测即将开放",
