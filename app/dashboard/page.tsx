@@ -22,7 +22,10 @@ function DetailModal({ indicator, onClose, t, locale }: { indicator: ITCIndicato
   const max = Math.max(...data.map(d => d.value));
   
   const displayName = t(`dashboard.indicator.${indicator.id}.name`, locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name);
-  const displayDesc = t(`dashboard.indicator.${indicator.id}.desc`, indicator.description || '');
+  const localizedDescriptionFallback = locale === 'en'
+    ? (indicator.descriptionEn || indicator.description || '')
+    : (indicator.description || indicator.descriptionEn || '');
+  const displayDesc = t(`dashboard.indicator.${indicator.id}.desc`, localizedDescriptionFallback);
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
@@ -162,7 +165,7 @@ export default function DashboardPage() {
   const { t, locale } = useI18n();
   const [selected, setSelected] = useState<ITCIndicator | null>(null);
   const [category, setCategory] = useState<string>('all');
-  const { indicators: ITCIndicators, prices, loading: dataLoading, error: dataError, isLive } = useITCData();
+  const { indicators: ITCIndicators, prices, isLive } = useITCData();
 
   const filtered = category === 'all' ? ITCIndicators : ITCIndicators.filter(i => i.category === category);
 

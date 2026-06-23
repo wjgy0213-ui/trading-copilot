@@ -7,6 +7,7 @@ export interface ITCIndicator {
   value: number;
   history: { timestamp: number; value: number }[];
   description: string;
+  descriptionEn?: string;
   category: 'crypto' | 'macro' | 'onchain' | 'on-chain' | 'weightless' | 'price';
 }
 
@@ -27,61 +28,73 @@ export const ITCIndicators: ITCIndicator[] = [
     id: 'btc-risk', name: 'BTC 风险', nameEn: 'BTC Risk', value: 0.31,
     history: generateHistory(0.31, 0.12, 180), category: 'crypto',
     description: '基于价格回归模型的BTC长周期风险值。0.3以下为历史性买入区间。',
+    descriptionEn: 'BTC long-cycle risk based on price regression models. Below 0.3 has historically marked deep value zones.',
   },
   {
     id: 'eth-risk', name: 'ETH 风险', nameEn: 'ETH Risk', value: 0.29,
     history: generateHistory(0.29, 0.15, 180), category: 'crypto',
     description: '以太坊长周期风险指标，综合价格、Gas费、活跃地址等因素。',
+    descriptionEn: 'Ethereum long-cycle risk indicator combining price, gas fees, active addresses, and related activity inputs.',
   },
   {
     id: 'total-market-risk', name: '市场总风险', nameEn: 'Total Market Risk', value: 0.33,
     history: generateHistory(0.33, 0.10, 180), category: 'crypto',
     description: '加密货币总市值风险指标，衡量整体市场热度。',
+    descriptionEn: 'Aggregate crypto market-cap risk gauge used to measure overall market heat.',
   },
   {
     id: 'mvrv-zscore', name: 'MVRV Z-Score', nameEn: 'MVRV Z-Score', value: 0.45,
     history: generateHistory(0.45, 0.08, 180), category: 'onchain',
     description: 'BTC市值与实现市值比值的Z分数。<0.3极度低估，>0.7极度高估。',
+    descriptionEn: 'BTC market cap versus realized cap Z-score. Below 0.3 signals deep undervaluation, above 0.7 signals overheating.',
   },
   {
     id: 'macro-recession-risk', name: '宏观衰退风险', nameEn: 'Macro Recession Risk', value: 0.62,
     history: generateHistory(0.62, 0.05, 180), category: 'macro',
     description: '基于美债收益率曲线、失业率、PMI等的全球宏观衰退概率。',
+    descriptionEn: 'Global recession probability model using yield curves, labor data, PMI, and macro stress inputs.',
   },
   {
     id: 'crypto-risk', name: '综合加密风险', nameEn: 'Crypto Risk Index', value: 0.29,
     history: generateHistory(0.29, 0.12, 180), category: 'crypto',
     description: '综合所有ITC指标的加权风险评分。',
+    descriptionEn: 'Weighted composite risk score across the main ITC-style crypto indicators.',
   },
   {
     id: 'fear-greed', name: '恐惧贪婪指数', nameEn: 'Fear & Greed', value: 0.08,
     history: generateHistory(0.15, 0.10, 180), category: 'crypto',
     description: '市场情绪指标。当前处于极度恐惧区间，历史上是最佳买入时机之一。',
+    descriptionEn: 'Market sentiment gauge. The current reading is in extreme fear, a zone that has often aligned with strong long-term accumulation.',
   },
   {
     id: 'stablecoin-supply', name: '稳定币供应比', nameEn: 'Stablecoin Supply Ratio', value: 0.55,
     history: generateHistory(0.55, 0.08, 180), category: 'onchain',
     description: '稳定币市值占总市值比例。高=场外资金充裕，低=资金紧张。',
+    descriptionEn: 'Stablecoin market cap as a share of total crypto market value. Higher can imply stronger sideline liquidity, lower can imply tighter liquidity.',
   },
   {
     id: 'btc-dominance', name: 'BTC 市占率', nameEn: 'BTC Dominance', value: 0.64,
     history: generateHistory(0.60, 0.06, 180), category: 'crypto',
     description: 'BTC市值占加密总市值比例。高=避险情绪强，低=山寨币季节。',
+    descriptionEn: 'Bitcoin share of total crypto market cap. Higher often signals defensive positioning, lower can hint at alt rotation.',
   },
   {
     id: 'etf-flow', name: 'ETF 资金流向', nameEn: 'BTC ETF Flow', value: 0.35,
     history: generateHistory(0.40, 0.15, 180), category: 'onchain',
     description: 'BTC现货ETF近期净流入/流出趋势。低=机构在撤退。',
+    descriptionEn: 'Recent net flow trend of spot BTC ETFs. Lower values suggest institutions are pulling capital back.',
   },
   {
     id: 'defi-tvl', name: 'DeFi TVL 健康度', nameEn: 'DeFi TVL Health', value: 0.42,
     history: generateHistory(0.45, 0.10, 180), category: 'onchain',
     description: 'DeFi总锁仓值相对趋势线的偏离度。低=资金外流。',
+    descriptionEn: 'Deviation of DeFi total value locked from trend. Lower values suggest capital is leaking out of the sector.',
   },
   {
     id: 'vix', name: 'VIX 波动率', nameEn: 'VIX Volatility', value: 0.58,
     history: generateHistory(0.50, 0.12, 180), category: 'macro',
     description: '标普500波动率指数。高=传统市场恐慌，可能拖累加密市场。',
+    descriptionEn: 'S&P 500 volatility index. Higher readings reflect risk-off stress that can spill into crypto.',
   },
 ];
 
