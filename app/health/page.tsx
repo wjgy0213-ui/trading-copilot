@@ -208,6 +208,8 @@ export default function HealthCheckPage() {
               <button 
                 onClick={fetchHealth} 
                 disabled={loading}
+                aria-label={t('health.refreshAria')}
+                title={t('health.refreshAria')}
                 className="px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-medium disabled:opacity-50 transition-colors"
               >
                 {loading ? t('health.refreshing') : t('health.refreshNow')}

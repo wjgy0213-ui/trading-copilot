@@ -158,10 +158,15 @@ function AssetCard({ fused }: { fused: FusedSignal }) {
         <p className="text-xs text-gray-400 mt-4 leading-relaxed">{fused.summary}</p>
       </div>
 
-      <button onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-center gap-1 py-2 border-t border-gray-800/30 text-xs text-gray-500 hover:text-gray-300 hover:bg-gray-800/20 transition">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
+        aria-label={expanded ? t('signals.collapse') : t('signals.expandCount').replace('{count}', String(fused.signals.length)).replace('{label}', t('signals.signals_suffix'))}
+        title={expanded ? t('signals.collapse') : t('signals.expandCount').replace('{count}', String(fused.signals.length)).replace('{label}', t('signals.signals_suffix'))}
+        className="w-full flex items-center justify-center gap-1 py-2 border-t border-gray-800/30 text-xs text-gray-500 hover:text-gray-300 hover:bg-gray-800/20 transition"
+      >
         {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-        {expanded ? t('signals.collapse') : `${t('signals.expand')} ${fused.signals.length} ${t('signals.signals_suffix')}`}
+        {expanded ? t('signals.collapse') : t('signals.expandCount').replace('{count}', String(fused.signals.length)).replace('{label}', t('signals.signals_suffix'))}
       </button>
 
       {expanded && (

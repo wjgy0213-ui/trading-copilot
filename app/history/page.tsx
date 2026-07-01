@@ -100,7 +100,7 @@ export default function HistoryPage() {
                 <div className={`text-2xl font-bold ${winRate >= 50 ? 'text-green-400' : 'text-red-400'}`}>
                   {formatLocaleNumber(winRate, locale, { maximumFractionDigits: 0 })}%
                 </div>
-                <div className="text-xs text-gray-400">{t('history.win_rate')} ({wins}{t('review.wins_suffix')}{losses}{t('review.losses_suffix')})</div>
+                <div className="text-xs text-gray-400">{t('history.win_rate')} ({t('history.wins_losses').replace('{wins}', formatLocaleNumber(wins, locale)).replace('{losses}', formatLocaleNumber(losses, locale))})</div>
               </div>
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
                 <div className={`text-2xl font-bold ${totalPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
@@ -118,7 +118,7 @@ export default function HistoryPage() {
               </div>
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 text-center">
                 <div className={`text-2xl font-bold ${avgScore >= 70 ? 'text-yellow-400' : 'text-gray-400'}`}>
-                  {avgScore > 0 ? formatLocaleNumber(avgScore, locale, { maximumFractionDigits: 0 }) : '-'}
+                  {avgScore > 0 ? formatLocaleNumber(avgScore, locale, { maximumFractionDigits: 0 }) : t('common.noData')}
                 </div>
                 <div className="text-xs text-gray-400">{t('history.avg_ai_score')}</div>
               </div>
@@ -159,7 +159,7 @@ export default function HistoryPage() {
                     <div className="flex items-center gap-2 bg-gray-700 px-3 py-1 rounded-full">
                       <Star className="w-4 h-4 text-yellow-400" />
                       <span className="text-sm font-semibold">
-                        {t('history.ai_score')}: {formatLocaleNumber(score.entryScore, locale, { maximumFractionDigits: 0 })}/100
+                        {t('history.ai_score')}: {t('coach.score_out_of_100').replace('{score}', formatLocaleNumber(score.entryScore, locale, { maximumFractionDigits: 0 }))}
                       </span>
                     </div>
                   )}

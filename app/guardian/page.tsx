@@ -166,7 +166,12 @@ export default function GuardianPage() {
             </div>
             <p className="text-sm text-gray-500 mt-1">{t('guardian.subtitle')}</p>
           </div>
-          <button onClick={() => fetchData(true)} className={`p-2 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition ${refreshing ? 'animate-spin' : ''}`}>
+          <button
+            onClick={() => fetchData(true)}
+            aria-label={t('guardian.refreshAria')}
+            title={t('guardian.refreshAria')}
+            className={`p-2 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition ${refreshing ? 'animate-spin' : ''}`}
+          >
             <RefreshCw className="w-4 h-4 text-gray-400" />
           </button>
         </div>
