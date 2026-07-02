@@ -86,15 +86,16 @@ function HeatMap({ data, t }: { data: Record<string, { wins: number; losses: num
           const bg = d.wins + d.losses === 0
             ? 'bg-gray-800/30'
             : isProfit
-              ? `bg-emerald-500` 
+              ? `bg-emerald-500`
               : `bg-red-500`;
+          const tooltip = t('review.heatmapTooltip')
+            .replace('{hour}', String(h))
+            .replace('{pnl}', d.pnl.toFixed(2))
+            .replace('{wins}', String(d.wins))
+            .replace('{losses}', String(d.losses));
 
           return (
-            <div key={h} className="text-center" title={t('review.heatmapTooltip')
-              .replace('{hour}', String(h))
-              .replace('{pnl}', d.pnl.toFixed(2))
-              .replace('{wins}', String(d.wins))
-              .replace('{losses}', String(d.losses))}>
+            <div key={h} className="text-center" title={tooltip} aria-label={tooltip}>
               <div className={`h-8 rounded ${bg} transition-all`} style={{ opacity: d.wins + d.losses === 0 ? 0.2 : 0.3 + intensity * 0.7 }} />
               <span className="text-[10px] text-gray-600">{h}</span>
             </div>
@@ -132,16 +133,20 @@ function TradeList({ trades, t, locale }: { trades: any[]; t: (key: string) => s
         <h3 className="text-sm font-semibold text-gray-300">{t('review.recent_trades')}</h3>
       </div>
       <div className="divide-y divide-gray-800/30 max-h-80 overflow-y-auto">
-        {trades.map((t, i) => (
+        {trades.map((trade, i) => (
           <div key={i} className="flex items-center justify-between px-4 py-2.5 hover:bg-gray-800/20">
             <div className="flex items-center gap-3">
-              <span className="text-xs font-mono font-semibold text-gray-300">{t.symbol}</span>
-              <span className="text-[10px] text-gray-500">{formatLocaleNumber(t.entries?.length || 0, locale)}→{formatLocaleNumber(t.exits?.length || 0, locale)}</span>
+              <span className="text-xs font-mono font-semibold text-gray-300">{trade.symbol}</span>
+              <span className="text-[10px] text-gray-500">{formatLocaleNumber(trade.entries?.length || 0, locale)}→{formatLocaleNumber(trade.exits?.length || 0, locale)}</span>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-xs text-gray-500">{t.duration ? t('review.duration_minutes').replace('{minutes}', formatLocaleNumber(Math.round(t.duration / 60000), locale)) : '-'}</span>
-              <span className={`text-sm font-semibold ${t.pnl >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                {formatLocaleCurrency(t.pnl || 0, locale, 'USD', { maximumFractionDigits: 2, signDisplay: 'always' })}
+              <span className="text-xs text-gray-500">
+                {trade.duration
+                  ? t('review.duration_minutes').replace('{minutes}', formatLocaleNumber(Math.round(trade.duration / 60000), locale))
+                  : t('review.not_available')}
+              </span>
+              <span className={`text-sm font-semibold ${trade.pnl >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                {formatLocaleCurrency(trade.pnl || 0, locale, 'USD', { maximumFractionDigits: 2, signDisplay: 'always' })}
               </span>
             </div>
           </div>

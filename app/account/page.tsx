@@ -218,20 +218,23 @@ export default function AccountPage() {
 
         {/* Usage Stats placeholder */}
         <div className="border border-gray-800 rounded-2xl p-6">
-          <h2 className="text-sm font-medium text-gray-400 mb-3 flex items-center gap-2">
-            <Clock className="w-4 h-4" /> {t('account.usage_stats')}
-          </h2>
+          <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
+            <h2 className="text-sm font-medium text-gray-400 flex items-center gap-2">
+              <Clock className="w-4 h-4" /> {t('account.usage_stats')}
+            </h2>
+            <span className="text-xs text-gray-500">{t('account.usage_coming_soon')}</span>
+          </div>
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
-              <div className="text-2xl font-bold font-mono text-emerald-400">—</div>
+              <div className="text-2xl font-bold font-mono text-emerald-400">{t('account.value_unavailable')}</div>
               <div className="text-xs text-gray-500 mt-1">{t('account.backtest_count')}</div>
             </div>
             <div>
-              <div className="text-2xl font-bold font-mono text-violet-400">—</div>
+              <div className="text-2xl font-bold font-mono text-violet-400">{t('account.value_unavailable')}</div>
               <div className="text-xs text-gray-500 mt-1">{t('account.ai_gen_count')}</div>
             </div>
             <div>
-              <div className="text-2xl font-bold font-mono text-cyan-400">—</div>
+              <div className="text-2xl font-bold font-mono text-cyan-400">{t('account.value_unavailable')}</div>
               <div className="text-xs text-gray-500 mt-1">{t('account.optimize_count')}</div>
             </div>
           </div>

@@ -84,6 +84,9 @@ export default function PriceChart({ symbol = 'BINANCE:BTCUSDT' }: PriceChartPro
           ? 'fixed inset-0 z-50 bg-gray-950 flex flex-col'
           : 'relative'
       }
+      role={isFullscreen ? 'dialog' : undefined}
+      aria-modal={isFullscreen ? true : undefined}
+      aria-label={isFullscreen ? t('chart.dialogLabel').replace('{symbol}', symbol) : undefined}
     >
       {/* Top bar in fullscreen */}
       {isFullscreen && (
@@ -108,6 +111,7 @@ export default function PriceChart({ symbol = 'BINANCE:BTCUSDT' }: PriceChartPro
           className="absolute top-3 right-3 z-10 p-2 bg-gray-800/80 hover:bg-gray-700 rounded-lg transition-all border border-gray-700/50 backdrop-blur-sm group"
           title={t('chart.fullscreen_symbol').replace('{symbol}', symbol)}
           aria-label={t('chart.fullscreen_symbol').replace('{symbol}', symbol)}
+          aria-pressed={isFullscreen}
         >
           <Maximize2 className="w-5 h-5 text-gray-400 group-hover:text-white" />
         </button>

@@ -172,7 +172,10 @@ export default function TelegramNotify() {
                 </div>
                 <button
                   type="button"
+                  role="switch"
+                  aria-checked={config.notifications[item.key]}
                   aria-label={t('telegram.toggle_notification').replace('{label}', item.label)}
+                  title={t('telegram.toggle_notification').replace('{label}', item.label)}
                   onClick={() => toggleNotification(item.key)}
                   className={`relative w-11 h-6 rounded-full transition-colors ${
                     config.notifications[item.key] ? 'bg-violet-600' : 'bg-gray-700'
@@ -211,6 +214,7 @@ export default function TelegramNotify() {
         <div className="flex gap-3">
           <button
             onClick={saveConfig}
+            aria-label={t('telegram.save_config')}
             className="flex-1 px-4 py-3 bg-violet-600 hover:bg-violet-700 text-white font-medium rounded-lg transition-all"
           >
             {t('telegram.save_config')}
@@ -218,6 +222,7 @@ export default function TelegramNotify() {
           <button
             onClick={testNotification}
             disabled={testing}
+            aria-label={testing ? t('telegram.testing') : t('telegram.test')}
             className="flex-1 px-4 py-3 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             <Send className="w-4 h-4" />
