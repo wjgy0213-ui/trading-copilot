@@ -31,6 +31,13 @@ interface DayStat {
 
 export default function AdminPage() {
   const { t, locale } = useI18n();
+  const formatAdminText = (key: string, replacements: Record<string, string | number> = {}) => {
+    let text = t(key);
+    for (const [name, value] of Object.entries(replacements)) {
+      text = text.replace(`{${name}}`, String(value));
+    }
+    return text;
+  };
   const [stats, setStats] = useState<DayStat[]>([]);
   const [leads, setLeads] = useState<LeadItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -179,7 +186,7 @@ export default function AdminPage() {
               {pages.map((p, i) => (
                 <div key={i} className="flex items-center justify-between py-1">
                   <span className="text-gray-300 text-sm font-mono">{p.page}</span>
-                  <span className="text-gray-400 text-sm">{formatLocaleNumber(p.views, locale)} {t('admin.viewsUnit')}</span>
+                  <span className="text-gray-400 text-sm">{formatAdminText('admin.pageViewsValue', { count: formatLocaleNumber(p.views, locale) })}</span>
                 </div>
               ))}
             </div>

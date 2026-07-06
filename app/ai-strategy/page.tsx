@@ -32,6 +32,13 @@ interface AIResult {
 // @i18n
 export default function AIStrategyPage() {
   const { t, locale } = useI18n();
+  const formatAiStrategyText = (key: string, replacements: Record<string, string | number> = {}) => {
+    let text = t(key);
+    for (const [name, value] of Object.entries(replacements)) {
+      text = text.replace(`{${name}}`, String(value));
+    }
+    return text;
+  };
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AIResult | null>(null);
@@ -130,7 +137,7 @@ export default function AIStrategyPage() {
                 </div>
                 <div>
                   <h3 className="font-bold">{getLocalizedStrategyName(result)}</h3>
-                  <p className="text-xs text-gray-500">{t('aiStrategy.strategyId')}: {result.strategy.strategyId}</p>
+                  <p className="text-xs text-gray-500">{formatAiStrategyText('aiStrategy.strategyIdValue', { id: result.strategy.strategyId })}</p>
                 </div>
               </div>
 
@@ -179,7 +186,12 @@ export default function AIStrategyPage() {
                 </div>
               )}
 
-              <Link href={`/strategy?sid=${result.strategy.strategyId}&${Object.entries(result.strategy.params).map(([k,v]) => `${k}=${v}`).join('&')}&sl=${result.risk.stopLoss}&tp=${result.risk.takeProfit}`}
+              <Link href={`/strategy?${new URLSearchParams({
+                sid: result.strategy.strategyId,
+                ...Object.fromEntries(Object.entries(result.strategy.params).map(([k, v]) => [k, String(v)])),
+                sl: String(result.risk.stopLoss),
+                tp: String(result.risk.takeProfit),
+              }).toString()}`}
                 className="w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white transition">
                 <BarChart3 className="w-4 h-4" /> {t('aiStrategy.goBacktest')} <ArrowRight className="w-4 h-4" />
               </Link>

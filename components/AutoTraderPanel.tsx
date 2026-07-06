@@ -20,6 +20,13 @@ interface AutoTraderPanelProps {
 
 export default function AutoTraderPanel({ currentPrice, onTradeComplete }: AutoTraderPanelProps) {
   const { t, locale } = useI18n();
+  const formatAutoText = (key: string, replacements: Record<string, string | number> = {}) => {
+    let text = t(key);
+    for (const [name, value] of Object.entries(replacements)) {
+      text = text.replace(`{${name}}`, String(value));
+    }
+    return text;
+  };
   const [strategy, setStrategy] = useState<AutoStrategy | null>(null);
   const [logs, setLogs] = useState<SignalLog[]>([]);
   const [lastEval, setLastEval] = useState<string>('');
@@ -135,14 +142,18 @@ export default function AutoTraderPanel({ currentPrice, onTradeComplete }: AutoT
         <div className="text-xs text-gray-400 mb-1">{t('auto.strategy')}</div>
         <div className="font-semibold text-sm">{strategyName}</div>
         <div className="text-xs text-gray-500 mt-1">
-          {t('auto.sl_label')} {strategy.risk.stopLoss}% | {t('auto.tp_label')} {strategy.risk.takeProfit}% | {t('auto.max_position_label')} {strategy.risk.maxPosition}%
+          {formatAutoText('auto.riskSummary', {
+            sl: strategy.risk.stopLoss,
+            tp: strategy.risk.takeProfit,
+            max: strategy.risk.maxPosition,
+          })}
         </div>
       </div>
 
       <div className="flex items-center gap-2 mb-3 text-xs">
         <Activity className="w-3 h-3 text-gray-500" />
         <span className="text-gray-400">{lastEval || t('auto.waiting')}</span>
-        <span className="text-gray-600 ml-auto">#{evalCount}</span>
+        <span className="text-gray-600 ml-auto">{formatAutoText('auto.evaluationCount', { count: evalCount })}</span>
       </div>
 
       {logs.length > 0 && (

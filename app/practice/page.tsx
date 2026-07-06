@@ -67,6 +67,13 @@ function formatPracticeReason(reason: string, t: (key: string) => string): strin
 
 export default function PracticePage() {
   const { t, locale } = useI18n();
+  const formatPracticeText = (key: string, replacements: Record<string, string | number> = {}) => {
+    let text = t(key);
+    for (const [name, value] of Object.entries(replacements)) {
+      text = text.replace(`{${name}}`, String(value));
+    }
+    return text;
+  };
   const tierLabels = {
     bronze: t('practice.tier_bronze'),
     silver: t('practice.tier_silver'),
@@ -288,13 +295,13 @@ export default function PracticePage() {
           <div className="bg-gray-800/30 rounded-xl p-3 border border-gray-700/30 mb-6">
             <div className="flex justify-between text-xs text-gray-400 mb-1">
               <span>{tierLabels[tier]}</span>
-              <span>{t('practice.next_tier')}: {tierLabels[tierInfo.next as keyof typeof tierLabels]}</span>
+              <span>{formatPracticeText('practice.nextTierValue', { tier: tierLabels[tierInfo.next as keyof typeof tierLabels] })}</span>
             </div>
             <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-yellow-500 to-green-500 rounded-full transition-all" 
                 style={{ width: `${Math.min(100, Math.max(0, totalPnl / 20 * 100))}%` }} />
             </div>
-            <div className="text-xs text-gray-500 mt-1">{t('practice.unlock_req')}: {t(tierInfo.reqKey)}</div>
+            <div className="text-xs text-gray-500 mt-1">{formatPracticeText('practice.unlockReqValue', { requirement: t(tierInfo.reqKey) })}</div>
           </div>
         )}
 
@@ -379,7 +386,9 @@ export default function PracticePage() {
                     ? 'bg-green-600 hover:bg-green-500 text-white' 
                     : 'bg-red-600 hover:bg-red-500 text-white'
                 } disabled:opacity-30`}>
-                {orderSide === 'long' ? `🟢 ${t('practice.open_long')}` : `🔴 ${t('practice.open_short')}`} {selectedCoin}
+                {orderSide === 'long'
+                  ? formatPracticeText('practice.openLongSymbol', { symbol: selectedCoin })
+                  : formatPracticeText('practice.openShortSymbol', { symbol: selectedCoin })}
               </button>
             </div>
 
@@ -474,7 +483,7 @@ export default function PracticePage() {
                           {formatLocaleCurrency(trade.pnl, locale, 'USD', { maximumFractionDigits: 2, signDisplay: 'always' })}
                         </span>
                       </div>
-                      <div className="text-[11px] text-gray-500">{t('practice.closed_by')}: {formatPracticeReason(trade.reason, t)}</div>
+                      <div className="text-[11px] text-gray-500">{formatPracticeText('practice.closedByValue', { reason: formatPracticeReason(trade.reason, t) })}</div>
                       {trade.aiAdvice && <p className="text-xs text-gray-400 mt-1">💡 {trade.aiAdvice}</p>}
                     </div>
                   ))
