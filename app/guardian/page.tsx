@@ -7,7 +7,7 @@ import { formatLocaleCurrency, formatLocaleNumber } from '@/lib/i18n-helpers';
 
 interface RiskData {
   score: { overall: number; concentration: number; leverage: number; drawdown: number; correlation: number; liquidation: number };
-  alerts: { level: 'info' | 'warning' | 'critical'; category: string; title: string; detail: string; action: string }[];
+  alerts: { level: 'info' | 'warning' | 'critical'; categoryKey: 'status' | 'concentration' | 'leverage' | 'drawdown' | 'correlation' | 'liquidation'; category: string; title: string; detail: string; action: string }[];
   positions: any[];
   balance: number;
   totalNotional: number;
@@ -65,6 +65,7 @@ function DimensionBar({ label, score, icon: Icon, desc }: { label: string; score
 }
 
 function AlertCard({ alert }: { alert: RiskData['alerts'][0] }) {
+  const { t } = useI18n();
   const styles = {
     critical: 'border-red-500/30 bg-red-500/5',
     warning: 'border-yellow-500/30 bg-yellow-500/5',
@@ -79,7 +80,7 @@ function AlertCard({ alert }: { alert: RiskData['alerts'][0] }) {
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold text-gray-200">{alert.title}</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-800 text-gray-500">{alert.category}</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-800 text-gray-500">{alert.category || t(`guardian.alertCategory.${alert.categoryKey}`, alert.categoryKey)}</span>
           </div>
           <p className="text-xs text-gray-400 mt-0.5">{alert.detail}</p>
           <div className="flex items-center gap-1 mt-1.5 text-[11px] text-gray-300">

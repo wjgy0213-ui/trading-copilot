@@ -21,11 +21,11 @@ function DetailModal({ indicator, onClose, t, locale }: { indicator: ITCIndicato
   const min = Math.min(...data.map(d => d.value));
   const max = Math.max(...data.map(d => d.value));
   
-  const displayName = t(`dashboard.indicator.${indicator.id}.name`, locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name);
+  const displayName = t(`dashboard.indicator.${indicator.id}.name`) || (locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name);
   const localizedDescriptionFallback = locale === 'en'
     ? (indicator.descriptionEn || indicator.description || '')
     : (indicator.description || indicator.descriptionEn || '');
-  const displayDesc = t(`dashboard.indicator.${indicator.id}.desc`, localizedDescriptionFallback);
+  const displayDesc = t(`dashboard.indicator.${indicator.id}.desc`) || localizedDescriptionFallback;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
@@ -176,7 +176,7 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-lg font-semibold text-gray-100">{t('dashboard.title')}</h1>
           <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
-            {ITCIndicators.length} {t('dashboard.subtitle_indicators')} · {t('dashboard.subtitle_click')}
+            {t('dashboard.subtitle_indicator_count').replace('{count}', formatLocaleNumber(ITCIndicators.length, locale))} · {t('dashboard.subtitle_click')}
             {isLive ? <span className="inline-flex items-center gap-1 text-emerald-400"><Wifi className="w-3 h-3" />{t('dashboard.live')}</span> : <span className="inline-flex items-center gap-1 text-gray-600"><WifiOff className="w-3 h-3" />{t('dashboard.simulated')}</span>}
             {prices && <span className="text-gray-500">{t('dashboard.priceSummary').replace('{btc}', formatLocaleCurrency(prices.BTC, locale, 'USD', { maximumFractionDigits: 0 })).replace('{eth}', formatLocaleCurrency(prices.ETH, locale, 'USD', { maximumFractionDigits: 0 }))}</span>}
           </p>
@@ -267,7 +267,7 @@ export default function DashboardPage() {
         ].map(s => (
           <div key={s.label} className={`border rounded-lg p-3 ${s.bg}`}>
             <div className="text-[10px] text-gray-500">{s.label}</div>
-            <div className={`text-2xl font-mono font-bold ${s.color}`}>{s.count}</div>
+            <div className={`text-2xl font-mono font-bold ${s.color}`}>{formatLocaleNumber(s.count, locale)}</div>
           </div>
         ))}
       </div>
@@ -284,7 +284,7 @@ export default function DashboardPage() {
             <div key={indicator.id} onClick={() => setSelected(indicator)}
               className="border border-gray-800/50 rounded-lg p-3.5 bg-gray-900/30 hover:bg-gray-900/60 hover:border-gray-700 transition-all cursor-pointer group">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-gray-400">{t(`dashboard.indicator.${indicator.id}.name`, locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name)}</span>
+                <span className="text-xs font-medium text-gray-400">{t(`dashboard.indicator.${indicator.id}.name`) || (locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name)}</span>
                 <Maximize2 className="w-3 h-3 text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
 
@@ -309,7 +309,7 @@ export default function DashboardPage() {
                 <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${getRiskBgColor(indicator.value)}`}>
                   {i18nText(locale as 'en' | 'zh', getRiskLabel(indicator.value))}
                 </span>
-                <span className="text-[9px] text-gray-600">{t(`dashboard.indicator.${indicator.id}.name`, locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name)}</span>
+                <span className="text-[9px] text-gray-600">{t(`dashboard.indicator.${indicator.id}.name`) || (locale === 'en' ? (indicator.nameEn || indicator.name) : indicator.name)}</span>
               </div>
             </div>
           );

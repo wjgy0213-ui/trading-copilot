@@ -17,6 +17,12 @@ function formatQuestionCount(count: number, locale: 'zh' | 'en', t: (key: string
     .replace('{unit}', t('learn.questions_count'));
 }
 
+function formatAnsweredProgress(answered: number, total: number, locale: 'zh' | 'en', t: (key: string, fallback?: string) => string) {
+  return t('learn.submit_test_progress')
+    .replace('{answered}', formatLocaleNumber(answered, locale))
+    .replace('{total}', formatLocaleNumber(total, locale));
+}
+
 function PaywallBanner({ onUnlock }: { onUnlock: () => void }) {
   const { t } = useI18n();
   const [code, setCode] = useState('');
@@ -373,7 +379,7 @@ function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; ch
       >
         <span className="text-xl">📝</span>
         <div className="flex-1">
-          <span className="font-semibold text-sm">{t('learn.chapter_quiz')}：{chapterTitle}</span>
+          <span className="font-semibold text-sm">{t('learn.chapter_quiz_title').replace('{title}', chapterTitle)}</span>
           <span className="text-xs text-gray-500 ml-2">{countLabel}</span>
           {showResults && (
             <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${score >= quiz.length * 0.8 ? 'bg-green-600/20 text-green-400' : score >= quiz.length * 0.6 ? 'bg-yellow-600/20 text-yellow-400' : 'bg-red-600/20 text-red-400'}`}>
@@ -417,7 +423,7 @@ function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; ch
                 disabled={!allAnswered}
                 className={`px-5 py-2 rounded-lg text-sm font-medium transition ${allAnswered ? 'bg-purple-600 hover:bg-purple-500 text-white' : 'bg-gray-800 text-gray-600 cursor-not-allowed'}`}
               >
-                {t('learn.submit_test')}{locale === 'zh' ? `（${Object.keys(answers).length}/${quiz.length}）` : ` (${Object.keys(answers).length}/${quiz.length})`}
+                {formatAnsweredProgress(Object.keys(answers).length, quiz.length, locale, t)}
               </button>
             ) : (
               <button onClick={() => { setAnswers({}); setShowResults(false); }} className="px-5 py-2 rounded-lg text-sm font-medium bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
@@ -477,7 +483,7 @@ function ChapterSection({ chapter, isPro, chapterIndex }: { chapter: Chapter; is
         <div className="mt-4 ml-2 p-4 bg-gray-900/30 border border-gray-800/50 rounded-xl opacity-60">
           <div className="flex items-center gap-2">
             <span className="text-xl">📝</span>
-          <span className="text-sm text-gray-500">{t('learn.chapter_quiz')}{formatQuestionCount(CHAPTER_QUIZZES[chapter.id].length, locale, t)}{t('learn.chapter_quiz_locked')}</span>
+          <span className="text-sm text-gray-500">{t('learn.chapter_quiz_locked_summary').replace('{count}', formatQuestionCount(CHAPTER_QUIZZES[chapter.id].length, locale, t))}</span>
             <Lock className="w-3.5 h-3.5 text-gray-600" />
           </div>
         </div>

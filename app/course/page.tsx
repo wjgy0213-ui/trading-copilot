@@ -165,7 +165,7 @@ export default function CoursePage() {
                 <div>
                   <h3 className="font-semibold text-white">{plan.name}</h3>
                   <span className={`text-xs px-2 py-0.5 rounded-full ${plan.badgeClassName}`}>
-                    {t('course.giftPrefix')}{plan.eliteLabel}
+                    {t('course.giftLabel').replace('{value}', plan.eliteLabel)}
                   </span>
                 </div>
               </div>
@@ -175,7 +175,7 @@ export default function CoursePage() {
                   <span className="text-4xl font-bold text-white">{formatLocaleCurrency(plan.price, locale, 'USD', { maximumFractionDigits: 0 })}</span>
                   <span className="text-lg text-gray-600 line-through">{formatLocaleCurrency(plan.originalPrice, locale, 'USD', { maximumFractionDigits: 0 })}</span>
                   <span className="text-xs text-emerald-400 font-medium">
-                    {t('course.save')}{formatLocaleCurrency(plan.originalPrice - plan.price, locale, 'USD', { maximumFractionDigits: 0 })}
+                    {t('course.saveAmount').replace('{amount}', formatLocaleCurrency(plan.originalPrice - plan.price, locale, 'USD', { maximumFractionDigits: 0 }))}
                   </span>
                 </div>
                 <div className="text-sm text-gray-500 mt-1">{t('course.oneTime')}</div>

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { fillTemplate, getRequestLocale, translateForLocale } from '@/lib/server-i18n';
 
 // Risk Guardian — real-time portfolio risk scanner
 // Checks: position concentration, leverage, correlation, drawdown, volatility exposure
@@ -16,6 +17,7 @@ interface Position {
 
 interface RiskAlert {
   level: 'info' | 'warning' | 'critical';
+  categoryKey: 'status' | 'concentration' | 'leverage' | 'drawdown' | 'correlation' | 'liquidation';
   category: string;
   title: string;
   detail: string;
@@ -31,7 +33,10 @@ interface RiskScore {
   liquidation: number;    // proximity to liquidation
 }
 
-function assessRisk(positions: Position[], balance: number): { score: RiskScore; alerts: RiskAlert[] } {
+function assessRisk(positions: Position[], balance: number, locale: 'zh' | 'en'): { score: RiskScore; alerts: RiskAlert[] } {
+  const tr = (key: string, fallback?: string) => translateForLocale(locale, key, fallback);
+  const txt = (key: string, values: Record<string, string | number> = {}, fallback?: string) =>
+    fillTemplate(tr(key, fallback), values);
   const alerts: RiskAlert[] = [];
   const totalNotional = positions.reduce((s, p) => s + p.size, 0);
   const totalPnl = positions.reduce((s, p) => s + p.unrealizedPnl, 0);
@@ -42,10 +47,10 @@ function assessRisk(positions: Position[], balance: number): { score: RiskScore;
     const pct = p.size / Math.max(totalNotional, 1);
     if (pct > 0.5) {
       concentrationScore = 20;
-      alerts.push({ level: 'critical', category: '集中度', title: `${p.symbol} 占仓位 ${(pct * 100).toFixed(0)}%`, detail: '单一标的超过50%，风险极高', action: '减仓至30%以下' });
+      alerts.push({ level: 'critical', categoryKey: 'concentration', category: tr('guardian.alertCategory.concentration'), title: txt('guardian.alert.concentration.critical.title', { symbol: p.symbol, percent: (pct * 100).toFixed(0) }), detail: tr('guardian.alert.concentration.critical.detail'), action: tr('guardian.alert.concentration.critical.action') });
     } else if (pct > 0.3) {
       concentrationScore = Math.min(concentrationScore, 50);
-      alerts.push({ level: 'warning', category: '集中度', title: `${p.symbol} 占 ${(pct * 100).toFixed(0)}%`, detail: '建议分散', action: '考虑分散到其他标的' });
+      alerts.push({ level: 'warning', categoryKey: 'concentration', category: tr('guardian.alertCategory.concentration'), title: txt('guardian.alert.concentration.warning.title', { symbol: p.symbol, percent: (pct * 100).toFixed(0) }), detail: tr('guardian.alert.concentration.warning.detail'), action: tr('guardian.alert.concentration.warning.action') });
     }
   }
   if (positions.length === 0) concentrationScore = 100;
@@ -55,10 +60,10 @@ function assessRisk(positions: Position[], balance: number): { score: RiskScore;
   const weightedLev = positions.length ? positions.reduce((s, p) => s + p.leverage * (p.size / Math.max(totalNotional, 1)), 0) : 0;
   if (weightedLev > 20) {
     leverageScore = 10;
-    alerts.push({ level: 'critical', category: '杠杆', title: `加权杠杆 ${weightedLev.toFixed(1)}x`, detail: '极端杠杆，微小波动即爆仓', action: '立即降杠杆至10x以下' });
+    alerts.push({ level: 'critical', categoryKey: 'leverage', category: tr('guardian.alertCategory.leverage'), title: txt('guardian.alert.leverage.critical.title', { leverage: weightedLev.toFixed(1) }), detail: tr('guardian.alert.leverage.critical.detail'), action: tr('guardian.alert.leverage.critical.action') });
   } else if (weightedLev > 10) {
     leverageScore = 40;
-    alerts.push({ level: 'warning', category: '杠杆', title: `加权杠杆 ${weightedLev.toFixed(1)}x`, detail: '高杠杆需要严格止损', action: '确保每笔都有止损' });
+    alerts.push({ level: 'warning', categoryKey: 'leverage', category: tr('guardian.alertCategory.leverage'), title: txt('guardian.alert.leverage.warning.title', { leverage: weightedLev.toFixed(1) }), detail: tr('guardian.alert.leverage.warning.detail'), action: tr('guardian.alert.leverage.warning.action') });
   } else if (weightedLev > 5) {
     leverageScore = 70;
   }
@@ -68,10 +73,10 @@ function assessRisk(positions: Position[], balance: number): { score: RiskScore;
   const drawdownPct = balance > 0 ? (totalPnl / balance) * 100 : 0;
   if (drawdownPct < -10) {
     drawdownScore = 15;
-    alerts.push({ level: 'critical', category: '回撤', title: `浮亏 ${drawdownPct.toFixed(1)}%`, detail: '超过10%回撤红线', action: '考虑减仓或全平，冷静后再入场' });
+    alerts.push({ level: 'critical', categoryKey: 'drawdown', category: tr('guardian.alertCategory.drawdown'), title: txt('guardian.alert.drawdown.critical.title', { percent: drawdownPct.toFixed(1) }), detail: tr('guardian.alert.drawdown.critical.detail'), action: tr('guardian.alert.drawdown.critical.action') });
   } else if (drawdownPct < -5) {
     drawdownScore = 40;
-    alerts.push({ level: 'warning', category: '回撤', title: `浮亏 ${drawdownPct.toFixed(1)}%`, detail: '接近回撤警戒线', action: '收紧止损，不加仓' });
+    alerts.push({ level: 'warning', categoryKey: 'drawdown', category: tr('guardian.alertCategory.drawdown'), title: txt('guardian.alert.drawdown.warning.title', { percent: drawdownPct.toFixed(1) }), detail: tr('guardian.alert.drawdown.warning.detail'), action: tr('guardian.alert.drawdown.warning.action') });
   } else if (drawdownPct < -3) {
     drawdownScore = 65;
   }
@@ -83,7 +88,7 @@ function assessRisk(positions: Position[], balance: number): { score: RiskScore;
   const sameSide = majorPositions.filter(p => p.side === majorPositions[0]?.side);
   if (sameSide.length >= 3) {
     correlationScore = 30;
-    alerts.push({ level: 'warning', category: '相关性', title: `${sameSide.length}个高相关标的同方向`, detail: 'BTC/ETH/SOL高度相关，同向持仓=放大风险', action: '考虑对冲或减少同向持仓' });
+    alerts.push({ level: 'warning', categoryKey: 'correlation', category: tr('guardian.alertCategory.correlation'), title: txt('guardian.alert.correlation.warning.title', { count: sameSide.length }), detail: tr('guardian.alert.correlation.warning.detail'), action: tr('guardian.alert.correlation.warning.action') });
   } else if (sameSide.length >= 2) {
     correlationScore = 60;
   }
@@ -95,10 +100,10 @@ function assessRisk(positions: Position[], balance: number): { score: RiskScore;
     const dist = Math.abs(p.markPrice - p.liquidationPrice) / p.markPrice * 100;
     if (dist < 3) {
       liquidationScore = 5;
-      alerts.push({ level: 'critical', category: '爆仓', title: `${p.symbol} 距爆仓仅 ${dist.toFixed(1)}%`, detail: `当前价 $${p.markPrice.toFixed(2)}，爆仓价 $${p.liquidationPrice.toFixed(2)}`, action: '立即加保证金或减仓' });
+      alerts.push({ level: 'critical', categoryKey: 'liquidation', category: tr('guardian.alertCategory.liquidation'), title: txt('guardian.alert.liquidation.critical.title', { symbol: p.symbol, percent: dist.toFixed(1) }), detail: txt('guardian.alert.liquidation.critical.detail', { markPrice: p.markPrice.toFixed(2), liquidationPrice: p.liquidationPrice.toFixed(2) }), action: tr('guardian.alert.liquidation.critical.action') });
     } else if (dist < 8) {
       liquidationScore = Math.min(liquidationScore, 35);
-      alerts.push({ level: 'warning', category: '爆仓', title: `${p.symbol} 距爆仓 ${dist.toFixed(1)}%`, detail: '安全边际不足', action: '考虑减仓位' });
+      alerts.push({ level: 'warning', categoryKey: 'liquidation', category: tr('guardian.alertCategory.liquidation'), title: txt('guardian.alert.liquidation.warning.title', { symbol: p.symbol, percent: dist.toFixed(1) }), detail: tr('guardian.alert.liquidation.warning.detail'), action: tr('guardian.alert.liquidation.warning.action') });
     } else if (dist < 15) {
       liquidationScore = Math.min(liquidationScore, 65);
     }
@@ -115,10 +120,10 @@ function assessRisk(positions: Position[], balance: number): { score: RiskScore;
 
   // Add positive alerts
   if (alerts.length === 0 && positions.length > 0) {
-    alerts.push({ level: 'info', category: '状态', title: '风控健康', detail: '所有指标在安全范围内', action: '继续保持纪律' });
+    alerts.push({ level: 'info', categoryKey: 'status', category: tr('guardian.alertCategory.status'), title: tr('guardian.alert.status.healthy.title'), detail: tr('guardian.alert.status.healthy.detail'), action: tr('guardian.alert.status.healthy.action') });
   }
   if (positions.length === 0) {
-    alerts.push({ level: 'info', category: '状态', title: '空仓状态', detail: '无持仓风险', action: '等待高质量入场信号' });
+    alerts.push({ level: 'info', categoryKey: 'status', category: tr('guardian.alertCategory.status'), title: tr('guardian.alert.status.flat.title'), detail: tr('guardian.alert.status.flat.detail'), action: tr('guardian.alert.status.flat.action') });
   }
 
   return {
@@ -140,6 +145,7 @@ function generateDemoPositions(): { positions: Position[]; balance: number } {
 
 export async function GET(req: NextRequest) {
   try {
+    const locale = getRequestLocale(req);
     const mode = req.nextUrl.searchParams.get('mode') || 'demo';
 
     let positions: Position[];
@@ -156,7 +162,7 @@ export async function GET(req: NextRequest) {
       balance = demo.balance;
     }
 
-    const { score, alerts } = assessRisk(positions, balance);
+    const { score, alerts } = assessRisk(positions, balance, locale);
 
     return NextResponse.json({
       score,
