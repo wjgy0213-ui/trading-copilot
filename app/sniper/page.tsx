@@ -95,13 +95,13 @@ function PnlText({ pnl }: { pnl: number }) {
   return <span className={`font-medium ${color}`}>{pnl > 0 ? '+' : ''}{formatLocaleNumber(pnl, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%</span>;
 }
 
-function timeAgo(isoStr: string, t: (key: string, fallback?: string) => string): string {
+function timeAgo(isoStr: string, locale: 'zh' | 'en', t: (key: string, fallback?: string) => string): string {
   const diff = Date.now() - new Date(isoStr).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 60) return t('sniper.time.minutes').replace('{value}', String(mins));
+  if (mins < 60) return t('sniper.time.minutes').replace('{value}', formatLocaleNumber(mins, locale));
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return t('sniper.time.hours').replace('{value}', String(hrs));
-  return t('sniper.time.days').replace('{value}', String(Math.floor(hrs / 24)));
+  if (hrs < 24) return t('sniper.time.hours').replace('{value}', formatLocaleNumber(hrs, locale));
+  return t('sniper.time.days').replace('{value}', formatLocaleNumber(Math.floor(hrs / 24), locale));
 }
 
 /* ========== Mode Selection Screen ========== */
@@ -739,7 +739,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                       </div>
                       <div>
                         <div className="text-gray-500 text-xs">{t('sniper.holdTime')}</div>
-                        <div className="text-gray-300">{timeAgo(pos.entry_time, t)}</div>
+                        <div className="text-gray-300">{timeAgo(pos.entry_time, locale, t)}</div>
                       </div>
                     </div>
 
@@ -817,7 +817,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                       )}
                     </div>
                   </div>
-                  <div className="text-xs text-gray-600">{timeAgo(trade.ts, t)}</div>
+                  <div className="text-xs text-gray-600">{timeAgo(trade.ts, locale, t)}</div>
                 </div>
               ))
             )}

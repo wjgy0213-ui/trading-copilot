@@ -157,8 +157,8 @@ function LessonCard({ lesson, index, locked }: { lesson: Lesson; index: number; 
                   if (typeof window !== 'undefined') {
                     localStorage.setItem('tc-lesson-context', JSON.stringify({
                       lessonId: lesson.id,
-                      lessonTitle: lesson.title,
-                      homework: lesson.homework,
+                      lessonTitle: en && lesson.titleEn ? lesson.titleEn : lesson.title,
+                      homework: en && lesson.homeworkEn ? lesson.homeworkEn : lesson.homework,
                     }));
                   }
                 }}

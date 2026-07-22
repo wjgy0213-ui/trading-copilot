@@ -254,7 +254,7 @@ function ShareCard({ result, strategyName, symbol, timeframe, onClose }: {
     miniSVG = pts;
   }
 
-  const shareText = `${tr('strategy.shareText')}\n📊 ${strategyName} (${symbolLabel} ${tfLabel[timeframe]})\n⭐ ${tr('strategy.shareOverallScore')} ${formatLocaleNumber(score, locale)} ${tr('strategy.scoreLabel')} (${grade}${tr('strategy.shareGradeSuffix')})\n💰 ${tr('strategy.shareTotalReturn')} ${formatSignedLocalePercent(result.totalReturnPercent, locale, { maximumFractionDigits: 1 })}\n✅ ${tr('strategy.shareWinRate')} ${formatLocaleNumber(result.winRate, locale, { maximumFractionDigits: 1 })}%  📉 ${tr('strategy.shareMaxDD')} ${formatLocaleNumber(result.maxDrawdownPercent, locale, { maximumFractionDigits: 1 })}%\n\n${tr('strategy.shareFreeTrialCTA')} 👉 trading-copilot-delta.vercel.app`;
+  const shareText = `${tr('strategy.shareText')}\n📊 ${strategyName} (${symbolLabel} ${tfLabel[timeframe]})\n⭐ ${tr('strategy.shareOverallScore')} ${formatLocaleNumber(score, locale)} ${tr('strategy.scoreLabel')} (${grade}${tr('strategy.shareGradeSuffix')})\n💰 ${tr('strategy.shareTotalReturn')} ${formatSignedLocalePercent(result.totalReturnPercent, locale, { maximumFractionDigits: 1 })}\n✅ ${tr('strategy.shareWinRate')} ${formatLocaleNumber(result.winRate, locale, { maximumFractionDigits: 1 })}%  📉 ${tr('strategy.shareMaxDD')} ${formatLocaleNumber(result.maxDrawdownPercent, locale, { maximumFractionDigits: 1 })}%\n\n${tr('strategy.shareFreeTrialCTA')} 👉 ${tr('strategy.shareDomain')}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareText).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });

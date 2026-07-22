@@ -152,14 +152,16 @@ export default function HistoryPage() {
                       )}
                       {trade.side === 'long' ? t('history.long') : t('history.short')}
                     </div>
-                    <span className="text-gray-400 text-sm">{formatLocaleNumber(trade.leverage, locale, { maximumFractionDigits: 0 })}x {t('history.leverage')}</span>
+                    <span className="text-gray-400 text-sm">
+                      {t('history.leverage_value').replace('{value}', formatLocaleNumber(trade.leverage, locale, { maximumFractionDigits: 0 }))}
+                    </span>
                   </div>
 
                   {score && (
                     <div className="flex items-center gap-2 bg-gray-700 px-3 py-1 rounded-full">
                       <Star className="w-4 h-4 text-yellow-400" />
                       <span className="text-sm font-semibold">
-                        {t('history.ai_score')}: {t('coach.score_out_of_100').replace('{score}', formatLocaleNumber(score.entryScore, locale, { maximumFractionDigits: 0 }))}
+                        {t('history.ai_score_value').replace('{score}', formatLocaleNumber(score.entryScore, locale, { maximumFractionDigits: 0 }))}
                       </span>
                     </div>
                   )}
