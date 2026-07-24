@@ -26,6 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: 'summary_large_image',
       title: t('meta.admin.title'),
       description: t('meta.admin.description'),
+      creator: t('seo.twitter.creator'),
     },
   };
 }
