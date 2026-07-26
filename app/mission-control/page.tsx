@@ -86,21 +86,21 @@ const SIDEBAR_TAB_ICONS: Record<string, React.ComponentType<{ className?: string
   factory: Factory, pipeline: Layers3,
 };
 
-function timeAgo(isoStr: string, t: (key: string, fallback?: string) => string): string {
+function timeAgo(isoStr: string, t: (key: string, fallback?: string) => string, locale: 'zh' | 'en'): string {
   const diff = Date.now() - new Date(isoStr).getTime();
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return t('missionControl.time.justNow');
-  if (mins < 60) return t('missionControl.time.minutesAgo').replace('{mins}', String(mins));
+  if (mins < 60) return t('missionControl.time.minutesAgo').replace('{mins}', formatLocaleNumber(mins, locale));
   const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return t('missionControl.time.hoursAgo').replace('{hrs}', String(hrs));
-  return t('missionControl.time.daysAgo').replace('{days}', String(Math.floor(hrs / 24)));
+  if (hrs < 24) return t('missionControl.time.hoursAgo').replace('{hrs}', formatLocaleNumber(hrs, locale));
+  return t('missionControl.time.daysAgo').replace('{days}', formatLocaleNumber(Math.floor(hrs / 24), locale));
 }
 
-function formatUptime(isoStr: string, t: (key: string, fallback?: string) => string): string {
+function formatUptime(isoStr: string, t: (key: string, fallback?: string) => string, locale: 'zh' | 'en'): string {
   const diff = Date.now() - new Date(isoStr).getTime();
   const hrs = Math.floor(diff / 3600000);
   const mins = Math.floor((diff % 3600000) / 60000);
-  return t('missionControl.time.uptime').replace('{hrs}', String(hrs)).replace('{mins}', String(mins));
+  return t('missionControl.time.uptime').replace('{hrs}', formatLocaleNumber(hrs, locale)).replace('{mins}', formatLocaleNumber(mins, locale));
 }
 
 function formatUsd(value: number | undefined, locale: 'zh' | 'en', t: (key: string, fallback?: string) => string): string {
@@ -445,7 +445,7 @@ export default function MissionControlPage() {
                 </div>
                 <div className="text-2xl font-semibold text-white">{t('missionControl.running')}</div>
                 <div className="mt-1 text-xs text-gray-400">
-                  {state?.start_time ? `${t('missionControl.uptime')} ${formatUptime(state.start_time, t)}` : t('missionControl.waitingData')}
+                  {state?.start_time ? `${t('missionControl.uptime')} ${formatUptime(state.start_time, t, locale)}` : t('missionControl.waitingData')}
                 </div>
               </div>
 
@@ -469,13 +469,13 @@ export default function MissionControlPage() {
                   <TrendingUp className="h-4 w-4" />
                   {t('missionControl.throughput')}
                 </div>
-                <div className="text-2xl font-semibold text-white">{state?.total_trades || 0} {t('missionControl.trades')}</div>
+                <div className="text-2xl font-semibold text-white">{formatLocaleNumber(state?.total_trades || 0, locale)} {t('missionControl.trades')}</div>
                 <div className="mt-1 text-xs text-gray-400">
                   {state
                     ? t('missionControl.winsLosses')
-                        .replace('{wins}', String(state.wins))
-                        .replace('{losses}', String(state.losses))
-                        .replace('{winRate}', String(portfolio?.win_rate.toFixed(0) ?? '0'))
+                        .replace('{wins}', formatLocaleNumber(state.wins, locale))
+                        .replace('{losses}', formatLocaleNumber(state.losses, locale))
+                        .replace('{winRate}', formatLocaleNumber(portfolio?.win_rate ?? 0, locale, { maximumFractionDigits: 0 }))
                     : t('missionControl.notAvailable')}
                 </div>
               </div>
@@ -505,7 +505,7 @@ export default function MissionControlPage() {
                       subtitle={t('missionControl.card.entryTokens')
                         .replace('{entry}', formatUsd(pos.entry_price, locale, t))
                         .replace('{tokens}', formatLocaleNumber(pos.tokens || 0, locale))}
-                      meta={timeAgo(pos.entry_time, t)}
+                      meta={timeAgo(pos.entry_time, t, locale)}
                       score={t('missionControl.card.score').replace('{score}', formatLocaleNumber(pos.score, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }))}
                       pnl={formatPct(pos.pnl_pct, locale, t)}
                       footer={t('missionControl.card.peakSize')
@@ -526,7 +526,7 @@ export default function MissionControlPage() {
                       tone="blue"
                       title={`${t(`missionControl.action.${trade.action}`)} ${trade.symbol}`}
                       subtitle={trade.reason || t('missionControl.newExecution')}
-                      meta={timeAgo(trade.ts, t)}
+                      meta={timeAgo(trade.ts, t, locale)}
                       score={trade.score !== undefined ? t('missionControl.card.score').replace('{score}', formatLocaleNumber(trade.score, locale, { maximumFractionDigits: 0 })) : undefined}
                       footer={trade.size_sol !== undefined ? t('missionControl.card.size').replace('{size}', formatLocaleNumber(trade.size_sol, locale, { minimumFractionDigits: 3, maximumFractionDigits: 3 })) : t('missionControl.awaitingDetail')}
                     />
@@ -541,7 +541,7 @@ export default function MissionControlPage() {
                     subtitle={t('missionControl.card.currentEntry')
                       .replace('{current}', formatUsd(pos.current_price, locale, t))
                       .replace('{entry}', formatUsd(pos.entry_price, locale, t))}
-                    meta={timeAgo(pos.entry_time, t)}
+                    meta={timeAgo(pos.entry_time, t, locale)}
                       score={t('missionControl.card.score').replace('{score}', formatLocaleNumber(pos.score, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }))}
                       pnl={formatPct(pos.pnl_pct, locale, t)}
                     footer={`${t('missionControl.dexReady')} · ${pos.partial_sold ? t('missionControl.partialSold') : t('missionControl.fullPosLive')}`}
@@ -561,7 +561,7 @@ export default function MissionControlPage() {
                       tone="amber"
                       title={`${t(`missionControl.action.${trade.action}`)} ${trade.symbol}`}
                       subtitle={trade.reason || t('missionControl.exitRecorded')}
-                      meta={timeAgo(trade.ts, t)}
+                      meta={timeAgo(trade.ts, t, locale)}
                       pnl={trade.pnl_pct !== undefined ? formatPct(trade.pnl_pct, locale, t) : undefined}
                       footer={trade.size_sol !== undefined ? t('missionControl.card.closed').replace('{size}', formatLocaleNumber(trade.size_sol, locale, { minimumFractionDigits: 3, maximumFractionDigits: 3 })) : t('missionControl.exitSnapshot')}
                     />
@@ -634,7 +634,7 @@ export default function MissionControlPage() {
                         ) : (
                           <div className="text-gray-400">—</div>
                         )}
-                        <div className="mt-1 text-gray-600">{timeAgo(trade.ts, t)}</div>
+                        <div className="mt-1 text-gray-600">{timeAgo(trade.ts, t, locale)}</div>
                       </div>
                     </div>
                   ))}

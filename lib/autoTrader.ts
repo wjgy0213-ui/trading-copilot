@@ -1,7 +1,7 @@
 // 自动交易引擎 - 将策略工坊的策略部署到纸盘执行
 
 import { i18nText } from './i18n-helpers';
-import type { Locale } from './i18n';
+import type { Locale } from './locale';
 import { PositionSide } from './types';
 
 export interface AutoStrategy {

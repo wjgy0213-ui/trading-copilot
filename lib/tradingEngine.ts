@@ -3,7 +3,7 @@
 import { Account, Trade, PositionSide } from './types';
 import { getAccount, saveAccount } from './storage';
 import { v4 as uuidv4 } from 'uuid';
-import type { Locale } from './i18n';
+import type { Locale } from './locale';
 import { i18nText } from './i18n-helpers';
 
 /** 开仓参数 */

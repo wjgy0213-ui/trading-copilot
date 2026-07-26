@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
       url: canonical,
     },
     twitter: {
-      card: t('seo.twitter.summaryLargeImage'),
+      card: 'summary_large_image',
       title: pageTitle,
       description: pageDescription,
       creator: t('seo.twitter.creator'),

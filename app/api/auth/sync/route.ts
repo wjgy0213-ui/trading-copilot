@@ -1,16 +1,19 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/authOptions';
 import { createSession, setSessionCookie } from '@/lib/auth';
 import { getUser, setUser } from '@/lib/db';
+import { getRequestLocale, translateForLocale as tr } from '@/lib/server-i18n';
 
 // Sync NextAuth session → tc-session cookie
 // Called after Google/email login to bridge the two auth systems
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const locale = getRequestLocale(req);
+
   try {
     const nextSession = await getServerSession(authOptions);
     if (!nextSession?.user?.email) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+      return NextResponse.json({ error: tr(locale, 'api.auth.syncNotAuthenticated') }, { status: 401 });
     }
 
     const email = nextSession.user.email;
@@ -42,6 +45,6 @@ export async function GET() {
     return NextResponse.json({ ok: true, email, plan: effectivePlan });
   } catch (error) {
     console.error('Auth sync error:', error);
-    return NextResponse.json({ error: 'Sync failed' }, { status: 500 });
+    return NextResponse.json({ error: tr(locale, 'api.auth.syncFailed') }, { status: 500 });
   }
 }

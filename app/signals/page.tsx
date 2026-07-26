@@ -38,7 +38,7 @@ const LAYER_META: Record<string, { labelKey: string; icon: any; color: string }>
 };
 
 function ConvictionMeter({ conviction, grade }: { conviction: number; grade: string }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const pct = (conviction + 100) / 2; // -100~100 → 0~100
   const color = conviction > 30 ? '#10b981' : conviction > 0 ? '#3b82f6' : conviction > -30 ? '#f59e0b' : '#ef4444';
 
@@ -56,7 +56,7 @@ function ConvictionMeter({ conviction, grade }: { conviction: number; grade: str
       </div>
       <div className="flex justify-between items-center">
         <span className="text-lg font-bold" style={{ color }}>
-          {conviction > 0 ? '+' : ''}{conviction}
+          {conviction > 0 ? '+' : ''}{formatLocaleNumber(conviction, locale)}
         </span>
         <span className={`text-xs font-bold px-2 py-0.5 rounded ${
           grade === 'A' ? 'bg-emerald-500/20 text-emerald-400' :
@@ -71,7 +71,7 @@ function ConvictionMeter({ conviction, grade }: { conviction: number; grade: str
 }
 
 function LayerBar({ layer, score }: { layer: string; score: number }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const meta = LAYER_META[layer];
   const colors: Record<string, string> = { purple: 'bg-purple-500', blue: 'bg-blue-500', amber: 'bg-amber-500' };
   const width = Math.abs(score);
@@ -93,7 +93,7 @@ function LayerBar({ layer, score }: { layer: string; score: number }) {
           )}
         </div>
         <span className={`text-[10px] font-mono w-8 text-right ${score > 0 ? 'text-emerald-400' : score < 0 ? 'text-red-400' : 'text-gray-500'}`}>
-          {score > 0 ? '+' : ''}{score}
+          {score > 0 ? '+' : ''}{formatLocaleNumber(score, locale)}
         </span>
       </div>
     </div>
@@ -101,7 +101,7 @@ function LayerBar({ layer, score }: { layer: string; score: number }) {
 }
 
 function SignalRow({ signal }: { signal: Signal }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const dirIcon = signal.direction === 'bullish' ? <TrendingUp className="w-3 h-3 text-emerald-400" /> :
     signal.direction === 'bearish' ? <TrendingDown className="w-3 h-3 text-red-400" /> :
     <Minus className="w-3 h-3 text-gray-500" />;
@@ -114,7 +114,7 @@ function SignalRow({ signal }: { signal: Signal }) {
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium text-gray-200">{signal.source}</span>
           <span className={`text-[9px] px-1 py-0.5 rounded bg-gray-800 text-gray-500`}>{t(meta.labelKey)}</span>
-          <span className="text-[10px] text-gray-600">{t('signals.strength')} {signal.strength}</span>
+          <span className="text-[10px] text-gray-600">{t('signals.strength')} {formatLocaleNumber(signal.strength, locale)}</span>
         </div>
         <p className="text-[11px] text-gray-500 mt-0.5">{signal.detail}</p>
       </div>
@@ -123,7 +123,7 @@ function SignalRow({ signal }: { signal: Signal }) {
 }
 
 function AssetCard({ fused }: { fused: FusedSignal }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [expanded, setExpanded] = useState(false);
   const dirColor = fused.direction === 'bullish' ? 'border-emerald-500/20' : fused.direction === 'bearish' ? 'border-red-500/20' : 'border-gray-700/30';
   const dirBg = fused.direction === 'bullish' ? 'from-emerald-500/5' : fused.direction === 'bearish' ? 'from-red-500/5' : 'from-gray-800/30';
@@ -142,7 +142,7 @@ function AssetCard({ fused }: { fused: FusedSignal }) {
             <span className="text-2xl font-bold" style={{
               color: fused.conviction > 30 ? '#10b981' : fused.conviction > 0 ? '#3b82f6' : fused.conviction > -30 ? '#f59e0b' : '#ef4444'
             }}>
-              {fused.conviction > 0 ? '+' : ''}{fused.conviction}
+              {fused.conviction > 0 ? '+' : ''}{formatLocaleNumber(fused.conviction, locale)}
             </span>
           </div>
         </div>
@@ -161,12 +161,12 @@ function AssetCard({ fused }: { fused: FusedSignal }) {
       <button
         onClick={() => setExpanded(!expanded)}
         aria-expanded={expanded}
-        aria-label={expanded ? t('signals.collapse') : t('signals.expandCount').replace('{count}', String(fused.signals.length)).replace('{label}', t('signals.signals_suffix'))}
-        title={expanded ? t('signals.collapse') : t('signals.expandCount').replace('{count}', String(fused.signals.length)).replace('{label}', t('signals.signals_suffix'))}
+        aria-label={expanded ? t('signals.collapse') : t('signals.expandCount').replace('{count}', formatLocaleNumber(fused.signals.length, locale)).replace('{label}', t('signals.signals_suffix'))}
+        title={expanded ? t('signals.collapse') : t('signals.expandCount').replace('{count}', formatLocaleNumber(fused.signals.length, locale)).replace('{label}', t('signals.signals_suffix'))}
         className="w-full flex items-center justify-center gap-1 py-2 border-t border-gray-800/30 text-xs text-gray-500 hover:text-gray-300 hover:bg-gray-800/20 transition"
       >
         {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-        {expanded ? t('signals.collapse') : t('signals.expandCount').replace('{count}', String(fused.signals.length)).replace('{label}', t('signals.signals_suffix'))}
+        {expanded ? t('signals.collapse') : t('signals.expandCount').replace('{count}', formatLocaleNumber(fused.signals.length, locale)).replace('{label}', t('signals.signals_suffix'))}
       </button>
 
       {expanded && (
@@ -246,17 +246,17 @@ export default function SignalsPage() {
           <h3 className="text-sm font-semibold text-gray-300 mb-3">{t('signals.methodology')}</h3>
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
-              <div className="text-purple-400 font-bold text-lg">35%</div>
+              <div className="text-purple-400 font-bold text-lg">{formatLocaleNumber(35, locale)}%</div>
               <div className="text-xs text-gray-400">{t('signals.onchain')}</div>
               <div className="text-[10px] text-gray-600 mt-1">{t('signals.onchain_detail')}</div>
             </div>
             <div>
-              <div className="text-blue-400 font-bold text-lg">35%</div>
+              <div className="text-blue-400 font-bold text-lg">{formatLocaleNumber(35, locale)}%</div>
               <div className="text-xs text-gray-400">{t('signals.technical')}</div>
               <div className="text-[10px] text-gray-600 mt-1">{t('signals.technical_detail')}</div>
             </div>
             <div>
-              <div className="text-amber-400 font-bold text-lg">30%</div>
+              <div className="text-amber-400 font-bold text-lg">{formatLocaleNumber(30, locale)}%</div>
               <div className="text-xs text-gray-400">{t('signals.macro')}</div>
               <div className="text-[10px] text-gray-600 mt-1">{t('signals.macro_detail')}</div>
             </div>

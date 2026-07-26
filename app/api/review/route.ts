@@ -8,6 +8,11 @@ import {
 import { decrypt } from '@/lib/encryption';
 import { cookies } from 'next/headers';
 import { createHmac } from 'crypto';
+import { getRequestLocale, translateForLocale as tr } from '@/lib/server-i18n';
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
 
 // AI Trade Review — analyze recent trades and generate insights
 // Elite-only feature: requires exchange connection
@@ -350,17 +355,19 @@ export async function GET(req: NextRequest) {
 
 // POST — save a review
 export async function POST(req: NextRequest) {
+  const locale = getRequestLocale(req);
+
   try {
     const session = await getSession();
     if (!session?.email) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+      return NextResponse.json({ error: tr(locale, 'api.review.notAuthenticated') }, { status: 401 });
     }
 
     const body = await req.json();
     const { date, entries, mood, ai_diagnosis, score } = body;
 
     if (!date) {
-      return NextResponse.json({ error: 'Date required' }, { status: 400 });
+      return NextResponse.json({ error: tr(locale, 'api.review.dateRequired') }, { status: 400 });
     }
 
     const saved = await saveReviewDB({
@@ -373,11 +380,11 @@ export async function POST(req: NextRequest) {
     });
 
     if (!saved) {
-      return NextResponse.json({ error: 'Failed to save review' }, { status: 500 });
+      return NextResponse.json({ error: tr(locale, 'api.review.saveFailed') }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    return NextResponse.json({ error: getErrorMessage(error) || tr(locale, 'api.review.requestFailed') }, { status: 500 });
   }
 }

@@ -1,5 +1,5 @@
 import { BacktestResult } from './backtestEngine';
-import type { Locale } from './i18n';
+import type { Locale } from './locale';
 import { i18nText } from './i18n-helpers';
 
 export interface MonteCarloConfig {

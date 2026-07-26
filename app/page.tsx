@@ -64,6 +64,26 @@ export default function LandingPage() {
     { nameKey: 'pricing.elite', price: 39.99, originalPrice: 79.99, features: ['pricing.elite.f1', 'pricing.elite.f2', 'pricing.elite.f3', 'pricing.elite.f4', 'pricing.elite.f5'], ctaKey: 'pricing.cta.elite', href: '/pricing', color: 'violet', badgeKey: 'pricing.save50' },
   ];
 
+  const featureCardStyles: Record<string, { border: string; icon: string }> = {
+    emerald: { border: 'hover:border-emerald-500/50', icon: 'text-emerald-400' },
+    blue: { border: 'hover:border-blue-500/50', icon: 'text-blue-400' },
+    cyan: { border: 'hover:border-cyan-500/50', icon: 'text-cyan-400' },
+    amber: { border: 'hover:border-amber-500/50', icon: 'text-amber-400' },
+    violet: { border: 'hover:border-violet-500/50', icon: 'text-violet-400' },
+    rose: { border: 'hover:border-rose-500/50', icon: 'text-rose-400' },
+    orange: { border: 'hover:border-orange-500/50', icon: 'text-orange-400' },
+    purple: { border: 'hover:border-purple-500/50', icon: 'text-purple-400' },
+    teal: { border: 'hover:border-teal-500/50', icon: 'text-teal-400' },
+    sky: { border: 'hover:border-sky-500/50', icon: 'text-sky-400' },
+    gray: { border: 'hover:border-gray-700', icon: 'text-gray-400' },
+  };
+
+  const pricingStyles: Record<string, { check: string; cta: string }> = {
+    gray: { check: 'text-gray-400', cta: 'bg-gray-800 text-gray-400' },
+    emerald: { check: 'text-emerald-400', cta: 'bg-emerald-600 hover:bg-emerald-500 text-white' },
+    violet: { check: 'text-violet-400', cta: 'bg-violet-600/20 text-violet-400 hover:bg-violet-600/30' },
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white pt-16">
       {session ? <WelcomeModal /> : null}
@@ -241,16 +261,20 @@ export default function LandingPage() {
           className="text-3xl md:text-4xl font-bold text-center mb-4">{t('features.title')}</motion.h2>
         <p className="text-gray-500 text-center mb-12 max-w-2xl mx-auto">{t('features.subtitle')}</p>
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {features.map((f, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}>
-              <Link href={f.href} className={`block bg-gray-900/50 rounded-xl p-6 border border-gray-800 hover:border-${f.color}-500/50 transition-all hover:scale-[1.02] group`}>
-                <f.icon className={`w-8 h-8 text-${f.color}-400 mb-3 group-hover:scale-110 transition`} />
-                <h3 className="text-lg font-semibold mb-1.5">{t(f.titleKey)}</h3>
-                <p className="text-sm text-gray-500">{t(f.descKey)}</p>
-              </Link>
-            </motion.div>
-          ))}
+          {features.map((f, i) => {
+            const styles = featureCardStyles[f.color] || featureCardStyles.gray;
+
+            return (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}>
+                <Link href={f.href} className={`block bg-gray-900/50 rounded-xl p-6 border border-gray-800 ${styles.border} transition-all hover:scale-[1.02] group`}>
+                  <f.icon className={`w-8 h-8 ${styles.icon} mb-3 group-hover:scale-110 transition`} />
+                  <h3 className="text-lg font-semibold mb-1.5">{t(f.titleKey)}</h3>
+                  <p className="text-sm text-gray-500">{t(f.descKey)}</p>
+                </Link>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
 
@@ -328,10 +352,13 @@ export default function LandingPage() {
         <h2 className="text-3xl font-bold text-center mb-4">{t('pricing.title')}</h2>
         <p className="text-gray-500 text-center mb-10">{t('pricing.subtitle')}</p>
         <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6">
-          {plans.map((p, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.15 }}
-              className={`bg-gray-900/50 border ${p.popular ? 'border-emerald-500/50 ring-1 ring-emerald-500/20' : 'border-gray-800'} rounded-2xl p-6 relative`}>
+          {plans.map((p, i) => {
+            const styles = pricingStyles[p.color] || pricingStyles.gray;
+
+            return (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.15 }}
+                className={`bg-gray-900/50 border ${p.popular ? 'border-emerald-500/50 ring-1 ring-emerald-500/20' : 'border-gray-800'} rounded-2xl p-6 relative`}>
               {p.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full">{t('pricing.popular')}</div>}
               {'badgeKey' in p && p.badgeKey ? <div className="absolute top-4 right-4 rounded-full border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-[10px] font-bold text-amber-300">{t(p.badgeKey)}</div> : null}
               <h3 className="text-lg font-bold mb-1">{t(p.nameKey)}</h3>
@@ -339,14 +366,13 @@ export default function LandingPage() {
                 {'originalPrice' in p && p.originalPrice ? <div className="text-sm text-gray-500 line-through">{formatLocaleCurrency(p.originalPrice, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{t('pricing.perMonth')}</div> : null}
                 <span className="text-3xl font-bold">{formatLocaleCurrency(p.price, locale, 'USD', { minimumFractionDigits: p.price === 0 ? 0 : 2, maximumFractionDigits: p.price === 0 ? 0 : 2 })}</span>{p.price !== 0 && <span className="text-gray-500 text-sm">{t('pricing.perMonth')}</span>}
               </div>
-              <ul className="space-y-2 mb-6">
-                {p.features.map(fk => <li key={fk} className="flex items-center gap-2 text-sm text-gray-400"><span className={`text-${p.color}-400`}>✓</span>{t(fk)}</li>)}
-              </ul>
-              <Link href={p.href} className={`block w-full py-2.5 rounded-xl text-sm font-medium text-center transition ${
-                p.popular ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : p.color === 'violet' ? 'bg-violet-600/20 text-violet-400 hover:bg-violet-600/30' : 'bg-gray-800 text-gray-400'
-              }`}>{t(p.ctaKey)}</Link>
-            </motion.div>
-          ))}
+                <ul className="space-y-2 mb-6">
+                  {p.features.map(fk => <li key={fk} className="flex items-center gap-2 text-sm text-gray-400"><span className={styles.check}>✓</span>{t(fk)}</li>)}
+                </ul>
+                <Link href={p.href} className={`block w-full py-2.5 rounded-xl text-sm font-medium text-center transition ${p.popular ? pricingStyles.emerald.cta : styles.cta}`}>{t(p.ctaKey)}</Link>
+              </motion.div>
+            );
+          })}
         </div>
       </motion.div>
 

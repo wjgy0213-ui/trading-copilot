@@ -98,13 +98,14 @@ function renderMarkdown(content: string): string {
 export default function BlogPostClient({ post, relatedPosts }: { post: BlogPost; relatedPosts: BlogPost[] }) {
   const { t, locale } = useI18n();
   const htmlContent = renderMarkdown(post.content);
+  const relatedArticleAria = (title: string) => t('blog.relatedArticleAria').replace('{title}', title);
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       <article className="max-w-3xl mx-auto px-4 py-12">
         {/* Breadcrumb */}
         <div className="text-sm text-gray-500 mb-8">
-          <Link href="/blog" className="hover:text-gray-300 transition">← {t('blog.backToBlog')}</Link>
+          <Link href="/blog" aria-label={t('blog.backToBlogAria')} className="hover:text-gray-300 transition">← {t('blog.backToBlog')}</Link>
         </div>
 
         {/* Header */}
@@ -114,7 +115,7 @@ export default function BlogPostClient({ post, relatedPosts }: { post: BlogPost;
             <span>·</span>
             <span>{estimateReadingMinutes(post.content, locale)} {t('blog.minRead')}</span>
             <span>·</span>
-            <span>{post.author}</span>
+            <span>{t('blog.authorBy').replace('{author}', post.author)}</span>
           </div>
           
           <h1 className="text-3xl md:text-4xl font-bold leading-tight mb-4">
@@ -145,10 +146,10 @@ export default function BlogPostClient({ post, relatedPosts }: { post: BlogPost;
           <h3 className="text-xl font-bold mb-2">{t('blog.postCtaTitle')}</h3>
           <p className="text-gray-400 mb-4">{t('blog.postCtaDesc')}</p>
           <div className="flex gap-3 justify-center flex-wrap">
-            <Link href="/pricing" className="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-xl transition">
+            <Link href="/pricing" aria-label={t('blog.getStartedAria')} className="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-xl transition">
               {t('blog.ctaGetStarted')}
             </Link>
-            <Link href="/dashboard" className="bg-gray-800 hover:bg-gray-700 text-white font-medium px-6 py-3 rounded-xl transition">
+            <Link href="/dashboard" aria-label={t('blog.viewDashboardAria')} className="bg-gray-800 hover:bg-gray-700 text-white font-medium px-6 py-3 rounded-xl transition">
               {t('blog.viewDashboard')}
             </Link>
           </div>
@@ -160,12 +161,16 @@ export default function BlogPostClient({ post, relatedPosts }: { post: BlogPost;
           <div className="grid gap-4">
             {relatedPosts.map(p => (
               <Link key={p.slug} href={`/blog/${p.slug}`}
+                aria-label={relatedArticleAria(p.title)}
                 className="border border-gray-800 rounded-lg p-4 hover:border-gray-600 transition-all">
                 <div className="text-xs text-gray-500 mb-1">{formatLocaleDate(p.date, locale, { month: 'short', day: 'numeric', year: 'numeric' })}</div>
                 <div className="font-medium text-gray-200 hover:text-emerald-400 transition">{p.title}</div>
               </Link>
             ))}
           </div>
+          {relatedPosts.length === 0 && (
+            <p className="text-sm text-gray-500">{t('blog.relatedEmpty')}</p>
+          )}
         </div>
       </article>
     </div>

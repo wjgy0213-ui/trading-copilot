@@ -3,12 +3,19 @@ import { getStripe } from '@/lib/stripe';
 import { createSession, setSessionCookie } from '@/lib/auth';
 import { activateSubscription, isSessionActivated, getUser } from '@/lib/db';
 import { trackServerEvent } from '@/lib/analytics-server';
+import { getRequestLocale, translateForLocale as tr } from '@/lib/server-i18n';
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
 
 export async function POST(req: NextRequest) {
+  const locale = getRequestLocale(req);
+
   try {
     const { sessionId } = await req.json();
     if (!sessionId) {
-      return NextResponse.json({ error: 'Missing session ID' }, { status: 400 });
+      return NextResponse.json({ error: tr(locale, 'api.activate.missingSessionId') }, { status: 400 });
     }
 
     // Verify the checkout session with Stripe
@@ -22,14 +29,14 @@ export async function POST(req: NextRequest) {
     const isTrialing = subscription?.status === 'trialing';
 
     if (!isPaid && !isTrialing) {
-      return NextResponse.json({ error: 'Payment or trial activation not completed' }, { status: 400 });
+      return NextResponse.json({ error: tr(locale, 'api.activate.notCompleted') }, { status: 400 });
     }
 
     const planId = checkoutSession.metadata?.planId as 'pro' | 'elite' || 'pro';
     const email = checkoutSession.metadata?.email || checkoutSession.customer_email || '';
 
     if (!email) {
-      return NextResponse.json({ error: 'Unable to get email' }, { status: 400 });
+      return NextResponse.json({ error: tr(locale, 'api.activate.emailMissing') }, { status: 400 });
     }
 
     // Check if already activated (prevent replay)
@@ -65,8 +72,8 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true, plan: planId, email });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Activate error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: getErrorMessage(error) || tr(locale, 'api.activate.failed') }, { status: 500 });
   }
 }

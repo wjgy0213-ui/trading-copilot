@@ -20,7 +20,13 @@ const PLAN_META = {
 } as const;
 
 export default function PricingPageWrapper() {
-  return <Suspense fallback={<div className="min-h-screen bg-gray-950" />}><PricingPage /></Suspense>;
+  const { t } = useI18n();
+
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-950" role="status" aria-live="polite" aria-label={t('common.loading')} />}>
+      <PricingPage />
+    </Suspense>
+  );
 }
 
 function PricingPage() {
@@ -135,9 +141,11 @@ function PricingPage() {
           </div>
 
           {/* Billing Toggle */}
-          <div className="inline-flex items-center gap-3 bg-gray-900 border border-gray-800 rounded-xl p-1">
+          <div className="inline-flex items-center gap-3 bg-gray-900 border border-gray-800 rounded-xl p-1" role="radiogroup" aria-label={t('pricing.heading')}>
             <button
               onClick={() => setBillingInterval('monthly')}
+              role="radio"
+              aria-checked={billingInterval === 'monthly'}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 billingInterval === 'monthly'
                   ? 'bg-gray-800 text-white'
@@ -148,6 +156,8 @@ function PricingPage() {
             </button>
             <button
               onClick={() => setBillingInterval('yearly')}
+              role="radio"
+              aria-checked={billingInterval === 'yearly'}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
                 billingInterval === 'yearly'
                   ? 'bg-emerald-600 text-white'
@@ -164,7 +174,7 @@ function PricingPage() {
 
         {/* Success/Cancel banners */}
         {success && (
-          <div className={`border rounded-xl p-4 mb-8 text-center ${activateError ? 'bg-red-500/10 border-red-500/30' : 'bg-emerald-500/10 border-emerald-500/30'}`}>
+          <div role="status" aria-live="polite" className={`border rounded-xl p-4 mb-8 text-center ${activateError ? 'bg-red-500/10 border-red-500/30' : 'bg-emerald-500/10 border-emerald-500/30'}`}>
             {activating ? (
               <p className="text-emerald-400 font-medium flex items-center justify-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin" /> {t('pricing.activating')}
@@ -188,7 +198,7 @@ function PricingPage() {
           </div>
         )}
         {canceled && (
-          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 mb-8 text-center">
+          <div role="status" aria-live="polite" className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 mb-8 text-center">
             <p className="text-yellow-400">{t('pricing.canceled')}</p>
           </div>
         )}
@@ -275,6 +285,7 @@ function PricingPage() {
                 <button
                   onClick={() => !plan.disabled && !isCurrentPlan && handleCheckout(plan.id)}
                   disabled={plan.disabled || isCurrentPlan || loading === plan.id}
+                  aria-busy={loading === plan.id}
                   className={`w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition ${
                     isCurrentPlan
                       ? 'bg-gray-800 text-gray-500 cursor-default'

@@ -1,7 +1,7 @@
 // 交易分析器 - 基于历史交易生成优化建议
 
 import { Trade } from './types';
-import type { Locale } from './i18n';
+import type { Locale } from './locale';
 import { formatLocaleCurrency, i18nText } from './i18n-helpers';
 
 /** 交易表现分析结果 */

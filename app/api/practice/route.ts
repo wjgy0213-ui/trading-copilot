@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import {
   getPracticePortfolio,
@@ -6,6 +6,11 @@ import {
   savePracticeTrade,
   getPracticeTrades,
 } from '@/lib/supabase';
+import { getRequestLocale, translateForLocale as tr } from '@/lib/server-i18n';
+
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
 
 // Trading Practice Mode — Virtual $10,000 paper trading with AI coaching
 // Tiers: Bronze ($10K) → Silver ($50K) → Gold ($100K) → Platinum ($500K)
@@ -130,7 +135,8 @@ function gradeTrade(trade: Omit<PracticeTrade, 'aiScore' | 'aiAdvice'>): { score
 }
 
 // GET — fetch practice state (from Supabase if authenticated, fallback to default)
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const locale = getRequestLocale(request);
   const { searchParams } = new URL(request.url);
   const action = searchParams.get('action');
 
@@ -143,7 +149,7 @@ export async function GET(request: Request) {
       const data = await res.json();
       return NextResponse.json(data);
     } catch {
-      return NextResponse.json({ error: 'Price fetch failed' }, { status: 500 });
+      return NextResponse.json({ error: tr(locale, 'api.practice.priceFetchFailed') }, { status: 500 });
     }
   }
 
@@ -203,7 +209,7 @@ export async function GET(request: Request) {
       return NextResponse.json({
         state,
         tiers: TIERS,
-        message: 'Loaded from cloud',
+        message: tr(locale, 'api.practice.loadedFromCloud'),
         source: 'supabase',
       });
     }
@@ -230,13 +236,15 @@ export async function GET(request: Request) {
   return NextResponse.json({
     state: defaultState,
     tiers: TIERS,
-    message: userId ? 'No saved data, starting fresh' : 'Guest mode - login to save progress',
+    message: userId ? tr(locale, 'api.practice.startingFresh') : tr(locale, 'api.practice.guestMode'),
     source: 'default',
   });
 }
 
 // POST — save state or grade a trade
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const locale = getRequestLocale(request);
+
   try {
     const body = await request.json();
     
@@ -249,7 +257,7 @@ export async function POST(request: Request) {
       // Save portfolio state to Supabase
       const session = await getSession();
       if (!session?.email) {
-        return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+        return NextResponse.json({ error: tr(locale, 'api.practice.notAuthenticated') }, { status: 401 });
       }
 
       const { state, trade } = body;
@@ -306,8 +314,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true });
     }
 
-    return NextResponse.json({ error: 'Unknown action' }, { status: 400 });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 });
+    return NextResponse.json({ error: tr(locale, 'api.practice.unknownAction') }, { status: 400 });
+  } catch (e: unknown) {
+    return NextResponse.json({ error: getErrorMessage(e) || tr(locale, 'api.practice.requestFailed') }, { status: 500 });
   }
 }

@@ -73,6 +73,7 @@ function Dropdown({ group }: { group: NavGroup }) {
   const ref = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const isActive = group.items.some(i => i.href === pathname);
+  const menuId = `${group.labelKey.replace(/[^a-z0-9]+/gi, '-')}-menu`;
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -86,6 +87,9 @@ function Dropdown({ group }: { group: NavGroup }) {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-controls={menuId}
         className={`flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-medium transition-all whitespace-nowrap ${
           isActive ? 'bg-gray-800 text-white' : 'text-gray-500 hover:text-gray-200 hover:bg-gray-800/50'
         }`}
@@ -95,7 +99,7 @@ function Dropdown({ group }: { group: NavGroup }) {
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 mt-1 w-48 bg-gray-900 border border-gray-800 rounded-lg shadow-xl py-1 z-50">
+        <div id={menuId} role="menu" className="absolute top-full left-0 mt-1 w-48 bg-gray-900 border border-gray-800 rounded-lg shadow-xl py-1 z-50">
           {group.items.map(({ href, labelKey, icon: Icon, premium }) => {
             const active = pathname === href;
             return (
@@ -121,6 +125,10 @@ export default function Navbar() {
   const pathname = usePathname();
   const { data: authSession, status } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50">
@@ -162,7 +170,13 @@ export default function Navbar() {
             </div>
 
             {/* Mobile menu button */}
-            <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden p-2 text-gray-400">
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label={mobileOpen ? t('common.close') : t('nav.menu')}
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-nav"
+              className="md:hidden p-2 text-gray-400"
+            >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
 
@@ -171,7 +185,7 @@ export default function Navbar() {
               <QuotaIndicator />
               <LanguageSwitcher />
               {status === 'authenticated' && authSession?.user ? (
-                <Link href="/account" className="flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-gray-800/50 transition">
+                <Link href="/account" aria-label={t('nav.account')} className="flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-gray-800/50 transition">
                   {authSession.user.image ? (
                     <img src={authSession.user.image} alt="" className="w-6 h-6 rounded-full" />
                   ) : (
@@ -180,7 +194,7 @@ export default function Navbar() {
                   <span className="text-xs text-gray-400 hidden sm:inline">{authSession.user.name?.split(' ')[0]}</span>
                 </Link>
               ) : status !== 'loading' ? (
-                <Link href="/login" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 text-xs font-medium transition border border-emerald-700/30">
+                <Link href="/login" aria-label={t('nav.login')} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 text-xs font-medium transition border border-emerald-700/30">
                   <LogIn className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">{t('nav.login')}</span>
                 </Link>
@@ -192,7 +206,7 @@ export default function Navbar() {
 
       {/* Mobile Nav */}
       {mobileOpen && (
-        <div className="md:hidden bg-gray-950 border-t border-gray-800/50 max-h-[80vh] overflow-y-auto">
+        <div id="mobile-nav" className="md:hidden bg-gray-950 border-t border-gray-800/50 max-h-[80vh] overflow-y-auto">
           <div className="px-3 py-2 space-y-1">
             {MAIN_ITEMS.map(({ href, labelKey, icon: Icon, premium }) => (
               <Link key={href} href={href} onClick={() => setMobileOpen(false)}

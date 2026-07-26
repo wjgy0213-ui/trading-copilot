@@ -4,6 +4,7 @@ import { useI18n } from '@/lib/i18n';
 
 export default function PrivacyAppsClient() {
   const { t } = useI18n();
+  const navItemAria = (title: string) => t('privacy.navItemAria').replace('{title}', title);
 
   const sections = [
     { id: 'overview', title: t('privacy.overviewTitle'), text: t('privacy.overviewText') },
@@ -53,6 +54,7 @@ export default function PrivacyAppsClient() {
                     <a
                       key={section.id}
                       href={`#${section.id}`}
+                      aria-label={navItemAria(section.title)}
                       className="block rounded-xl px-3 py-2 text-sm text-gray-300 transition hover:bg-gray-800 hover:text-white"
                     >
                       {section.title}
@@ -71,7 +73,7 @@ export default function PrivacyAppsClient() {
                   </div>
                   <p className="mt-3 text-sm leading-7 text-gray-300 sm:text-base">{section.text}</p>
                   <div className="mt-4">
-                    <a href="#top" className="text-xs font-medium text-emerald-300 hover:text-emerald-200">{t('privacy.backToTop')}</a>
+                    <a href="#top" aria-label={t('privacy.backToTopAria')} className="text-xs font-medium text-emerald-300 hover:text-emerald-200">{t('privacy.backToTop')}</a>
                   </div>
                 </section>
               ))}

@@ -1,7 +1,7 @@
 // AI评分系统 - V1简单版（基于规则的评分）
 
 import { Trade, AIScore, Account } from './types';
-import type { Locale } from './i18n';
+import type { Locale } from './locale';
 import { i18nText } from './i18n-helpers';
 
 /** 评估入场交易 */

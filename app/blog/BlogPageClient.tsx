@@ -24,6 +24,7 @@ function TagBadge({ tag }: { tag: string }) {
 
 export default function BlogPageClient({ posts }: { posts: BlogPost[] }) {
   const { t, locale } = useI18n();
+  const articleCardAria = (title: string) => t('blog.openArticle').replace('{title}', title);
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
@@ -40,6 +41,7 @@ export default function BlogPageClient({ posts }: { posts: BlogPost[] }) {
         <div className="space-y-8">
           {posts.map(post => (
             <Link key={post.slug} href={`/blog/${post.slug}`}
+              aria-label={articleCardAria(post.title)}
               className="block group border border-gray-800 rounded-xl p-6 hover:border-gray-600 hover:bg-gray-900/50 transition-all">
               <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
                 <time>{formatLocaleDate(post.date, locale, { year: 'numeric', month: 'long', day: 'numeric' })}</time>
@@ -67,6 +69,7 @@ export default function BlogPageClient({ posts }: { posts: BlogPost[] }) {
         {posts.length === 0 && (
           <div className="text-center text-gray-500 py-20">
             <p className="text-6xl mb-4">📝</p>
+            <p className="text-lg text-white mb-2">{t('blog.emptyTitle')}</p>
             <p>{t('blog.comingSoon')}</p>
           </div>
         )}
@@ -76,10 +79,10 @@ export default function BlogPageClient({ posts }: { posts: BlogPost[] }) {
           <h3 className="text-xl font-bold mb-2">{t('blog.ctaTitle')}</h3>
           <p className="text-gray-400 mb-4">{t('blog.ctaDesc')}</p>
           <div className="flex gap-3 justify-center flex-wrap">
-            <Link href="/pricing" className="inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-xl transition">
+            <Link href="/pricing" aria-label={t('blog.getStartedAria')} className="inline-block bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-xl transition">
               {t('blog.ctaGetStarted')}
             </Link>
-            <Link href="/features/health" className="inline-block bg-gray-800 hover:bg-gray-700 text-white font-medium px-6 py-3 rounded-xl transition">
+            <Link href="/features/health" aria-label={t('blog.exploreFeaturesAria')} className="inline-block bg-gray-800 hover:bg-gray-700 text-white font-medium px-6 py-3 rounded-xl transition">
               {t('blog.ctaExplore')}
             </Link>
           </div>

@@ -8,13 +8,13 @@ import { NEWS_CATEGORIES, type NewsCategory, getSentimentBgColor, getSentimentLa
 import { useNewsData } from '@/lib/useNewsData';
 import { Clock, Flame, TrendingUp, TrendingDown, Minus, Wifi, WifiOff } from 'lucide-react';
 
-function formatTimeAgo(timestamp: number, t: (key: string) => string): string {
+function formatTimeAgo(timestamp: number, t: (key: string) => string, locale: 'zh' | 'en'): string {
   const diff = Date.now() - timestamp;
   const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins} ${t('news.minutesAgo')}`;
+  if (mins < 60) return `${formatLocaleNumber(mins, locale)} ${t('news.minutesAgo')}`;
   const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours} ${t('news.hoursAgo')}`;
-  return `${Math.floor(hours / 24)} ${t('news.daysAgo')}`;
+  if (hours < 24) return `${formatLocaleNumber(hours, locale)} ${t('news.hoursAgo')}`;
+  return `${formatLocaleNumber(Math.floor(hours / 24), locale)} ${t('news.daysAgo')}`;
 }
 
 const SentimentIcon = ({ sentiment }: { sentiment: string }) => {
@@ -150,7 +150,7 @@ export default function NewsPage() {
                   <span className="text-gray-500">{getSentimentLabel(item.sentiment, locale as 'zh' | 'en')}</span>
                   <span className={`${getImpactColor(item.impact)}`}>{getImpactLabel(item.impact, locale as 'zh' | 'en')}</span>
                   <span className="text-gray-600">{localizeNewsText(item.source, locale as 'zh' | 'en')}</span>
-                  <span className="text-gray-600 flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" />{formatTimeAgo(item.timestamp, t)}</span>
+                  <span className="text-gray-600 flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" />{formatTimeAgo(item.timestamp, t, locale)}</span>
                 </div>
               </div>
             </div>

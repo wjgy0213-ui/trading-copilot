@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       images: post.image ? [post.image] : [],
     },
     twitter: {
-      card: t('seo.twitter.summaryLargeImage'),
+      card: 'summary_large_image',
       title: `${post.title} | ${t('blog.ogTitle')}`,
       description: post.description,
       creator: t('seo.twitter.creator'),

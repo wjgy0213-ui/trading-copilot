@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
     const stripe = getStripe();
     if (!stripe) return NextResponse.json({ error: tr(locale, 'api.subscription.stripeMissing') }, { status: 500 });
 
-    const sub = await stripe.subscriptions.retrieve(session.subscriptionId) as StripeSubscriptionLike;
+    const sub = await stripe.subscriptions.retrieve(session.subscriptionId) as unknown as StripeSubscriptionLike;
     
     return NextResponse.json({
       id: sub.id,
@@ -59,7 +59,7 @@ export async function DELETE(req: NextRequest) {
     // Cancel at period end in Stripe
     const sub = await stripe.subscriptions.update(session.subscriptionId, {
       cancel_at_period_end: true,
-    }) as StripeSubscriptionLike;
+    }) as unknown as StripeSubscriptionLike;
 
     // Update KV to reflect cancellation
     await updateUserSubscription(session.email, {

@@ -29,6 +29,7 @@ export default function ExchangeConnect() {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
+  const exchangeButtonAria = (exchangeKey: string) => t('exchange.select_exchange_aria').replace('{exchange}', t(exchangeKey));
   const formatDelay = (ms: number) => formatLocaleNumber(ms, locale);
   const [selectedExchange, setSelectedExchange] = useState<Exchange>('binance');
   const [apiKey, setApiKey] = useState('');
@@ -119,6 +120,7 @@ export default function ExchangeConnect() {
               <button
                 key={ex.id}
                 onClick={() => setSelectedExchange(ex.id)}
+                aria-label={exchangeButtonAria(ex.nameKey)}
                 className={`p-3 rounded-lg border transition-all ${
                   selectedExchange === ex.id
                     ? 'bg-violet-600/20 border-violet-500 text-violet-400'
@@ -213,6 +215,7 @@ export default function ExchangeConnect() {
         <div className="flex gap-3">
           <button
             onClick={saveConfig}
+            aria-label={t('exchange.save_config')}
             className="flex-1 px-4 py-3 bg-violet-600 hover:bg-violet-700 text-white font-medium rounded-lg transition-all"
           >
             {t('exchange.save_config')}
@@ -220,6 +223,7 @@ export default function ExchangeConnect() {
           <button
             onClick={testConnection}
             disabled={testing || !currentConfig}
+            aria-label={testing ? t('exchange.testing') : t('exchange.test_connection')}
             className="flex-1 px-4 py-3 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {testing ? t('exchange.testing') : t('exchange.test_connection')}

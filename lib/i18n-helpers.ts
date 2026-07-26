@@ -1,6 +1,6 @@
 import en from '@/locales/en.json';
 import zh from '@/locales/zh.json';
-import type { Locale } from './i18n';
+import type { Locale } from './locale';
 
 const enTranslations = en as Record<string, string>;
 const zhTranslations = zh as Record<string, string>;

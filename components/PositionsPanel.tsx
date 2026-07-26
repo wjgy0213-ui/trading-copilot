@@ -82,8 +82,8 @@ export default function PositionsPanel({ currentPrice, onPositionClosed }: Posit
                 <button
                   onClick={() => handleClose(position.id)}
                   className="text-gray-400 hover:text-white transition"
-                  title={t('positions.closeSymbol').replace('{symbol}', position.symbol)}
-                  aria-label={t('positions.closeSymbol').replace('{symbol}', position.symbol)}
+                  title={t('positions.close')}
+                  aria-label={t('positions.close')}
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -151,7 +151,7 @@ export default function PositionsPanel({ currentPrice, onPositionClosed }: Posit
                       : 'bg-red-600 hover:bg-red-700 text-white'
                   }`}
                 >
-                  {t('positions.closeSymbol').replace('{symbol}', position.symbol)}
+                  {t('positions.close')}
                 </button>
               </div>
             </div>
