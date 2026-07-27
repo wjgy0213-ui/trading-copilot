@@ -686,7 +686,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
               tab === 'positions' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'
             }`}
           >
-            {t('sniper.positions')} ({positions.length})
+            {t('sniper.positionsTab').replace('{count}', formatLocaleNumber(positions.length, locale))}
           </button>
           <button
             onClick={() => setTab('history')}
@@ -694,7 +694,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
               tab === 'history' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'
             }`}
           >
-            {t('sniper.tradeHistory')} ({trades.length})
+            {t('sniper.historyTab').replace('{count}', formatLocaleNumber(trades.length, locale))}
           </button>
         </div>
 
@@ -828,7 +828,10 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
         <div className="mt-8 text-center text-xs text-gray-600">
           <p>{t('sniper.footerScan')}</p>
           <p className="mt-1">
-            {mode === 'paper' ? t('sniper.paperFooter') : t('sniper.liveFooter')} · {t('sniper.solTicker')} ${portfolio.sol_price.toFixed(2)}
+            {t('sniper.footerLine')
+              .replace('{mode}', mode === 'paper' ? t('sniper.paperFooter') : t('sniper.liveFooter'))
+              .replace('{ticker}', t('sniper.solTicker'))
+              .replace('{price}', formatLocaleNumber(portfolio.sol_price, locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }))}
           </p>
         </div>
       </div>

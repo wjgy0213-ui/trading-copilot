@@ -99,6 +99,7 @@ function PositionRow({ p }: { p: any }) {
   const liqDist = p.liquidationPrice > 0 ? Math.abs(p.markPrice - p.liquidationPrice) / p.markPrice * 100 : 999;
   const liqColor = liqDist < 5 ? 'text-red-400' : liqDist < 10 ? 'text-yellow-400' : 'text-gray-400';
   const sideLabel = p.side === 'LONG' ? t('guardian.long') : p.side === 'SHORT' ? t('guardian.short') : p.side;
+  const leverageLabel = t('guardian.leverageValue').replace('{value}', formatLocaleNumber(p.leverage, locale, { maximumFractionDigits: 0 }));
 
   return (
     <div className="flex items-center justify-between py-2.5 px-3 hover:bg-gray-800/20 rounded">
@@ -107,7 +108,7 @@ function PositionRow({ p }: { p: any }) {
           {sideLabel}
         </span>
         <span className="text-sm font-mono font-semibold text-gray-200">{p.symbol}</span>
-        <span className="text-xs text-gray-500">{p.leverage}x</span>
+        <span className="text-xs text-gray-500">{leverageLabel}</span>
       </div>
       <div className="flex items-center gap-6 text-right">
         <div>
@@ -182,10 +183,10 @@ export default function GuardianPage() {
           <div className="bg-gray-900/50 border border-gray-800/50 rounded-xl p-6 flex flex-col items-center">
             <ScoreGauge score={data.score.overall} />
             <div className="flex items-center gap-4 mt-4 text-xs text-gray-500">
-              <span>{t('guardian.positions_count')} {formatLocaleNumber(data.positions.length, locale)}</span>
-              <span>{t('guardian.total_exposure')} {formatLocaleCurrency(data.totalNotional, locale, 'USD', { maximumFractionDigits: 0 })}</span>
+              <span>{t('guardian.positionsCountValue').replace('{count}', formatLocaleNumber(data.positions.length, locale))}</span>
+              <span>{t('guardian.totalExposureValue').replace('{value}', formatLocaleCurrency(data.totalNotional, locale, 'USD', { maximumFractionDigits: 0 }))}</span>
               <span className={data.totalPnl >= 0 ? 'text-emerald-400' : 'text-red-400'}>
-                {t('guardian.unrealized_pnl')} {data.totalPnl >= 0 ? '+' : ''}{formatLocaleCurrency(Math.abs(data.totalPnl), locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {t('guardian.unrealizedPnlValue').replace('{value}', `${data.totalPnl >= 0 ? '+' : ''}${formatLocaleCurrency(Math.abs(data.totalPnl), locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)}
               </span>
             </div>
           </div>

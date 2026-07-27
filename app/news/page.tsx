@@ -11,10 +11,10 @@ import { Clock, Flame, TrendingUp, TrendingDown, Minus, Wifi, WifiOff } from 'lu
 function formatTimeAgo(timestamp: number, t: (key: string) => string, locale: 'zh' | 'en'): string {
   const diff = Date.now() - timestamp;
   const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${formatLocaleNumber(mins, locale)} ${t('news.minutesAgo')}`;
+  if (mins < 60) return t('news.minutesAgoValue').replace('{value}', formatLocaleNumber(mins, locale));
   const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${formatLocaleNumber(hours, locale)} ${t('news.hoursAgo')}`;
-  return `${formatLocaleNumber(Math.floor(hours / 24), locale)} ${t('news.daysAgo')}`;
+  if (hours < 24) return t('news.hoursAgoValue').replace('{value}', formatLocaleNumber(hours, locale));
+  return t('news.daysAgoValue').replace('{value}', formatLocaleNumber(Math.floor(hours / 24), locale));
 }
 
 const SentimentIcon = ({ sentiment }: { sentiment: string }) => {
