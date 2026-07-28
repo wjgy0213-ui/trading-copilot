@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Radio, TrendingUp, TrendingDown, Minus, Layers, Link2, BarChart3, Globe, Activity, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
+import { Radio, TrendingUp, TrendingDown, Minus, Link2, BarChart3, Globe, Activity, RefreshCw, ChevronDown, ChevronUp, type LucideIcon } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import { formatLocaleNumber } from '@/lib/i18n-helpers';
 
@@ -31,7 +31,7 @@ interface SignalsData {
   timestamp: number;
 }
 
-const LAYER_META: Record<string, { labelKey: string; icon: any; color: string }> = {
+const LAYER_META: Record<string, { labelKey: string; icon: LucideIcon; color: string }> = {
   onchain: { labelKey: 'signals.layer_onchain', icon: Link2, color: 'purple' },
   technical: { labelKey: 'signals.layer_technical', icon: Activity, color: 'blue' },
   macro: { labelKey: 'signals.layer_macro', icon: Globe, color: 'amber' },
@@ -63,7 +63,7 @@ function ConvictionMeter({ conviction, grade }: { conviction: number; grade: str
           grade === 'B' ? 'bg-blue-500/20 text-blue-400' :
           grade === 'C' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-gray-700 text-gray-400'
         }`}>
-          {t('signals.confidence')} {grade}
+          {t('signals.confidenceGrade').replace('{grade}', grade)}
         </span>
       </div>
     </div>
@@ -231,9 +231,12 @@ export default function SignalsPage() {
 
         {/* Stats bar */}
         <div className="flex items-center gap-4 text-xs text-gray-500">
-          <span className="flex items-center gap-1"><BarChart3 className="w-3 h-3" /> {formatLocaleNumber(data.totalSignals, locale)} {t('signals.sources')}</span>
-          <span>{t('signals.layers_filter')}</span>
-          <span>{formatLocaleNumber(data.fused.length, locale)} {t('signals.assets')}</span>
+          <span className="flex items-center gap-1">
+            <BarChart3 className="w-3 h-3" />
+            {t('signals.sourcesCount').replace('{count}', formatLocaleNumber(data.totalSignals, locale))}
+          </span>
+          <span>{t('signals.layersFilterValue').replace('{count}', formatLocaleNumber(3, locale))}</span>
+          <span>{t('signals.assetsCount').replace('{count}', formatLocaleNumber(data.fused.length, locale))}</span>
         </div>
 
         {/* Fused signals */}

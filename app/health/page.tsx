@@ -123,8 +123,8 @@ export default function HealthCheckPage() {
         second: '2-digit',
       }).format(new Date(json.timestamp)));
       setError('');
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : t('health.fetchFailed'));
     } finally {
       setLoading(false);
     }
@@ -148,7 +148,11 @@ export default function HealthCheckPage() {
           </h1>
           <p className="text-gray-400 text-sm">{t('health.subtitle')}</p>
           {lastUpdate && (
-            <p className="text-gray-600 text-xs mt-1">{t('health.updatedAt')} {lastUpdate} · {t('health.refreshInterval')}</p>
+            <p className="text-gray-600 text-xs mt-1">
+              {t('health.updatedAtValue')
+                .replace('{time}', lastUpdate)
+                .replace('{interval}', t('health.refreshInterval'))}
+            </p>
           )}
         </div>
 

@@ -139,7 +139,9 @@ export default function WhalesPage() {
 
         {/* Consensus Overview */}
         <div className="bg-gradient-to-r from-cyan-900/20 to-blue-900/20 rounded-2xl p-6 border border-cyan-500/20 mb-6">
-          <h2 className="text-sm text-gray-400 mb-3">{t('whales.consensus')} — {formatLocaleNumber(summary.totalWhales, locale)} {t('whales.top_traders')}</h2>
+          <h2 className="text-sm text-gray-400 mb-3">
+            {t('whales.consensusTopTraders').replace('{count}', formatLocaleNumber(summary.totalWhales, locale))}
+          </h2>
           
           {/* Long/Short Ratio */}
           <div className="mb-4">
@@ -156,9 +158,17 @@ export default function WhalesPage() {
               <div key={tc.coin} className="bg-gray-800/60 rounded-lg p-2 text-center">
                 <div className="font-bold text-sm">{tc.coin}</div>
                 <div className="flex items-center justify-center gap-1 mt-1">
-                  <span className="text-green-400 text-xs">{formatLocaleNumber(tc.longCount, locale)}{t('whales.longShortLongSuffix')}</span>
+                  <span className="text-green-400 text-xs">
+                    {t('whales.countPair')
+                      .replace('{count}', formatLocaleNumber(tc.longCount, locale))
+                      .replace('{label}', t('whales.longShortLongSuffix'))}
+                  </span>
                   <span className="text-gray-600">/</span>
-                  <span className="text-red-400 text-xs">{formatLocaleNumber(tc.shortCount, locale)}{t('whales.longShortShortSuffix')}</span>
+                  <span className="text-red-400 text-xs">
+                    {t('whales.countPair')
+                      .replace('{count}', formatLocaleNumber(tc.shortCount, locale))
+                      .replace('{label}', t('whales.longShortShortSuffix'))}
+                  </span>
                 </div>
                 <div className={`text-xs mt-0.5 ${
                   tc.bias === 'LONG' ? 'text-green-400' : tc.bias === 'SHORT' ? 'text-red-400' : 'text-gray-400'
@@ -192,8 +202,12 @@ export default function WhalesPage() {
                       <span className="text-xs text-gray-500 font-mono">{w.address.slice(0, 6)}...{w.address.slice(-4)}</span>
                     </div>
                     <div className="flex items-center gap-4 mt-1 text-sm">
-                      <span className="text-gray-400">💰 {formatUsd(w.accountValue, locale)}</span>
-                      <span className="text-gray-400">📊 {formatLocaleNumber(w.positions.length, locale)} {t('whales.positions')}</span>
+                      <span className="text-gray-400">
+                        {t('whales.accountSummary')
+                          .replace('{value}', formatUsd(w.accountValue, locale))
+                          .replace('{positions}', formatLocaleNumber(w.positions.length, locale))
+                          .replace('{positionsLabel}', t('whales.positions'))}
+                      </span>
                       <span>{t('whales.today')} <PnlBadge value={w.dayPnl} locale={locale} /></span>
                     </div>
                   </div>
@@ -219,7 +233,7 @@ export default function WhalesPage() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <span className="font-medium text-sm">{p.coin}</span>
-                              <span className="text-xs text-gray-500">{p.leverage}x</span>
+                              <span className="text-xs text-gray-500">{t('whales.leverageValue').replace('{value}', p.leverage)}</span>
                             </div>
                             <div className="text-xs text-gray-400">
                               {t('whales.entry')} {formatLocaleCurrency(p.entryPrice, locale, 'USD', {

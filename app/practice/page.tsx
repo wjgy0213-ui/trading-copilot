@@ -251,7 +251,7 @@ export default function PracticePage() {
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <span>🎮</span>
               <span className={`bg-gradient-to-r ${tierInfo.color} bg-clip-text text-transparent`}>
-                {t('practice.title')} {tierLabels[tier]}
+                {formatPracticeText('practice.titleWithTier', { title: t('practice.title'), tier: tierLabels[tier] })}
               </span>
             </h1>
             <p className="text-gray-500 text-sm">{t('practice.subtitle')}</p>
@@ -309,7 +309,7 @@ export default function PracticePage() {
           {/* Left: Order Form */}
           <div className="lg:col-span-1">
             <div className="bg-gray-800/60 rounded-xl p-4 border border-gray-700/50">
-              <h3 className="font-semibold mb-3">📝 {t('practice.order')}</h3>
+              <h3 className="font-semibold mb-3">{t('practice.orderTitle')}</h3>
 
               {/* Coin selector */}
               <div className="flex gap-1 mb-3">
@@ -395,7 +395,7 @@ export default function PracticePage() {
             {/* AI Grade */}
             {lastGrade && (
               <div className="bg-gray-800/60 rounded-xl p-4 border border-gray-700/50 mt-3">
-                <h3 className="font-semibold mb-2">🤖 {t('practice.ai_score')}</h3>
+                <h3 className="font-semibold mb-2">{t('practice.aiScoreTitle')}</h3>
                 <div className="flex items-center gap-3 mb-2">
                   <div className={`text-3xl font-bold ${
                     lastGrade.score >= 70 ? 'text-green-400' : lastGrade.score >= 40 ? 'text-yellow-400' : 'text-red-400'
@@ -411,7 +411,12 @@ export default function PracticePage() {
           <div className="lg:col-span-2 space-y-4">
             {/* Active Positions */}
             <div>
-              <h3 className="font-semibold mb-2">📊 {t('practice.positions')} ({formatLocaleNumber(positions.length, locale)})</h3>
+              <h3 className="font-semibold mb-2">
+                {formatPracticeText('practice.positionsCount', {
+                  count: formatLocaleNumber(positions.length, locale),
+                  label: t('practice.positions'),
+                })}
+              </h3>
               {positions.length === 0 ? (
                 <div className="bg-gray-800/30 rounded-xl p-6 border border-gray-700/30 text-center text-gray-500">
                   <p className="text-2xl mb-2">🎯</p>
@@ -457,7 +462,12 @@ export default function PracticePage() {
 
             {/* Trade History */}
             <div>
-              <h3 className="font-semibold mb-2">📜 {t('practice.history')} ({formatLocaleNumber(history.length, locale)})</h3>
+              <h3 className="font-semibold mb-2">
+                {formatPracticeText('practice.historyCount', {
+                  count: formatLocaleNumber(history.length, locale),
+                  label: t('practice.history'),
+                })}
+              </h3>
               <div className="space-y-2 max-h-80 overflow-y-auto">
                 {history.length === 0 ? (
                   <div className="text-center text-gray-500 text-sm py-4">{t('practice.no_history')}</div>
