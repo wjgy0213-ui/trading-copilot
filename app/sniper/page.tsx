@@ -3,7 +3,7 @@
 import { useI18n } from '@/lib/i18n';
 import { formatLocaleCurrency, formatLocaleNumber } from '@/lib/i18n-helpers';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useSyncExternalStore } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface Position {
@@ -60,11 +60,45 @@ interface SniperData {
   trades: Trade[];
 }
 
+interface PersistedPaperState extends NonNullable<SniperData['state']> {
+  peak_balance: number;
+  trade_history: Trade[];
+}
+
+interface PhantomProvider {
+  isPhantom?: boolean;
+  connect: () => Promise<{ publicKey: { toString: () => string } }>;
+}
+
 type SniperMode = 'choose' | 'paper' | 'live';
 type LiveExchange = 'binance' | 'phantom' | null;
 
 const INITIAL_PAPER_BALANCE_SOL = 10;
 const DEFAULT_SOL_PRICE = 93;
+const SNIPER_MODE_EVENT = 'sniper-mode-change';
+const SNIPER_PAPER_SESSION_EVENT = 'sniper-paper-session-change';
+
+function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
+}
+
+function subscribeToStorage(eventName: string, callback: () => void): () => void {
+  window.addEventListener('storage', callback);
+  window.addEventListener(eventName, callback);
+  return () => {
+    window.removeEventListener('storage', callback);
+    window.removeEventListener(eventName, callback);
+  };
+}
+
+function getStoredMode(): SniperMode {
+  const saved = localStorage.getItem('sniper_mode');
+  return saved === 'paper' || saved === 'live' ? saved : 'choose';
+}
+
+function hasStoredPaperSession(): boolean {
+  return localStorage.getItem('sniper_paper_session') !== null;
+}
 
 function StatCard({ label, value, sub, color }: { label: string; value: string; sub?: string; color?: string }) {
   return (
@@ -243,8 +277,8 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || t('sniper.connectFail'));
       onConnect('binance');
-    } catch (e: any) {
-      setError(e.message);
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, t('sniper.connectFail')));
     } finally {
       setConnecting(false);
     }
@@ -252,7 +286,11 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
 
   const connectPhantom = async () => {
     try {
-      const provider = (window as any).phantom?.solana || (window as any).solana;
+      const browserWindow = window as Window & {
+        phantom?: { solana?: PhantomProvider };
+        solana?: PhantomProvider;
+      };
+      const provider = browserWindow.phantom?.solana || browserWindow.solana;
       if (!provider?.isPhantom) {
         setPhantomStatus('no-wallet');
         return;
@@ -262,8 +300,8 @@ function LiveConnect({ onBack, onConnect }: { onBack: () => void; onConnect: (ex
       const pubkey = resp.publicKey.toString();
       localStorage.setItem('sniper_phantom_pubkey', pubkey);
       onConnect('phantom');
-    } catch (e: any) {
-      setError(e.message || t('sniper.phantomFail'));
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, t('sniper.phantomFail')));
       setPhantomStatus('idle');
     }
   };
@@ -425,17 +463,21 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
   const [data, setData] = useState<SniperData | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<'positions' | 'history'>('positions');
-  const [paperStarted, setPaperStarted] = useState(false);
+  const paperStarted = useSyncExternalStore(
+    useCallback((callback) => subscribeToStorage(SNIPER_PAPER_SESSION_EVENT, callback), []),
+    hasStoredPaperSession,
+    () => false,
+  );
 
   const loadPaperData = useCallback(() => {
     // Paper mode: user's own data from localStorage
     const saved = localStorage.getItem('sniper_paper_state');
     if (saved) {
       try {
-        const state = JSON.parse(saved);
+        const state = JSON.parse(saved) as PersistedPaperState;
         const solPrice = DEFAULT_SOL_PRICE; // approximate
         const posEntries = Object.entries(state.positions || {});
-        const posValue = posEntries.reduce((sum, [, p]: [string, any]) => sum + (p.size_sol || 0), 0);
+        const posValue = posEntries.reduce((sum, [, position]) => sum + (position.size_sol || 0), 0);
         const totalValue = state.balance_sol + posValue;
         const pnlPct = ((totalValue - INITIAL_PAPER_BALANCE_SOL) / INITIAL_PAPER_BALANCE_SOL) * 100;
         const winRate = state.total_trades > 0 ? (state.wins / (state.wins + state.losses)) * 100 : 0;
@@ -485,18 +527,15 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
   }, []);
 
   useEffect(() => {
-    if (mode === 'paper') {
-      const saved = localStorage.getItem('sniper_paper_session');
-      if (saved) {
-        setPaperStarted(true);
-        loadPaperData();
-        const iv = setInterval(loadPaperData, 30000);
-        return () => clearInterval(iv);
-      } else {
-        setLoading(false);
-      }
-    }
-  }, [mode, loadPaperData]);
+    if (mode !== 'paper' || !paperStarted) return;
+
+    const initialLoad = window.setTimeout(() => void loadPaperData(), 0);
+    const interval = window.setInterval(() => void loadPaperData(), 30000);
+    return () => {
+      window.clearTimeout(initialLoad);
+      window.clearInterval(interval);
+    };
+  }, [mode, paperStarted, loadPaperData]);
 
   // Paper mode - fresh start
   if (mode === 'paper' && !paperStarted) {
@@ -550,8 +589,7 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
                   started: new Date().toISOString(),
                   balance: INITIAL_PAPER_BALANCE_SOL,
                 }));
-                setPaperStarted(true);
-                loadPaperData();
+                window.dispatchEvent(new Event(SNIPER_PAPER_SESSION_EVENT));
               }}
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-3 px-8 rounded-xl text-lg transition-all transform hover:scale-105"
             >
@@ -841,27 +879,25 @@ function SniperDashboard({ mode, onBack }: { mode: 'paper' | 'live'; onBack: () 
 
 /* ========== Root Page ========== */
 export default function SniperPage() {
-  const [mode, setMode] = useState<SniperMode>('choose');
+  const mode = useSyncExternalStore(
+    useCallback((callback) => subscribeToStorage(SNIPER_MODE_EVENT, callback), []),
+    getStoredMode,
+    () => 'choose',
+  );
   const [liveExchange, setLiveExchange] = useState<LiveExchange>(null);
 
-  // Check for existing session
-  useEffect(() => {
-    const saved = localStorage.getItem('sniper_mode');
-    if (saved === 'paper' || saved === 'live') {
-      setMode(saved);
-    }
-  }, []);
-
   const selectMode = (m: SniperMode) => {
-    setMode(m);
     if (m === 'paper' || m === 'live') {
       localStorage.setItem('sniper_mode', m);
+    } else {
+      localStorage.removeItem('sniper_mode');
     }
+    window.dispatchEvent(new Event(SNIPER_MODE_EVENT));
   };
 
   const goBack = () => {
-    setMode('choose');
     localStorage.removeItem('sniper_mode');
+    window.dispatchEvent(new Event(SNIPER_MODE_EVENT));
   };
 
   if (mode === 'choose') {

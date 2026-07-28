@@ -1,14 +1,35 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Shield, AlertTriangle, TrendingDown, Layers, Link2, Zap, Target, RefreshCw, ChevronRight } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { Shield, AlertTriangle, TrendingDown, Link2, Zap, Target, RefreshCw, ChevronRight } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import { formatLocaleCurrency, formatLocaleNumber } from '@/lib/i18n-helpers';
 
+interface RiskScore {
+  overall: number;
+  concentration: number;
+  leverage: number;
+  drawdown: number;
+  correlation: number;
+  liquidation: number;
+}
+
+interface Position {
+  symbol: string;
+  side: 'LONG' | 'SHORT';
+  size: number;
+  leverage: number;
+  unrealizedPnl: number;
+  entryPrice: number;
+  markPrice: number;
+  liquidationPrice: number;
+}
+
 interface RiskData {
-  score: { overall: number; concentration: number; leverage: number; drawdown: number; correlation: number; liquidation: number };
+  score: RiskScore;
   alerts: { level: 'info' | 'warning' | 'critical'; categoryKey: 'status' | 'concentration' | 'leverage' | 'drawdown' | 'correlation' | 'liquidation'; category: string; title: string; detail: string; action: string }[];
-  positions: any[];
+  positions: Position[];
   balance: number;
   totalNotional: number;
   totalPnl: number;
@@ -27,8 +48,6 @@ function ScoreGauge({ score }: { score: number }) {
   const color = score >= 80 ? '#10b981' : score >= 60 ? '#3b82f6' : score >= 40 ? '#f59e0b' : score >= 20 ? '#f97316' : '#ef4444';
   const label = score >= 80 ? t('guardian.safe') : score >= 60 ? t('guardian.good') : score >= 40 ? t('guardian.caution') : score >= 20 ? t('guardian.danger') : t('guardian.critical');
   const circumference = 2 * Math.PI * 58;
-  const offset = circumference - (score / 100) * circumference * 0.75; // 270 degree arc
-
   return (
     <div className="relative w-44 h-44 mx-auto">
       <svg className="w-full h-full" viewBox="0 0 128 128" style={{ transform: 'rotate(135deg)' }}>
@@ -43,7 +62,7 @@ function ScoreGauge({ score }: { score: number }) {
   );
 }
 
-function DimensionBar({ label, score, icon: Icon, desc }: { label: string; score: number; icon: any; desc?: string }) {
+function DimensionBar({ label, score, icon: Icon, desc }: { label: string; score: number; icon: LucideIcon; desc?: string }) {
   const color = score >= 80 ? 'bg-emerald-500' : score >= 60 ? 'bg-blue-500' : score >= 40 ? 'bg-yellow-500' : score >= 20 ? 'bg-orange-500' : 'bg-red-500';
   const textColor = score >= 80 ? 'text-emerald-400' : score >= 60 ? 'text-blue-400' : score >= 40 ? 'text-yellow-400' : score >= 20 ? 'text-orange-400' : 'text-red-400';
 
@@ -93,7 +112,7 @@ function AlertCard({ alert }: { alert: RiskData['alerts'][0] }) {
   );
 }
 
-function PositionRow({ p }: { p: any }) {
+function PositionRow({ p }: { p: Position }) {
   const { t, locale } = useI18n();
   const pnlColor = p.unrealizedPnl >= 0 ? 'text-emerald-400' : 'text-red-400';
   const liqDist = p.liquidationPrice > 0 ? Math.abs(p.markPrice - p.liquidationPrice) / p.markPrice * 100 : 999;
@@ -134,15 +153,29 @@ export default function GuardianPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchData = (isRefresh = false) => {
-    if (isRefresh) setRefreshing(true);
-    fetch('/api/risk-guardian?mode=demo')
-      .then(r => r.json())
-      .then(d => { setData(d); setLoading(false); setRefreshing(false); })
-      .catch(() => { setLoading(false); setRefreshing(false); });
-  };
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await fetch('/api/risk-guardian?mode=demo');
+      const nextData = await response.json() as RiskData;
+      setData(nextData);
+    } catch {
+      // Keep the last successful snapshot when a refresh fails.
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
 
-  useEffect(() => { fetchData(); const i = setInterval(() => fetchData(true), 10000); return () => clearInterval(i); }, []);
+  const refreshData = useCallback(() => {
+    setRefreshing(true);
+    void fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    void fetchData();
+    const interval = setInterval(refreshData, 10000);
+    return () => clearInterval(interval);
+  }, [fetchData, refreshData]);
 
   if (loading) return (
     <div className="min-h-screen bg-gray-950 pt-20 flex items-center justify-center">
@@ -169,7 +202,7 @@ export default function GuardianPage() {
             <p className="text-sm text-gray-500 mt-1">{t('guardian.subtitle')}</p>
           </div>
           <button
-            onClick={() => fetchData(true)}
+            onClick={refreshData}
             aria-label={t('guardian.refreshAria')}
             title={t('guardian.refreshAria')}
             className={`p-2 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition ${refreshing ? 'animate-spin' : ''}`}
@@ -193,7 +226,7 @@ export default function GuardianPage() {
           <div className="bg-gray-900/50 border border-gray-800/50 rounded-xl p-5">
             <h3 className="text-xs font-semibold text-gray-400 mb-2">{t('guardian.five_dims')}</h3>
             {DIMENSIONS.map(d => (
-              <DimensionBar key={d.key} label={t(d.labelKey)} score={(data.score as any)[d.key]} icon={d.icon} desc={t(d.descKey)} />
+              <DimensionBar key={d.key} label={t(d.labelKey)} score={data.score[d.key]} icon={d.icon} desc={t(d.descKey)} />
             ))}
           </div>
         </div>
