@@ -218,13 +218,13 @@ export default function ElitePage() {
 
         {/* Alerts */}
         {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-3">
+          <div role="alert" aria-live="assertive" className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-3">
             <X className="w-5 h-5 text-red-400 mt-0.5" />
             <p className="text-red-400 text-sm">{error}</p>
           </div>
         )}
         {success && (
-          <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg flex items-start gap-3">
+          <div role="status" aria-live="polite" className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg flex items-start gap-3">
             <Check className="w-5 h-5 text-emerald-400 mt-0.5" />
             <p className="text-emerald-400 text-sm">{success}</p>
           </div>
@@ -380,6 +380,7 @@ export default function ElitePage() {
                   <p>{t('elite.telegramGuide')}</p>
                   <p>{t('elite.telegramStep1')}</p>
                   <p>{t('elite.telegramStep2')}</p>
+                  <p className="text-blue-300/80">{t('elite.telegramDemoNote')}</p>
                 </div>
               </div>
             ) : (

@@ -15,6 +15,7 @@ interface CancelRetentionModalProps {
 export default function CancelRetentionModal({ isOpen, onClose, currentPlan, email }: CancelRetentionModalProps) {
   const { t, locale } = useI18n();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   if (!isOpen) return null;
 
@@ -26,6 +27,7 @@ export default function CancelRetentionModal({ isOpen, onClose, currentPlan, ema
 
   const handleSwitchToYearly = async () => {
     setLoading(true);
+    setError('');
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
@@ -35,9 +37,11 @@ export default function CancelRetentionModal({ isOpen, onClose, currentPlan, ema
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
+        return;
       }
+      setError(data.error || t('cancel_modal.network_error'));
     } catch {
-      alert(t('cancel_modal.network_error'));
+      setError(t('cancel_modal.network_error'));
     }
     setLoading(false);
   };
@@ -65,7 +69,7 @@ export default function CancelRetentionModal({ isOpen, onClose, currentPlan, ema
             {t('cancel_modal.desc').replace('{discount}', `${discountPct}%`)}
           </p>
 
-          <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-5 mb-6">
+          <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-5 mb-4">
             <div className="text-3xl font-bold text-white mb-1">
               {formatLocaleCurrency(monthlyEquiv, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}<span className="text-base text-gray-400 font-normal">{t('cancel_modal.per_month')}</span>
             </div>
@@ -76,6 +80,12 @@ export default function CancelRetentionModal({ isOpen, onClose, currentPlan, ema
               {t('cancel_modal.save_per_year').replace('{amount}', formatLocaleCurrency(yearlyPrice - discountedPrice, locale, 'USD', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))}
             </div>
           </div>
+
+          {error && (
+            <div role="alert" aria-live="assertive" className="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-left text-sm text-red-300">
+              {error}
+            </div>
+          )}
 
           <button
             onClick={handleSwitchToYearly}

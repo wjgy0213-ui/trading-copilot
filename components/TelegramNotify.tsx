@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Send, Bell, CheckCircle2, AlertCircle } from 'lucide-react';
 import EliteGate from './EliteGate';
 import { useI18n } from '@/lib/i18n';
@@ -32,20 +32,19 @@ const DEFAULT_CONFIG: TelegramConfig = {
 
 export default function TelegramNotify() {
   const { t, locale } = useI18n();
-  const [config, setConfig] = useState<TelegramConfig>(DEFAULT_CONFIG);
+  const [config, setConfig] = useState<TelegramConfig>(() => {
+    if (typeof window === 'undefined') return DEFAULT_CONFIG;
+    const saved = localStorage.getItem('tc-telegram-config');
+    if (!saved) return DEFAULT_CONFIG;
+    try {
+      return JSON.parse(saved);
+    } catch {
+      return DEFAULT_CONFIG;
+    }
+  });
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('tc-telegram-config');
-    if (saved) {
-      try {
-        setConfig(JSON.parse(saved));
-      } catch (e) {
-        console.error(t('common.parseErrorTelegramConfig'), e);
-      }
-    }
-  }, []);
+  const testDelayMs = 1500;
 
   const saveConfig = () => {
     if (!config.botToken.trim() || !config.chatId.trim()) {
@@ -66,10 +65,9 @@ export default function TelegramNotify() {
     setTesting(true);
     setTestResult(null);
 
-    // 模拟发送测试消息
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise(resolve => setTimeout(resolve, testDelayMs));
 
-    const success = Math.random() > 0.3; // 70% 成功率模拟
+    const success = Math.random() > 0.3;
     setTestResult({
       success,
       message: success
@@ -135,7 +133,7 @@ export default function TelegramNotify() {
         </div>
 
         {/* Help Text */}
-        <div className="mb-6 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+        <div className="mb-6 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg space-y-3">
           <div className="flex items-start gap-2">
             <AlertCircle className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
             <div className="text-xs text-blue-400">
@@ -145,6 +143,14 @@ export default function TelegramNotify() {
                 <li>{t('telegram.step2')}</li>
                 <li>{t('telegram.step3')}</li>
               </ol>
+            </div>
+          </div>
+          <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 px-3 py-2 text-[11px] text-blue-200">
+            <div className="font-medium text-blue-300">{t('telegram.demo_badge')}</div>
+            <div className="mt-1 text-blue-200/90">
+              {t('telegram.demo_note')
+                .replace('{delay}', formatLocaleNumber(testDelayMs, locale))
+                .replace('{rate}', formatLocaleNumber(70, locale))}
             </div>
           </div>
         </div>
@@ -194,7 +200,7 @@ export default function TelegramNotify() {
 
         {/* Test Result */}
         {testResult && (
-          <div className={`mb-4 p-3 rounded-lg border flex items-start gap-2 ${
+          <div role="status" aria-live="polite" className={`mb-4 p-3 rounded-lg border flex items-start gap-2 ${
             testResult.success
               ? 'bg-green-500/10 border-green-500/30'
               : 'bg-red-500/10 border-red-500/30'

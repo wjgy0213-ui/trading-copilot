@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ArrowLeftRight, Key, Lock, CheckCircle2, AlertCircle, Wallet } from 'lucide-react';
 import EliteGate from './EliteGate';
 import { useI18n } from '@/lib/i18n';
@@ -31,23 +31,22 @@ export default function ExchangeConnect() {
   });
   const exchangeButtonAria = (exchangeKey: string) => t('exchange.select_exchange_aria').replace('{exchange}', t(exchangeKey));
   const formatDelay = (ms: number) => formatLocaleNumber(ms, locale);
+  const demoDelayMs = 1500;
   const [selectedExchange, setSelectedExchange] = useState<Exchange>('binance');
   const [apiKey, setApiKey] = useState('');
   const [apiSecret, setApiSecret] = useState('');
-  const [configs, setConfigs] = useState<ExchangeConfig[]>([]);
+  const [configs, setConfigs] = useState<ExchangeConfig[]>(() => {
+    if (typeof window === 'undefined') return [];
+    const saved = localStorage.getItem('tc-exchange-keys');
+    if (!saved) return [];
+    try {
+      return JSON.parse(saved);
+    } catch {
+      return [];
+    }
+  });
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('tc-exchange-keys');
-    if (saved) {
-      try {
-        setConfigs(JSON.parse(saved));
-      } catch (e) {
-        console.error(t('common.parseErrorExchangeConfigs'), e);
-      }
-    }
-  }, []);
 
   const saveConfig = () => {
     if (!apiKey.trim() || !apiSecret.trim()) {
@@ -82,8 +81,7 @@ export default function ExchangeConnect() {
     setTesting(true);
     setTestResult(null);
 
-    // Simulated API roundtrip for demo mode
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise(resolve => setTimeout(resolve, demoDelayMs));
 
     const mockBalance = Math.random() * 10000 + 1000;
     const updated = configs.map(c =>
@@ -181,21 +179,25 @@ export default function ExchangeConnect() {
         </div>
 
         {/* Security Notice */}
-        <div className="mb-6 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+        <div className="mb-6 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg space-y-2">
           <div className="flex items-start gap-2">
             <AlertCircle className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
             <div className="text-xs text-yellow-400">
               <strong>{t('exchange.security_notice')}</strong> {t('exchange.security_desc')}
               <div className="mt-1 text-[11px] text-yellow-300/80">
-                {t('exchange.demo_latency').replace('{ms}', formatDelay(1500))}
+                {t('exchange.demo_latency').replace('{ms}', formatDelay(demoDelayMs))}
               </div>
             </div>
+          </div>
+          <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/5 px-3 py-2 text-[11px] text-yellow-100/90">
+            <div className="font-medium text-yellow-300">{t('exchange.demo_badge')}</div>
+            <div className="mt-1">{t('exchange.demo_note')}</div>
           </div>
         </div>
 
         {/* Test Result */}
         {testResult && (
-          <div className={`mb-4 p-3 rounded-lg border flex items-start gap-2 ${
+          <div role="status" aria-live="polite" className={`mb-4 p-3 rounded-lg border flex items-start gap-2 ${
             testResult.success
               ? 'bg-green-500/10 border-green-500/30'
               : 'bg-red-500/10 border-red-500/30'
