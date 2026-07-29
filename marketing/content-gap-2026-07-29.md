@@ -26,15 +26,28 @@ The next step should be consolidation, internal linking, evidence upgrades, and 
 
 ### 1. Paper Trading Comparison Cluster
 
-Problem: at least two pages compete for nearly identical intent.
+Problem: two pages compete for nearly identical intent and repeat almost the same heading structure.
+
+Exact audit:
+
+| File | Slug | Words | Date | Assessment |
+|---|---|---:|---|---|
+| `paper-trading-vs-real-trading.mdx` | `paper-trading-vs-real-trading` | 1,693 | 2026-04-18 | More complete, cleaner primary slug |
+| `paper-trading-vs-real-trading-complete-guide.mdx` | `paper-trading-vs-real-trading-complete-guide` | 1,514 | 2026-04-12 | Overlapping secondary page |
+
+Both were introduced in the same repository commit, and no explicit internal references to either slug were found outside the two articles. Their H2 structures substantially overlap, including quick answer, strengths/limits, pros/cons, graduation criteria, staged transition, common mistakes, and final recommendation.
+
+Recommended canonical: **`/blog/paper-trading-vs-real-trading`**.
 
 Actions:
 
-1. Select `paper-trading-vs-real-trading-complete-guide.mdx` as the likely canonical page.
-2. Compare backlinks, impressions, and content depth before redirecting or merging the other page.
-3. Add a decision table covering goals, emotional realism, slippage, execution quality, and transition criteria.
-4. Link directly to Practice Mode with a non-promotional CTA.
-5. Add FAQ schema for questions such as:
+1. Check Google Search Console and analytics before removal, in case the longer slug already has impressions or backlinks.
+2. Merge any unique sections from `paper-trading-vs-real-trading-complete-guide.mdx` into the shorter-slug article.
+3. Add a permanent redirect from `/blog/paper-trading-vs-real-trading-complete-guide` to `/blog/paper-trading-vs-real-trading`.
+4. Remove the duplicate from sitemap and article listings only after the redirect is active.
+5. Add a decision table covering goals, emotional realism, slippage, execution quality, and transition criteria.
+6. Link directly to Practice Mode with a non-promotional CTA.
+7. Add FAQ schema for questions such as:
    - Is paper trading accurate?
    - How long should I paper trade?
    - When should I switch to real money?
