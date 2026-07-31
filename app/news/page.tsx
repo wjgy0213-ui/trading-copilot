@@ -79,12 +79,12 @@ export default function NewsPage() {
 
       {/* Filters */}
       <div className="flex items-center gap-4 mb-4 overflow-x-auto pb-1">
-        <div className="flex gap-1">
+        <div role="group" aria-label={t('news.categoryFilterLabel').replace('{label}', t('news.all'))} className="flex gap-1">
           {NEWS_CATEGORIES.map(({ id, label, labelEn, icon }) => (
-            <button key={id} onClick={() => setCategory(id === 'all' ? undefined : id as NewsCategory)}
+            <button type="button" key={id} onClick={() => setCategory(id === 'all' ? undefined : id as NewsCategory)}
               aria-pressed={(id === 'all' && !category) || category === id}
               aria-label={t('news.categoryFilterLabel').replace('{label}', locale === 'en' ? labelEn : label)}
-              className={`flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-medium transition-all whitespace-nowrap ${
+              className={`flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-medium transition-all whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
                 (id === 'all' && !category) || category === id ? 'bg-gray-700 text-white' : 'text-gray-500 hover:bg-gray-800'
               }`}>
               <span className="text-[10px]">{icon}</span>{locale === 'en' ? labelEn : label}
@@ -92,16 +92,16 @@ export default function NewsPage() {
           ))}
         </div>
         <div className="w-px h-5 bg-gray-800" />
-        <div className="flex gap-1">
+        <div role="group" aria-label={t('news.sentimentFilterLabel').replace('{label}', t('news.all'))} className="flex gap-1">
           {[
             { id: 'all', label: t('news.all') },
             { id: 'bullish', label: t('news.bullish') },
             { id: 'bearish', label: t('news.bearish') },
           ].map(f => (
-            <button key={f.id} onClick={() => setSentimentFilter(f.id)}
+            <button type="button" key={f.id} onClick={() => setSentimentFilter(f.id)}
               aria-pressed={sentimentFilter === f.id}
               aria-label={t('news.sentimentFilterLabel').replace('{label}', f.label)}
-              className={`px-2 py-1 rounded text-[10px] font-medium transition-all ${
+              className={`px-2 py-1 rounded text-[10px] font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
                 sentimentFilter === f.id ? 'bg-gray-700 text-white' : 'text-gray-500 hover:bg-gray-800'
               }`}>
               {f.label}

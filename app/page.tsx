@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { ArrowRight, TrendingUp, Brain, BarChart3, ChevronDown, Sparkles, Shield, Zap, LineChart, Activity, Crosshair, Fish, Gamepad2, ShieldAlert, Radio, BookOpen, Package, Gift, CircleDot } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useId } from 'react';
 import { useI18n } from '@/lib/i18n';
 import { formatLocaleCurrency, formatLocaleNumber } from '@/lib/i18n-helpers';
 import { analytics } from '@/lib/analytics';
@@ -23,13 +23,21 @@ function CountUpNumber({ target, suffix = '', locale }: { target: number; suffix
 
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false);
+  const answerId = useId();
+
   return (
     <div className="border border-gray-700 rounded-lg overflow-hidden">
-      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-800/50 transition">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        aria-controls={answerId}
+        className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-800/50 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-400"
+      >
         <span className="font-medium text-gray-200">{question}</span>
-        <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown aria-hidden="true" className={`w-5 h-5 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
-      {open && <div className="px-4 pb-4 text-gray-400 text-sm leading-relaxed">{answer}</div>}
+      {open && <div id={answerId} className="px-4 pb-4 text-gray-400 text-sm leading-relaxed">{answer}</div>}
     </div>
   );
 }

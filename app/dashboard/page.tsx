@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getRiskColor, getRiskBgColor, getRiskLabel, getRiskStrokeColor, type ITCIndicator } from '@/lib/mockData';
 import { useITCData } from '@/lib/useITCData';
 import { useI18n } from '@/lib/i18n';
@@ -26,17 +26,32 @@ function DetailModal({ indicator, onClose, t, locale }: { indicator: ITCIndicato
     ? (indicator.descriptionEn || indicator.description || '')
     : (indicator.description || indicator.descriptionEn || '');
   const displayDesc = t(`dashboard.indicator.${indicator.id}.desc`) || localizedDescriptionFallback;
+  const titleId = `indicator-${indicator.id}-title`;
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-gray-900 border border-gray-700 rounded-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="bg-gray-900 border border-gray-700 rounded-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-gray-800">
           <div>
-            <h2 className="text-xl font-semibold">{displayName}</h2>
+            <h2 id={titleId} className="text-xl font-semibold">{displayName}</h2>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-lg transition-colors">
-            <X className="w-5 h-5 text-gray-400" />
+          <button type="button" onClick={onClose} aria-label={t('common.close')} className="p-2 hover:bg-gray-800 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">
+            <X aria-hidden="true" className="w-5 h-5 text-gray-400" />
           </button>
         </div>
 
@@ -67,8 +82,13 @@ function DetailModal({ indicator, onClose, t, locale }: { indicator: ITCIndicato
         {/* Range Selector */}
         <div className="flex gap-1.5 px-5 mb-3">
           {([30, 90, 180] as const).map(r => (
-            <button key={r} onClick={() => setRange(r)}
-              className={`px-3 py-1 rounded text-xs font-medium transition-all ${range === r ? 'bg-gray-700 text-white' : 'text-gray-500 hover:bg-gray-800'}`}>
+            <button
+              type="button"
+              key={r}
+              onClick={() => setRange(r)}
+              aria-pressed={range === r}
+              className={`px-3 py-1 rounded text-xs font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${range === r ? 'bg-gray-700 text-white' : 'text-gray-500 hover:bg-gray-800'}`}
+            >
               {r}{t('dashboard.days')}
             </button>
           ))}
@@ -183,10 +203,15 @@ export default function DashboardPage() {
         </div>
         <div className="flex gap-1">
           {CATEGORY_TABS.map(({ id, labelKey, icon: Icon }) => (
-            <button key={id} onClick={() => setCategory(id)}
-              className={`flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-medium transition-all ${
+            <button
+              type="button"
+              key={id}
+              onClick={() => setCategory(id)}
+              aria-pressed={category === id}
+              className={`flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
                 category === id ? 'bg-gray-700 text-white' : 'text-gray-500 hover:bg-gray-800'
-              }`}>
+              }`}
+            >
               <Icon className="w-3 h-3" />
               {t(labelKey)}
             </button>
