@@ -66,11 +66,11 @@ export default function FeatureLanding({
           <p className="text-gray-500 max-w-2xl mx-auto mb-8">{description}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
             <Link href={ctaHref}
-              className={`inline-flex items-center justify-center gap-2 ${primaryButton} font-medium px-6 py-3.5 rounded-xl transition text-center`}>
+              className={`inline-flex items-center justify-center gap-2 ${primaryButton} font-medium px-6 py-3.5 rounded-xl transition text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950`}>
               {resolvedCtaText} <ArrowRight className="w-4 h-4 shrink-0" />
             </Link>
             <Link href="/pricing"
-              className="inline-flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-white font-medium px-6 py-3.5 rounded-xl transition text-center">
+              className="inline-flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-white font-medium px-6 py-3.5 rounded-xl transition text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
               {t('featureLanding.viewPricing')}
             </Link>
           </div>
@@ -112,7 +112,7 @@ export default function FeatureLanding({
           <h3 className="text-xl font-bold mb-2">{t('featureLanding.readyToTry')}</h3>
           <p className="text-gray-400 mb-4">{t('featureLanding.freeUpgrade')}</p>
           <Link href={ctaHref}
-            className={`inline-flex items-center justify-center gap-2 ${primaryButton} font-medium px-6 py-3 rounded-xl transition`}>
+            className={`inline-flex items-center justify-center gap-2 ${primaryButton} font-medium px-6 py-3 rounded-xl transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950`}>
             {t('featureLanding.getStartedFree')} <ArrowRight className="w-4 h-4 shrink-0" />
           </Link>
         </div>
@@ -123,7 +123,7 @@ export default function FeatureLanding({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {relatedFeatures.map((f, i) => (
               <Link key={i} href={f.href}
-                className="group border border-gray-800 rounded-xl p-5 hover:border-gray-600 hover:bg-gray-900/50 transition-all">
+                className="group border border-gray-800 rounded-xl p-5 hover:border-gray-600 hover:bg-gray-900/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
                 <h3 className="font-semibold text-white mb-1 flex items-center gap-1.5">
                   {f.name}
                   <ArrowRight className="w-3.5 h-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />

@@ -146,7 +146,7 @@ function PricingPage() {
               onClick={() => setBillingInterval('monthly')}
               role="radio"
               aria-checked={billingInterval === 'monthly'}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
                 billingInterval === 'monthly'
                   ? 'bg-gray-800 text-white'
                   : 'text-gray-500 hover:text-gray-300'
@@ -158,7 +158,7 @@ function PricingPage() {
               onClick={() => setBillingInterval('yearly')}
               role="radio"
               aria-checked={billingInterval === 'yearly'}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
                 billingInterval === 'yearly'
                   ? 'bg-emerald-600 text-white'
                   : 'text-gray-500 hover:text-gray-300'
@@ -184,7 +184,7 @@ function PricingPage() {
                 <p className="text-red-400 font-medium mb-2">{t('pricing.activateError')}</p>
                 <p className="text-red-400/70 text-sm mb-3">{activateError}</p>
                 <button onClick={() => sessionId && doActivate(sessionId)}
-                  className="text-sm bg-red-500/20 hover:bg-red-500/30 text-red-300 px-4 py-1.5 rounded-lg transition">
+                  className="text-sm bg-red-500/20 hover:bg-red-500/30 text-red-300 px-4 py-1.5 rounded-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300">
                   {t('pricing.retryActivate')}
                 </button>
                 <p className="text-gray-600 text-xs mt-2">{t('pricing.activateHelp')}</p>
@@ -206,10 +206,10 @@ function PricingPage() {
         {/* Email input */}
         {!isPro && (
           <div className="max-w-md mx-auto mb-10">
-            <label className="text-xs text-gray-500 block mb-1.5">{t('pricing.emailLabel')}</label>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+            <label htmlFor="checkout-email" className="text-xs text-gray-500 block mb-1.5">{t('pricing.emailLabel')}</label>
+            <input id="checkout-email" type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)}
               placeholder={t('pricing.emailPlaceholder')}
-              className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none transition" />
+              className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition" />
           </div>
         )}
 
@@ -286,7 +286,7 @@ function PricingPage() {
                   onClick={() => !plan.disabled && !isCurrentPlan && handleCheckout(plan.id)}
                   disabled={plan.disabled || isCurrentPlan || loading === plan.id}
                   aria-busy={loading === plan.id}
-                  className={`w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition ${
+                  className={`w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 ${
                     isCurrentPlan
                       ? 'bg-gray-800 text-gray-500 cursor-default'
                       : plan.popular
@@ -309,7 +309,7 @@ function PricingPage() {
           <div className="text-center mt-8">
             <button
               onClick={() => setShowCancelModal(true)}
-              className="text-sm text-gray-600 hover:text-gray-400 transition"
+              className="rounded px-2 py-1 text-sm text-gray-600 hover:text-gray-400 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
             >
               {t('pricing.cancelSub')}
             </button>
