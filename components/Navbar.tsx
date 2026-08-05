@@ -7,7 +7,8 @@ import { useState, useRef, useEffect } from 'react';
 import {
   BarChart3, BookOpen, History, Home, Zap, LineChart, TrendingUp, Newspaper,
   Sparkles, CreditCard, UserCircle, LogIn, Shield, Activity, Crosshair,
-  Fish, Gamepad2, Brain, ShieldAlert, Radio, ChevronDown, Menu, X
+  Fish, Gamepad2, Brain, ShieldAlert, Radio, ChevronDown, Menu, X,
+  type LucideIcon,
 } from 'lucide-react';
 import { QuotaIndicator } from './Paywall';
 import { useI18n, LanguageSwitcher } from '@/lib/i18n';
@@ -15,7 +16,7 @@ import { useI18n, LanguageSwitcher } from '@/lib/i18n';
 interface NavItem {
   href: string;
   labelKey: string;
-  icon: any;
+  icon: LucideIcon;
   premium?: boolean;
 }
 
@@ -90,7 +91,7 @@ function Dropdown({ group }: { group: NavGroup }) {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={menuId}
-        className={`flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-medium transition-all whitespace-nowrap ${
+        className={`flex items-center gap-1 px-2.5 py-1.5 rounded text-xs font-medium transition-all whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
           isActive ? 'bg-gray-800 text-white' : 'text-gray-500 hover:text-gray-200 hover:bg-gray-800/50'
         }`}
       >
@@ -126,15 +127,11 @@ export default function Navbar() {
   const { data: authSession, status } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
-
   return (
     <nav className="fixed top-0 left-0 right-0 z-50">
       <Link
         href="/pricing"
-        className="block border-b border-emerald-400/20 bg-gradient-to-r from-emerald-500 to-cyan-500 px-3 py-2 text-center text-xs font-semibold text-gray-950"
+        className="block border-b border-emerald-400/20 bg-gradient-to-r from-emerald-500 to-cyan-500 px-3 py-2 text-center text-xs font-semibold text-gray-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-950"
       >
         {t('banner.launchSpecial')}
       </Link>
@@ -143,7 +140,7 @@ export default function Navbar() {
         <div className="max-w-[1400px] mx-auto px-3">
           <div className="flex items-center justify-between h-14">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 shrink-0">
+            <Link href="/" className="flex items-center gap-2 shrink-0 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">
               <div className="w-7 h-7 bg-gradient-to-br from-emerald-500 to-cyan-600 rounded flex items-center justify-center">
                 <BarChart3 className="w-4 h-4 text-white" />
               </div>
@@ -175,7 +172,7 @@ export default function Navbar() {
               aria-label={mobileOpen ? t('common.close') : t('nav.menu')}
               aria-expanded={mobileOpen}
               aria-controls="mobile-nav"
-              className="md:hidden p-2 text-gray-400"
+              className="md:hidden rounded-md p-2 text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -185,7 +182,7 @@ export default function Navbar() {
               <QuotaIndicator />
               <LanguageSwitcher />
               {status === 'authenticated' && authSession?.user ? (
-                <Link href="/account" aria-label={t('nav.account')} className="flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-gray-800/50 transition">
+                <Link href="/account" aria-label={t('nav.account')} className="flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-gray-800/50 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">
                   {authSession.user.image ? (
                     <img src={authSession.user.image} alt="" className="w-6 h-6 rounded-full" />
                   ) : (
@@ -194,7 +191,7 @@ export default function Navbar() {
                   <span className="text-xs text-gray-400 hidden sm:inline">{authSession.user.name?.split(' ')[0]}</span>
                 </Link>
               ) : status !== 'loading' ? (
-                <Link href="/login" aria-label={t('nav.login')} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 text-xs font-medium transition border border-emerald-700/30">
+                <Link href="/login" aria-label={t('nav.login')} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 text-xs font-medium transition border border-emerald-700/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">
                   <LogIn className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">{t('nav.login')}</span>
                 </Link>

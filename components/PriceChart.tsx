@@ -8,6 +8,11 @@ interface PriceChartProps {
   symbol?: string;
 }
 
+type TradingViewConstructor = new (config: Record<string, unknown>) => unknown;
+type TradingViewWindow = Window & {
+  TradingView?: { widget: TradingViewConstructor };
+};
+
 export default function PriceChart({ symbol = 'BINANCE:BTCUSDT' }: PriceChartProps) {
   const { t, locale } = useI18n();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -27,8 +32,9 @@ export default function PriceChart({ symbol = 'BINANCE:BTCUSDT' }: PriceChartPro
     script.src = 'https://s3.tradingview.com/tv.js';
     script.async = true;
     script.onload = () => {
-      if (typeof (window as any).TradingView !== 'undefined' && document.getElementById(id)) {
-        new (window as any).TradingView.widget({
+      const TradingView = (window as TradingViewWindow).TradingView;
+      if (TradingView && document.getElementById(id)) {
+        new TradingView.widget({
           container_id: id,
           symbol,
           interval: '15',
@@ -96,7 +102,7 @@ export default function PriceChart({ symbol = 'BINANCE:BTCUSDT' }: PriceChartPro
             onClick={() => setIsFullscreen(false)}
             aria-label={t('chart.exit_fullscreen_symbol').replace('{symbol}', symbol)}
             title={t('chart.exit_fullscreen_symbol').replace('{symbol}', symbol)}
-            className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 hover:bg-red-600/80 rounded-lg text-sm text-gray-300 hover:text-white transition-all"
+            className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 hover:bg-red-600/80 rounded-lg text-sm text-gray-300 hover:text-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             <Minimize2 className="w-4 h-4" />
             {t('chart.exit_fullscreen')}
@@ -108,7 +114,7 @@ export default function PriceChart({ symbol = 'BINANCE:BTCUSDT' }: PriceChartPro
       {!isFullscreen && (
         <button
           onClick={() => setIsFullscreen(true)}
-          className="absolute top-3 right-3 z-10 p-2 bg-gray-800/80 hover:bg-gray-700 rounded-lg transition-all border border-gray-700/50 backdrop-blur-sm group"
+          className="absolute top-3 right-3 z-10 p-2 bg-gray-800/80 hover:bg-gray-700 rounded-lg transition-all border border-gray-700/50 backdrop-blur-sm group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
           title={t('chart.fullscreen_symbol').replace('{symbol}', symbol)}
           aria-label={t('chart.fullscreen_symbol').replace('{symbol}', symbol)}
           aria-pressed={isFullscreen}

@@ -46,8 +46,9 @@ export default function EliteGate({ children, label }: EliteGateProps) {
             {t('elite_gate.desc')}
           </p>
           <button
+            type="button"
             onClick={() => window.location.href = '/pricing'}
-            className="px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white font-bold rounded-lg transition-all shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40"
+            className="px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white font-bold rounded-lg transition-all shadow-lg shadow-violet-600/25 hover:shadow-violet-600/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900"
           >
             {t('elite_gate.upgrade')}
           </button>
