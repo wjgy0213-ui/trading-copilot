@@ -223,7 +223,7 @@ export default function SignalsPage() {
                 {formatLocaleNumber(data.fearGreed, locale)}
               </div>
             </div>
-            <button onClick={fetchData} aria-label={t('signals.refreshAria')} title={t('signals.refreshAria')} className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition">
+            <button onClick={fetchData} aria-label={t('signals.refreshAria')} title={t('signals.refreshAria')} className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
               <RefreshCw className="w-4 h-4 text-gray-400" />
             </button>
           </div>

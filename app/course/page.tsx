@@ -103,7 +103,7 @@ export default function CoursePage() {
           </div>
           <h1 className="text-2xl font-bold text-white mb-2">{t('course.owned')}</h1>
           <p className="text-gray-500 mb-6">{t('course.ownedDesc')}</p>
-          <Link href="/learn" className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-xl font-medium transition hover:bg-emerald-500 hover:translate-y-[-1px]">
+          <Link href="/learn" className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-xl font-medium transition hover:bg-emerald-500 hover:translate-y-[-1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
             {t('course.continueLearning')} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

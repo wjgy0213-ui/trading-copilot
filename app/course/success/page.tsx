@@ -50,7 +50,7 @@ function SuccessContent() {
           </div>
         </div>
 
-        <Link href="/learn" className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:opacity-90 transition shadow-lg shadow-violet-900/30">
+        <Link href="/learn" className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-xl font-semibold hover:opacity-90 transition shadow-lg shadow-violet-900/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
           {t('courseSuccess.startLesson')} <ArrowRight className="w-4 h-4" />
         </Link>
         

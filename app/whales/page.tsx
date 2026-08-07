@@ -132,7 +132,7 @@ export default function WhalesPage() {
             </h1>
             <p className="text-gray-500 text-sm">{t('whales.subtitle')}</p>
           </div>
-          <button onClick={fetchData} className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm text-gray-400">
+          <button onClick={fetchData} aria-label={t('whales.refresh')} className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
             {t('whales.refresh')}
           </button>
         </div>

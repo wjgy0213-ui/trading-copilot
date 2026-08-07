@@ -189,7 +189,7 @@ export default function WaitlistPage() {
         <div className="mt-8 text-center">
           <p className="text-gray-600 text-xs">
             {t('waitlist.has_account')}{' '}
-            <Link href="/strategy" className="text-emerald-500 hover:text-emerald-400">
+            <Link href="/strategy" className="rounded text-emerald-500 hover:text-emerald-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
               {t('waitlist.try_free')}
             </Link>
           </p>
