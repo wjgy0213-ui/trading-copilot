@@ -105,7 +105,7 @@ function Dropdown({ group }: { group: NavGroup }) {
             const active = pathname === href;
             return (
               <Link key={href} href={href} onClick={() => setOpen(false)}
-                className={`flex items-center gap-2.5 px-3 py-2 text-xs transition-all ${
+                className={`flex items-center gap-2.5 px-3 py-2 text-xs transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-400 ${
                   active
                     ? premium ? 'bg-emerald-500/10 text-emerald-400' : 'bg-gray-800 text-white'
                     : premium ? 'text-emerald-500/70 hover:text-emerald-400 hover:bg-emerald-500/5' : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/50'
@@ -153,7 +153,7 @@ export default function Navbar() {
                 const isActive = pathname === href;
                 return (
                   <Link key={href} href={href}
-                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-medium transition-all whitespace-nowrap ${
+                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded text-xs font-medium transition-all whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
                       isActive
                         ? premium ? 'bg-emerald-500/15 text-emerald-400' : 'bg-gray-800 text-white'
                         : premium ? 'text-emerald-500/70 hover:text-emerald-400 hover:bg-emerald-500/10' : 'text-gray-500 hover:text-gray-200 hover:bg-gray-800/50'
@@ -207,7 +207,7 @@ export default function Navbar() {
           <div className="px-3 py-2 space-y-1">
             {MAIN_ITEMS.map(({ href, labelKey, icon: Icon, premium }) => (
               <Link key={href} href={href} onClick={() => setMobileOpen(false)}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm ${
+                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-400 ${
                   pathname === href
                     ? premium ? 'bg-emerald-500/10 text-emerald-400' : 'bg-gray-800 text-white'
                     : 'text-gray-400 hover:bg-gray-800/50'
@@ -220,7 +220,7 @@ export default function Navbar() {
                 <div className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider px-3 pt-3 pb-1">{t(g.labelKey)}</div>
                 {g.items.map(({ href, labelKey, icon: Icon, premium }) => (
                   <Link key={href} href={href} onClick={() => setMobileOpen(false)}
-                    className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm ${
+                    className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-400 ${
                       pathname === href
                         ? premium ? 'bg-emerald-500/10 text-emerald-400' : 'bg-gray-800 text-white'
                         : premium ? 'text-emerald-500/60' : 'text-gray-400 hover:bg-gray-800/50'

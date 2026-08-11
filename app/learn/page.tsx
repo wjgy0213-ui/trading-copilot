@@ -67,7 +67,7 @@ function PaywallBanner({ onUnlock }: { onUnlock: () => void }) {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowInput(true)}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white px-6 py-3 rounded-xl font-semibold transition-all hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
               >
                 {t('learn.enter_code')}
               </button>
@@ -75,7 +75,7 @@ function PaywallBanner({ onUnlock }: { onUnlock: () => void }) {
                 href="https://t.me/SlowManJW"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-xl font-semibold transition-all border border-gray-700"
+                className="bg-gray-800 hover:bg-gray-700 text-white px-6 py-3 rounded-xl font-semibold transition-all border border-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
               >
                 {t('learn.get_code')}
               </a>
@@ -92,7 +92,7 @@ function PaywallBanner({ onUnlock }: { onUnlock: () => void }) {
               />
               <button
                 onClick={handleActivate}
-                className="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-xl font-semibold transition"
+                className="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-xl font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
               >
                 {t('learn.activate')}
               </button>
@@ -123,7 +123,8 @@ function LessonCard({ lesson, index, locked }: { lesson: Lesson; index: number; 
     >
       <button
         onClick={() => !locked && setExpanded(!expanded)}
-        className="w-full p-5 flex items-center gap-4 text-left"
+        className="w-full p-5 flex items-center gap-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-400 disabled:cursor-not-allowed"
+        aria-expanded={!locked ? expanded : undefined}
         disabled={locked}
       >
         <span className="text-2xl">{lesson.icon}</span>
@@ -152,7 +153,7 @@ function LessonCard({ lesson, index, locked }: { lesson: Lesson; index: number; 
               <p className="text-sm text-gray-300">{en && lesson.homeworkEn ? lesson.homeworkEn : lesson.homework}</p>
               <Link
                 href={`/trade?lesson=${lesson.id}`}
-                className="mt-3 inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 px-4 py-2 rounded-lg transition-all"
+                className="mt-3 inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 px-4 py-2 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
                 onClick={() => {
                   if (typeof window !== 'undefined') {
                     localStorage.setItem('tc-lesson-context', JSON.stringify({
@@ -322,7 +323,7 @@ function QuizSection({ quiz, lessonId }: { quiz: QuizQuestion[]; lessonId: strin
                 else if (showResults && isCorrect) cls = 'bg-green-600/10 border-green-500/20 text-green-400';
                 else if (selected) cls = 'bg-blue-600/20 border-blue-500/30 text-blue-300';
                 return (
-                  <button key={oi} onClick={() => handleAnswer(qi, oi)} className={`w-full text-left text-sm p-3 rounded-lg border transition ${cls}`}>
+                  <button key={oi} onClick={() => handleAnswer(qi, oi)} className={`w-full text-left text-sm p-3 rounded-lg border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${cls}`}>
                     {opt}
                   </button>
                 );
@@ -338,12 +339,12 @@ function QuizSection({ quiz, lessonId }: { quiz: QuizQuestion[]; lessonId: strin
         <button
           onClick={() => Object.keys(answers).length === quiz.length && setShowResults(true)}
           disabled={Object.keys(answers).length < quiz.length}
-          className={`mt-4 px-5 py-2 rounded-lg text-sm font-medium transition ${Object.keys(answers).length === quiz.length ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-gray-800 text-gray-600 cursor-not-allowed'}`}
+          className={`mt-4 px-5 py-2 rounded-lg text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 disabled:cursor-not-allowed ${Object.keys(answers).length === quiz.length ? 'bg-blue-600 hover:bg-blue-500 text-white' : 'bg-gray-800 text-gray-600'}`}
         >
           {t('learn.submit_answers')}
         </button>
       ) : (
-        <button onClick={() => { setAnswers({}); setShowResults(false); }} className="mt-4 px-5 py-2 rounded-lg text-sm font-medium bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
+        <button onClick={() => { setAnswers({}); setShowResults(false); }} className="mt-4 px-5 py-2 rounded-lg text-sm font-medium bg-gray-800 hover:bg-gray-700 text-gray-300 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
           {t('learn.retry_quiz')}
         </button>
       )}
@@ -375,7 +376,8 @@ function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; ch
     <div className="mt-4 ml-2">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex items-center gap-3 w-full text-left p-4 bg-gradient-to-r from-purple-900/30 to-blue-900/30 border border-purple-500/20 rounded-xl hover:border-purple-500/40 transition"
+        className="flex items-center gap-3 w-full text-left p-4 bg-gradient-to-r from-purple-900/30 to-blue-900/30 border border-purple-500/20 rounded-xl hover:border-purple-500/40 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
+        aria-expanded={expanded}
       >
         <span className="text-xl">📝</span>
         <div className="flex-1">
@@ -405,7 +407,7 @@ function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; ch
                   else if (showResults && isCorrect) cls = 'bg-green-600/10 border-green-500/20 text-green-400';
                   else if (selected) cls = 'bg-blue-600/20 border-blue-500/30 text-blue-300';
                   return (
-                    <button key={oi} onClick={() => handleAnswer(qi, oi)} className={`w-full text-left text-sm p-3 rounded-lg border transition ${cls}`}>
+                    <button key={oi} onClick={() => handleAnswer(qi, oi)} className={`w-full text-left text-sm p-3 rounded-lg border transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 ${cls}`}>
                       {opt}
                     </button>
                   );
@@ -421,12 +423,12 @@ function ChapterQuizSection({ chapterId, chapterTitle }: { chapterId: string; ch
               <button
                 onClick={() => allAnswered && setShowResults(true)}
                 disabled={!allAnswered}
-                className={`px-5 py-2 rounded-lg text-sm font-medium transition ${allAnswered ? 'bg-purple-600 hover:bg-purple-500 text-white' : 'bg-gray-800 text-gray-600 cursor-not-allowed'}`}
+                className={`px-5 py-2 rounded-lg text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 disabled:cursor-not-allowed ${allAnswered ? 'bg-purple-600 hover:bg-purple-500 text-white' : 'bg-gray-800 text-gray-600'}`}
               >
                 {formatAnsweredProgress(Object.keys(answers).length, quiz.length, locale, t)}
               </button>
             ) : (
-              <button onClick={() => { setAnswers({}); setShowResults(false); }} className="px-5 py-2 rounded-lg text-sm font-medium bg-gray-800 hover:bg-gray-700 text-gray-300 transition">
+              <button onClick={() => { setAnswers({}); setShowResults(false); }} className="px-5 py-2 rounded-lg text-sm font-medium bg-gray-800 hover:bg-gray-700 text-gray-300 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400">
                 {t('learn.retry_test')}
               </button>
             )}
@@ -548,7 +550,7 @@ export default function LearnPage() {
               href="https://t.me/SlowManJW"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl font-bold transition-all hover:scale-105"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl font-bold transition-all hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
             >
               {t('learn.get_activation')}
               <ChevronRight className="w-5 h-5" />

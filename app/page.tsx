@@ -119,13 +119,13 @@ export default function LandingPage() {
             <Link
               href="/login"
               onClick={() => analytics.ctaClick({ cta_id: 'hero_primary', cta_text: 'start_free_no_card', target: '/login', page: '/', location: 'hero' })}
-              className="inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-gray-950 px-8 py-4 rounded-xl text-lg font-semibold transition-all hover:scale-105 shadow-lg shadow-emerald-900/40">
+              className="inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-gray-950 px-8 py-4 rounded-xl text-lg font-semibold transition-all hover:scale-105 shadow-lg shadow-emerald-900/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
               {t('hero.cta.primary')} <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               href="/practice"
               onClick={() => analytics.ctaClick({ cta_id: 'hero_secondary', cta_text: 'see_how_it_works', target: '/practice', page: '/', location: 'hero' })}
-              className="inline-flex items-center justify-center gap-2 bg-gray-800/80 hover:bg-gray-700/80 text-gray-200 border border-gray-700 px-8 py-4 rounded-xl text-lg font-semibold transition-all">
+              className="inline-flex items-center justify-center gap-2 bg-gray-800/80 hover:bg-gray-700/80 text-gray-200 border border-gray-700 px-8 py-4 rounded-xl text-lg font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
               <Zap className="w-5 h-5 text-emerald-400" /> {t('hero.cta.secondary')}
             </Link>
           </motion.div>
@@ -152,7 +152,7 @@ export default function LandingPage() {
                 {t('workflow.desc')}
               </p>
             </div>
-            <Link href="/dashboard" className="inline-flex items-center gap-2 text-sm font-medium text-emerald-300 hover:text-emerald-200">
+            <Link href="/dashboard" className="rounded inline-flex items-center gap-2 text-sm font-medium text-emerald-300 hover:text-emerald-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">
               {t('workflow.dashboardLink')} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -163,7 +163,7 @@ export default function LandingPage() {
               { step: '02', titleKey: 'workflow.step02.title', descKey: 'workflow.step02.desc', href: '/practice', icon: Gamepad2, color: 'text-cyan-400' },
               { step: '03', titleKey: 'workflow.step03.title', descKey: 'workflow.step03.desc', href: '/strategy', icon: Sparkles, color: 'text-violet-400' },
             ].map((item) => (
-              <Link key={item.step} href={item.href} className="group rounded-2xl border border-gray-800 bg-black/20 p-5 hover:border-gray-700 hover:bg-black/30 transition-all">
+              <Link key={item.step} href={item.href} className="group rounded-2xl border border-gray-800 bg-black/20 p-5 hover:border-gray-700 hover:bg-black/30 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold tracking-[0.2em] text-gray-500">{t('workflow.stepLabel')} {item.step}</span>
                   <item.icon className={`w-5 h-5 ${item.color}`} />
@@ -275,7 +275,7 @@ export default function LandingPage() {
             return (
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}>
-                <Link href={f.href} className={`block bg-gray-900/50 rounded-xl p-6 border border-gray-800 ${styles.border} transition-all hover:scale-[1.02] group`}>
+                <Link href={f.href} className={`block bg-gray-900/50 rounded-xl p-6 border border-gray-800 ${styles.border} transition-all hover:scale-[1.02] group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950`}>
                   <f.icon className={`w-8 h-8 ${styles.icon} mb-3 group-hover:scale-110 transition`} />
                   <h3 className="text-lg font-semibold mb-1.5">{t(f.titleKey)}</h3>
                   <p className="text-sm text-gray-500">{t(f.descKey)}</p>
@@ -293,7 +293,7 @@ export default function LandingPage() {
         <p className="text-gray-500 text-center mb-12 max-w-2xl mx-auto">{t('course.sectionDesc')}</p>
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
-            <Link href="/learn" className="block bg-gradient-to-br from-emerald-900/30 to-gray-900/50 rounded-2xl p-6 border border-emerald-500/30 hover:border-emerald-500/60 transition-all hover:scale-[1.02] group h-full">
+            <Link href="/learn" className="block bg-gradient-to-br from-emerald-900/30 to-gray-900/50 rounded-2xl p-6 border border-emerald-500/30 hover:border-emerald-500/60 transition-all hover:scale-[1.02] group h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
               <div className="flex items-center gap-2 mb-3">
                 <Gift className="w-6 h-6 text-emerald-400" />
                 <span className="text-xs font-medium bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full">{t('course.free')}</span>
@@ -309,7 +309,7 @@ export default function LandingPage() {
             </Link>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.15 }}>
-            <Link href="/course" className="block bg-gradient-to-br from-violet-900/30 to-gray-900/50 rounded-2xl p-6 border border-violet-500/30 hover:border-violet-500/60 transition-all hover:scale-[1.02] group h-full relative">
+            <Link href="/course" className="block bg-gradient-to-br from-violet-900/30 to-gray-900/50 rounded-2xl p-6 border border-violet-500/30 hover:border-violet-500/60 transition-all hover:scale-[1.02] group h-full relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
               <div className="absolute -top-3 right-4 bg-violet-500 text-white text-[10px] font-bold px-3 py-1 rounded-full">{t('course.hot')}</div>
               <BookOpen className="w-6 h-6 text-violet-400 mb-3" />
               <h3 className="text-xl font-bold mb-2">{t('course.paidTitle')}</h3>
@@ -323,7 +323,7 @@ export default function LandingPage() {
             </Link>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.3 }}>
-            <Link href="/pricing" className="block bg-gradient-to-br from-amber-900/30 to-gray-900/50 rounded-2xl p-6 border border-amber-500/30 hover:border-amber-500/60 transition-all hover:scale-[1.02] group h-full">
+            <Link href="/pricing" className="block bg-gradient-to-br from-amber-900/30 to-gray-900/50 rounded-2xl p-6 border border-amber-500/30 hover:border-amber-500/60 transition-all hover:scale-[1.02] group h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
               <Package className="w-6 h-6 text-amber-400 mb-3" />
               <h3 className="text-xl font-bold mb-2">{t('course.toolkitTitle')}</h3>
               <p className="text-sm text-gray-400 mb-4">{t('course.toolkitDesc')}</p>
@@ -377,7 +377,7 @@ export default function LandingPage() {
                 <ul className="space-y-2 mb-6">
                   {p.features.map(fk => <li key={fk} className="flex items-center gap-2 text-sm text-gray-400"><span className={styles.check}>✓</span>{t(fk)}</li>)}
                 </ul>
-                <Link href={p.href} className={`block w-full py-2.5 rounded-xl text-sm font-medium text-center transition ${p.popular ? pricingStyles.emerald.cta : styles.cta}`}>{t(p.ctaKey)}</Link>
+                <Link href={p.href} className={`block w-full py-2.5 rounded-xl text-sm font-medium text-center transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 ${p.popular ? pricingStyles.emerald.cta : styles.cta}`}>{t(p.ctaKey)}</Link>
               </motion.div>
             );
           })}
@@ -420,7 +420,7 @@ export default function LandingPage() {
         className="container mx-auto px-4 py-20 text-center">
         <h2 className="text-3xl font-bold mb-4">{t('cta.title')}</h2>
         <p className="text-gray-500 mb-8">{t('cta.subtitle')}</p>
-        <Link href="/dashboard" className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white px-10 py-5 rounded-xl text-xl font-semibold transition-all hover:scale-105">
+        <Link href="/dashboard" className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white px-10 py-5 rounded-xl text-xl font-semibold transition-all hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
           {t('cta.button')} <ArrowRight className="w-6 h-6" />
         </Link>
       </motion.div>
