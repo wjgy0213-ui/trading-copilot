@@ -164,7 +164,7 @@ export default function HealthCheckPage() {
         ) : error ? (
           <div className="text-center py-20 text-red-400">
             <p>❌ {error}</p>
-            <button onClick={fetchHealth} className="mt-4 px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
+            <button onClick={fetchHealth} className="mt-4 px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900">
               {t('health.retry')}
             </button>
           </div>

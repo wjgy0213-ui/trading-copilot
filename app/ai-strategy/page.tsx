@@ -104,7 +104,7 @@ export default function AIStrategyPage() {
             <button
               onClick={() => handleGenerate()}
               disabled={loading || !prompt.trim()}
-              className={`px-6 py-2.5 rounded-xl font-medium text-sm flex items-center gap-2 transition ${
+              className={`px-6 py-2.5 rounded-xl font-medium text-sm flex items-center gap-2 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 ${
                 loading ? 'bg-gray-800 text-gray-500' : 'bg-violet-600 hover:bg-violet-500 text-white'
               }`}>
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
@@ -120,7 +120,7 @@ export default function AIStrategyPage() {
             {EXAMPLES.map(ex => (
               <button key={ex.textKey}
                 onClick={() => { setPrompt(t(ex.textKey)); handleGenerate(t(ex.textKey)); }}
-                className="text-left bg-gray-900/30 border border-gray-800 hover:border-violet-500/30 rounded-xl px-3 py-2.5 text-xs text-gray-400 hover:text-gray-200 transition">
+                className="text-left bg-gray-900/30 border border-gray-800 hover:border-violet-500/30 rounded-xl px-3 py-2.5 text-xs text-gray-400 hover:text-gray-200 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
                 <span className="mr-1.5">{ex.icon}</span>{t(ex.textKey)}
               </button>
             ))}
@@ -192,7 +192,7 @@ export default function AIStrategyPage() {
                 sl: String(result.risk.stopLoss),
                 tp: String(result.risk.takeProfit),
               }).toString()}`}
-                className="w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white transition">
+                className="w-full py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
                 <BarChart3 className="w-4 h-4" /> {t('aiStrategy.goBacktest')} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>

@@ -297,7 +297,7 @@ export default function ElitePage() {
                   onClick={connectExchange}
                   disabled={connecting || !apiKey || (exchange !== 'hyperliquid' && !apiSecret) || (exchange === 'okx' && !passphrase)}
                   aria-busy={connecting}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-700 disabled:text-gray-500 text-white font-medium py-2.5 rounded-lg transition flex items-center justify-center gap-2"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-700 disabled:text-gray-500 text-white font-medium py-2.5 rounded-lg transition flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 disabled:cursor-not-allowed"
                 >
                   {connecting ? (
                     <>
@@ -332,7 +332,7 @@ export default function ElitePage() {
                     setBalance(null);
                     setPositions([]);
                   }}
-                  className="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium py-2 rounded-lg transition"
+                  className="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium py-2 rounded-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
                 >
                   {t('elite.disconnect')}
                 </button>
@@ -364,7 +364,7 @@ export default function ElitePage() {
                   onClick={setupTelegram}
                   disabled={loading || !chatId}
                   aria-busy={loading}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:text-gray-500 text-white font-medium py-2.5 rounded-lg transition flex items-center justify-center gap-2"
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:text-gray-500 text-white font-medium py-2.5 rounded-lg transition flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
@@ -410,7 +410,7 @@ export default function ElitePage() {
 
                 <button
                   onClick={() => setTelegramConnected(false)}
-                  className="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium py-2 rounded-lg transition"
+                  className="w-full bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium py-2 rounded-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950"
                 >
                   {t('elite.disconnect')}
                 </button>
@@ -557,7 +557,7 @@ export default function ElitePage() {
                           <button
                             onClick={() => closePosition(pos)}
                             disabled={loading}
-                            className="px-3 py-1 bg-red-600/20 hover:bg-red-600/30 text-red-400 text-xs font-medium rounded border border-red-600/30 transition disabled:opacity-50"
+                            className="px-3 py-1 bg-red-600/20 hover:bg-red-600/30 text-red-400 text-xs font-medium rounded border border-red-600/30 transition disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 disabled:cursor-not-allowed"
                           >
                             {t('elite.closePos')}
                           </button>

@@ -53,7 +53,7 @@ export default function AccountPage() {
         <User className="w-16 h-16 text-gray-700 mx-auto" />
         <h1 className="text-xl font-bold text-gray-300">{t('account.login_required')}</h1>
         <p className="text-sm text-gray-500">{t('account.login_desc')}</p>
-        <Link href="/pricing" className="inline-block px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-medium text-sm transition">
+        <Link href="/pricing" className="inline-block px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-medium text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
           {t('account.view_plans')}
         </Link>
       </div>
@@ -69,12 +69,12 @@ export default function AccountPage() {
       {/* Nav */}
       <nav className="border-b border-gray-800 bg-gray-950/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link href="/" className="text-lg font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+          <Link href="/" className="rounded text-lg font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">
             {t('account.app_name')}
           </Link>
           <div className="flex items-center gap-4 text-sm">
-            <Link href="/strategy" className="text-gray-400 hover:text-white transition">{t('account.strategy_lab')}</Link>
-            <Link href="/pricing" className="text-gray-400 hover:text-white transition">{t('account.pricing')}</Link>
+            <Link href="/strategy" className="rounded text-gray-400 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">{t('account.strategy_lab')}</Link>
+            <Link href="/pricing" className="rounded text-gray-400 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">{t('account.pricing')}</Link>
           </div>
         </div>
       </nav>
@@ -97,7 +97,7 @@ export default function AccountPage() {
               </div>
             </div>
             {session.plan === 'free' && (
-              <Link href="/pricing" className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-medium transition">
+              <Link href="/pricing" className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
                 {t('account.upgrade_pro')}
               </Link>
             )}
@@ -167,7 +167,7 @@ export default function AccountPage() {
             <>
               {!showCancel ? (
                 <button onClick={() => setShowCancel(true)}
-                  className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-900/50 hover:bg-gray-800/50 border border-gray-800 transition text-sm">
+                  className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-900/50 hover:bg-gray-800/50 border border-gray-800 transition text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">
                   <span className="flex items-center gap-3 text-gray-400">
                     <CreditCard className="w-4 h-4" /> {t('account.cancel_sub')}
                   </span>
@@ -184,11 +184,11 @@ export default function AccountPage() {
                   </div>
                   <div className="flex gap-3">
                     <button onClick={handleCancel} disabled={cancelling}
-                      className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm font-medium transition">
+                      className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 disabled:cursor-wait">
                       {cancelling ? t('account.processing') : t('account.confirm')}
                     </button>
                     <button onClick={() => setShowCancel(false)}
-                      className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-sm transition">
+                      className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
                       {t('account.back')}
                     </button>
                   </div>
@@ -199,7 +199,7 @@ export default function AccountPage() {
 
           {session.plan === 'free' && (
             <Link href="/pricing"
-              className="w-full flex items-center justify-between p-3 rounded-xl bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-800/50 transition text-sm">
+              className="w-full flex items-center justify-between p-3 rounded-xl bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-800/50 transition text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">
               <span className="flex items-center gap-3 text-emerald-400">
                 <CreditCard className="w-4 h-4" /> {t('account.upgrade_to_pro')}
               </span>
@@ -208,7 +208,7 @@ export default function AccountPage() {
           )}
 
           <button onClick={logout}
-            className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-900/50 hover:bg-gray-800/50 border border-gray-800 transition text-sm">
+            className="w-full flex items-center justify-between p-3 rounded-xl bg-gray-900/50 hover:bg-gray-800/50 border border-gray-800 transition text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400">
             <span className="flex items-center gap-3 text-gray-400">
               <LogOut className="w-4 h-4" /> {t('account.logout')}
             </span>

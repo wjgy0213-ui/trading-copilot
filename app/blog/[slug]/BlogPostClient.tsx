@@ -105,7 +105,7 @@ export default function BlogPostClient({ post, relatedPosts }: { post: BlogPost;
       <article className="max-w-3xl mx-auto px-4 py-12">
         {/* Breadcrumb */}
         <div className="text-sm text-gray-500 mb-8">
-          <Link href="/blog" aria-label={t('blog.backToBlogAria')} className="hover:text-gray-300 transition">← {t('blog.backToBlog')}</Link>
+          <Link href="/blog" aria-label={t('blog.backToBlogAria')} className="rounded hover:text-gray-300 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">← {t('blog.backToBlog')}</Link>
         </div>
 
         {/* Header */}
@@ -146,10 +146,10 @@ export default function BlogPostClient({ post, relatedPosts }: { post: BlogPost;
           <h3 className="text-xl font-bold mb-2">{t('blog.postCtaTitle')}</h3>
           <p className="text-gray-400 mb-4">{t('blog.postCtaDesc')}</p>
           <div className="flex gap-3 justify-center flex-wrap">
-            <Link href="/pricing" aria-label={t('blog.getStartedAria')} className="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-xl transition">
+            <Link href="/pricing" aria-label={t('blog.getStartedAria')} className="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-xl transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
               {t('blog.ctaGetStarted')}
             </Link>
-            <Link href="/dashboard" aria-label={t('blog.viewDashboardAria')} className="bg-gray-800 hover:bg-gray-700 text-white font-medium px-6 py-3 rounded-xl transition">
+            <Link href="/dashboard" aria-label={t('blog.viewDashboardAria')} className="bg-gray-800 hover:bg-gray-700 text-white font-medium px-6 py-3 rounded-xl transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
               {t('blog.viewDashboard')}
             </Link>
           </div>
@@ -162,7 +162,7 @@ export default function BlogPostClient({ post, relatedPosts }: { post: BlogPost;
             {relatedPosts.map(p => (
               <Link key={p.slug} href={`/blog/${p.slug}`}
                 aria-label={relatedArticleAria(p.title)}
-                className="border border-gray-800 rounded-lg p-4 hover:border-gray-600 transition-all">
+                className="border border-gray-800 rounded-lg p-4 hover:border-gray-600 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
                 <div className="text-xs text-gray-500 mb-1">{formatLocaleDate(p.date, locale, { month: 'short', day: 'numeric', year: 'numeric' })}</div>
                 <div className="font-medium text-gray-200 hover:text-emerald-400 transition">{p.title}</div>
               </Link>

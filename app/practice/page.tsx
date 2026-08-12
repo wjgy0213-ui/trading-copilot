@@ -315,7 +315,7 @@ export default function PracticePage() {
               <div className="flex gap-1 mb-3">
                 {COINS.map(c => (
                   <button key={c} onClick={() => setSelectedCoin(c)}
-                    className={`flex-1 py-1.5 rounded text-xs font-medium transition-colors ${
+                    className={`flex-1 py-1.5 rounded text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${
                       selectedCoin === c ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-400 hover:text-white'
                     }`}>
                     {c}
@@ -332,11 +332,11 @@ export default function PracticePage() {
               {/* Side */}
               <div className="flex gap-2 mb-3">
                 <button onClick={() => setOrderSide('long')}
-                  className={`flex-1 py-2 rounded-lg font-medium ${
+                  className={`flex-1 py-2 rounded-lg font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${
                     orderSide === 'long' ? 'bg-green-600 text-white' : 'bg-gray-700 text-gray-400'
                   }`}>🟢 {t('practice.long')}</button>
                 <button onClick={() => setOrderSide('short')}
-                  className={`flex-1 py-2 rounded-lg font-medium ${
+                  className={`flex-1 py-2 rounded-lg font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${
                     orderSide === 'short' ? 'bg-red-600 text-white' : 'bg-gray-700 text-gray-400'
                   }`}>🔴 {t('practice.short')}</button>
               </div>
@@ -349,7 +349,7 @@ export default function PracticePage() {
                 <div className="flex gap-1 mt-1">
                   {[100, 500, 1000, 2000].map(v => (
                     <button key={v} onClick={() => setOrderSize(String(v))}
-                      className="flex-1 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs text-gray-400">{t('practice.quickAmount').replace('{amount}', formatLocaleNumber(v, locale))}</button>
+                      className="flex-1 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">{t('practice.quickAmount').replace('{amount}', formatLocaleNumber(v, locale))}</button>
                   ))}
                 </div>
               </div>
@@ -381,7 +381,7 @@ export default function PracticePage() {
               </div>
 
               <button onClick={openPosition} disabled={!currentPrice(selectedCoin)}
-                className={`w-full py-3 rounded-xl font-bold text-lg transition-colors ${
+                className={`w-full py-3 rounded-xl font-bold text-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 ${
                   orderSide === 'long' 
                     ? 'bg-green-600 hover:bg-green-500 text-white' 
                     : 'bg-red-600 hover:bg-red-500 text-white'
@@ -449,7 +449,7 @@ export default function PracticePage() {
                         <div className="flex items-center justify-between text-xs text-gray-400">
                           <span>{t('practice.entry')} {formatUsd(pos.entryPrice, locale)} · {t('practice.position_size')} {formatUsd(pos.size, locale)}</span>
                           <button onClick={() => closePosition(pos.id, 'manual')}
-                            className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-lg text-white">
+                            className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-lg text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400">
                             {t('practice.close')}
                           </button>
                         </div>
@@ -509,7 +509,7 @@ export default function PracticePage() {
             <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-violet-300">{t('practice.afterLabel')}</div>
             <h3 className="mt-2 text-lg font-semibold text-white">{t('practice.ctaTitle')}</h3>
             <p className="mt-2 text-sm text-gray-400">{t('practice.ctaDesc')}</p>
-            <Link href="/strategy" className="mt-4 inline-flex items-center gap-2 rounded-full bg-violet-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-violet-400">
+            <Link href="/strategy" className="mt-4 inline-flex items-center gap-2 rounded-full bg-violet-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-violet-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
               {t('practice.ctaButton')}
             </Link>
           </div>
@@ -517,7 +517,7 @@ export default function PracticePage() {
             <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-300">{t('practice.proLabel')}</div>
             <h3 className="mt-2 text-lg font-semibold text-white">{t('practice.proTitle')}</h3>
             <p className="mt-2 text-sm text-gray-400">{t('practice.proDesc')}</p>
-            <Link href="/pricing" className="mt-4 inline-flex items-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-medium text-black transition hover:bg-amber-400">
+            <Link href="/pricing" className="mt-4 inline-flex items-center gap-2 rounded-full bg-amber-500 px-4 py-2 text-sm font-medium text-black transition hover:bg-amber-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950">
               {t('practice.proButton')}
             </Link>
           </div>
@@ -528,7 +528,7 @@ export default function PracticePage() {
           <p>{t('practice.footer1')}</p>
           <p>{t('practice.footer2')}</p>
           <button onClick={() => { localStorage.removeItem('practice_state'); window.location.reload(); }}
-            className="text-gray-600 hover:text-red-400 transition-colors mt-2">{t('practice.reset')}</button>
+            className="rounded text-gray-600 hover:text-red-400 transition-colors mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400">{t('practice.reset')}</button>
         </div>
       </div>
     </div>

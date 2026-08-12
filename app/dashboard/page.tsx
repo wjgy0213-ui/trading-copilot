@@ -234,11 +234,11 @@ export default function DashboardPage() {
           <div className="rounded-xl border border-gray-800 bg-black/20 px-4 py-3 text-sm text-gray-300">
             <div className="text-[11px] uppercase tracking-[0.16em] text-gray-500">{t('dashboard.recommendedPath')}</div>
             <div className="mt-2 flex flex-wrap items-center gap-2 text-sm font-medium">
-              <Link href="/health" className="rounded-full bg-gray-800 px-3 py-1.5 hover:bg-gray-700 transition-colors">{t('dashboard.step1')}</Link>
+              <Link href="/health" className="rounded-full bg-gray-800 px-3 py-1.5 hover:bg-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">{t('dashboard.step1')}</Link>
               <ArrowRight className="w-4 h-4 text-gray-600" />
-              <Link href="/practice" className="rounded-full bg-gray-800 px-3 py-1.5 hover:bg-gray-700 transition-colors">{t('dashboard.step2')}</Link>
+              <Link href="/practice" className="rounded-full bg-gray-800 px-3 py-1.5 hover:bg-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">{t('dashboard.step2')}</Link>
               <ArrowRight className="w-4 h-4 text-gray-600" />
-              <Link href="/strategy" className="rounded-full bg-gray-800 px-3 py-1.5 hover:bg-gray-700 transition-colors">{t('dashboard.step3')}</Link>
+              <Link href="/strategy" className="rounded-full bg-gray-800 px-3 py-1.5 hover:bg-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400">{t('dashboard.step3')}</Link>
             </div>
           </div>
         </div>

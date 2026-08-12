@@ -328,7 +328,7 @@ export default function MissionControlPage() {
           {passwordError ? <p className="mt-2 text-xs text-red-300">{passwordError}</p> : null}
           <button
             onClick={submitPassword}
-            className="mt-4 w-full rounded-2xl bg-cyan-500 px-4 py-3 font-medium text-slate-950 transition hover:bg-cyan-400"
+            className="mt-4 w-full rounded-2xl bg-cyan-500 px-4 py-3 font-medium text-slate-950 transition hover:bg-cyan-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
           >
             {t('missionControl.enterControl')}
           </button>
@@ -368,7 +368,7 @@ export default function MissionControlPage() {
                 <button
                   key={tabId}
                   onClick={() => setActiveTab(tabId)}
-                  className={`flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left transition ${
+                  className={`flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 ${
                     active
                       ? 'bg-white/8 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.06)]'
                       : 'text-gray-500 hover:bg-white/4 hover:text-gray-200'
@@ -406,7 +406,7 @@ export default function MissionControlPage() {
                 <button
                   onClick={fetchData}
                   aria-label={t('missionControl.refresh')}
-                  className="inline-flex items-center gap-2 rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-cyan-200 transition hover:bg-cyan-400/15"
+                  className="inline-flex items-center gap-2 rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-cyan-200 transition hover:bg-cyan-400/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
                 >
                   <RefreshCw className="h-4 w-4" />
                   {t('missionControl.refresh')}
@@ -425,7 +425,7 @@ export default function MissionControlPage() {
                     <button
                       key={tabId}
                       onClick={() => setActiveTab(tabId)}
-                      className={`shrink-0 rounded-full border px-3 py-1.5 text-xs transition ${
+                      className={`shrink-0 rounded-full border px-3 py-1.5 text-xs transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 ${
                         active
                           ? 'border-cyan-400/30 bg-cyan-400/10 text-cyan-200'
                           : 'border-white/10 bg-white/[0.03] text-gray-400'

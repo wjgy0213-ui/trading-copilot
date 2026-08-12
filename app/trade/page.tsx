@@ -120,7 +120,7 @@ export default function TradePage() {
               <div className="flex items-center gap-1 mb-2">
                 <button
                   onClick={() => { setActiveCategory('crypto'); if (TRADING_PAIRS[activePair].category !== 'crypto') { setActivePair('BTC/USD'); setLoading(true); } }}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+                  className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${
                     activeCategory === 'crypto'
                       ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
                       : 'text-gray-500 hover:text-gray-300'
@@ -130,7 +130,7 @@ export default function TradePage() {
                 </button>
                 <button
                   onClick={() => { setActiveCategory('stock'); if (TRADING_PAIRS[activePair].category !== 'stock') { setActivePair('NVDA'); setLoading(true); } }}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+                  className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 ${
                     activeCategory === 'stock'
                       ? 'bg-purple-600/20 text-purple-400 border border-purple-500/30'
                       : 'text-gray-500 hover:text-gray-300'
@@ -145,7 +145,7 @@ export default function TradePage() {
                   <button
                     key={pair}
                     onClick={() => { setActivePair(pair); setLoading(true); }}
-                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${
                       activePair === pair
                         ? activeCategory === 'crypto'
                           ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25'
